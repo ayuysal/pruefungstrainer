@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VLSM & Strukturierte Verkabelung Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.calc-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:end}
+.calc-row label{font-size:12px;font-weight:600;display:block;margin-bottom:4px}
+.calc-row input,.calc-row select{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;width:180px}
+.calc-row input:focus{border-color:var(--accent)}
+.calc-btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:#fff;transition:all .25s}
+.calc-btn:hover{background:#5a52e0;transform:translateY(-1px)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.result-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px}
+.result-item .rl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.result-item .rv{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cyan);font-weight:600}
+.vlsm-step{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px;margin-top:10px;animation:fadeUp .4s ease both}
+.vlsm-step .step-head{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px}
+.vlsm-step .step-detail{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:1.8}
+.vlsm-step .step-detail span{color:var(--cyan)}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none;white-space:pre-wrap}
+.solution-box.show{display:block}
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.mc-options{display:grid;gap:8px;margin-bottom:12px}
+.mc-opt{font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:all .2s;text-align:left}
+.mc-opt:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.06)}
+.mc-opt.selected{border-color:var(--accent);background:rgba(108,99,255,.1)}
+.mc-opt.correct-opt{border-color:var(--green);background:rgba(81,207,102,.1);color:var(--green)}
+.mc-opt.wrong-opt{border-color:var(--red);background:rgba(255,107,107,.1);color:var(--red)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zur&uuml;ck zur &Uuml;bersicht</a>
+<header>
+<div class="tag">ITI25 &middot; Netzwerke</div>
+<h1>VLSM & Strukturierte Verkabelung</h1>
+<p>Variable Length Subnet Masking planen, Subnetze berechnen und Verkabelungsstandards lernen &ndash; interaktiv &uuml;ben</p>
+</header>
+
+<!-- REFERENCE SECTION -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz &ndash; VLSM</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#128200; VLSM vs. Fixed-Length</h3>
+<p><strong>Fixed-Length:</strong> Alle Subnetze gleich gro&szlig; &rarr; IP-Verschwendung.<br>
+<strong>VLSM:</strong> Jedes Subnetz bekommt individuelle Prefixl&auml;nge.</p>
+<ul><li>IP-Sparsamkeit: Nur so viele Adressen wie n&ouml;tig</li><li>Flexibilit&auml;t: Verschiedene Netzgr&ouml;&szlig;en in einem Netz</li><li>Voraussetzung: Routing-Protokoll muss VLSM unterst&uuml;tzen (OSPF, EIGRP)</li></ul></div>
+<div class="card c2"><h3>&#128221; VLSM-Methode</h3>
+<p>Schritt-f&uuml;r-Schritt-Vorgehen:</p>
+<ul><li><strong>1.</strong> Alle Subnetze nach Hostbedarf absteigend sortieren</li><li><strong>2.</strong> Gr&ouml;&szlig;tes Subnetz zuerst: passende Prefixl&auml;nge w&auml;hlen</li><li><strong>3.</strong> N&auml;chste verf&uuml;gbare Netzadresse berechnen (= vorherige Broadcast + 1)</li><li><strong>4.</strong> Wiederholen bis alle Subnetze zugewiesen</li></ul></div>
+<div class="card c3"><h3>&#128290; Prefix-Tabelle</h3>
+<ul><li>/25 &rarr; 126 Hosts (128 Adr.)</li><li>/26 &rarr; 62 Hosts (64 Adr.)</li><li>/27 &rarr; 30 Hosts (32 Adr.)</li><li>/28 &rarr; 14 Hosts (16 Adr.)</li><li>/29 &rarr; 6 Hosts (8 Adr.)</li><li>/30 &rarr; 2 Hosts (4 Adr.)</li></ul>
+<p>Formel: Hosts = 2<sup>(32&minus;Prefix)</sup> &minus; 2</p></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#128268;</div><h2>Referenz &ndash; Strukturierte Verkabelung</h2></div>
+<div class="cards">
+<div class="card c4"><h3>&#127959; Verkabelungsebenen</h3>
+<ul><li><strong>Prim&auml;rverkabelung:</strong> Campus-Backbone &ndash; verbindet Geb&auml;ude (Glasfaser, au&szlig;en)</li><li><strong>Sekund&auml;rverkabelung:</strong> Geb&auml;ude-Backbone &ndash; verbindet Etagen/Stockwerke (Glasfaser, Steigleitung)</li><li><strong>Terti&auml;rverkabelung:</strong> Etagenverkabelung &ndash; vom Etagenverteiler zur Netzwerkdose (Kupfer/TP)</li></ul></div>
+<div class="card c1"><h3>&#128295; Komponenten</h3>
+<ul><li><strong>Patchpanel:</strong> Festes Anschlussfeld im Rack, Endpunkt der Verlegekabel</li><li><strong>Patchkabel:</strong> Flexibles Kabel zwischen Patchpanel und Switch</li><li><strong>Verlegekabel:</strong> Fest installiert in Wand/Decke (starr, nicht bewegen)</li><li><strong>Netzwerkdose:</strong> Anschluss am Arbeitsplatz (RJ45)</li><li><strong>19-Zoll-Rack:</strong> Standard-Schrankma&szlig; f&uuml;r Netzwerkger&auml;te</li></ul></div>
+<div class="card c2"><h3>&#128220; Standards &amp; Kategorien</h3>
+<ul><li><strong>EN 50173:</strong> Europ&auml;ischer Standard f&uuml;r Verkabelung</li><li><strong>TIA/EIA 568:</strong> US-Standard (Belegung T568A/T568B)</li><li><strong>Cat 5e:</strong> bis 1 Gbit/s, 100 MHz</li><li><strong>Cat 6:</strong> bis 1 Gbit/s (10G auf 55m), 250 MHz</li><li><strong>Cat 6a:</strong> bis 10 Gbit/s, 500 MHz</li><li><strong>Cat 7:</strong> bis 10 Gbit/s, 600 MHz, S/FTP</li></ul></div>
+</div>
+
+<!-- VLSM CALCULATOR -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#128425;</div><h2>VLSM-Rechner</h2></div>
+<div class="calc-wrap">
+<div class="calc-row">
+<div><label>Startnetzwerk (z.B. 192.168.1.0/24)</label><input type="text" id="vlsm-net" value="192.168.1.0/24" placeholder="192.168.1.0/24" style="width:220px"></div>
+<div><label>Ben&ouml;tigte Hosts pro Subnetz (kommagetrennt)</label><input type="text" id="vlsm-hosts" value="60, 30, 14, 6" placeholder="60, 30, 14, 6" style="width:220px"></div>
+<button class="calc-btn" onclick="calcVLSM()">Berechnen</button>
+</div>
+<div id="vlsm-error" style="color:var(--red);font-size:13px;margin-bottom:8px;display:none"></div>
+<div id="vlsm-results"></div>
+</div>
+
+<!-- EXERCISE MODE -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--pink),var(--purple))">&#127947;&#65039;</div><h2>&Uuml;bungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="vlsm" onclick="setMode('vlsm')">VLSM planen</div>
+<div class="tab" data-mode="prefix" onclick="setMode('prefix')">Prefix bestimmen</div>
+<div class="tab" data-mode="verkabelung" onclick="setMode('verkabelung')">Verkabelung</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- CABLE CATEGORIES TABLE -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#128203;</div><h2>Kabelkategorien &Uuml;bersicht</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Kategorie</th><th>Max. Frequenz</th><th>Max. Datenrate</th><th>Schirmung</th><th>Einsatz</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--muted)">Cat 5e</td><td>100 MHz</td><td>1 Gbit/s</td><td>UTP / FTP</td><td>B&uuml;ro, &auml;ltere Netze</td></tr>
+<tr><td style="color:var(--cyan)">Cat 6</td><td>250 MHz</td><td>1 Gbit/s (10G/55m)</td><td>UTP / FTP</td><td>Neuinstallationen</td></tr>
+<tr><td style="color:var(--green)">Cat 6a</td><td>500 MHz</td><td>10 Gbit/s</td><td>S/FTP</td><td>Rechenzentrum, Neubau</td></tr>
+<tr><td style="color:var(--pink)">Cat 7</td><td>600 MHz</td><td>10 Gbit/s</td><td>S/FTP</td><td>Hochleistung, Industrie</td></tr>
+<tr><td style="color:var(--purple)">Cat 8</td><td>2000 MHz</td><td>25/40 Gbit/s</td><td>S/FTP</td><td>Rechenzentrum (kurz)</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- SUMMARY CARDS -->
+<div class="summary">
+<div class="summary-card"><h4>&#128161; VLSM-Merke</h4><p>Immer das gr&ouml;&szlig;te Subnetz zuerst zuweisen! Sortiere absteigend nach Hostanzahl. Die n&auml;chste Netzadresse ergibt sich aus der vorherigen Broadcastadresse + 1.</p></div>
+<div class="summary-card"><h4>&#127919; Pr&uuml;fungstipp</h4><p>VLSM-Aufgaben: Zuerst die passende Blockgr&ouml;&szlig;e (2er-Potenz) bestimmen, die den Hostbedarf + 2 deckt. Dann schrittweise von der Startadresse aus zuweisen.</p></div>
+<div class="summary-card"><h4>&#128268; Verkabelung merken</h4><p>Prim&auml;r = Campus (zwischen Geb&auml;uden), Sekund&auml;r = Geb&auml;ude (zwischen Etagen), Terti&auml;r = Etage (zum Arbeitsplatz). Patchpanel ist fest, Patchkabel ist flexibel.</p></div>
+<div class="summary-card"><h4>&#129513; Standards-Tipp</h4><p>EN 50173 ist der europ&auml;ische Verkabelungsstandard. TIA/EIA 568 definiert die RJ45-Belegung (T568A/B). Bei Cat 6a beginnt 10 Gbit/s auf voller 100m-L&auml;nge.</p></div>
+</div>
+</div>
+
+<script>
+// ===== PROGRESS =====
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('vlsm-verkabelung',{status:'in-progress'});
+
+// ===== HELPERS =====
+function ipToArr(s){return s.trim().split('.').map(Number);}
+function arrToIp(a){return a.join('.');}
+function ipToNum(a){return((a[0]<<24)|(a[1]<<16)|(a[2]<<8)|a[3])>>>0;}
+function numToIp(n){return[(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255];}
+function prefixToMask(p){if(p===0)return[0,0,0,0];const m=[];for(let i=0;i<4;i++){const bits=Math.min(8,Math.max(0,p-i*8));m.push(256-Math.pow(2,8-bits));}return m;}
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+
+function minPrefixForHosts(h){
+  for(let p=30;p>=0;p--){if(Math.pow(2,32-p)-2>=h)return p;}
+  return 0;
+}
+
+// ===== VLSM CALCULATOR =====
+function calcVLSM(){
+  const errEl=document.getElementById('vlsm-error');
+  const resEl=document.getElementById('vlsm-results');
+  errEl.style.display='none'; resEl.innerHTML='';
+
+  const netInput=document.getElementById('vlsm-net').value.trim();
+  const hostsInput=document.getElementById('vlsm-hosts').value.trim();
+
+  const netParts=netInput.split('/');
+  if(netParts.length!==2){errEl.textContent='Ung\u00fcltiges Netzwerk-Format. Beispiel: 192.168.1.0/24';errEl.style.display='block';return;}
+
+  const startIp=ipToArr(netParts[0]);
+  const startPrefix=parseInt(netParts[1]);
+  if(startIp.length!==4||startIp.some(o=>isNaN(o)||o<0||o>255)||isNaN(startPrefix)||startPrefix<0||startPrefix>30){
+    errEl.textContent='Ung\u00fcltige IP oder Prefix.';errEl.style.display='block';return;}
+
+  const needed=hostsInput.split(',').map(s=>parseInt(s.trim())).filter(n=>!isNaN(n)&&n>0);
+  if(needed.length===0){errEl.textContent='Mindestens ein Subnetz angeben.';errEl.style.display='block';return;}
+
+  const sorted=[...needed].sort((a,b)=>b-a);
+  const totalAvailable=Math.pow(2,32-startPrefix);
+  let currentAddr=ipToNum(startIp);
+  const results=[];
+
+  for(let i=0;i<sorted.length;i++){
+    const hosts=sorted[i];
+    const prefix=minPrefixForHosts(hosts);
+    const blockSize=Math.pow(2,32-prefix);
+    const usable=blockSize-2;
+
+    // Align to block boundary
+    if(currentAddr%blockSize!==0){currentAddr=Math.ceil(currentAddr/blockSize)*blockSize;}
+
+    const netAddr=numToIp(currentAddr);
+    const bcAddr=numToIp(currentAddr+blockSize-1);
+    const firstHost=numToIp(currentAddr+1);
+    const lastHost=numToIp(currentAddr+blockSize-2);
+
+    // Check if within original network
+    const endAddr=ipToNum(startIp)+totalAvailable-1;
+    if(currentAddr+blockSize-1>endAddr){
+      errEl.textContent='Fehler: Nicht genug Adressraum im Netzwerk '+netInput+' f\u00fcr alle Subnetze!';
+      errEl.style.display='block';return;
+    }
+
+    results.push({hosts,prefix,blockSize,usable,netAddr,bcAddr,firstHost,lastHost});
+    currentAddr+=blockSize;
+  }
+
+  let html='<div style="margin-bottom:12px;font-size:13px;color:var(--muted)">Subnetze sortiert nach Gr\u00f6\u00dfe (gr\u00f6\u00dftes zuerst):</div>';
+  results.forEach((r,i)=>{
+    html+=`<div class="vlsm-step" style="animation-delay:${i*0.1}s">
+      <div class="step-head">Schritt ${i+1}: ${r.hosts} Hosts ben\u00f6tigt</div>
+      <div class="step-detail">
+        Prefix: <span>/${r.prefix}</span> (Blockgr\u00f6\u00dfe: ${r.blockSize} Adressen, ${r.usable} nutzbar)<br>
+        Netzadresse: &nbsp;<span>${arrToIp(r.netAddr)}</span><br>
+        Erster Host: &nbsp;<span>${arrToIp(r.firstHost)}</span><br>
+        Letzter Host: <span>${arrToIp(r.lastHost)}</span><br>
+        Broadcast: &nbsp;&nbsp;&nbsp;<span>${arrToIp(r.bcAddr)}</span>
+      </div>
+    </div>`;
+  });
+
+  const usedTotal=results.reduce((s,r)=>s+r.blockSize,0);
+  html+=`<div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">Gesamt belegt: ${usedTotal} von ${totalAvailable} Adressen (${(usedTotal/totalAvailable*100).toFixed(1)}%)</div>`;
+  resEl.innerHTML=html;
+}
+calcVLSM();
+
+// ===== EXERCISE MODE =====
+let mode='vlsm';
+let score={correct:0,wrong:0,streak:0};
+let currentTask={};
+let selectedMC=-1;
+
+function setMode(m){mode=m;selectedMC=-1;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+
+// ----- VLSM Task Generator -----
+function genVLSMTask(){
+  const bases=['192.168.1.0/24','10.0.0.0/24','172.16.0.0/24','192.168.10.0/24','10.10.0.0/24'];
+  const base=bases[rand(0,bases.length-1)];
+  const hostSets=[[60,30,14,6],[100,50,20,10],[25,12,6,2],[50,25,10,6],[30,14,6,2]];
+  const hosts=hostSets[rand(0,hostSets.length-1)];
+
+  // Calculate answer (first subnet)
+  const startIp=ipToArr(base.split('/')[0]);
+  const sorted=[...hosts].sort((a,b)=>b-a);
+  const firstNeeded=sorted[0];
+  const firstPrefix=minPrefixForHosts(firstNeeded);
+  const firstBlock=Math.pow(2,32-firstPrefix);
+
+  let currentAddr=ipToNum(startIp);
+  const allSubnets=[];
+  for(let i=0;i<sorted.length;i++){
+    const p=minPrefixForHosts(sorted[i]);
+    const bs=Math.pow(2,32-p);
+    if(currentAddr%bs!==0)currentAddr=Math.ceil(currentAddr/bs)*bs;
+    allSubnets.push({hosts:sorted[i],prefix:p,net:arrToIp(numToIp(currentAddr)),bc:arrToIp(numToIp(currentAddr+bs-1)),block:bs});
+    currentAddr+=bs;
+  }
+
+  const askIdx=rand(0,sorted.length-1);
+  const askSubnet=allSubnets[askIdx];
+  const answer=askSubnet.net+'/'+askSubnet.prefix;
+
+  let solution='VLSM-Plan f\u00fcr '+base+':\nSubnetze sortiert: '+sorted.join(', ')+' Hosts\n\n';
+  allSubnets.forEach((s,i)=>{
+    solution+=`${i+1}. ${s.hosts} Hosts -> /${s.prefix} (Block: ${s.block})\n   Netz: ${s.net}  Broadcast: ${s.bc}\n`;
+  });
+  solution+='\nGesuchtes Subnetz ('+askSubnet.hosts+' Hosts): '+answer;
+
+  return{
+    q:base+' aufteilen in Subnetze mit '+hosts.join(', ')+' Hosts',
+    sub:'Gib Netzadresse/Prefix f\u00fcr das Subnetz mit '+askSubnet.hosts+' Hosts an (z.B. 192.168.1.0/26)',
+    answer,
+    solution
+  };
+}
+
+// ----- Prefix Task Generator -----
+function genPrefixTask(){
+  const hostCounts=[2,5,6,10,14,20,25,30,50,60,100,120,200,250,500,1000];
+  const h=hostCounts[rand(0,hostCounts.length-1)];
+  const prefix=minPrefixForHosts(h);
+  const usable=Math.pow(2,32-prefix)-2;
+  const answer='/'+prefix;
+  const solution='Ben\u00f6tigte Hosts: '+h+'\nN\u00e4chste 2er-Potenz >= '+(h+2)+': '+Math.pow(2,32-prefix)+'\nHostbits: '+(32-prefix)+'\nPrefix: 32 - '+(32-prefix)+' = /'+prefix+'\nNutzbare Hosts: '+usable;
+  return{q:h+' Hosts ben\u00f6tigt',sub:'Gib den minimalen Prefix an (z.B. /26)',answer,solution};
+}
+
+// ----- Verkabelung Task Generator -----
+const verkabelungQuestions=[
+  {q:'Welche Verkabelungsebene verbindet Geb\u00e4ude auf einem Campus?',opts:['Prim\u00e4rverkabelung','Sekund\u00e4rverkabelung','Terti\u00e4rverkabelung','Horizontalverkabelung'],correct:0,
+   solution:'Die Prim\u00e4rverkabelung (Campusverkabelung) verbindet\ndie Geb\u00e4ude untereinander, typischerweise mit Glasfaser.'},
+  {q:'Welche Verkabelungsebene verbindet die Etagen innerhalb eines Geb\u00e4udes?',opts:['Prim\u00e4rverkabelung','Sekund\u00e4rverkabelung','Terti\u00e4rverkabelung','Patchverkabelung'],correct:1,
+   solution:'Die Sekund\u00e4rverkabelung (Steigleitung/Geb\u00e4udeverkabelung)\nverbindet die Stockwerke, meist \u00fcber Glasfaser.'},
+  {q:'Welche Verkabelungsebene f\u00fchrt vom Etagenverteiler zur Netzwerkdose?',opts:['Prim\u00e4rverkabelung','Sekund\u00e4rverkabelung','Terti\u00e4rverkabelung','Backbone'],correct:2,
+   solution:'Die Terti\u00e4rverkabelung (Etagenverkabelung) f\u00fchrt\nvom Etagenverteiler zur Netzwerkdose am Arbeitsplatz,\ntypischerweise Kupfer/Twisted Pair.'},
+  {q:'Was ist die Aufgabe eines Patchpanels?',opts:['Verbindung Switch zu Router','Fester Anschlusspunkt f\u00fcr Verlegekabel im Rack','WLAN-Abdeckung in der Etage','Glasfaser-Konvertierung'],correct:1,
+   solution:'Ein Patchpanel ist ein festes Anschlussfeld im 19-Zoll-Rack.\nDie Verlegekabel enden dort fest aufgelegt.\nPer Patchkabel wird die Verbindung zum Switch hergestellt.'},
+  {q:'Was ist der Unterschied zwischen Patchkabel und Verlegekabel?',opts:['Patchkabel ist fest verlegt, Verlegekabel flexibel','Patchkabel ist flexibel, Verlegekabel fest installiert','Kein Unterschied, nur die L\u00e4nge','Verlegekabel hat RJ45, Patchkabel nicht'],correct:1,
+   solution:'Patchkabel: Flexibel, mit Steckern, zum Verbinden\nvon Patchpanel/Dose mit Endger\u00e4t/Switch.\nVerlegekabel: Fest in Wand/Decke installiert, starr.'},
+  {q:'Welchen Standard beschreibt EN 50173?',opts:['WLAN-Sicherheit','Europ\u00e4ischer Verkabelungsstandard','US-Steckerbelegung','IP-Adressierung'],correct:1,
+   solution:'EN 50173 ist der europ\u00e4ische Standard f\u00fcr\nanwendungsneutrale Kommunikationskabelanlagen\n(strukturierte Verkabelung).'},
+  {q:'Welcher Standard definiert die RJ45-Belegung (T568A/T568B)?',opts:['EN 50173','IEEE 802.11','TIA/EIA 568','ISO 27001'],correct:2,
+   solution:'TIA/EIA 568 definiert die Pinbelegung\nf\u00fcr RJ45-Stecker:\nT568A und T568B sind die beiden g\u00e4ngigen Varianten.'},
+  {q:'Ab welcher Kategorie ist 10 Gbit/s auf voller 100m-Strecke m\u00f6glich?',opts:['Cat 5e','Cat 6','Cat 6a','Cat 8'],correct:2,
+   solution:'Cat 6a (500 MHz) unterst\u00fctzt 10 Gbit/s\nauf der vollen 100m-Strecke.\nCat 6 schafft 10G nur auf ca. 55m.'},
+  {q:'Welche maximale Frequenz hat Cat 7?',opts:['250 MHz','500 MHz','600 MHz','1000 MHz'],correct:2,
+   solution:'Cat 7 arbeitet mit bis zu 600 MHz Bandbreite\nund verwendet S/FTP-Schirmung\nf\u00fcr 10 Gbit/s \u00dcbertragung.'},
+  {q:'Was ist das Standardma\u00df f\u00fcr Netzwerkschr\u00e4nke?',opts:['10 Zoll','19 Zoll','21 Zoll','24 Zoll'],correct:1,
+   solution:'19 Zoll (ca. 48,26 cm) ist das Standardma\u00df\nf\u00fcr Netzwerkschr\u00e4nke und Server-Racks.\nDie H\u00f6he wird in H\u00f6heneinheiten (HE) gemessen.'},
+  {q:'Welches Medium wird typischerweise f\u00fcr die Prim\u00e4rverkabelung eingesetzt?',opts:['Kupfer Cat 5e','Koaxialkabel','Glasfaser','Twisted Pair Cat 6'],correct:2,
+   solution:'F\u00fcr die Prim\u00e4rverkabelung (Campus-Backbone)\nwird typischerweise Glasfaser (LWL) verwendet,\nda gro\u00dfe Distanzen \u00fcberbr\u00fcckt werden.'},
+  {q:'Wo befindet sich der Etagenverteiler in der Verkabelungshierarchie?',opts:['Zwischen Prim\u00e4r- und Sekund\u00e4rverkabelung','Am Ende der Prim\u00e4rverkabelung','Zwischen Sekund\u00e4r- und Terti\u00e4rverkabelung','Im Rechenzentrum'],correct:2,
+   solution:'Der Etagenverteiler (Floor Distributor) bildet den\n\u00dcbergang von Sekund\u00e4r- zu Terti\u00e4rverkabelung.\nHier befinden sich Switches und Patchpanels der Etage.'},
+  {q:'Welche Schirmung hat Cat 5e typischerweise?',opts:['S/FTP','S/STP','UTP (ungeschirmt)','PiMF'],correct:2,
+   solution:'Cat 5e ist typischerweise UTP (Unshielded Twisted Pair),\nalso ungeschirmt. H\u00f6here Kategorien (Cat 6a, 7)\nverwenden zunehmend S/FTP oder S/STP.'},
+  {q:'Was bedeutet VLSM?',opts:['Virtual Local Subnet Mode','Variable Length Subnet Masking','Very Large Subnet Method','Virtual LAN Subnet Management'],correct:1,
+   solution:'VLSM = Variable Length Subnet Masking.\nErlaubt unterschiedlich gro\u00dfe Subnetze innerhalb\neines Netzwerks f\u00fcr effiziente IP-Nutzung.'},
+  {q:'Was ist der Hauptvorteil von VLSM gegen\u00fcber Fixed-Length Subnetting?',opts:['Schnellere Daten\u00fcbertragung','Bessere Verschl\u00fcsselung','IP-Adress-Sparsamkeit','Einfachere Konfiguration'],correct:2,
+   solution:'VLSM spart IP-Adressen, weil jedes Subnetz\nnur so viele Adressen bekommt wie tats\u00e4chlich\nben\u00f6tigt (statt einheitliche Blockgr\u00f6\u00dfe).'},
+  {q:'Bei VLSM: Welches Subnetz wird zuerst zugewiesen?',opts:['Das kleinste','Das mittlere','Das gr\u00f6\u00dfte','Die Reihenfolge ist egal'],correct:2,
+   solution:'Bei VLSM wird immer das gr\u00f6\u00dfte Subnetz\nzuerst zugewiesen (absteigend sortieren),\num Alignment-Probleme zu vermeiden.'},
+];
+
+function genVerkabelungTask(){
+  const q=verkabelungQuestions[rand(0,verkabelungQuestions.length-1)];
+  // Shuffle options while tracking correct
+  const indices=[0,1,2,3];
+  for(let i=indices.length-1;i>0;i--){const j=rand(0,i);[indices[i],indices[j]]=[indices[j],indices[i]];}
+  const shuffledOpts=indices.map(i=>q.opts[i]);
+  const newCorrect=indices.indexOf(q.correct);
+  return{q:q.q,opts:shuffledOpts,correct:newCorrect,solution:q.solution,type:'mc'};
+}
+
+function newTask(){
+  selectedMC=-1;
+  if(mode==='vlsm')currentTask=genVLSMTask();
+  else if(mode==='prefix')currentTask=genPrefixTask();
+  else currentTask=genVerkabelungTask();
+  renderTask();
+}
+
+function renderTask(){
+  const area=document.getElementById('exercise-area');
+  if(currentTask.type==='mc'){
+    area.innerHTML=`
+      <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">W\u00e4hle die richtige Antwort</div>
+      <div class="task-display" style="font-size:15px">${currentTask.q}</div>
+      <div class="mc-options">${currentTask.opts.map((o,i)=>`<button class="mc-opt" data-idx="${i}" onclick="selectMC(${i})">${o}</button>`).join('')}</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkAnswer()">Pr\u00fcfen &#8629;</button>
+        <button class="btn btn-secondary" onclick="showSolution()">L\u00f6sung zeigen</button>
+        <button class="btn btn-secondary" onclick="newTask()">N\u00e4chste &rarr;</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="solution-box" id="sol"></div>`;
+    document.addEventListener('keydown',handleEnter);
+  } else {
+    area.innerHTML=`
+      <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${mode==='vlsm'?'Berechne das VLSM-Subnetz':'Bestimme den Prefix'}</div>
+      <div class="task-display" style="font-size:15px">${currentTask.q}</div>
+      <div class="task-sub">${currentTask.sub}</div>
+      <div class="input-row"><input type="text" id="user-answer" placeholder="Deine Antwort..." autocomplete="off"></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkAnswer()">Pr\u00fcfen &#8629;</button>
+        <button class="btn btn-secondary" onclick="showSolution()">L\u00f6sung zeigen</button>
+        <button class="btn btn-secondary" onclick="newTask()">N\u00e4chste &rarr;</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="solution-box" id="sol"></div>`;
+    const inp=document.getElementById('user-answer');
+    inp.focus();
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+  }
+}
+
+function handleEnter(e){if(e.key==='Enter'){checkAnswer();}}
+
+function selectMC(idx){
+  selectedMC=idx;
+  document.querySelectorAll('.mc-opt').forEach((el,i)=>{el.classList.toggle('selected',i===idx);});
+}
+
+function checkAnswer(){
+  const fb=document.getElementById('fb');
+  if(currentTask.type==='mc'){
+    if(selectedMC===-1)return;
+    document.removeEventListener('keydown',handleEnter);
+    const opts=document.querySelectorAll('.mc-opt');
+    opts.forEach(o=>{o.style.pointerEvents='none';});
+    if(selectedMC===currentTask.correct){
+      opts[selectedMC].classList.add('correct-opt');
+      fb.textContent='\u2713 Richtig!';fb.className='feedback correct';
+      score.correct++;score.streak++;updateScore();
+      if(score.correct>=10)saveProgress('vlsm-verkabelung',{status:'completed',score:score.correct});
+      setTimeout(newTask,1200);
+    } else {
+      opts[selectedMC].classList.add('wrong-opt');
+      opts[currentTask.correct].classList.add('correct-opt');
+      fb.textContent='\u2717 Falsch \u2013 richtig: '+currentTask.opts[currentTask.correct];fb.className='feedback wrong';
+      score.wrong++;score.streak=0;updateScore();showSolution();
+    }
+  } else {
+    const inp=document.getElementById('user-answer');
+    const v=inp.value.trim();
+    if(!v)return;
+    const normalise=s=>s.replace(/\s/g,'').toLowerCase();
+    if(normalise(v)===normalise(currentTask.answer)){
+      inp.classList.add('correct');fb.textContent='\u2713 Richtig!';fb.className='feedback correct';
+      score.correct++;score.streak++;updateScore();
+      if(score.correct>=10)saveProgress('vlsm-verkabelung',{status:'completed',score:score.correct});
+      setTimeout(newTask,1200);
+    } else {
+      inp.classList.add('wrong');fb.textContent='\u2717 Falsch \u2013 richtig: '+currentTask.answer;fb.className='feedback wrong';
+      score.wrong++;score.streak=0;updateScore();showSolution();
+    }
+  }
+}
+
+function showSolution(){const s=document.getElementById('sol');s.textContent=currentTask.solution;s.classList.add('show');}
+
+// Load saved score
+(function(){
+  const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');
+  if(all['vlsm-verkabelung']&&all['vlsm-verkabelung'].score){
+    score.correct=0;score.wrong=0;score.streak=0;
+  }
+})();
+
+newTask();
+</script>
+</body>
+</html>
+</html>

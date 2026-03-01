@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O-Notation & Master-Theorem Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.calc-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:end}
+.calc-row label{font-size:12px;font-weight:600;display:block;margin-bottom:4px}
+.calc-row input,.calc-row select{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;width:180px}
+.calc-row input:focus{border-color:var(--accent)}
+.calc-btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:#fff;transition:all .25s}
+.calc-btn:hover{background:#5a52e0;transform:translateY(-1px)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.result-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px}
+.result-item .rl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.result-item .rv{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cyan);font-weight:600}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace;line-height:1.5}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px;line-height:1.6}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input,.input-row select{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
+.input-row input.correct,.input-row select.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong,.input-row select.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.input-row select option{background:var(--surface);color:var(--text)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none;white-space:pre-wrap}
+.solution-box.show{display:block}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+canvas{width:100%;border-radius:10px;margin-top:12px;background:rgba(0,0,0,.3)}
+.slider-row{display:flex;align-items:center;gap:16px;margin-top:12px}
+.slider-row input[type=range]{flex:1;accent-color:var(--accent)}
+.slider-row span{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);min-width:60px}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+.legend-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.legend-color{width:20px;height:3px;border-radius:2px}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
+.match-col{display:flex;flex-direction:column;gap:8px}
+.match-item{padding:12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace;font-size:13px;cursor:pointer;transition:all .2s;text-align:center}
+.match-item:hover{border-color:var(--accent)}
+.match-item.selected{border-color:var(--accent);background:rgba(108,99,255,.1)}
+.match-item.matched-correct{border-color:var(--green);background:rgba(81,207,102,.08)}
+.match-item.matched-wrong{border-color:var(--red);background:rgba(255,107,107,.08)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.match-grid{grid-template-columns:1fr}}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">TGI02 · Algorithmen &amp; Komplexität</div>
+<h1>O-Notation & Master-Theorem</h1>
+<p>Landau-Notation, Wachstumsraten, Master-Theorem und Algorithmen-Komplexität interaktiv trainieren</p>
+</header>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#x1F4DA;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#x1F4C8; O-Notation Grundlagen</h3><p>Obere Schranke für die Laufzeit eines Algorithmus.</p><ul><li><strong>O(1)</strong> – Konstant</li><li><strong>O(log n)</strong> – Logarithmisch</li><li><strong>O(n)</strong> – Linear</li><li><strong>O(n log n)</strong> – Linearithmisch</li><li><strong>O(n&sup2;)</strong> – Quadratisch</li><li><strong>O(n&sup3;)</strong> – Kubisch</li><li><strong>O(2&#x207F;)</strong> – Exponentiell</li><li><strong>O(n!)</strong> – Faktoriell</li></ul></div>
+<div class="card c2"><h3>&#x1F4CA; Wachstumshierarchie</h3><p>Von langsam nach schnell wachsend:</p><p style="font-family:'JetBrains Mono',monospace;margin-top:8px;color:var(--cyan);font-size:12px;line-height:1.8">1 &lt; log n &lt; &radic;n &lt; n &lt; n log n &lt; n&sup2; &lt; n&sup3; &lt; 2&#x207F; &lt; n!</p><p style="margin-top:8px">&Omega;(f) = untere Schranke<br>&Theta;(f) = enge Schranke (obere UND untere)<br>O(f) = obere Schranke</p></div>
+<div class="card c3"><h3>&#x1F9EA; Best / Average / Worst Case</h3><ul><li><strong>Best Case:</strong> Günstigste Eingabe</li><li><strong>Average Case:</strong> Erwartungswert über alle Eingaben</li><li><strong>Worst Case:</strong> Ungünstigste Eingabe (O-Notation)</li></ul><p style="margin-top:8px">Beispiel QuickSort:<br>Best: O(n log n), Avg: O(n log n), Worst: O(n&sup2;)</p></div>
+<div class="card c4"><h3>&#x2696;&#xFE0F; Master-Theorem</h3><p>Für <strong>T(n) = a &middot; T(n/b) + f(n)</strong>:</p><p style="font-family:'JetBrains Mono',monospace;font-size:11px;margin-top:8px;line-height:2;color:var(--text)"><span style="color:var(--cyan)">Fall 1:</span> f(n)=O(n<sup>log<sub>b</sub>(a)-&epsilon;</sup>)<br>&rarr; T(n) = &Theta;(n<sup>log<sub>b</sub>(a)</sup>)<br><span style="color:var(--green)">Fall 2:</span> f(n)=&Theta;(n<sup>log<sub>b</sub>(a)</sup>)<br>&rarr; T(n) = &Theta;(n<sup>log<sub>b</sub>(a)</sup> &middot; log n)<br><span style="color:var(--pink)">Fall 3:</span> f(n)=&Omega;(n<sup>log<sub>b</sub>(a)+&epsilon;</sup>)<br>&rarr; T(n) = &Theta;(f(n))</p></div>
+<div class="card c1"><h3>&#x1F50D; Bekannte Komplexitäten</h3><ul><li>Binary Search: <strong>O(log n)</strong></li><li>Linear Search: <strong>O(n)</strong></li><li>MergeSort: <strong>O(n log n)</strong></li><li>QuickSort: <strong>O(n&sup2;)</strong> worst / <strong>O(n log n)</strong> avg</li><li>BubbleSort: <strong>O(n&sup2;)</strong></li><li>Matrix-Multiplikation: <strong>O(n&sup3;)</strong></li></ul></div>
+<div class="card c2"><h3>&#x1F9E9; P vs NP</h3><ul><li><strong>P:</strong> In Polynomialzeit loesbar</li><li><strong>NP:</strong> In Polynomialzeit verifizierbar</li><li><strong>NP-vollstaendig:</strong> Härteste Probleme in NP</li><li><strong>Offenes Problem:</strong> P = NP?</li></ul><p style="margin-top:8px">Bsp: Traveling Salesman (NP-vollst.), Sortieren (P), SAT (NP-vollst.)</p></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#x1F4C8;</div><h2>Wachstumsraten-Visualizer</h2></div>
+<div class="calc-wrap">
+<canvas id="growthCanvas" height="360"></canvas>
+<div class="slider-row">
+<label style="font-size:12px;font-weight:600">n =</label>
+<input type="range" id="nSlider" min="2" max="100" value="20">
+<span id="nValue">20</span>
+</div>
+<div class="legend" id="graphLegend"></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--pink),var(--purple))">&#x1F9EE;</div><h2>Master-Theorem Solver</h2></div>
+<div class="calc-wrap">
+<p style="font-size:13px;color:var(--muted);margin-bottom:16px">T(n) = a &middot; T(n/b) + f(n) &mdash; Gib a, b und den Exponenten c von f(n) = n<sup>c</sup> ein.</p>
+<div class="calc-row">
+<div><label>a (Teilprobleme)</label><input type="number" id="mt-a" value="2" min="1" step="1"></div>
+<div><label>b (Teiler)</label><input type="number" id="mt-b" value="2" min="2" step="1"></div>
+<div><label>c (Exponent von n<sup>c</sup>)</label><input type="number" id="mt-c" value="1" min="0" step="0.5"></div>
+<button class="calc-btn" onclick="solveMasterTheorem()">Analysieren</button>
+</div>
+<div class="result-grid" id="mt-results"></div>
+<div id="mt-explanation" style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:var(--muted)"></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#x1F3CB;&#xFE0F;</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="complexity" onclick="setMode('complexity')">Komplexität</div>
+<div class="tab" data-mode="master" onclick="setMode('master')">Master-Theorem</div>
+<div class="tab" data-mode="compare" onclick="setMode('compare')">Vergleichen</div>
+<div class="tab" data-mode="match" onclick="setMode('match')">Zuordnen</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<div class="summary">
+<div class="summary-card"><h4>&#x1F4A1; Merke: Master-Theorem</h4><p>Berechne immer zuerst log<sub>b</sub>(a) und vergleiche mit dem Exponenten von f(n). Ist f(n) polynomiell kleiner &rarr; Fall 1. Gleich &rarr; Fall 2. Größer &rarr; Fall 3.</p></div>
+<div class="summary-card"><h4>&#x1F3AF; Prüfungstipp</h4><p>Master-Theorem ist Pflicht! Typische Aufgabe: T(n)=4T(n/2)+n &rarr; log<sub>2</sub>(4)=2, f(n)=n=O(n<sup>2-&epsilon;</sup>) &rarr; Fall 1 &rarr; &Theta;(n&sup2;). Rechne log<sub>b</sub>(a) IMMER zuerst!</p></div>
+<div class="summary-card"><h4>&#x1F9E9; Standardbeispiele</h4><p>MergeSort: T(n)=2T(n/2)+n &rarr; Fall 2 &rarr; &Theta;(n log n)<br>Binary Search: T(n)=T(n/2)+1 &rarr; Fall 2 &rarr; &Theta;(log n)<br>Strassen: T(n)=7T(n/2)+n&sup2; &rarr; Fall 1 &rarr; &Theta;(n<sup>log<sub>2</sub>7</sup>)</p></div>
+<div class="summary-card"><h4>&#x26A0;&#xFE0F; Häufige Fehler</h4><p>1. log<sub>b</sub>(a) falsch berechnet<br>2. Vergessen, dass f(n)=n&sup2; bedeutet c=2<br>3. Verwechslung: O ist obere, &Omega; untere Schranke<br>4. Master-Theorem gilt NUR für T(n)=aT(n/b)+f(n)</p></div>
+</div>
+
+<div class="glossary-section" id="glossary-section">
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--cyan))">&#x1F4D6;</div><h2>Glossar-Trainer</h2></div>
+<div class="glossary-progress-bar"><span class="gp-text">Fortschritt</span><div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div><span class="gp-count" id="glossary-count">0 / 8 gemeistert</span></div>
+<div class="glossary-grid" id="glossary-grid"></div>
+<div class="glossary-learn" id="glossary-learn"></div>
+</div>
+
+<div class="glossary-tooltip" id="glossary-tooltip"><div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">&#x1F4D6; Klicken zum Lernen</div></div>
+</div>
+
+<script>
+// --- Progress ---
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('o-notation-master',{status:'in-progress'});
+
+// --- Growth Rate Visualizer ---
+const growthFns=[
+  {name:'O(1)',color:'#6b7084',fn:()=>1},
+  {name:'O(log n)',color:'#38bdf8',fn:n=>Math.log2(n)},
+  {name:'O(sqrt n)',color:'#a78bfa',fn:n=>Math.sqrt(n)},
+  {name:'O(n)',color:'#51cf66',fn:n=>n},
+  {name:'O(n log n)',color:'#fbbf24',fn:n=>n*Math.log2(n)},
+  {name:'O(n^2)',color:'#f472b6',fn:n=>n*n},
+  {name:'O(2^n)',color:'#ff6b6b',fn:n=>Math.pow(2,n)}
+];
+
+function drawGraph(){
+  const canvas=document.getElementById('growthCanvas');
+  const ctx=canvas.getContext('2d');
+  const dpr=window.devicePixelRatio||1;
+  const rect=canvas.getBoundingClientRect();
+  canvas.width=rect.width*dpr;canvas.height=360*dpr;
+  ctx.scale(dpr,dpr);
+  const W=rect.width,H=360,pad={t:20,r:20,b:40,l:60};
+  const pW=W-pad.l-pad.r,pH=H-pad.t-pad.b;
+  ctx.clearRect(0,0,W,H);
+  const maxN=parseInt(document.getElementById('nSlider').value);
+  document.getElementById('nValue').textContent=maxN;
+  let maxY=0;
+  for(const f of growthFns){const v=f.fn(maxN);if(v<1e10&&v>maxY)maxY=v;}
+  maxY=maxY*1.1||10;
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,.06)';ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){const y=pad.t+pH-pH*(i/5);ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle='#6b7084';ctx.font='11px JetBrains Mono';ctx.textAlign='right';ctx.fillText(Math.round(maxY*i/5),pad.l-8,y+4);}
+  for(let i=0;i<=5;i++){const x=pad.l+pW*(i/5);ctx.beginPath();ctx.moveTo(x,pad.t);ctx.lineTo(x,H-pad.b);ctx.stroke();
+    ctx.textAlign='center';ctx.fillText(Math.round(maxN*i/5),x,H-pad.b+18);}
+  ctx.fillStyle='#6b7084';ctx.font='12px JetBrains Mono';ctx.textAlign='center';ctx.fillText('n',W/2,H-5);
+  // Curves
+  for(const f of growthFns){
+    ctx.strokeStyle=f.color;ctx.lineWidth=2;ctx.beginPath();let started=false;
+    for(let px=0;px<=pW;px++){
+      const n=Math.max(1,(px/pW)*maxN);
+      const v=f.fn(n);const y=pad.t+pH-pH*(Math.min(v,maxY)/maxY);
+      if(!started){ctx.moveTo(pad.l+px,y);started=true;}else ctx.lineTo(pad.l+px,y);
+    }
+    ctx.stroke();
+  }
+}
+
+function buildLegend(){
+  const el=document.getElementById('graphLegend');
+  el.innerHTML=growthFns.map(f=>`<div class="legend-item"><div class="legend-color" style="background:${f.color}"></div>${f.name}</div>`).join('');
+}
+
+document.getElementById('nSlider').addEventListener('input',drawGraph);
+window.addEventListener('resize',drawGraph);
+buildLegend();
+setTimeout(drawGraph,50);
+
+// --- Master-Theorem Solver ---
+function solveMasterTheorem(){
+  const a=parseFloat(document.getElementById('mt-a').value);
+  const b=parseFloat(document.getElementById('mt-b').value);
+  const c=parseFloat(document.getElementById('mt-c').value);
+  if(a<1||b<2||isNaN(a)||isNaN(b)||isNaN(c)){
+    document.getElementById('mt-results').innerHTML='<div class="result-item"><div class="rl">Fehler</div><div class="rv" style="color:var(--red)">Ungültige Eingabe (a>=1, b>=2)</div></div>';return;}
+  const logba=Math.log(a)/Math.log(b);
+  const logbaRound=Math.round(logba*1000)/1000;
+  let fall,tn,explanation;
+  if(c<logba-0.001){
+    fall='Fall 1';tn=`Theta(n^${logbaRound})`;
+    explanation=`log_b(a) = log_${b}(${a}) = ${logbaRound}\nf(n) = n^${c}\nDa c = ${c} < log_b(a) = ${logbaRound}\n=> f(n) = O(n^(log_b(a)-epsilon))\n=> Fall 1: T(n) = Theta(n^${logbaRound})`;
+  }else if(Math.abs(c-logba)<0.001){
+    fall='Fall 2';tn=`Theta(n^${logbaRound} * log n)`;
+    explanation=`log_b(a) = log_${b}(${a}) = ${logbaRound}\nf(n) = n^${c}\nDa c = ${c} = log_b(a) = ${logbaRound}\n=> f(n) = Theta(n^log_b(a))\n=> Fall 2: T(n) = Theta(n^${logbaRound} * log n)`;
+  }else{
+    fall='Fall 3';tn=`Theta(n^${c})`;
+    explanation=`log_b(a) = log_${b}(${a}) = ${logbaRound}\nf(n) = n^${c}\nDa c = ${c} > log_b(a) = ${logbaRound}\n=> f(n) = Omega(n^(log_b(a)+epsilon))\n=> Fall 3: T(n) = Theta(f(n)) = Theta(n^${c})`;
+  }
+  document.getElementById('mt-results').innerHTML=`
+    <div class="result-item"><div class="rl">log<sub>b</sub>(a)</div><div class="rv">${logbaRound}</div></div>
+    <div class="result-item"><div class="rl">Angewandter Fall</div><div class="rv" style="color:var(--green)">${fall}</div></div>
+    <div class="result-item"><div class="rl">Ergebnis T(n)</div><div class="rv" style="color:var(--yellow)">${tn}</div></div>`;
+  document.getElementById('mt-explanation').textContent=explanation;
+}
+solveMasterTheorem();
+
+// --- Exercise Mode ---
+let mode='complexity',score={correct:0,wrong:0,streak:0},currentTask={},matchState={};
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[rand(0,arr.length-1)];}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=rand(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+
+// -- Complexity exercises --
+const complexityTasks=[
+  {code:'for(int i=0; i<n; i++)\n  sum += a[i];',answer:'O(n)',explanation:'Eine Schleife von 0 bis n => lineare Laufzeit O(n).'},
+  {code:'for(int i=0; i<n; i++)\n  for(int j=0; j<n; j++)\n    matrix[i][j] = 0;',answer:'O(n^2)',explanation:'Zwei verschachtelte Schleifen je n => O(n*n) = O(n^2).'},
+  {code:'for(int i=0; i<n; i++)\n  for(int j=0; j<n; j++)\n    for(int k=0; k<n; k++)\n      c[i][j] += a[i][k]*b[k][j];',answer:'O(n^3)',explanation:'Drei verschachtelte Schleifen je n => O(n^3). Standard-Matrixmultiplikation.'},
+  {code:'int binarySearch(arr, target):\n  left=0, right=n-1\n  while left <= right:\n    mid = (left+right)/2\n    if arr[mid]==target: return\n    ...',answer:'O(log n)',explanation:'Halbierung des Suchbereichs in jedem Schritt => O(log n).'},
+  {code:'return arr[0] + arr[n-1];',answer:'O(1)',explanation:'Nur zwei Arrayzugriffe, unabhängig von n => O(1) konstant.'},
+  {code:'mergeSort(arr):\n  if len<=1: return\n  mid = n/2\n  mergeSort(left)\n  mergeSort(right)\n  merge(left, right) // O(n)',answer:'O(n log n)',explanation:'T(n) = 2T(n/2) + n => Master-Theorem Fall 2 => O(n log n).'},
+  {code:'for(int i=1; i<n; i*=2)\n  print(i);',answer:'O(log n)',explanation:'i verdoppelt sich in jedem Schritt => log_2(n) Durchläufe => O(log n).'},
+  {code:'for(int i=0; i<n; i++)\n  for(int j=i; j<n; j++)\n    sum += a[j];',answer:'O(n^2)',explanation:'Innere Schleife: n-i Schritte. Summe: n+(n-1)+...+1 = n(n+1)/2 => O(n^2).'},
+  {code:'void permutations(arr, l, r):\n  if l==r: print(arr)\n  for i in range(l,r+1):\n    swap(arr[l],arr[i])\n    permutations(arr,l+1,r)\n    swap(arr[l],arr[i])',answer:'O(n!)',explanation:'Alle Permutationen erzeugen: n * (n-1) * ... * 1 = n! Aufrufe => O(n!).'},
+  {code:'int fib(n):\n  if n<=1: return n\n  return fib(n-1)+fib(n-2)',answer:'O(2^n)',explanation:'Rekursiver Fibonacci ohne Memoization: T(n) = T(n-1)+T(n-2) => exponentiell O(2^n).'},
+  {code:'for(int i=0; i<n; i++)\n  for(int j=0; j<100; j++)\n    process(i,j);',answer:'O(n)',explanation:'Aeussere Schleife n-mal, innere Schleife konstant 100-mal => O(100n) = O(n).'},
+  {code:'for(int i=0; i<n; i++)\n  for(int j=0; j<m; j++)\n    grid[i][j]=0;',answer:'O(n*m)',explanation:'Zwei verschachtelte Schleifen mit unterschiedlichen Grenzen n und m => O(n*m).'},
+];
+
+// -- Master-Theorem exercises (extensive!) --
+const masterTasks=[
+  {a:2,b:2,fn:'n',fnC:1,fall:2,result:'Theta(n log n)',explanation:'log_2(2)=1, f(n)=n=Theta(n^1) => Fall 2 => Theta(n log n). [MergeSort]'},
+  {a:4,b:2,fn:'n',fnC:1,fall:1,result:'Theta(n^2)',explanation:'log_2(4)=2, f(n)=n=O(n^(2-1)) => Fall 1 => Theta(n^2).'},
+  {a:1,b:2,fn:'1',fnC:0,fall:2,result:'Theta(log n)',explanation:'log_2(1)=0, f(n)=1=Theta(n^0) => Fall 2 => Theta(n^0 * log n) = Theta(log n). [Binary Search]'},
+  {a:2,b:2,fn:'n^2',fnC:2,fall:3,result:'Theta(n^2)',explanation:'log_2(2)=1, f(n)=n^2=Omega(n^(1+1)) => Fall 3 => Theta(n^2).'},
+  {a:8,b:2,fn:'n^2',fnC:2,fall:1,result:'Theta(n^3)',explanation:'log_2(8)=3, f(n)=n^2=O(n^(3-1)) => Fall 1 => Theta(n^3).'},
+  {a:7,b:2,fn:'n^2',fnC:2,fall:1,result:'Theta(n^log_2(7))',explanation:'log_2(7)=2.807, f(n)=n^2=O(n^(2.807-0.807)) => Fall 1 => Theta(n^2.807). [Strassen]'},
+  {a:9,b:3,fn:'n',fnC:1,fall:1,result:'Theta(n^2)',explanation:'log_3(9)=2, f(n)=n=O(n^(2-1)) => Fall 1 => Theta(n^2).'},
+  {a:3,b:3,fn:'n',fnC:1,fall:2,result:'Theta(n log n)',explanation:'log_3(3)=1, f(n)=n=Theta(n^1) => Fall 2 => Theta(n log n).'},
+  {a:4,b:2,fn:'n^2',fnC:2,fall:2,result:'Theta(n^2 log n)',explanation:'log_2(4)=2, f(n)=n^2=Theta(n^2) => Fall 2 => Theta(n^2 log n).'},
+  {a:2,b:4,fn:'n',fnC:1,fall:3,result:'Theta(n)',explanation:'log_4(2)=0.5, f(n)=n=Omega(n^(0.5+0.5)) => Fall 3 => Theta(n).'},
+  {a:1,b:3,fn:'n',fnC:1,fall:3,result:'Theta(n)',explanation:'log_3(1)=0, f(n)=n=Omega(n^(0+1)) => Fall 3 => Theta(n).'},
+  {a:16,b:4,fn:'n',fnC:1,fall:1,result:'Theta(n^2)',explanation:'log_4(16)=2, f(n)=n=O(n^(2-1)) => Fall 1 => Theta(n^2).'},
+  {a:2,b:2,fn:'n^3',fnC:3,fall:3,result:'Theta(n^3)',explanation:'log_2(2)=1, f(n)=n^3=Omega(n^(1+2)) => Fall 3 => Theta(n^3).'},
+  {a:3,b:2,fn:'n',fnC:1,fall:1,result:'Theta(n^log_2(3))',explanation:'log_2(3)=1.585, f(n)=n=O(n^(1.585-0.585)) => Fall 1 => Theta(n^1.585).'},
+  {a:4,b:4,fn:'n',fnC:1,fall:2,result:'Theta(n log n)',explanation:'log_4(4)=1, f(n)=n=Theta(n^1) => Fall 2 => Theta(n log n).'},
+  {a:8,b:2,fn:'n^3',fnC:3,fall:2,result:'Theta(n^3 log n)',explanation:'log_2(8)=3, f(n)=n^3=Theta(n^3) => Fall 2 => Theta(n^3 log n).'},
+  {a:1,b:2,fn:'n',fnC:1,fall:3,result:'Theta(n)',explanation:'log_2(1)=0, f(n)=n=Omega(n^(0+1)) => Fall 3 => Theta(n).'},
+  {a:9,b:3,fn:'n^3',fnC:3,fall:3,result:'Theta(n^3)',explanation:'log_3(9)=2, f(n)=n^3=Omega(n^(2+1)) => Fall 3 => Theta(n^3).'},
+  {a:5,b:5,fn:'n',fnC:1,fall:2,result:'Theta(n log n)',explanation:'log_5(5)=1, f(n)=n=Theta(n^1) => Fall 2 => Theta(n log n).'},
+  {a:2,b:3,fn:'1',fnC:0,fall:1,result:'Theta(n^log_3(2))',explanation:'log_3(2)=0.631, f(n)=1=O(n^(0.631-0.631)) => Fall 1 => Theta(n^0.631).'},
+];
+
+// -- Compare exercises --
+const comparisons=[
+  {a:'O(n)',b:'O(n^2)',answer:'O(n)',explanation:'n waechst langsamer als n^2.'},
+  {a:'O(n log n)',b:'O(n^2)',answer:'O(n log n)',explanation:'n log n < n^2 für grosse n.'},
+  {a:'O(log n)',b:'O(n)',answer:'O(log n)',explanation:'Logarithmisch waechst viel langsamer als linear.'},
+  {a:'O(2^n)',b:'O(n^3)',answer:'O(n^3)',explanation:'Polynomiell waechst immer langsamer als exponentiell.'},
+  {a:'O(n!)',b:'O(2^n)',answer:'O(2^n)',explanation:'2^n waechst langsamer als n! für grosse n.'},
+  {a:'O(1)',b:'O(log n)',answer:'O(1)',explanation:'Konstant ist immer die langsamste Wachstumsrate.'},
+  {a:'O(n^2)',b:'O(n^3)',answer:'O(n^2)',explanation:'n^2 waechst langsamer als n^3.'},
+  {a:'O(sqrt(n))',b:'O(log n)',answer:'O(log n)',explanation:'log n waechst langsamer als sqrt(n).'},
+  {a:'O(n log n)',b:'O(n sqrt(n))',answer:'O(n log n)',explanation:'log n < sqrt(n), also n log n < n sqrt(n).'},
+  {a:'O(n^2 log n)',b:'O(n^3)',answer:'O(n^2 log n)',explanation:'n^2 log n waechst langsamer als n^3.'},
+];
+
+// -- Match exercises --
+const matchSets=[
+  {pairs:[['BinarySearch','O(log n)'],['LinearSearch','O(n)'],['BubbleSort','O(n^2)'],['MergeSort','O(n log n)']]},
+  {pairs:[['Arrayzugriff','O(1)'],['HashTable Lookup','O(1)'],['QuickSort avg','O(n log n)'],['SelectionSort','O(n^2)']]},
+  {pairs:[['Matrix-Mult.','O(n^3)'],['Fibonacci rekursiv','O(2^n)'],['Permutationen','O(n!)'],['Binäre Suche','O(log n)']]},
+];
+
+function genComplexityTask(){
+  const t=pick(complexityTasks);
+  return{type:'complexity',code:t.code,answer:t.answer,explanation:t.explanation,options:shuffle(['O(1)','O(log n)','O(n)','O(n log n)','O(n^2)','O(n^3)','O(2^n)','O(n!)','O(n*m)'].filter(o=>o!==t.answer).slice(0,3).concat([t.answer]))};
+}
+
+function genMasterTask(){
+  const t=pick(masterTasks);
+  const logba=Math.log(t.a)/Math.log(t.b);
+  return{type:'master',a:t.a,b:t.b,fn:t.fn,fall:t.fall,result:t.result,explanation:t.explanation,logba:Math.round(logba*1000)/1000};
+}
+
+function genCompareTask(){
+  const t=pick(comparisons);
+  return{type:'compare',a:t.a,b:t.b,answer:t.answer,explanation:t.explanation};
+}
+
+function genMatchTask(){
+  const t=pick(matchSets);
+  const algos=shuffle(t.pairs.map(p=>p[0]));
+  const complexities=shuffle(t.pairs.map(p=>p[1]));
+  const correct={};t.pairs.forEach(p=>{correct[p[0]]=p[1];});
+  return{type:'match',algos,complexities,correct};
+}
+
+function newTask(){
+  matchState={selectedAlgo:null,matches:{},revealed:false};
+  if(mode==='complexity')currentTask=genComplexityTask();
+  else if(mode==='master')currentTask=genMasterTask();
+  else if(mode==='compare')currentTask=genCompareTask();
+  else currentTask=genMatchTask();
+  renderTask();
+}
+
+function renderTask(){
+  const area=document.getElementById('exercise-area');
+  if(currentTask.type==='complexity'){
+    area.innerHTML=`
+      <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Bestimme die Zeitkomplexität</div>
+      <pre class="task-display" style="font-size:13px;white-space:pre-wrap;line-height:1.7;background:rgba(0,0,0,.3);padding:16px;border-radius:10px;margin-bottom:16px">${currentTask.code}</pre>
+      <div class="input-row"><select id="user-answer">${currentTask.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkAnswer()">Prüfen &#8629;</button>
+        <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+        <button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="solution-box" id="sol"></div>`;
+    document.getElementById('user-answer').focus();
+    document.getElementById('user-answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+  }else if(currentTask.type==='master'){
+    area.innerHTML=`
+      <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Master-Theorem anwenden</div>
+      <div class="task-display">T(n) = ${currentTask.a} &middot; T(n/${currentTask.b}) + ${currentTask.fn==='1'?'1':'n'+(currentTask.fn.includes('^')?currentTask.fn.slice(1):'')}</div>
+      <div class="task-sub">Bestimme: Welcher Fall des Master-Theorems liegt vor?</div>
+      <div class="input-row"><select id="user-answer"><option value="1">Fall 1</option><option value="2">Fall 2</option><option value="3">Fall 3</option></select></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkAnswer()">Prüfen &#8629;</button>
+        <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+        <button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="solution-box" id="sol"></div>`;
+    document.getElementById('user-answer').focus();
+    document.getElementById('user-answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+  }else if(currentTask.type==='compare'){
+    area.innerHTML=`
+      <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Welche Komplexität waechst langsamer?</div>
+      <div class="task-display">${currentTask.a} &nbsp; vs &nbsp; ${currentTask.b}</div>
+      <div class="task-sub">Wähle die Klasse mit dem langsameren Wachstum.</div>
+      <div class="input-row"><select id="user-answer"><option value="${currentTask.a}">${currentTask.a}</option><option value="${currentTask.b}">${currentTask.b}</option></select></div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="checkAnswer()">Prüfen &#8629;</button>
+        <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+        <button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>
+      </div>
+      <div class="feedback" id="fb"></div>
+      <div class="solution-box" id="sol"></div>`;
+    document.getElementById('user-answer').focus();
+    document.getElementById('user-answer').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+  }else if(currentTask.type==='match'){
+    renderMatchTask();
+  }
+}
+
+function renderMatchTask(){
+  const area=document.getElementById('exercise-area');
+  const t=currentTask;
+  let algosHtml=t.algos.map(a=>{
+    let cls='match-item';
+    if(matchState.matches[a])cls+=' matched-correct';
+    else if(matchState.selectedAlgo===a)cls+=' selected';
+    return `<div class="${cls}" data-algo="${a}" onclick="selectAlgo('${a}')">${a}${matchState.matches[a]?' -> '+matchState.matches[a]:''}</div>`;
+  }).join('');
+  let compHtml=t.complexities.map(c=>{
+    const used=Object.values(matchState.matches).includes(c);
+    let cls='match-item';if(used)cls+=' matched-correct';
+    return `<div class="${cls}" data-comp="${c}" onclick="selectComp('${c}')" ${used?'style="opacity:.4;pointer-events:none"':''}>${c}</div>`;
+  }).join('');
+  area.innerHTML=`
+    <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Ordne Algorithmen ihren Komplexitäten zu</div>
+    <div class="task-sub">Klicke zuerst einen Algorithmus, dann die passende Komplexität.</div>
+    <div class="match-grid"><div class="match-col">${algosHtml}</div><div class="match-col">${compHtml}</div></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkMatchAnswer()">Alle prüfen &#8629;</button>
+      <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+      <button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="solution-box" id="sol"></div>`;
+}
+
+function selectAlgo(a){
+  if(matchState.matches[a])return;
+  matchState.selectedAlgo=a;
+  renderMatchTask();
+}
+
+function selectComp(c){
+  if(!matchState.selectedAlgo||Object.values(matchState.matches).includes(c))return;
+  matchState.matches[matchState.selectedAlgo]=c;
+  matchState.selectedAlgo=null;
+  renderMatchTask();
+}
+
+function checkMatchAnswer(){
+  const t=currentTask;
+  if(Object.keys(matchState.matches).length<t.algos.length){
+    const fb=document.getElementById('fb');fb.textContent='Bitte ordne alle Algorithmen zu!';fb.className='feedback wrong';return;
+  }
+  let allCorrect=true;
+  for(const a of t.algos){
+    if(matchState.matches[a]!==t.correct[a])allCorrect=false;
+  }
+  const fb=document.getElementById('fb');
+  if(allCorrect){
+    fb.textContent='Alle richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('o-notation-master',{status:'completed',score:score.correct});
+    setTimeout(newTask,1500);
+  }else{
+    fb.className='feedback wrong';
+    let wrongList=[];
+    for(const a of t.algos){
+      if(matchState.matches[a]!==t.correct[a])wrongList.push(`${a}: deine Antwort ${matchState.matches[a]}, richtig: ${t.correct[a]}`);
+    }
+    fb.textContent='Nicht alle richtig: '+wrongList.join('; ');
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function checkAnswer(){
+  if(currentTask.type==='match'){checkMatchAnswer();return;}
+  const inp=document.getElementById('user-answer');
+  const fb=document.getElementById('fb');
+  const v=inp.value.trim();
+  if(!v)return;
+  let correct=false;
+  if(currentTask.type==='complexity'){correct=v===currentTask.answer;}
+  else if(currentTask.type==='master'){correct=parseInt(v)===currentTask.fall;}
+  else if(currentTask.type==='compare'){correct=v===currentTask.answer;}
+
+  if(correct){
+    inp.classList.add('correct');fb.textContent='Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('o-notation-master',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  }else{
+    inp.classList.add('wrong');
+    if(currentTask.type==='master')fb.textContent='Falsch – richtig: Fall '+currentTask.fall+' => '+currentTask.result;
+    else fb.textContent='Falsch – richtig: '+currentTask.answer;
+    fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function showSolution(){
+  const s=document.getElementById('sol');
+  if(currentTask.type==='match'){
+    const t=currentTask;
+    s.textContent=t.algos.map(a=>`${a} => ${t.correct[a]}`).join('\n');
+  }else{
+    s.textContent=currentTask.explanation;
+  }
+  s.classList.add('show');
+}
+
+function updateScore(){
+  document.getElementById('s-correct').textContent=score.correct;
+  document.getElementById('s-wrong').textContent=score.wrong;
+  document.getElementById('s-streak').textContent=score.streak;
+}
+
+newTask();
+
+// ===== GLOSSARY SYSTEM =====
+(function(){
+const GLOSSARY_KEY='glossary-o-notation';
+const glossaryTerms=[
+  {
+    id:'o-notation',term:'O-Notation',short:'Landau-Notation zur Beschreibung der oberen Schranke der Laufzeit.',
+    definition:'Die O-Notation (auch Landau-Notation oder Big-O) beschreibt das asymptotische Wachstumsverhalten einer Funktion. O(g(n)) ist die Menge aller Funktionen f(n), fuer die gilt: Es existieren Konstanten c > 0 und n_0, sodass f(n) <= c * g(n) fuer alle n >= n_0. Sie gibt die obere Schranke der Laufzeit oder des Speicherbedarfs eines Algorithmus an und wird hauptsaechlich fuer die Worst-Case-Analyse verwendet.',
+    analogy:'Stell dir vor, du sagst: "Das Paket kommt spaetestens in 3 Tagen." Du gibst eine obere Grenze an -- es koennte auch schneller da sein. Die O-Notation macht genau das fuer Algorithmen: Sie sagt, wie lange es hoechstens dauert, wenn die Eingabe waechst.',
+    hints:['Denke an "obere Schranke" -- O steht fuer "Oben".','Es zaehlen nur die dominanten Terme: O(3n^2 + 5n) = O(n^2).','Konstante Faktoren werden ignoriert: O(1000n) = O(n).'],
+    questions:[
+      {type:'fill',q:'Die O-Notation beschreibt die _____ Schranke der Laufzeit.',a:'obere',keywords:['obere','upper']},
+      {type:'choice',q:'Welche Aussage ist korrekt?',choices:['O(n) beschreibt die exakte Laufzeit','O(n) beschreibt die obere Schranke','O(n) beschreibt die untere Schranke','O(n) beschreibt den Durchschnitt'],correct:1},
+      {type:'explain',q:'Warum ist O(3n^2 + 5n + 7) = O(n^2)? Erklaere die Vereinfachungsregeln.',keywords:['dominant','konstant','faktor','hoechst','groesst','term','ignor','wachstum','asymptot']}
+    ],
+    icon:'&#x1F4C8;',difficulty:1
+  },
+  {
+    id:'zeitkomplexitaet',term:'Zeitkomplexitaet',short:'Mass fuer die Anzahl der Rechenschritte in Abhaengigkeit von der Eingabegroesse.',
+    definition:'Die Zeitkomplexitaet gibt an, wie viele elementare Operationen (Vergleiche, Zuweisungen, Berechnungen) ein Algorithmus in Abhaengigkeit von der Eingabegroesse n benoetigt. Sie wird meist als Funktion T(n) ausgedrueckt und mithilfe der O-Notation klassifiziert. Die Zeitkomplexitaet ist entscheidend fuer die Bewertung der Effizienz eines Algorithmus.',
+    analogy:'Wie lange brauchst du, um n Buecher alphabetisch einzusortieren? Bei 10 Buechern geht es schnell, bei 10.000 dauert es laenger. Die Zeitkomplexitaet beschreibt, wie stark die benoetigte Zeit mit der Menge der Buecher waechst.',
+    hints:['Zaehle die Schleifendurchlaeufe in Abhaengigkeit von n.','Verschachtelte Schleifen multiplizieren sich: zwei n-Schleifen => O(n^2).','Konstante Operationen (z.B. eine Addition) sind immer O(1).'],
+    questions:[
+      {type:'fill',q:'Die Zeitkomplexitaet misst die Anzahl der _____ in Abhaengigkeit von n.',a:'Operationen',keywords:['operation','schritt','rechenschritt','anweisung']},
+      {type:'choice',q:'Zwei verschachtelte Schleifen mit je n Durchlaeufen haben welche Zeitkomplexitaet?',choices:['O(n)','O(2n)','O(n^2)','O(n log n)'],correct:2},
+      {type:'explain',q:'Erklaere den Unterschied zwischen Zeitkomplexitaet und tatsaechlicher Laufzeit.',keywords:['konstant','hardware','faktor','asymptot','wachstum','eingabe','abstrakt','modell','unabhaengig']}
+    ],
+    icon:'&#x23F1;&#xFE0F;',difficulty:1
+  },
+  {
+    id:'speicherkomplexitaet',term:'Speicherkomplexitaet',short:'Mass fuer den zusaetzlichen Speicherverbrauch eines Algorithmus.',
+    definition:'Die Speicherkomplexitaet (auch Platzkomplexitaet oder Space Complexity) beschreibt den zusaetzlichen Speicher, den ein Algorithmus neben der Eingabe benoetigt. Sie wird ebenfalls in O-Notation angegeben. Ein Algorithmus mit O(1) Speicher arbeitet "in-place", waehrend z.B. MergeSort O(n) zusaetzlichen Speicher benoetigt. Die Speicherkomplexitaet ist besonders relevant bei grossen Datenmengen oder eingebetteten Systemen.',
+    analogy:'Stell dir vor, du sortierst Spielkarten. Wenn du sie direkt auf dem Tisch umsortierst, brauchst du keinen Extra-Platz (in-place, O(1)). Wenn du einen zweiten Stapel daneben legst, brauchst du extra Platz proportional zur Kartenzahl (O(n)).',
+    hints:['In-place bedeutet O(1) zusaetzlicher Speicher.','Rekursive Algorithmen brauchen O(Rekursionstiefe) Stack-Speicher.','MergeSort braucht O(n) Extra-Speicher, QuickSort nur O(log n) im Average Case.'],
+    questions:[
+      {type:'fill',q:'Ein Algorithmus mit O(1) Speicherkomplexitaet arbeitet _____.',a:'in-place',keywords:['in-place','inplace','in place','konstant']},
+      {type:'choice',q:'Welcher Sortieralgorithmus arbeitet in-place?',choices:['MergeSort','QuickSort (in-place Variante)','Radix Sort','Counting Sort'],correct:1},
+      {type:'explain',q:'Warum hat MergeSort eine Speicherkomplexitaet von O(n)?',keywords:['hilfsarray','kopie','merge','zusammen','temp','zusaetz','extra','array']}
+    ],
+    icon:'&#x1F4BE;',difficulty:2
+  },
+  {
+    id:'o-1-konstant',term:'O(1) - Konstant',short:'Laufzeit unabhaengig von der Eingabegroesse.',
+    definition:'Ein Algorithmus mit O(1)-Komplexitaet benoetigt eine konstante Anzahl von Operationen, unabhaengig von der Groesse der Eingabe n. Beispiele sind der Zugriff auf ein Array-Element ueber den Index, das Einfuegen am Anfang einer verketteten Liste, oder eine einfache arithmetische Operation. O(1) ist die bestmoegliche Komplexitaetsklasse.',
+    analogy:'Egal ob ein Buch 100 oder 10.000 Seiten hat -- das Aufschlagen der Seite 1 dauert immer gleich lang. Das ist O(1): Die "Arbeit" haengt nicht davon ab, wie gross das Buch ist.',
+    hints:['Array-Zugriff per Index: arr[5] ist immer O(1).','HashTable-Lookup ist im Durchschnitt O(1).','Auch 1000 konstante Operationen sind O(1), da Konstanten ignoriert werden.'],
+    questions:[
+      {type:'fill',q:'Der Zugriff auf ein Array-Element ueber den Index hat die Komplexitaet _____.',a:'O(1)',keywords:['O(1)','o(1)','konstant']},
+      {type:'choice',q:'Welche Operation ist NICHT O(1)?',choices:['arr[i] Zugriff','Einfuegen am Listen-Anfang','Lineare Suche in einem Array','push() auf einen Stack'],correct:2},
+      {type:'explain',q:'Warum ist ein HashTable-Lookup im Durchschnitt O(1), im Worst Case aber O(n)?',keywords:['kollision','hash','verkettung','bucket','worst','degeneri','alle','gleich']}
+    ],
+    icon:'&#x26A1;',difficulty:1
+  },
+  {
+    id:'o-n-linear',term:'O(n) - Linear',short:'Laufzeit waechst proportional zur Eingabegroesse.',
+    definition:'Ein Algorithmus mit O(n)-Komplexitaet benoetigt eine Anzahl von Operationen, die linear mit der Eingabegroesse n waechst. Das bedeutet: Verdoppelt sich die Eingabe, verdoppelt sich auch die Laufzeit. Typische Beispiele sind die lineare Suche, das Durchlaufen eines Arrays, oder das Zaehlen von Elementen. O(n) ist die bestmoegliche Komplexitaet fuer Probleme, bei denen jedes Element mindestens einmal betrachtet werden muss.',
+    analogy:'Du suchst einen bestimmten Namen in einer unsortieren Namensliste. Im schlimmsten Fall musst du jeden einzelnen Namen lesen -- bei doppelt so vielen Namen dauert es doppelt so lange.',
+    hints:['Eine einzelne Schleife ueber n Elemente ist O(n).','Lineare Suche: Im Worst Case n Vergleiche.','Auch O(2n) oder O(5n) wird zu O(n) vereinfacht.'],
+    questions:[
+      {type:'fill',q:'Bei der linearen Suche werden im Worst Case _____ Elemente verglichen.',a:'n',keywords:['n','alle']},
+      {type:'choice',q:'Welcher Algorithmus hat O(n) Zeitkomplexitaet?',choices:['Binary Search','Lineare Suche','BubbleSort','QuickSort'],correct:1},
+      {type:'explain',q:'Warum kann man nicht schneller als O(n) feststellen, ob ein Element in einem unsortierten Array vorkommt?',keywords:['jedes','element','betracht','pruef','unsortiert','kein','ueberspringen','information']}
+    ],
+    icon:'&#x1F4CF;',difficulty:1
+  },
+  {
+    id:'o-nlogn-linearithmisch',term:'O(n log n) - Linearithmisch',short:'Typische Komplexitaet effizienter Sortieralgorithmen.',
+    definition:'O(n log n) beschreibt eine linearithmische Komplexitaet und ist die untere Schranke fuer vergleichsbasierte Sortierverfahren (bewiesen durch den Entscheidungsbaum). Algorithmen wie MergeSort, HeapSort und QuickSort (Average Case) erreichen diese Komplexitaet. Sie entsteht typischerweise, wenn ein Problem in jedem Schritt halbiert wird (log n Stufen) und auf jeder Stufe n Operationen durchgefuehrt werden.',
+    analogy:'Stell dir vor, du sortierst einen Kartenstapel mit MergeSort: Du teilst ihn immer wieder in zwei Haelften (log n Stufen), und beim Zusammenfuegen vergleichst du auf jeder Stufe alle n Karten. Das ergibt n * log n Schritte.',
+    hints:['MergeSort: T(n) = 2T(n/2) + n => Master-Theorem Fall 2 => O(n log n).','O(n log n) ist die bestmoegliche Zeitkomplexitaet fuer vergleichsbasiertes Sortieren.','Divide-and-Conquer mit linearem Merge-Schritt fuehrt oft zu O(n log n).'],
+    questions:[
+      {type:'fill',q:'Die untere Schranke fuer vergleichsbasiertes Sortieren ist _____.',a:'O(n log n)',keywords:['O(n log n)','o(n log n)','n log n','nlogn']},
+      {type:'choice',q:'Welcher Sortieralgorithmus hat NICHT O(n log n) im Worst Case?',choices:['MergeSort','HeapSort','QuickSort','Alle haben O(n log n)'],correct:2},
+      {type:'explain',q:'Warum ist O(n log n) die untere Schranke fuer vergleichsbasiertes Sortieren?',keywords:['entscheidungsbaum','vergleich','blaetter','n!','permutation','hoehe','log','tiefe']}
+    ],
+    icon:'&#x1F4CA;',difficulty:2
+  },
+  {
+    id:'o-n2-quadratisch',term:'O(n^2) - Quadratisch',short:'Laufzeit waechst mit dem Quadrat der Eingabegroesse.',
+    definition:'Ein Algorithmus mit O(n^2)-Komplexitaet hat eine Laufzeit, die quadratisch mit der Eingabegroesse waechst. Verdoppelt sich n, vervierfacht sich die Laufzeit. Typisch sind zwei verschachtelte Schleifen ueber n Elemente. Beispiele: BubbleSort, SelectionSort, InsertionSort (Worst Case), naive Matrixmultiplikation (Teilschritt). Fuer grosse n sind quadratische Algorithmen oft zu langsam.',
+    analogy:'In einer Klasse mit n Schuelern soll jeder jedem die Hand schuetteln. Das ergibt n*(n-1)/2 Handschlaege -- also ungefaehr n^2. Doppelt so viele Schueler bedeuten viermal so viele Handschlaege.',
+    hints:['Zwei verschachtelte for-Schleifen ueber n: O(n^2).','BubbleSort: n-1 + n-2 + ... + 1 = n(n-1)/2 = O(n^2).','QuickSort hat im Worst Case (bereits sortiert) O(n^2).'],
+    questions:[
+      {type:'fill',q:'BubbleSort hat im Worst Case eine Zeitkomplexitaet von _____.',a:'O(n^2)',keywords:['O(n^2)','O(n2)','o(n^2)','quadrat','n hoch 2']},
+      {type:'choice',q:'Welcher Algorithmus hat O(n^2) im Worst Case?',choices:['MergeSort','Binary Search','QuickSort','HeapSort'],correct:2},
+      {type:'explain',q:'Warum fuehren zwei verschachtelte Schleifen (je ueber n) zu O(n^2)?',keywords:['aeussere','innere','n mal','multiplik','n*n','jede','durchlauf','iteration']}
+    ],
+    icon:'&#x1F4D0;',difficulty:1
+  },
+  {
+    id:'worst-best-average',term:'Worst / Best / Average Case',short:'Drei Szenarien zur Analyse der Laufzeit eines Algorithmus.',
+    definition:'Die Laufzeitanalyse unterscheidet drei Faelle: Der Best Case beschreibt die guenstigste Eingabe (z.B. bereits sortiertes Array bei InsertionSort => O(n)). Der Worst Case beschreibt die unguenstigste Eingabe und wird standardmaessig mit der O-Notation angegeben (z.B. QuickSort mit bereits sortiertem Array => O(n^2)). Der Average Case ist der Erwartungswert ueber alle moeglichen Eingaben und beruecksichtigt Wahrscheinlichkeitsverteilungen (z.B. QuickSort => O(n log n)).',
+    analogy:'Stell dir vor, du suchst deinen Schluessel. Best Case: Er liegt direkt vor dir (1 Versuch). Worst Case: Du musst das ganze Haus durchsuchen (n Orte). Average Case: Durchschnittlich findest du ihn nach der Haelfte der Orte (n/2).',
+    hints:['Die O-Notation bezieht sich standardmaessig auf den Worst Case.','Omega beschreibt die untere Schranke (Best Case).','QuickSort: Best O(n log n), Average O(n log n), Worst O(n^2).'],
+    questions:[
+      {type:'fill',q:'Die O-Notation bezieht sich standardmaessig auf den _____ Case.',a:'Worst',keywords:['worst','schlecht','unguenstig']},
+      {type:'choice',q:'Welchen Best Case hat InsertionSort?',choices:['O(1)','O(n)','O(n log n)','O(n^2)'],correct:1},
+      {type:'explain',q:'Warum ist der Worst Case von QuickSort O(n^2) und wann tritt er ein?',keywords:['pivot','sortiert','partition','ungleich','einseit','n-1','teil','degener']}
+    ],
+    icon:'&#x1F3AF;',difficulty:2
+  }
+];
+
+// termMap for tooltip highlighting
+const glossaryTermMap={};
+glossaryTerms.forEach(t=>{
+  glossaryTermMap[t.term.toLowerCase()]=t.id;
+});
+// Additional variants
+const termVariants={
+  'o-notation':['o-notation','landau-notation','landau notation','big-o','big o','groß-o','gross-o'],
+  'zeitkomplexitaet':['zeitkomplexitaet','zeitkomplexität','laufzeitkomplexitaet','laufzeitkomplexität','laufzeit','time complexity'],
+  'speicherkomplexitaet':['speicherkomplexitaet','speicherkomplexität','platzkomplexitaet','platzkomplexität','space complexity','speicherbedarf'],
+  'o-1-konstant':['o(1)','konstante zeit','konstante komplexitaet','konstante komplexität','constant time'],
+  'o-n-linear':['o(n)','lineare zeit','lineare komplexitaet','lineare komplexität','linear time'],
+  'o-nlogn-linearithmisch':['o(n log n)','linearithmisch','n log n','quasilinear'],
+  'o-n2-quadratisch':['o(n²)','o(n^2)','quadratische zeit','quadratische komplexitaet','quadratische komplexität','quadratic time'],
+  'worst-best-average':['worst case','best case','average case','worst-case','best-case','average-case','bester fall','schlechtester fall','durchschnittsfall']
+};
+Object.entries(termVariants).forEach(([id,variants])=>{
+  variants.forEach(v=>{glossaryTermMap[v.toLowerCase()]=id;});
+});
+
+function loadGlossaryState(){try{return JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){return{};}}
+function saveGlossaryState(s){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(s));}
+
+function getTermLevel(id){const s=loadGlossaryState();return(s[id]&&s[id].level)||0;}
+function setTermLevel(id,level){const s=loadGlossaryState();if(!s[id])s[id]={};s[id].level=Math.min(3,Math.max(0,level));saveGlossaryState(s);}
+function getMasteredCount(){let c=0;glossaryTerms.forEach(t=>{if(getTermLevel(t.id)>=3)c++;});return c;}
+
+function renderGlossaryGrid(){
+  const grid=document.getElementById('glossary-grid');
+  if(!grid)return;
+  grid.innerHTML=glossaryTerms.map(t=>{
+    const lv=getTermLevel(t.id);
+    return`<div class="glossary-card" data-level="${lv}" data-id="${t.id}" onclick="window._glossaryOpen('${t.id}')"><div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div></div>`;
+  }).join('');
+  updateGlossaryProgress();
+}
+
+function updateGlossaryProgress(){
+  const mastered=getMasteredCount();
+  const total=glossaryTerms.length;
+  const pct=Math.round((mastered/total)*100);
+  const fill=document.getElementById('glossary-fill');
+  const count=document.getElementById('glossary-count');
+  if(fill)fill.style.width=pct+'%';
+  if(count)count.textContent=mastered+' / '+total+' gemeistert';
+}
+
+// Phases: 0=analogy, 1=definition, 2=fill, 3=choice, 4=explain
+const phaseNames=['Analogie','Definition','Lueckenfrage','Multiple Choice','Erklaerung'];
+let glCurrentTerm=null,glPhase=0,glHintsShown=0,glFeedbackTimeout=null;
+
+window._glossaryOpen=function(id){
+  const t=glossaryTerms.find(x=>x.id===id);
+  if(!t)return;
+  glCurrentTerm=t;glPhase=0;glHintsShown=0;
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',c.dataset.id===id));
+  renderGlossaryLearn();
+};
+
+function renderGlossaryLearn(){
+  const el=document.getElementById('glossary-learn');
+  if(!el||!glCurrentTerm)return;
+  el.classList.add('visible');
+  const t=glCurrentTerm;
+  const lv=getTermLevel(t.id);
+  let phasesHtml=phaseNames.map((p,i)=>{
+    let cls='gl-phase';
+    if(i===glPhase)cls+=' current';
+    else if(i<glPhase)cls+=' done';
+    const clickable=i<=glPhase;
+    return`<div class="${cls}"${clickable?' onclick="window._glGoToPhase('+i+')"':''}>${p}</div>`;
+  }).join('');
+  let contentHtml='';
+  if(glPhase===0){
+    contentHtml=`<div class="gl-analogy">${t.analogy}</div><button class="gl-btn primary" onclick="window._glNextPhase()">Verstanden &rarr;</button>`;
+  }else if(glPhase===1){
+    contentHtml=`<div class="gl-definition">${t.definition}</div><button class="gl-btn primary" onclick="window._glNextPhase()">Weiter zur Uebung &rarr;</button>`;
+  }else if(glPhase===2){
+    const q=t.questions.find(x=>x.type==='fill');
+    contentHtml=`<div class="gl-question">${q.q}</div><input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben..." autocomplete="off"><div class="gl-hints" id="gl-hints">${t.hints.map((h,i)=>`<div class="gl-hint" id="gl-hint-${i}">${h}</div>`).join('')}</div><button class="gl-hint-btn" onclick="window._glShowHint()">Hinweis anzeigen</button><br><button class="gl-btn primary" onclick="window._glCheckFill()">Pruefen</button><div id="gl-feedback-area"></div>`;
+  }else if(glPhase===3){
+    const q=t.questions.find(x=>x.type==='choice');
+    contentHtml=`<div class="gl-question">${q.q}</div><div class="gl-choices">${q.choices.map((c,i)=>`<button class="gl-choice" data-idx="${i}" onclick="window._glCheckChoice(${i})">${c}</button>`).join('')}</div><div id="gl-feedback-area"></div>`;
+  }else if(glPhase===4){
+    const q=t.questions.find(x=>x.type==='explain');
+    contentHtml=`<div class="gl-question">${q.q}</div><textarea class="gl-input" id="gl-explain-input" placeholder="Erklaere in eigenen Worten..."></textarea><div class="gl-hints" id="gl-hints">${t.hints.map((h,i)=>`<div class="gl-hint" id="gl-hint-${i}">${h}</div>`).join('')}</div><button class="gl-hint-btn" onclick="window._glShowHint()">Hinweis anzeigen</button><br><button class="gl-btn primary" onclick="window._glCheckExplain()">Pruefen</button><div id="gl-feedback-area"></div>`;
+  }
+  el.innerHTML=`<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="window._glClose()">&times;</button></div><div class="gl-phase-indicator">${phasesHtml}</div><div class="gl-content">${contentHtml}</div>`;
+  if(glPhase===2){const inp=document.getElementById('gl-fill-input');if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')window._glCheckFill();});}}
+  if(glPhase===4){const inp=document.getElementById('gl-explain-input');if(inp)inp.focus();}
+}
+
+window._glNextPhase=function(){
+  glPhase++;glHintsShown=0;
+  if(glPhase>=phaseNames.length){
+    const newLv=Math.min(3,getTermLevel(glCurrentTerm.id)+1);
+    setTermLevel(glCurrentTerm.id,newLv);
+    renderGlossaryGrid();
+    glPhase=0;
+    const el=document.getElementById('glossary-learn');
+    if(el){
+      el.innerHTML=`<div class="gl-header"><h3>${glCurrentTerm.icon} ${glCurrentTerm.term}</h3><button class="gl-close" onclick="window._glClose()">&times;</button></div><div class="gl-feedback success" style="text-align:center;font-size:15px;padding:24px;">Sehr gut! Level ${newLv}/3 erreicht.${newLv>=3?' Dieser Begriff ist gemeistert!':' Wiederhole fuer das naechste Level.'}</div><div style="text-align:center;margin-top:16px"><button class="gl-btn primary" onclick="window._glossaryOpen('${glCurrentTerm.id}')">Nochmal ueben</button></div>`;
+    }
+    return;
+  }
+  renderGlossaryLearn();
+};
+
+window._glGoToPhase=function(idx){
+  if(idx>glPhase)return;
+  glPhase=idx;glHintsShown=0;
+  renderGlossaryLearn();
+};
+
+window._glClose=function(){
+  const el=document.getElementById('glossary-learn');
+  if(el){el.classList.remove('visible');el.innerHTML='';}
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
+};
+
+window._glShowHint=function(){
+  if(!glCurrentTerm)return;
+  const hint=document.getElementById('gl-hint-'+glHintsShown);
+  if(hint){hint.classList.add('visible');glHintsShown++;}
+};
+
+window._glCheckFill=function(){
+  const inp=document.getElementById('gl-fill-input');
+  const area=document.getElementById('gl-feedback-area');
+  if(!inp||!area||!glCurrentTerm)return;
+  const q=glCurrentTerm.questions.find(x=>x.type==='fill');
+  const val=inp.value.trim().toLowerCase();
+  if(!val){area.innerHTML='<div class="gl-feedback error">Bitte gib eine Antwort ein.</div>';return;}
+  const found=q.keywords.some(k=>val.includes(k.toLowerCase()));
+  if(found){
+    area.innerHTML='<div class="gl-feedback success">Richtig! Die Antwort ist: '+q.a+'</div>';
+    setTimeout(()=>window._glNextPhase(),1200);
+  }else{
+    area.innerHTML='<div class="gl-feedback error">Nicht ganz. Die richtige Antwort ist: <strong>'+q.a+'</strong></div>';
+    setTimeout(()=>window._glNextPhase(),2500);
+  }
+};
+
+window._glCheckChoice=function(idx){
+  const area=document.getElementById('gl-feedback-area');
+  if(!area||!glCurrentTerm)return;
+  const q=glCurrentTerm.questions.find(x=>x.type==='choice');
+  const btns=document.querySelectorAll('.gl-choice');
+  btns.forEach((b,i)=>{
+    b.style.pointerEvents='none';
+    if(i===q.correct)b.classList.add('correct');
+    if(i===idx&&i!==q.correct)b.classList.add('wrong');
+  });
+  if(idx===q.correct){
+    area.innerHTML='<div class="gl-feedback success">Richtig!</div>';
+    setTimeout(()=>window._glNextPhase(),1200);
+  }else{
+    area.innerHTML='<div class="gl-feedback error">Falsch. Die richtige Antwort ist markiert.</div>';
+    setTimeout(()=>window._glNextPhase(),2500);
+  }
+};
+
+window._glCheckExplain=function(){
+  const inp=document.getElementById('gl-explain-input');
+  const area=document.getElementById('gl-feedback-area');
+  if(!inp||!area||!glCurrentTerm)return;
+  const q=glCurrentTerm.questions.find(x=>x.type==='explain');
+  const val=inp.value.trim().toLowerCase();
+  if(val.length<10){area.innerHTML='<div class="gl-feedback error">Bitte schreibe eine ausfuehrlichere Erklaerung (mind. 10 Zeichen).</div>';return;}
+  const foundKw=q.keywords.filter(k=>val.includes(k.toLowerCase()));
+  const missingKw=q.keywords.filter(k=>!val.includes(k.toLowerCase()));
+  const ratio=foundKw.length/q.keywords.length;
+  let kwHtml='<div style="margin-top:8px">'+q.keywords.map(k=>{
+    const f=val.includes(k.toLowerCase());
+    return`<span class="gl-keyword ${f?'found':'missing'}">${k}</span>`;
+  }).join(' ')+'</div>';
+  if(ratio>=0.4){
+    area.innerHTML=`<div class="gl-feedback success">Gute Erklaerung! ${foundKw.length}/${q.keywords.length} Schluesselwoerter erkannt.${kwHtml}</div>`;
+    setTimeout(()=>window._glNextPhase(),2000);
+  }else{
+    area.innerHTML=`<div class="gl-feedback error">Versuche mehr Kernkonzepte einzubeziehen. ${foundKw.length}/${q.keywords.length} Schluesselwoerter erkannt.${kwHtml}</div>`;
+    setTimeout(()=>window._glNextPhase(),3500);
+  }
+};
+
+// Tooltip system
+const tooltip=document.getElementById('glossary-tooltip');
+function initGlossaryTooltips(){
+  if(!tooltip)return;
+  const selectors=['.card p','.card li','.task-sub','.summary-card p','.calc-wrap p','.section-title h2','.gl-definition','.gl-analogy'];
+  selectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      if(el.dataset.glossaryProcessed)return;
+      el.dataset.glossaryProcessed='1';
+      let html=el.innerHTML;
+      const sortedEntries=Object.entries(glossaryTermMap).sort((a,b)=>b[0].length-a[0].length);
+      sortedEntries.forEach(([variant,id])=>{
+        const escaped=variant.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+        const regex=new RegExp('(?<![<\\/\\w-])(' + escaped + ')(?![\\w-]*[>])','gi');
+        html=html.replace(regex,(match)=>{
+          return`<span class="glossary-term" data-glossary-id="${id}">${match}</span>`;
+        });
+      });
+      el.innerHTML=html;
+    });
+  });
+  document.querySelectorAll('.glossary-term').forEach(el=>{
+    el.addEventListener('mouseenter',function(e){
+      const id=this.dataset.glossaryId;
+      const t=glossaryTerms.find(x=>x.id===id);
+      if(!t||!tooltip)return;
+      tooltip.querySelector('.gt-name').textContent=t.term;
+      tooltip.querySelector('.gt-short').textContent=t.short;
+      tooltip.style.display='block';
+      const rect=this.getBoundingClientRect();
+      let top=rect.bottom+8,left=rect.left;
+      if(top+tooltip.offsetHeight>window.innerHeight)top=rect.top-tooltip.offsetHeight-8;
+      if(left+260>window.innerWidth)left=window.innerWidth-270;
+      if(left<10)left=10;
+      tooltip.style.top=top+'px';
+      tooltip.style.left=left+'px';
+    });
+    el.addEventListener('mouseleave',function(){
+      if(tooltip)tooltip.style.display='none';
+    });
+    el.addEventListener('click',function(){
+      const id=this.dataset.glossaryId;
+      if(tooltip)tooltip.style.display='none';
+      const section=document.getElementById('glossary-section');
+      if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
+      setTimeout(()=>window._glossaryOpen(id),400);
+    });
+  });
+}
+
+renderGlossaryGrid();
+setTimeout(initGlossaryTooltips,200);
+})();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

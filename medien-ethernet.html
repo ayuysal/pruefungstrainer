@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Übertragungsmedien & Ethernet-Standards</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c;--tp:#38bdf8;--lwl:#51cf66;--coax:#fb923c;--eth:#a78bfa}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+  .noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  .glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+  .glow-orb.one{background:var(--tp);top:-120px;left:-80px}
+  .glow-orb.two{background:var(--lwl);bottom:-160px;right:-100px}
+  .container{position:relative;z-index:1;max-width:1040px;margin:0 auto;padding:40px 24px 80px}
+  header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease}
+  header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+  header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+  .section-title{display:flex;align-items:center;gap:12px;margin-bottom:18px;margin-top:52px;flex-wrap:wrap}
+  .section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .section-title h2{font-size:20px;font-weight:700}
+  .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
+
+  /* ── Media Tabs ── */
+  .m-tabs{display:flex;gap:6px;margin-bottom:16px;animation:fadeUp .6s ease .1s both}
+  .m-tab{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:12px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .25s;flex:1;text-align:center}
+  .m-tab:hover{background:rgba(255,255,255,.04)}
+  .m-tab.active{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.08)}
+  .m-content{display:none;animation:fadeUp .3s ease both}
+  .m-content.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:750px){.m-content.active{grid-template-columns:1fr}}
+
+  .m-visual{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .m-visual svg{max-width:100%;height:auto}
+  .m-info{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+  .m-info h3{font-size:17px;font-weight:700;margin-bottom:4px}
+  .m-info .m-en{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:14px}
+  .m-info .m-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:16px}
+  .m-info .m-desc strong{color:var(--text);font-weight:600}
+
+  /* Prop Grid */
+  .prop-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+  .prop-item{padding:10px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px}
+  .prop-item .p-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px}
+  .prop-item .p-val{font-size:13px;font-weight:600}
+
+  /* Cable Category Cards */
+  .cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:14px}
+  .cat-card{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:14px;transition:all .3s;cursor:default}
+  .cat-card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+  .cat-card h4{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;margin-bottom:4px}
+  .cat-card .cat-speed{font-family:'JetBrains Mono',monospace;font-size:11px;margin-bottom:2px}
+  .cat-card .cat-freq{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted)}
+  .cat-card .cat-type{font-size:10px;color:var(--muted);margin-top:6px;font-weight:300}
+  .cat-card .cat-shield{font-family:'JetBrains Mono',monospace;font-size:9px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);display:inline-block;margin-top:4px}
+
+  /* Fiber types */
+  .fiber-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  @media(max-width:600px){.fiber-grid{grid-template-columns:1fr}}
+  .fiber-card{padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;transition:all .3s}
+  .fiber-card:hover{border-color:rgba(255,255,255,.1)}
+  .fiber-card h4{font-size:14px;font-weight:700;margin-bottom:6px}
+  .fiber-card p{font-size:12px;color:var(--muted);line-height:1.6;font-weight:300}
+  .fiber-card p strong{color:var(--text);font-weight:600}
+  .fiber-card .fiber-specs{margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);line-height:1.8}
+
+  /* ── Ethernet Standards ── */
+  .eth-table-wrap{overflow-x:auto;animation:fadeUp .6s ease .2s both}
+  .eth-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:12px}
+  .eth-table th{padding:12px 12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border);white-space:nowrap}
+  .eth-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted);vertical-align:middle}
+  .eth-table tr:last-child td{border-bottom:none}
+  .eth-table tr:hover td{background:rgba(255,255,255,.015)}
+  .eth-table td:first-child{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--text);white-space:nowrap}
+  .eth-table td strong{color:var(--text);font-weight:600}
+  .speed-badge{font-family:'JetBrains Mono',monospace;font-size:10px;padding:3px 8px;border-radius:5px;white-space:nowrap;font-weight:700}
+
+  /* Filter tabs for ethernet */
+  .eth-filters{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .eth-filter{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;padding:6px 14px;border-radius:8px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .2s}
+  .eth-filter:hover{background:rgba(255,255,255,.04)}
+  .eth-filter.active{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.08)}
+
+  /* Naming Convention */
+  .naming-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:16px;animation:fadeUp .6s ease .15s both}
+  .naming-card h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .naming-demo{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-bottom:16px}
+  .naming-part{text-align:center;padding:10px 14px;position:relative}
+  .naming-part .n-val{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700}
+  .naming-part .n-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;margin-top:4px}
+  .naming-sep{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:300;color:var(--border);padding:0 2px}
+  .naming-examples{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+  .naming-ex{padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.6}
+  .naming-ex .ex-name{font-weight:700;margin-bottom:3px}
+  .naming-ex .ex-desc{font-size:10px;color:var(--muted);font-weight:300;font-family:'Outfit',sans-serif}
+
+  /* Compare Table */
+  .compare-table-wrap{margin-top:20px;overflow-x:auto;animation:fadeUp .6s ease .25s both}
+  .compare-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+  .compare-table th{padding:14px 14px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+  .compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted);vertical-align:top}
+  .compare-table tr:last-child td{border-bottom:none}
+  .compare-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap}
+  .compare-table td strong{color:var(--text);font-weight:600}
+  .good{color:var(--green)!important}.bad{color:var(--red)!important}.mid{color:var(--yellow)!important}
+
+  .summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;animation:fadeUp .6s ease .3s both}
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+  .summary-card:hover{border-color:rgba(108,99,255,.3)}
+  .summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+  .summary-card p strong{color:var(--text);font-weight:600}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="tag">Netzwerktechnik</div>
+    <h1>Übertragungsmedien & Ethernet</h1>
+    <p>Twisted Pair, Lichtwellenleiter, Koaxialkabel – und die wichtigsten Ethernet-Standards.</p>
+  </header>
+
+  <!-- ═══════════════════════════════
+       1. ÜBERTRAGUNGSMEDIEN
+       ═══════════════════════════════ -->
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--tp),var(--lwl));">🔌</div>
+    <h2>Übertragungsmedien</h2>
+    <span class="sub">TP · LWL · Koax</span>
+  </div>
+
+  <div class="m-tabs">
+    <div class="m-tab active" data-tab="tp">🔵 Twisted Pair</div>
+    <div class="m-tab" data-tab="lwl">🟢 Lichtwellenleiter</div>
+    <div class="m-tab" data-tab="coax">🟠 Koaxialkabel</div>
+  </div>
+
+  <!-- ── Twisted Pair ── -->
+  <div class="m-content active" id="tab-tp">
+    <div class="m-visual">
+      <svg width="320" height="280" viewBox="0 0 320 280">
+        <defs><filter id="gtp"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <!-- Cable cross-section -->
+        <text x="160" y="22" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="10" font-weight="600">KABELQUERSCHNITT</text>
+        <!-- Outer jacket -->
+        <circle cx="160" cy="130" r="70" fill="none" stroke="var(--border)" stroke-width="3"/>
+        <text x="160" y="216" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">Aussenmantel</text>
+        <!-- 4 twisted pairs -->
+        <circle cx="130" cy="100" r="14" fill="none" stroke="#38bdf8" stroke-width="1.5" filter="url(#gtp)"/>
+        <circle cx="124" cy="96" r="4" fill="#38bdf866"/><circle cx="136" cy="104" r="4" fill="#fff3"/>
+        <circle cx="190" cy="100" r="14" fill="none" stroke="#51cf66" stroke-width="1.5" filter="url(#gtp)"/>
+        <circle cx="184" cy="96" r="4" fill="#51cf6666"/><circle cx="196" cy="104" r="4" fill="#fff3"/>
+        <circle cx="130" cy="160" r="14" fill="none" stroke="#fb923c" stroke-width="1.5" filter="url(#gtp)"/>
+        <circle cx="124" cy="156" r="4" fill="#fb923c66"/><circle cx="136" cy="164" r="4" fill="#fff3"/>
+        <circle cx="190" cy="160" r="14" fill="none" stroke="#f472b6" stroke-width="1.5" filter="url(#gtp)"/>
+        <circle cx="184" cy="156" r="4" fill="#f472b666"/><circle cx="196" cy="164" r="4" fill="#fff3"/>
+        <!-- Label -->
+        <text x="160" y="136" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">4 Paare</text>
+        <!-- Twist illustration -->
+        <text x="160" y="246" text-anchor="middle" fill="var(--tp)" font-family="JetBrains Mono" font-size="10" font-weight="600">Verdrillte Adernpaare</text>
+        <text x="160" y="262" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">→ Reduziert Übersprechen (Crosstalk)</text>
+        <!-- Connector -->
+        <rect x="245" y="80" width="55" height="34" rx="4" fill="none" stroke="var(--tp)" stroke-width="1.5"/>
+        <text x="272" y="94" text-anchor="middle" fill="var(--tp)" font-family="JetBrains Mono" font-size="9" font-weight="700">RJ-45</text>
+        <text x="272" y="107" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">8P8C</text>
+      </svg>
+    </div>
+    <div class="m-info">
+      <h3 style="color:var(--tp)">Twisted Pair (TP)</h3>
+      <div class="m-en">VERDRILLTES KUPFERKABEL</div>
+      <div class="m-desc">Kupferleiter, paarweise <strong>verdrillt</strong>, um elektromagnetische Störungen zu minimieren. Am weitesten verbreitet in LANs. Stecker: <strong>RJ-45</strong> (8 Pins). Enthält <strong>4 Adernpaare</strong> = 8 Drähte.</div>
+      <div class="prop-grid">
+        <div class="prop-item"><div class="p-label">Signal</div><div class="p-val">Elektrisch</div></div>
+        <div class="prop-item"><div class="p-label">Max. Segment</div><div class="p-val">100 m</div></div>
+        <div class="prop-item"><div class="p-label">Stecker</div><div class="p-val">RJ-45</div></div>
+        <div class="prop-item"><div class="p-label">Kosten</div><div class="p-val good">Günstig</div></div>
+      </div>
+      <h4 style="font-size:13px;font-weight:700;margin:16px 0 8px">Schirmungstypen</h4>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;font-weight:300">
+        <strong style="color:var(--text)">UTP</strong> – Unshielded: kein Schirm, günstig, Standard<br>
+        <strong style="color:var(--text)">STP</strong> – Shielded: jedes Paar einzeln geschirmt<br>
+        <strong style="color:var(--text)">S/FTP</strong> – Gesamtschirm + Folienschirm je Paar<br>
+        <strong style="color:var(--text)">S/STP</strong> – Gesamtschirm + Geflechtschirm je Paar
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Lichtwellenleiter ── -->
+  <div class="m-content" id="tab-lwl">
+    <div class="m-visual">
+      <svg width="320" height="280" viewBox="0 0 320 280">
+        <defs><filter id="glwl"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <text x="160" y="22" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="10" font-weight="600">FASERQUERSCHNITT</text>
+        <!-- Singlemode -->
+        <circle cx="100" cy="110" r="45" fill="none" stroke="var(--border)" stroke-width="2"/>
+        <circle cx="100" cy="110" r="28" fill="none" stroke="var(--lwl)" stroke-width="1.5" filter="url(#glwl)"/>
+        <circle cx="100" cy="110" r="4" fill="var(--lwl)" filter="url(#glwl)"/>
+        <text x="100" y="170" text-anchor="middle" fill="var(--lwl)" font-family="JetBrains Mono" font-size="11" font-weight="700">Singlemode</text>
+        <text x="100" y="184" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">9/125 µm</text>
+        <text x="100" y="198" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">1 Lichtstrahl</text>
+        <!-- Light path singlemode -->
+        <line x1="55" y1="110" x2="145" y2="110" stroke="var(--lwl)" stroke-width="1.5" stroke-dasharray="4 2" filter="url(#glwl)" opacity=".6"/>
+        <!-- Multimode -->
+        <circle cx="230" cy="110" r="45" fill="none" stroke="var(--border)" stroke-width="2"/>
+        <circle cx="230" cy="110" r="28" fill="none" stroke="var(--orange)" stroke-width="1.5" filter="url(#glwl)"/>
+        <circle cx="230" cy="110" r="18" fill="rgba(251,146,60,.06)" stroke="var(--orange)" stroke-width="1" stroke-dasharray="2 2"/>
+        <!-- Multiple light rays -->
+        <line x1="205" y1="100" x2="220" y2="118" stroke="var(--orange)" stroke-width="1" filter="url(#glwl)" opacity=".5"/>
+        <line x1="220" y1="118" x2="240" y2="98" stroke="var(--orange)" stroke-width="1" filter="url(#glwl)" opacity=".5"/>
+        <line x1="240" y1="98" x2="255" y2="120" stroke="var(--orange)" stroke-width="1" filter="url(#glwl)" opacity=".5"/>
+        <line x1="202" y1="110" x2="258" y2="110" stroke="var(--orange)" stroke-width="1" stroke-dasharray="3 2" filter="url(#glwl)" opacity=".4"/>
+        <text x="230" y="170" text-anchor="middle" fill="var(--orange)" font-family="JetBrains Mono" font-size="11" font-weight="700">Multimode</text>
+        <text x="230" y="184" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">50/125 oder 62.5/125 µm</text>
+        <text x="230" y="198" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">Mehrere Lichtstrahlen</text>
+        <!-- Labels -->
+        <rect x="42" y="216" width="100" height="18" rx="4" fill="rgba(81,207,102,.06)" stroke="var(--lwl)" stroke-width="1"/>
+        <text x="92" y="229" text-anchor="middle" fill="var(--lwl)" font-family="JetBrains Mono" font-size="8">Laser · LC/SC</text>
+        <rect x="178" y="216" width="100" height="18" rx="4" fill="rgba(251,146,60,.06)" stroke="var(--orange)" stroke-width="1"/>
+        <text x="228" y="229" text-anchor="middle" fill="var(--orange)" font-family="JetBrains Mono" font-size="8">LED · SC/ST</text>
+        <!-- Aufbau -->
+        <text x="160" y="256" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">Aufbau: Kern → Mantel (Cladding) → Coating → Jacket</text>
+      </svg>
+    </div>
+    <div class="m-info">
+      <h3 style="color:var(--lwl)">Lichtwellenleiter (LWL)</h3>
+      <div class="m-en">FIBER OPTIC · GLASFASER</div>
+      <div class="m-desc">Überträgt Daten als <strong>Lichtimpulse</strong> durch einen Glaskern. Immun gegen <strong>elektromagnetische Störungen</strong>, extrem hohe Bandbreite und grosse Reichweite. Datenübertragung durch <strong>Totalreflexion</strong>.</div>
+      <div class="prop-grid">
+        <div class="prop-item"><div class="p-label">Signal</div><div class="p-val">Licht (optisch)</div></div>
+        <div class="prop-item"><div class="p-label">Reichweite</div><div class="p-val good">bis 80+ km</div></div>
+        <div class="prop-item"><div class="p-label">Stecker</div><div class="p-val">LC, SC, ST</div></div>
+        <div class="prop-item"><div class="p-label">Kosten</div><div class="p-val bad">Teuer</div></div>
+      </div>
+      <div class="fiber-grid">
+        <div class="fiber-card">
+          <h4 style="color:var(--lwl)">Singlemode (SMF)</h4>
+          <p>Kern <strong>9 µm</strong> – nur ein Lichtstrahl. Für <strong>grosse Distanzen</strong> (WAN, Backbone). Lichtquelle: <strong>Laser</strong>.</p>
+          <div class="fiber-specs">Kern: 9 µm · Mantel: 125 µm<br>Reichweite: bis 80 km+<br>Farbe Kabel: <span style="color:var(--lwl)">gelb</span></div>
+        </div>
+        <div class="fiber-card">
+          <h4 style="color:var(--orange)">Multimode (MMF)</h4>
+          <p>Kern <strong>50/62.5 µm</strong> – mehrere Modi. Für <strong>kurze Distanzen</strong> (LAN, Gebäude). Lichtquelle: <strong>LED</strong> oder VCSEL.</p>
+          <div class="fiber-specs">Kern: 50 od. 62.5 µm · Mantel: 125 µm<br>Reichweite: bis 2 km<br>Farbe Kabel: <span style="color:var(--orange)">orange</span> oder <span style="color:var(--cyan)">aqua</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Koaxialkabel ── -->
+  <div class="m-content" id="tab-coax">
+    <div class="m-visual">
+      <svg width="320" height="250" viewBox="0 0 320 250">
+        <defs><filter id="gcx"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+        <text x="160" y="22" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="10" font-weight="600">KABELQUERSCHNITT</text>
+        <!-- Layers from outside in -->
+        <circle cx="160" cy="120" r="65" fill="none" stroke="var(--border)" stroke-width="3"/>
+        <text x="160" y="200" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">Aussenmantel</text>
+        <circle cx="160" cy="120" r="50" fill="none" stroke="var(--orange)" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="242" y="110" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">Geflecht-</text>
+        <text x="242" y="122" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">schirm</text>
+        <circle cx="160" cy="120" r="34" fill="rgba(255,255,255,.02)" stroke="var(--border)" stroke-width="1.5"/>
+        <text x="70" y="116" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">Dielektri-</text>
+        <text x="70" y="128" fill="var(--muted)" font-family="JetBrains Mono" font-size="8">kum</text>
+        <circle cx="160" cy="120" r="10" fill="var(--orange)" opacity=".3" stroke="var(--orange)" stroke-width="2" filter="url(#gcx)"/>
+        <text x="160" y="124" text-anchor="middle" fill="var(--orange)" font-family="JetBrains Mono" font-size="8" font-weight="700">Cu</text>
+        <!-- Connector -->
+        <rect x="240" y="160" width="60" height="28" rx="4" fill="none" stroke="var(--orange)" stroke-width="1.5"/>
+        <text x="270" y="176" text-anchor="middle" fill="var(--orange)" font-family="JetBrains Mono" font-size="9" font-weight="700">BNC/F</text>
+        <text x="160" y="234" text-anchor="middle" fill="var(--orange)" font-family="JetBrains Mono" font-size="10" font-weight="600">Koaxialkabel</text>
+      </svg>
+    </div>
+    <div class="m-info">
+      <h3 style="color:var(--coax)">Koaxialkabel</h3>
+      <div class="m-en">COAXIAL CABLE · RG-58 / RG-6</div>
+      <div class="m-desc">Ein <strong>zentraler Kupferleiter</strong>, umgeben von Isolierung, <strong>Geflechtschirm</strong> und Aussenmantel. Gut geschirmt, aber in modernen LANs weitgehend durch TP ersetzt. Heute noch genutzt für <strong>TV/Kabelinternet</strong> und <strong>ältere Netzwerke</strong>.</div>
+      <div class="prop-grid">
+        <div class="prop-item"><div class="p-label">Signal</div><div class="p-val">Elektrisch</div></div>
+        <div class="prop-item"><div class="p-label">Max. Segment</div><div class="p-val">185–500 m</div></div>
+        <div class="prop-item"><div class="p-label">Stecker</div><div class="p-val">BNC, F-Typ</div></div>
+        <div class="prop-item"><div class="p-label">Einsatz heute</div><div class="p-val">TV, Kabel-Internet</div></div>
+      </div>
+      <div style="margin-top:14px;font-size:12px;color:var(--muted);line-height:1.7;font-weight:300">
+        <strong style="color:var(--text)">RG-58</strong> (Thinnet / 10Base2) – 50 Ω, dünn, 185 m, BNC<br>
+        <strong style="color:var(--text)">RG-8</strong> (Thicknet / 10Base5) – 50 Ω, dick, 500 m, AUI<br>
+        <strong style="color:var(--text)">RG-6</strong> – 75 Ω, Kabel-TV / Internet, F-Stecker
+      </div>
+    </div>
+  </div>
+
+  <!-- TP Category Cards -->
+  <div class="section-title" style="margin-top:40px">
+    <div class="ic" style="background:linear-gradient(135deg,var(--tp),var(--purple));">📋</div>
+    <h2>Twisted-Pair Kategorien</h2>
+  </div>
+
+  <div class="cat-grid" id="cat-grid"></div>
+
+  <!-- Comparison -->
+  <div class="compare-table-wrap" style="margin-top:24px">
+    <table class="compare-table">
+      <thead><tr><th>Eigenschaft</th><th style="color:var(--tp)">Twisted Pair</th><th style="color:var(--lwl)">LWL (Glasfaser)</th><th style="color:var(--coax)">Koaxialkabel</th></tr></thead>
+      <tbody>
+        <tr><td>Signalart</td><td>Elektrisch</td><td><strong>Optisch (Licht)</strong></td><td>Elektrisch</td></tr>
+        <tr><td>Bandbreite</td><td class="mid">Mittel</td><td class="good">Sehr hoch</td><td class="mid">Mittel</td></tr>
+        <tr><td>Reichweite</td><td>100 m</td><td class="good">bis 80+ km</td><td>185–500 m</td></tr>
+        <tr><td>EMI-Empfindlichkeit</td><td class="bad">Hoch (UTP)</td><td class="good">Immun</td><td class="mid">Gering</td></tr>
+        <tr><td>Kosten</td><td class="good">Günstig</td><td class="bad">Teuer</td><td class="mid">Mittel</td></tr>
+        <tr><td>Installation</td><td class="good">Einfach</td><td class="bad">Aufwändig (spleissen)</td><td class="mid">Mittel</td></tr>
+        <tr><td>Abhörsicherheit</td><td class="bad">Gering</td><td class="good">Hoch</td><td class="mid">Mittel</td></tr>
+        <tr><td>Stecker</td><td>RJ-45</td><td>LC, SC, ST</td><td>BNC, F</td></tr>
+        <tr><td>Einsatz</td><td>LAN, Büro, Heim</td><td>Backbone, WAN, Rechenzentrum</td><td>TV, Altlasten</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════
+       2. ETHERNET-STANDARDS
+       ═══════════════════════════════ -->
+  <div class="section-title" style="margin-top:56px">
+    <div class="ic" style="background:linear-gradient(135deg,var(--eth),var(--cyan));">📡</div>
+    <h2>Ethernet-Standards (IEEE 802.3)</h2>
+  </div>
+
+  <!-- Naming Convention -->
+  <div class="naming-card">
+    <h3>🏷️ Namensschema verstehen</h3>
+    <div class="naming-demo">
+      <div class="naming-part"><div class="n-val" style="color:var(--cyan)">1000</div><div class="n-label">Geschwindigkeit<br>(Mbit/s)</div></div>
+      <div class="naming-sep">-</div>
+      <div class="naming-part"><div class="n-val" style="color:var(--green)">BASE</div><div class="n-label">Signalart<br>(Baseband)</div></div>
+      <div class="naming-sep">-</div>
+      <div class="naming-part"><div class="n-val" style="color:var(--orange)">T</div><div class="n-label">Medium<br>(Twisted Pair)</div></div>
+    </div>
+    <div class="naming-examples">
+      <div class="naming-ex"><div class="ex-name" style="color:var(--orange)">T</div><div class="ex-desc">= Twisted Pair (Kupfer)</div></div>
+      <div class="naming-ex"><div class="ex-name" style="color:var(--lwl)">SX / LX / SR / LR</div><div class="ex-desc">= Glasfaser (Short/Long Range)</div></div>
+      <div class="naming-ex"><div class="ex-name" style="color:var(--coax)">2 / 5</div><div class="ex-desc">= Koax (Segmentlänge ×100m)</div></div>
+      <div class="naming-ex"><div class="ex-name" style="color:var(--tp)">BASE vs. BROAD</div><div class="ex-desc">= Baseband (digital) vs. Broadband (analog)</div></div>
+    </div>
+  </div>
+
+  <!-- Ethernet table with filters -->
+  <div style="margin-top:16px">
+    <div class="eth-filters" id="eth-filters">
+      <div class="eth-filter active" data-filter="all">Alle</div>
+      <div class="eth-filter" data-filter="10">10 Mbit/s</div>
+      <div class="eth-filter" data-filter="100">100 Mbit/s</div>
+      <div class="eth-filter" data-filter="1000">1 Gbit/s</div>
+      <div class="eth-filter" data-filter="10000">10 Gbit/s+</div>
+    </div>
+    <div class="eth-table-wrap">
+      <table class="eth-table" id="eth-table">
+        <thead><tr><th>Standard</th><th>IEEE</th><th>Geschwindigkeit</th><th>Medium</th><th>Max. Länge</th><th>Stecker</th></tr></thead>
+        <tbody id="eth-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-card">
+      <h4>🎯 Prüfungstipp</h4>
+      <p>Merke das <strong>Namensschema</strong>: Geschwindigkeit – BASE – Medium. <strong>T</strong> = Twisted Pair, <strong>F/SX/LX</strong> = Fiber, <strong>2/5</strong> = Koax. Die 100m-Grenze bei TP wird fast immer gefragt!</p>
+    </div>
+    <div class="summary-card">
+      <h4>💡 Merkhilfe</h4>
+      <p><strong>Cat 5e</strong> = 1 Gbit (das Minimum für modernes LAN). <strong>Cat 6a</strong> = 10 Gbit. <strong>Singlemode = weit</strong> (gelb), <strong>Multimode = nah</strong> (orange). TP max. <strong>100 m</strong>, LWL bis <strong>80 km</strong>.</p>
+    </div>
+    <div class="summary-card">
+      <h4>🧩 Zusammenhang</h4>
+      <p>Das <strong>Übertragungsmedium</strong> bestimmt, welcher <strong>Ethernet-Standard</strong> eingesetzt werden kann. Jeder Standard definiert Geschwindigkeit, Medium und maximale Segmentlänge.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       GLOSSAR-LERNSYSTEM
+       ═══════════════════════════════ -->
+  <div class="glossary-section" id="glossary-section">
+    <div class="section-title">
+      <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--accent));">📖</div>
+      <h2>Glossar-Trainer</h2>
+      <span class="sub">Begriffe meistern</span>
+    </div>
+
+    <div class="glossary-progress-bar">
+      <span class="gp-text">Fortschritt</span>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <span class="gp-count" id="glossary-count">0 / 8 gemeistert</span>
+    </div>
+
+    <div class="glossary-grid" id="glossary-grid"></div>
+
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" id="gl-close">&times;</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
+  </div>
+
+  <div id="glossary-tooltip" class="glossary-tooltip">
+    <div class="gt-name" id="gt-name"></div>
+    <div class="gt-short" id="gt-short"></div>
+    <div class="gt-link">Klicke im Glossar zum Lernen →</div>
+  </div>
+</div>
+
+<script>
+// ── Tab Switching ──
+document.querySelectorAll('.m-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.m-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.m-content').forEach(c=>c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ── TP Categories ──
+const cats = [
+  {name:'Cat 3',speed:'10 Mbit/s',freq:'16 MHz',type:'10BASE-T, Telefon',shield:'UTP',color:'var(--muted)',dim:true},
+  {name:'Cat 5',speed:'100 Mbit/s',freq:'100 MHz',type:'100BASE-TX (Fast Ethernet)',shield:'UTP',color:'var(--muted)',dim:true},
+  {name:'Cat 5e',speed:'1 Gbit/s',freq:'100 MHz',type:'1000BASE-T (Gigabit)',shield:'UTP',color:'var(--tp)',dim:false},
+  {name:'Cat 6',speed:'1–10 Gbit/s',freq:'250 MHz',type:'1000BASE-T, 10GBASE-T (55m)',shield:'UTP/STP',color:'var(--tp)',dim:false},
+  {name:'Cat 6a',speed:'10 Gbit/s',freq:'500 MHz',type:'10GBASE-T (100m)',shield:'S/FTP',color:'var(--green)',dim:false},
+  {name:'Cat 7',speed:'10 Gbit/s',freq:'600 MHz',type:'10GBASE-T, Rechenzentren',shield:'S/FTP',color:'var(--green)',dim:false},
+  {name:'Cat 8',speed:'25–40 Gbit/s',freq:'2000 MHz',type:'25/40GBASE-T (30m)',shield:'S/FTP',color:'var(--purple)',dim:false},
+];
+
+const catGrid = document.getElementById('cat-grid');
+cats.forEach(c => {
+  const card = document.createElement('div');
+  card.className = 'cat-card';
+  if(c.dim) card.style.opacity = '.6';
+  card.innerHTML = `
+    <h4 style="color:${c.color}">${c.name}</h4>
+    <div class="cat-speed" style="color:${c.color}">${c.speed}</div>
+    <div class="cat-freq">${c.freq}</div>
+    <div class="cat-type">${c.type}</div>
+    <span class="cat-shield">${c.shield}</span>`;
+  catGrid.appendChild(card);
+});
+
+// ── Ethernet Standards Table ──
+const ethStandards = [
+  {name:'10BASE-5',ieee:'802.3',speed:10,speedLabel:'10 Mbit/s',medium:'Koax (Thicknet)',len:'500 m',plug:'AUI',cat:'10',color:'var(--coax)'},
+  {name:'10BASE-2',ieee:'802.3a',speed:10,speedLabel:'10 Mbit/s',medium:'Koax (Thinnet)',len:'185 m',plug:'BNC',cat:'10',color:'var(--coax)'},
+  {name:'10BASE-T',ieee:'802.3i',speed:10,speedLabel:'10 Mbit/s',medium:'TP Cat 3+',len:'100 m',plug:'RJ-45',cat:'10',color:'var(--tp)'},
+  {name:'100BASE-TX',ieee:'802.3u',speed:100,speedLabel:'100 Mbit/s',medium:'TP Cat 5+',len:'100 m',plug:'RJ-45',cat:'100',color:'var(--tp)'},
+  {name:'100BASE-FX',ieee:'802.3u',speed:100,speedLabel:'100 Mbit/s',medium:'LWL Multimode',len:'2 km',plug:'SC/ST',cat:'100',color:'var(--lwl)'},
+  {name:'1000BASE-T',ieee:'802.3ab',speed:1000,speedLabel:'1 Gbit/s',medium:'TP Cat 5e+',len:'100 m',plug:'RJ-45',cat:'1000',color:'var(--tp)'},
+  {name:'1000BASE-SX',ieee:'802.3z',speed:1000,speedLabel:'1 Gbit/s',medium:'LWL Multimode',len:'550 m',plug:'LC/SC',cat:'1000',color:'var(--lwl)'},
+  {name:'1000BASE-LX',ieee:'802.3z',speed:1000,speedLabel:'1 Gbit/s',medium:'LWL Singlemode',len:'5 km',plug:'LC/SC',cat:'1000',color:'var(--lwl)'},
+  {name:'10GBASE-T',ieee:'802.3an',speed:10000,speedLabel:'10 Gbit/s',medium:'TP Cat 6a+',len:'100 m',plug:'RJ-45',cat:'10000',color:'var(--tp)'},
+  {name:'10GBASE-SR',ieee:'802.3ae',speed:10000,speedLabel:'10 Gbit/s',medium:'LWL Multimode',len:'300 m',plug:'LC',cat:'10000',color:'var(--lwl)'},
+  {name:'10GBASE-LR',ieee:'802.3ae',speed:10000,speedLabel:'10 Gbit/s',medium:'LWL Singlemode',len:'10 km',plug:'LC',cat:'10000',color:'var(--lwl)'},
+  {name:'40GBASE-SR4',ieee:'802.3ba',speed:40000,speedLabel:'40 Gbit/s',medium:'LWL Multimode',len:'100 m',plug:'MPO',cat:'10000',color:'var(--lwl)'},
+  {name:'100GBASE-SR10',ieee:'802.3ba',speed:100000,speedLabel:'100 Gbit/s',medium:'LWL Multimode',len:'100 m',plug:'MPO',cat:'10000',color:'var(--lwl)'},
+];
+
+function renderEthTable(filter) {
+  const tbody = document.getElementById('eth-tbody');
+  tbody.innerHTML = '';
+  const filtered = filter === 'all' ? ethStandards : ethStandards.filter(e => e.cat === filter);
+  filtered.forEach(e => {
+    const speedColors = {10:'var(--muted)',100:'var(--yellow)',1000:'var(--cyan)',10000:'var(--green)',40000:'var(--purple)',100000:'var(--pink)'};
+    const sc = speedColors[e.speed] || 'var(--text)';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:${e.color}">${e.name}</td>
+      <td>${e.ieee}</td>
+      <td><span class="speed-badge" style="background:${sc}15;color:${sc};border:1px solid ${sc}33">${e.speedLabel}</span></td>
+      <td>${e.medium}</td>
+      <td><strong>${e.len}</strong></td>
+      <td>${e.plug}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+renderEthTable('all');
+
+document.querySelectorAll('.eth-filter').forEach(f => {
+  f.addEventListener('click', () => {
+    document.querySelectorAll('.eth-filter').forEach(x => x.classList.remove('active'));
+    f.classList.add('active');
+    renderEthTable(f.dataset.filter);
+  });
+});
+
+// ══════════════════════════════════════════
+//  GLOSSAR-LERNSYSTEM
+// ══════════════════════════════════════════
+(function(){
+  const STORAGE_KEY = 'glossary-medien-ethernet';
+  const PHASES = ['Analogie','Definition','Lückentext','Multiple Choice','Erklärung'];
+
+  const glossaryTerms = [
+    {
+      id:'ethernet',
+      term:'Ethernet',
+      icon:'🌐',
+      short:'LAN-Standard IEEE 802.3 für kabelgebundene Netzwerke',
+      definition:'Ethernet ist eine Familie von Netzwerktechnologien, standardisiert als IEEE 802.3. Es definiert Protokolle für die Datenübertragung in lokalen Netzwerken (LANs) auf Schicht 1 (Physical) und Schicht 2 (Data Link) des OSI-Modells. Ethernet nutzt Frames zur Datenkapselung und CSMA/CD (bei Halbduplex) zur Kollisionsvermeidung.',
+      analogy:'Stell dir Ethernet wie ein Postsystem innerhalb eines Gebäudes vor: Es gibt feste Regeln, wie Briefe (Frames) adressiert, verpackt und über die Hausleitungen (Kabel) zugestellt werden. IEEE 802.3 ist dabei das "Postgesetz", das alles regelt.',
+      hints:['Denke an den IEEE-Standard und die OSI-Schichten.','CSMA/CD ist das Zugriffsverfahren bei geteiltem Medium.','Ethernet arbeitet auf Physical Layer und Data Link Layer.'],
+      questions:{
+        fill:{q:'Ethernet ist standardisiert als IEEE ______ und arbeitet auf OSI-Schicht __ und __.', answer:'802.3', keywords:['802.3','1','2']},
+        choice:{q:'Welches Zugriffsverfahren nutzt klassisches Ethernet bei Halbduplex?', options:['Token Passing','CSMA/CD','TDMA','Polling'], correct:1},
+        explain:{q:'Erkläre, warum Ethernet sowohl Schicht 1 als auch Schicht 2 des OSI-Modells abdeckt.', keywords:['physical','data link','frame','physikalisch','bitübertragung','sicherung','signal','adressierung']}
+      },
+      difficulty:1
+    },
+    {
+      id:'mac-adresse',
+      term:'MAC-Adresse',
+      icon:'🏷️',
+      short:'48-Bit Hardware-Adresse einer Netzwerkkarte',
+      definition:'Die MAC-Adresse (Media Access Control) ist eine weltweit eindeutige 48-Bit-Adresse (6 Byte), die jeder Netzwerkschnittstelle fest zugewiesen ist. Sie wird in hexadezimaler Schreibweise dargestellt (z.B. AA:BB:CC:DD:EE:FF). Die ersten 3 Byte identifizieren den Hersteller (OUI – Organizationally Unique Identifier), die letzten 3 Byte sind die individuelle Gerätenummer.',
+      analogy:'Die MAC-Adresse ist wie die Seriennummer eines Autos: Jedes Fahrzeug (Netzwerkkarte) hat ab Werk eine einzigartige Nummer. Die ersten Ziffern verraten den Hersteller, der Rest ist die individuelle Kennung.',
+      hints:['48 Bit = 6 Byte, hexadezimal geschrieben.','Die ersten 3 Byte = OUI (Herstellerkennung).','MAC-Adressen arbeiten auf OSI-Schicht 2.'],
+      questions:{
+        fill:{q:'Eine MAC-Adresse ist __ Bit lang und besteht aus __ Byte. Die ersten 3 Byte bilden den ______.', answer:'48', keywords:['48','6','OUI']},
+        choice:{q:'Wie lang ist eine MAC-Adresse?', options:['32 Bit','48 Bit','64 Bit','128 Bit'], correct:1},
+        explain:{q:'Erkläre den Aufbau einer MAC-Adresse und die Bedeutung der OUI.', keywords:['48','bit','byte','OUI','hersteller','hex','eindeutig','schicht 2']}
+      },
+      difficulty:1
+    },
+    {
+      id:'ethernet-frame',
+      term:'Ethernet-Frame',
+      icon:'📦',
+      short:'Dateneinheit mit Header, Payload und Prüfsumme',
+      definition:'Ein Ethernet-Frame (IEEE 802.3) ist die Dateneinheit auf Schicht 2. Er besteht aus: Präambel (7 Byte Synchronisation), SFD (1 Byte Start Frame Delimiter), Ziel-MAC (6 Byte), Quell-MAC (6 Byte), Typ/Länge (2 Byte), Nutzdaten (46–1500 Byte, die MTU) und FCS (4 Byte Frame Check Sequence, CRC-Prüfsumme). Die minimale Frame-Grösse beträgt 64 Byte, die maximale 1518 Byte (ohne Präambel/SFD).',
+      analogy:'Ein Ethernet-Frame ist wie ein Briefumschlag: Aussen steht der Absender (Quell-MAC) und der Empfänger (Ziel-MAC), innen steckt der Brief (Nutzdaten), und ein Siegel (FCS) stellt sicher, dass nichts manipuliert wurde.',
+      hints:['Denke an die Felder: Präambel, Adressen, Typ, Daten, FCS.','Die MTU (Maximum Transmission Unit) beträgt 1500 Byte.','FCS nutzt CRC-32 zur Fehlererkennung.'],
+      questions:{
+        fill:{q:'Die maximale Nutzdatengrösse (MTU) eines Ethernet-Frames beträgt ______ Byte. Zur Fehlererkennung dient die ______ (CRC-32).', answer:'1500', keywords:['1500','FCS','CRC']},
+        choice:{q:'Wie gross ist die MTU eines Standard-Ethernet-Frames?', options:['64 Byte','512 Byte','1500 Byte','9000 Byte'], correct:2},
+        explain:{q:'Beschreibe den Aufbau eines Ethernet-Frames und die Funktion der einzelnen Felder.', keywords:['präambel','MAC','ziel','quell','typ','nutzdaten','FCS','CRC','prüfsumme']}
+      },
+      difficulty:2
+    },
+    {
+      id:'twisted-pair',
+      term:'Twisted Pair',
+      icon:'🔌',
+      short:'Verdrilltes Kupferkabel mit RJ-45-Stecker',
+      definition:'Twisted Pair (TP) ist ein Kupferkabel, bei dem jeweils zwei Adern paarweise miteinander verdrillt sind. Durch die Verdrillung werden elektromagnetische Störungen (Übersprechen / Crosstalk) reduziert. Ein Standard-TP-Kabel enthält 4 Adernpaare (8 Drähte) und verwendet RJ-45-Stecker (8P8C). Die maximale Segmentlänge beträgt 100 m. Es gibt verschiedene Schirmungstypen: UTP (ungeschirmt), STP (geschirmt), S/FTP (Gesamtschirm + Folie je Paar).',
+      analogy:'Die Verdrillung funktioniert wie zwei Personen, die sich an den Händen halten und drehen: Störsignale, die von aussen kommen, treffen beide Adern gleichzeitig und heben sich gegenseitig auf (Differenzsignal). Je enger die Verdrillung, desto besser der Schutz.',
+      hints:['4 Adernpaare = 8 Drähte, Stecker RJ-45.','Maximale Segmentlänge: 100 m.','Verdrillung reduziert Crosstalk (Übersprechen).'],
+      questions:{
+        fill:{q:'Ein Twisted-Pair-Kabel enthält __ Adernpaare und hat eine maximale Segmentlänge von ______ m.', answer:'4', keywords:['4','100']},
+        choice:{q:'Warum werden die Adern bei Twisted Pair verdrillt?', options:['Um das Kabel flexibler zu machen','Um Übersprechen (Crosstalk) zu reduzieren','Um die Bandbreite zu erhöhen','Um Kosten zu sparen'], correct:1},
+        explain:{q:'Erkläre, warum die Verdrillung bei Twisted-Pair-Kabeln die Störanfälligkeit reduziert.', keywords:['verdrillung','crosstalk','übersprechen','störung','differenz','elektromagnetisch','paar']}
+      },
+      difficulty:1
+    },
+    {
+      id:'glasfaser',
+      term:'Glasfaser (LWL)',
+      icon:'💡',
+      short:'Lichtwellenleiter – Datenübertragung durch Lichtimpulse',
+      definition:'Glasfaser (Lichtwellenleiter, LWL) überträgt Daten als Lichtimpulse durch einen dünnen Glaskern. Das Prinzip basiert auf Totalreflexion: Licht wird im Kern reflektiert und breitet sich entlang der Faser aus. Es gibt zwei Typen: Singlemode (SMF, Kern 9 µm, Laser, bis 80+ km) und Multimode (MMF, Kern 50/62.5 µm, LED/VCSEL, bis 2 km). LWL ist immun gegen elektromagnetische Störungen (EMI) und bietet extrem hohe Bandbreite.',
+      analogy:'Glasfaser funktioniert wie ein perfekt verspiegelter Tunnel: Das Licht wird an den Wänden (Mantel/Cladding) immer wieder reflektiert und kommt am anderen Ende an, egal wie lang der Tunnel ist. Singlemode ist ein schmaler, gerader Tunnel (ein Strahl), Multimode ein breiterer (mehrere Strahlen).',
+      hints:['Totalreflexion ist das physikalische Prinzip.','Singlemode = weit (Laser, 9 µm), Multimode = nah (LED, 50/62.5 µm).','LWL ist immun gegen elektromagnetische Störungen.'],
+      questions:{
+        fill:{q:'Glasfaser nutzt das Prinzip der ______________ zur Lichtführung. Singlemode hat einen Kern von __ µm.', answer:'Totalreflexion', keywords:['totalreflexion','9']},
+        choice:{q:'Welcher Glasfasertyp eignet sich für Distanzen über 10 km?', options:['Multimode mit LED','Multimode mit VCSEL','Singlemode mit Laser','Beides gleich'], correct:2},
+        explain:{q:'Vergleiche Singlemode und Multimode hinsichtlich Kerndurchmesser, Lichtquelle und Einsatzbereich.', keywords:['singlemode','multimode','kern','9','50','62.5','laser','LED','distanz','reichweite']}
+      },
+      difficulty:2
+    },
+    {
+      id:'bandbreite',
+      term:'Bandbreite',
+      icon:'📊',
+      short:'Maximale Datenübertragungsrate eines Mediums',
+      definition:'Die Bandbreite bezeichnet in der Netzwerktechnik die maximale Datenübertragungsrate, die ein Übertragungsmedium oder eine Verbindung unterstützt. Sie wird in Bit pro Sekunde (bit/s) gemessen. Im physikalischen Sinne beschreibt Bandbreite den nutzbaren Frequenzbereich eines Mediums (in Hz). Höhere Frequenzbandbreite ermöglicht höhere Datenraten. Beispiele: Cat 5e unterstützt bis 100 MHz (1 Gbit/s), Cat 6a bis 500 MHz (10 Gbit/s), Glasfaser bietet Bandbreiten im THz-Bereich.',
+      analogy:'Bandbreite ist wie die Anzahl der Fahrspuren auf einer Autobahn: Je mehr Spuren (höhere Bandbreite), desto mehr Fahrzeuge (Daten) können gleichzeitig passieren. Die Frequenz des Kabels bestimmt, wie viele Spuren möglich sind.',
+      hints:['Bandbreite = maximale Datenrate (bit/s) oder Frequenzbereich (Hz).','Höhere Kabelkategorie = höhere Frequenz = mehr Bandbreite.','Nicht verwechseln mit Durchsatz (tatsächliche Datenrate).'],
+      questions:{
+        fill:{q:'Die Bandbreite wird in ______ gemessen und beschreibt die maximale ________________ eines Mediums.', answer:'bit/s', keywords:['bit/s','datenübertragungsrate','datenrate','übertragungsrate']},
+        choice:{q:'Welche TP-Kategorie unterstützt eine Frequenz von 500 MHz für 10 Gbit/s?', options:['Cat 5e','Cat 6','Cat 6a','Cat 7'], correct:2},
+        explain:{q:'Erkläre den Zusammenhang zwischen Frequenzbandbreite eines Kabels und der erreichbaren Datenrate.', keywords:['frequenz','Hz','MHz','datenrate','bit','kategorie','kabel','höher']}
+      },
+      difficulty:2
+    },
+    {
+      id:'vollduplex-halbduplex',
+      term:'Vollduplex / Halbduplex',
+      icon:'🔄',
+      short:'Gleichzeitiges vs. wechselseitiges Senden und Empfangen',
+      definition:'Vollduplex (Full Duplex) ermöglicht gleichzeitiges Senden und Empfangen auf getrennten Kanälen – typisch bei Switches mit dedizierten Leitungen (je 2 Adernpaare für Senden bzw. Empfangen). Es gibt keine Kollisionen, CSMA/CD ist deaktiviert. Halbduplex (Half Duplex) erlaubt nur abwechselndes Senden oder Empfangen auf dem gleichen Kanal – typisch bei Hubs und frühen Ethernet-Netzwerken. Hier ist CSMA/CD nötig, um Kollisionen zu erkennen und zu behandeln.',
+      analogy:'Vollduplex ist wie eine zweispurige Strasse: Verkehr fliesst gleichzeitig in beide Richtungen. Halbduplex ist wie eine einspurige Brücke: Nur eine Richtung kann gleichzeitig passieren, sonst gibt es einen Zusammenstoss (Kollision).',
+      hints:['Vollduplex = gleichzeitig senden und empfangen, keine Kollisionen.','Halbduplex = abwechselnd, CSMA/CD nötig.','Switches ermöglichen Vollduplex, Hubs nur Halbduplex.'],
+      questions:{
+        fill:{q:'Bei ____________ kann gleichzeitig gesendet und empfangen werden. Bei Halbduplex wird __________ zur Kollisionserkennung benötigt.', answer:'Vollduplex', keywords:['vollduplex','CSMA/CD']},
+        choice:{q:'Welches Gerät erzwingt Halbduplex-Betrieb?', options:['Switch','Router','Hub','Bridge'], correct:2},
+        explain:{q:'Erkläre den Unterschied zwischen Vollduplex und Halbduplex und warum Switches Vollduplex ermöglichen.', keywords:['gleichzeitig','senden','empfangen','kollision','CSMA','hub','switch','dediziert','kanal']}
+      },
+      difficulty:2
+    },
+    {
+      id:'kollisionsdomaene',
+      term:'Kollisionsdomäne',
+      icon:'💥',
+      short:'Netzbereich, in dem Datenkollisionen auftreten können',
+      definition:'Eine Kollisionsdomäne ist ein Netzwerksegment, in dem alle angeschlossenen Geräte das gleiche physische Übertragungsmedium teilen und Datenkollisionen auftreten können. Bei Hubs bilden alle Ports eine einzige Kollisionsdomäne. Switches hingegen teilen das Netz in separate Kollisionsdomänen auf – jeder Port ist eine eigene Kollisionsdomäne. Dadurch können Switches Vollduplex-Kommunikation ermöglichen und die Netzwerkleistung erheblich steigern. Router trennen sowohl Kollisions- als auch Broadcast-Domänen.',
+      analogy:'Eine Kollisionsdomäne ist wie ein Raum, in dem alle gleichzeitig reden: Je mehr Personen (Geräte), desto mehr Chaos (Kollisionen). Ein Hub ist ein grosser Raum für alle. Ein Switch gibt jedem ein eigenes Büro (separate Kollisionsdomäne), sodass Gespräche sich nicht stören.',
+      hints:['Hub = eine grosse Kollisionsdomäne für alle Ports.','Switch = jeder Port ist eine eigene Kollisionsdomäne.','Router trennen auch Broadcast-Domänen.'],
+      questions:{
+        fill:{q:'Ein Hub bildet ______ Kollisionsdomäne(n), ein Switch bildet pro Port ______ eigene Kollisionsdomäne(n).', answer:'eine', keywords:['eine','1','eine eigene','je eine']},
+        choice:{q:'Wie viele Kollisionsdomänen hat ein 24-Port-Switch?', options:['1','12','24','48'], correct:2},
+        explain:{q:'Erkläre, warum Switches die Netzwerkleistung gegenüber Hubs verbessern (Bezug: Kollisionsdomänen).', keywords:['kollision','port','hub','switch','segment','trennung','vollduplex','leistung','domäne']}
+      },
+      difficulty:3
+    }
+  ];
+
+  // ── State ──
+  let state = loadState();
+  let currentTerm = null;
+  let currentPhase = 0;
+  let hintIndex = 0;
+
+  function loadState(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; }
+  }
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+  function getLevel(id){
+    return (state[id] && state[id].level) || 0;
+  }
+  function setLevel(id, level){
+    if(!state[id]) state[id] = {};
+    state[id].level = Math.min(3, Math.max(0, level));
+    saveState();
+    renderGrid();
+    updateProgress();
+  }
+
+  // ── Progress ──
+  function updateProgress(){
+    const mastered = glossaryTerms.filter(t => getLevel(t.id) >= 3).length;
+    const total = glossaryTerms.length;
+    const pct = Math.round((mastered / total) * 100);
+    document.getElementById('glossary-fill').style.width = pct + '%';
+    document.getElementById('glossary-count').textContent = mastered + ' / ' + total + ' gemeistert';
+  }
+
+  // ── Grid ──
+  function renderGrid(){
+    const grid = document.getElementById('glossary-grid');
+    grid.innerHTML = '';
+    glossaryTerms.forEach(t => {
+      const level = getLevel(t.id);
+      const card = document.createElement('div');
+      card.className = 'glossary-card' + (currentTerm && currentTerm.id === t.id ? ' active' : '');
+      card.dataset.level = level;
+      card.innerHTML = '<div class="gc-icon">' + t.icon + '</div>' +
+        '<div class="gc-term">' + t.term + '</div>' +
+        '<div class="gc-short">' + t.short + '</div>' +
+        '<div class="gc-level"></div>';
+      card.addEventListener('click', () => openTerm(t));
+      grid.appendChild(card);
+    });
+  }
+
+  // ── Open Term ──
+  function openTerm(t){
+    currentTerm = t;
+    currentPhase = 0;
+    hintIndex = 0;
+    const panel = document.getElementById('glossary-learn');
+    panel.classList.add('visible');
+    document.getElementById('gl-title').textContent = t.icon + ' ' + t.term;
+    renderPhases();
+    renderPhaseContent();
+    renderGrid();
+    panel.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function closeTerm(){
+    currentTerm = null;
+    document.getElementById('glossary-learn').classList.remove('visible');
+    renderGrid();
+  }
+
+  document.getElementById('gl-close').addEventListener('click', closeTerm);
+
+  // ── Phase Indicator ──
+  function renderPhases(){
+    const container = document.getElementById('gl-phases');
+    container.innerHTML = '';
+    PHASES.forEach((p, i) => {
+      const el = document.createElement('span');
+      el.className = 'gl-phase' + (i === currentPhase ? ' current' : '') + (i < currentPhase ? ' done' : '');
+      el.textContent = (i < currentPhase ? '✓ ' : '') + p;
+      if (i <= currentPhase) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => { currentPhase = i; renderPhases(); renderPhaseContent(); });
+      }
+      container.appendChild(el);
+    });
+  }
+
+  // ── Phase Content ──
+  function renderPhaseContent(){
+    const content = document.getElementById('gl-content');
+    const t = currentTerm;
+    if(!t) return;
+    hintIndex = 0;
+
+    switch(currentPhase){
+      case 0: // Analogie
+        content.innerHTML = '<div class="gl-analogy">💡 ' + t.analogy + '</div>' +
+          '<button class="gl-btn primary" id="gl-next">Verstanden → Definition</button>';
+        document.getElementById('gl-next').addEventListener('click', nextPhase);
+        break;
+
+      case 1: // Definition
+        content.innerHTML = '<div class="gl-definition">' + t.definition + '</div>' +
+          '<button class="gl-btn primary" id="gl-next">Weiter → Lückentext</button>';
+        document.getElementById('gl-next').addEventListener('click', nextPhase);
+        break;
+
+      case 2: // Lückentext
+        content.innerHTML = '<div class="gl-question">' + t.questions.fill.q + '</div>' +
+          '<input type="text" class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben...">' +
+          '<div class="gl-hints" id="gl-hints">' +
+            t.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💡 '+h+'</div>').join('') +
+          '</div>' +
+          '<button class="gl-hint-btn" id="gl-hint-btn">💡 Hinweis anzeigen</button>' +
+          '<button class="gl-btn primary" id="gl-check-fill">Prüfen</button>' +
+          '<div id="gl-fill-feedback"></div>';
+        document.getElementById('gl-hint-btn').addEventListener('click', showHint);
+        document.getElementById('gl-check-fill').addEventListener('click', checkFill);
+        document.getElementById('gl-fill-input').addEventListener('keydown', function(e){ if(e.key==='Enter') checkFill(); });
+        break;
+
+      case 3: // Multiple Choice
+        const q = t.questions.choice;
+        content.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+          '<div class="gl-choices" id="gl-choices">' +
+            q.options.map((o,i) => '<button class="gl-choice" data-idx="'+i+'">'+o+'</button>').join('') +
+          '</div>' +
+          '<div id="gl-choice-feedback"></div>';
+        document.querySelectorAll('.gl-choice').forEach(btn => {
+          btn.addEventListener('click', function(){ checkChoice(parseInt(this.dataset.idx)); });
+        });
+        break;
+
+      case 4: // Erklärung
+        content.innerHTML = '<div class="gl-question">' + t.questions.explain.q + '</div>' +
+          '<textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten..."></textarea>' +
+          '<div class="gl-hints" id="gl-hints">' +
+            t.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💡 '+h+'</div>').join('') +
+          '</div>' +
+          '<button class="gl-hint-btn" id="gl-hint-btn">💡 Hinweis anzeigen</button>' +
+          '<button class="gl-btn primary" id="gl-check-explain">Antwort prüfen</button>' +
+          '<div id="gl-explain-feedback"></div>';
+        document.getElementById('gl-hint-btn').addEventListener('click', showHint);
+        document.getElementById('gl-check-explain').addEventListener('click', checkExplain);
+        break;
+    }
+  }
+
+  function nextPhase(){
+    if(currentPhase < PHASES.length - 1){
+      currentPhase++;
+      renderPhases();
+      renderPhaseContent();
+    }
+  }
+
+  function showHint(){
+    if(hintIndex < 3){
+      const el = document.getElementById('gl-hint-' + hintIndex);
+      if(el) el.classList.add('visible');
+      hintIndex++;
+      if(hintIndex >= 3){
+        const btn = document.getElementById('gl-hint-btn');
+        if(btn) btn.style.display = 'none';
+      }
+    }
+  }
+
+  // ── Check Fill ──
+  function checkFill(){
+    const input = document.getElementById('gl-fill-input').value.trim().toLowerCase();
+    const t = currentTerm;
+    const fb = document.getElementById('gl-fill-feedback');
+    if(!input){ fb.innerHTML = '<div class="gl-feedback info">Bitte gib eine Antwort ein.</div>'; return; }
+
+    const keywords = t.questions.fill.keywords;
+    const found = keywords.filter(k => input.includes(k.toLowerCase()));
+    const missing = keywords.filter(k => !input.includes(k.toLowerCase()));
+    const score = found.length / keywords.length;
+
+    let html = '<div class="gl-feedback ' + (score >= 0.5 ? 'success' : 'error') + '">';
+    if(score >= 0.5){
+      html += '✓ ' + (score === 1 ? 'Perfekt! Alle Schlüsselbegriffe erkannt.' : 'Gut! Die meisten Begriffe erkannt.') + '<br>';
+    } else {
+      html += '✗ Leider nicht ganz richtig.<br>';
+    }
+    html += '<div style="margin-top:8px">';
+    found.forEach(k => { html += '<span class="gl-keyword found">✓ '+k+'</span>'; });
+    missing.forEach(k => { html += '<span class="gl-keyword missing">✗ '+k+'</span>'; });
+    html += '</div></div>';
+
+    if(score >= 0.5){
+      html += '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Weiter → Multiple Choice</button>';
+    } else {
+      html += '<button class="gl-btn primary" id="gl-retry" style="margin-top:12px">Nochmal versuchen</button>';
+    }
+    fb.innerHTML = html;
+
+    if(score >= 0.5){
+      document.getElementById('gl-next').addEventListener('click', nextPhase);
+    } else {
+      document.getElementById('gl-retry').addEventListener('click', function(){
+        document.getElementById('gl-fill-input').value = '';
+        fb.innerHTML = '';
+        document.getElementById('gl-fill-input').focus();
+      });
+    }
+  }
+
+  // ── Check Choice ──
+  function checkChoice(idx){
+    const t = currentTerm;
+    const correct = t.questions.choice.correct;
+    const fb = document.getElementById('gl-choice-feedback');
+    const btns = document.querySelectorAll('.gl-choice');
+
+    btns.forEach((b, i) => {
+      b.style.pointerEvents = 'none';
+      if(i === correct) b.classList.add('correct');
+      if(i === idx && idx !== correct) b.classList.add('wrong');
+    });
+
+    if(idx === correct){
+      fb.innerHTML = '<div class="gl-feedback success">✓ Richtig!</div>' +
+        '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Weiter → Erklärung</button>';
+      document.getElementById('gl-next').addEventListener('click', nextPhase);
+    } else {
+      fb.innerHTML = '<div class="gl-feedback error">✗ Falsch. Die richtige Antwort ist markiert.</div>' +
+        '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Trotzdem weiter</button>';
+      document.getElementById('gl-next').addEventListener('click', nextPhase);
+    }
+  }
+
+  // ── Check Explain ──
+  function checkExplain(){
+    const input = document.getElementById('gl-explain-input').value.trim().toLowerCase();
+    const t = currentTerm;
+    const fb = document.getElementById('gl-explain-feedback');
+    if(input.length < 15){ fb.innerHTML = '<div class="gl-feedback info">Bitte schreibe eine ausführlichere Erklärung (mind. 15 Zeichen).</div>'; return; }
+
+    const keywords = t.questions.explain.keywords;
+    const found = keywords.filter(k => input.includes(k.toLowerCase()));
+    const missing = keywords.filter(k => !input.includes(k.toLowerCase()));
+    const score = found.length / keywords.length;
+
+    let newLevel;
+    if(score >= 0.6) newLevel = 3;
+    else if(score >= 0.35) newLevel = 2;
+    else newLevel = Math.max(getLevel(t.id), 1);
+
+    setLevel(t.id, newLevel);
+
+    const labels = ['Nicht gelernt','Gesehen','Verstanden','Gemeistert'];
+    const colors = ['var(--muted)','var(--yellow)','var(--cyan)','var(--green)'];
+
+    let html = '<div class="gl-feedback ' + (score >= 0.35 ? 'success' : 'error') + '">';
+    if(score >= 0.6){
+      html += '🎉 Ausgezeichnet! Begriff gemeistert!';
+    } else if(score >= 0.35){
+      html += '👍 Gut! Die wichtigsten Punkte erkannt.';
+    } else {
+      html += '📝 Noch nicht ganz. Wiederhole den Begriff später.';
+    }
+    html += '<br><span style="color:'+colors[newLevel]+';font-weight:600">Level: '+labels[newLevel]+'</span>';
+    html += '<div style="margin-top:8px">';
+    found.forEach(k => { html += '<span class="gl-keyword found">✓ '+k+'</span>'; });
+    missing.forEach(k => { html += '<span class="gl-keyword missing">✗ '+k+'</span>'; });
+    html += '</div></div>';
+    html += '<button class="gl-btn primary" id="gl-finish" style="margin-top:12px">Abschliessen</button>';
+    fb.innerHTML = html;
+
+    document.getElementById('gl-finish').addEventListener('click', closeTerm);
+  }
+
+  // ── Tooltip ──
+  const tooltip = document.getElementById('glossary-tooltip');
+  const ttName = document.getElementById('gt-name');
+  const ttShort = document.getElementById('gt-short');
+
+  function initTooltips(){
+    const selectors = [
+      '.m-desc', '.m-info p', '.m-info h3', '.m-info .m-en',
+      '.summary-card p', '.naming-card', '.naming-ex .ex-desc',
+      '.fiber-card p', '.compare-table td',
+      '.prop-item .p-val', '.section-title h2'
+    ];
+
+    const termMap = {};
+    glossaryTerms.forEach(t => {
+      const searchTerms = [t.term];
+      if(t.id === 'ethernet') searchTerms.push('Ethernet','IEEE 802.3','CSMA/CD');
+      if(t.id === 'mac-adresse') searchTerms.push('MAC-Adresse','MAC');
+      if(t.id === 'ethernet-frame') searchTerms.push('Frame','Frames');
+      if(t.id === 'twisted-pair') searchTerms.push('Twisted Pair','TP','Twisted-Pair','RJ-45');
+      if(t.id === 'glasfaser') searchTerms.push('Glasfaser','LWL','Lichtwellenleiter','Singlemode','Multimode');
+      if(t.id === 'bandbreite') searchTerms.push('Bandbreite','Mbit/s','Gbit/s');
+      if(t.id === 'vollduplex-halbduplex') searchTerms.push('Vollduplex','Halbduplex','Full Duplex','Half Duplex');
+      if(t.id === 'kollisionsdomaene') searchTerms.push('Kollisionsdomäne','Kollision','Kollisionen');
+      searchTerms.forEach(s => { termMap[s.toLowerCase()] = t; });
+    });
+
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        if(el.querySelector('.glossary-term')) return;
+        let html = el.innerHTML;
+        const sortedKeys = Object.keys(termMap).sort((a,b) => b.length - a.length);
+        sortedKeys.forEach(key => {
+          const t = termMap[key];
+          const regex = new RegExp('(?<![\\w-])(' + key.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')(?![\\w-])', 'gi');
+          let replaced = false;
+          html = html.replace(regex, function(match){
+            if(replaced) return match;
+            replaced = true;
+            return '<span class="glossary-term" data-glossary-id="'+t.id+'">'+match+'</span>';
+          });
+        });
+        el.innerHTML = html;
+      });
+    });
+
+    document.querySelectorAll('.glossary-term').forEach(el => {
+      el.addEventListener('mouseenter', function(e){
+        const t = glossaryTerms.find(x => x.id === this.dataset.glossaryId);
+        if(!t) return;
+        ttName.textContent = t.icon + ' ' + t.term;
+        ttShort.textContent = t.short;
+        tooltip.style.display = 'block';
+        positionTooltip(e);
+      });
+      el.addEventListener('mousemove', positionTooltip);
+      el.addEventListener('mouseleave', function(){
+        tooltip.style.display = 'none';
+      });
+    });
+  }
+
+  function positionTooltip(e){
+    let x = e.clientX + 16;
+    let y = e.clientY + 16;
+    const w = 260;
+    const h = 100;
+    if(x + w > window.innerWidth) x = e.clientX - w - 10;
+    if(y + h > window.innerHeight) y = e.clientY - h - 10;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  // ── Init ──
+  renderGrid();
+  updateProgress();
+  initTooltips();
+})();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

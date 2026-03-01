@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dualzahlen – Interaktiver Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0e13;
+    --surface: #14171e;
+    --border: #1e2230;
+    --text: #e2e4ea;
+    --muted: #6b7084;
+    --accent: #6c63ff;
+    --green: #51cf66;
+    --red: #ff6b6b;
+    --yellow: #fbbf24;
+    --cyan: #38bdf8;
+    --pink: #f472b6;
+    --purple: #a78bfa;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Outfit',sans-serif; min-height:100vh; overflow-x:hidden; }
+  .noise { position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+  .glow-orb { position:fixed; width:500px; height:500px; border-radius:50%; filter:blur(120px); opacity:.06; pointer-events:none; z-index:0; }
+  .glow-orb.one { background:var(--cyan); top:-120px; left:-80px; }
+  .glow-orb.two { background:var(--pink); bottom:-160px; right:-100px; }
+  .container { position:relative; z-index:1; max-width:900px; margin:0 auto; padding:40px 24px 80px; }
+
+  header { text-align:center; margin-bottom:48px; animation:fadeDown .8s ease; }
+  header .tag { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  header h1 { font-weight:900; font-size:clamp(26px,5vw,44px); line-height:1.1; background:linear-gradient(135deg,#fff,#9ba0b5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+  header p { font-weight:300; color:var(--muted); font-size:15px; max-width:560px; margin:0 auto; }
+
+  /* ── Stellenwerttafel ── */
+  .section-title { display:flex; align-items:center; gap:12px; margin-bottom:18px; margin-top:52px; flex-wrap:wrap; }
+  .section-title .ic { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; font-size:18px; flex-shrink:0; }
+  .section-title h2 { font-size:20px; font-weight:700; }
+
+  .stelle-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:24px; animation:fadeUp .6s ease .1s both; overflow-x:auto;
+  }
+  .stelle-table {
+    display:flex; gap:0; width:100%; min-width:500px;
+  }
+  .stelle-col {
+    flex:1; text-align:center; padding:10px 6px;
+    border-right:1px solid var(--border);
+    transition: all .3s;
+  }
+  .stelle-col:last-child { border-right:none; }
+  .stelle-col:hover { background:rgba(255,255,255,.03); }
+  .stelle-col .power {
+    font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--cyan);
+    margin-bottom:4px;
+  }
+  .stelle-col .value {
+    font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700; color:var(--text);
+    margin-bottom:4px;
+  }
+  .stelle-col .bit-label {
+    font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted);
+  }
+
+  .method-card {
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:20px 22px; margin-top:12px; animation:fadeUp .6s ease .15s both;
+  }
+  .method-card h4 { font-size:14px; font-weight:700; margin-bottom:8px; display:flex; align-items:center; gap:8px; }
+  .method-card p { font-size:13px; font-weight:300; color:var(--muted); line-height:1.7; }
+  .method-card p strong { color:var(--text); font-weight:600; }
+  .method-card code {
+    font-family:'JetBrains Mono',monospace; font-size:12px;
+    background:rgba(255,255,255,.05); padding:2px 7px; border-radius:4px;
+    color:var(--cyan);
+  }
+
+  /* ── Mode Tabs ── */
+  .mode-tabs {
+    display:flex; gap:6px; margin-bottom:18px; animation:fadeUp .6s ease .2s both;
+  }
+  .mode-tab {
+    font-family:'JetBrains Mono',monospace; font-size:12px; font-weight:600;
+    padding:12px 16px; border-radius:10px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--muted); cursor:pointer; transition:all .25s;
+    flex:1; text-align:center;
+  }
+  .mode-tab:hover { background:rgba(255,255,255,.04); }
+  .mode-tab.active { border-color:var(--accent); color:var(--text); background:rgba(108,99,255,.08); }
+
+  /* ── Exercise Area ── */
+  .exercise-area {
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:32px 28px; min-height:300px;
+    animation:fadeUp .6s ease .25s both;
+    display:flex; flex-direction:column; align-items:center;
+  }
+  .exercise-label {
+    font-family:'JetBrains Mono',monospace; font-size:10px; letter-spacing:2px;
+    text-transform:uppercase; color:var(--muted); margin-bottom:16px;
+  }
+
+  .task-display {
+    font-family:'JetBrains Mono',monospace;
+    font-size:clamp(22px, 5vw, 36px); font-weight:700;
+    text-align:center; margin-bottom:8px;
+    line-height:1.4;
+  }
+  .task-sub {
+    font-size:13px; color:var(--muted); font-weight:300; margin-bottom:24px;
+    text-align:center;
+  }
+
+  .input-row {
+    display:flex; align-items:center; gap:10px; margin-bottom:20px; flex-wrap:wrap;
+    justify-content:center;
+  }
+  .input-row input {
+    font-family:'JetBrains Mono',monospace;
+    font-size:20px; font-weight:600;
+    background:rgba(255,255,255,.04); border:2px solid var(--border);
+    border-radius:10px; padding:12px 18px;
+    color:var(--text); outline:none; width:220px;
+    text-align:center; transition:all .25s;
+  }
+  .input-row input:focus { border-color:var(--accent); }
+  .input-row input.correct { border-color:var(--green); background:rgba(81,207,102,.06); }
+  .input-row input.wrong { border-color:var(--red); background:rgba(255,107,107,.06); }
+
+  .input-row .suffix {
+    font-family:'JetBrains Mono',monospace; font-size:14px; color:var(--muted);
+  }
+
+  .btn {
+    font-family:'Outfit',sans-serif; font-size:14px; font-weight:600;
+    padding:10px 28px; border-radius:10px; border:none;
+    cursor:pointer; transition:all .25s;
+  }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:hover { background:#5a52e0; transform:translateY(-1px); }
+  .btn-secondary {
+    background:rgba(255,255,255,.06); color:var(--text);
+    border:1px solid var(--border);
+  }
+  .btn-secondary:hover { background:rgba(255,255,255,.1); }
+
+  .btn-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+
+  .feedback {
+    margin-top:16px; font-size:14px; font-weight:500;
+    text-align:center; min-height:24px;
+    transition:all .3s;
+  }
+  .feedback.correct { color:var(--green); }
+  .feedback.wrong { color:var(--red); }
+
+  .solution-box {
+    margin-top:12px; padding:16px 20px;
+    background:rgba(255,255,255,.02); border:1px solid var(--border);
+    border-radius:10px; font-family:'JetBrains Mono',monospace;
+    font-size:13px; color:var(--muted); line-height:1.8;
+    text-align:left; max-width:100%; overflow-x:auto;
+    display:none;
+  }
+  .solution-box.show { display:block; animation:fadeUp .3s ease; }
+  .solution-box strong { color:var(--text); font-weight:600; }
+  .solution-box .step { color:var(--cyan); }
+  .solution-box .carry { color:var(--yellow); font-weight:600; }
+  .solution-box .result { color:var(--green); font-weight:700; font-size:15px; }
+
+  /* ── Score Bar ── */
+  .score-bar {
+    display:flex; gap:16px; justify-content:center;
+    margin-bottom:24px; flex-wrap:wrap;
+  }
+  .score-item {
+    display:flex; align-items:center; gap:6px;
+    font-family:'JetBrains Mono',monospace; font-size:13px;
+  }
+  .score-dot {
+    width:10px; height:10px; border-radius:50%;
+  }
+
+  /* ── Bit Toggle (interactive reference) ── */
+  .bit-toggle-row {
+    display:flex; gap:4px; margin-top:20px; justify-content:center;
+  }
+  .bit-cell {
+    width:48px; height:56px; border-radius:8px;
+    background:rgba(255,255,255,.03); border:1px solid var(--border);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .2s; user-select:none;
+  }
+  .bit-cell:hover { background:rgba(255,255,255,.06); }
+  .bit-cell.on { background:rgba(56,189,248,.1); border-color:var(--cyan); }
+  .bit-cell .bit-val {
+    font-family:'JetBrains Mono',monospace; font-size:20px; font-weight:700;
+  }
+  .bit-cell .bit-pow {
+    font-family:'JetBrains Mono',monospace; font-size:8px; color:var(--muted);
+  }
+  .bit-result {
+    margin-top:10px; font-family:'JetBrains Mono',monospace;
+    font-size:14px; color:var(--muted); text-align:center;
+  }
+  .bit-result strong { color:var(--text); font-weight:700; font-size:18px; }
+
+  /* ── Methods grid ── */
+  .methods-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;
+    animation:fadeUp .6s ease .15s both;
+  }
+  @media (max-width:600px) { .methods-grid { grid-template-columns:1fr; } }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="tag">Zahlensysteme</div>
+    <h1>Dualzahlen-Trainer</h1>
+    <p>Interaktiv üben: Umrechnung, Addition und Subtraktion im Binärsystem.</p>
+  </header>
+
+  <!-- ═══════════════════════════════════
+       STELLENWERTTAFEL
+       ═══════════════════════════════════ -->
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple));">📊</div>
+    <h2>Stellenwerttafel & Bit-Spielwiese</h2>
+  </div>
+
+  <div class="stelle-card">
+    <div class="stelle-table">
+      <div class="stelle-col"><div class="power">2⁷</div><div class="value">128</div><div class="bit-label">Bit 7</div></div>
+      <div class="stelle-col"><div class="power">2⁶</div><div class="value">64</div><div class="bit-label">Bit 6</div></div>
+      <div class="stelle-col"><div class="power">2⁵</div><div class="value">32</div><div class="bit-label">Bit 5</div></div>
+      <div class="stelle-col"><div class="power">2⁴</div><div class="value">16</div><div class="bit-label">Bit 4</div></div>
+      <div class="stelle-col"><div class="power">2³</div><div class="value">8</div><div class="bit-label">Bit 3</div></div>
+      <div class="stelle-col"><div class="power">2²</div><div class="value">4</div><div class="bit-label">Bit 2</div></div>
+      <div class="stelle-col"><div class="power">2¹</div><div class="value">2</div><div class="bit-label">Bit 1</div></div>
+      <div class="stelle-col"><div class="power">2⁰</div><div class="value">1</div><div class="bit-label">Bit 0</div></div>
+    </div>
+    <div class="bit-toggle-row" id="bit-toggles"></div>
+    <div class="bit-result" id="bit-result">Dezimal: <strong>0</strong> &nbsp;│&nbsp; Binär: <strong>00000000</strong></div>
+  </div>
+
+  <div class="methods-grid">
+    <div class="method-card">
+      <h4>🔄 Dezimal → Binär</h4>
+      <p><strong>Divisionsmethode:</strong> Zahl fortlaufend durch 2 teilen, den <strong>Rest</strong> notieren. Die Reste <strong>von unten nach oben</strong> gelesen ergeben die Dualzahl.<br><br>
+      Beispiel: <code>13 ÷ 2 = 6 R1</code>, <code>6 ÷ 2 = 3 R0</code>, <code>3 ÷ 2 = 1 R1</code>, <code>1 ÷ 2 = 0 R1</code> → <code>1101₂</code></p>
+    </div>
+    <div class="method-card">
+      <h4>🔄 Binär → Dezimal</h4>
+      <p><strong>Stellenwertmethode:</strong> Jede <code>1</code> mit ihrem <strong>Stellenwert</strong> (2ⁿ) multiplizieren und alle Werte <strong>addieren</strong>.<br><br>
+      Beispiel: <code>1101₂</code> = 1×8 + 1×4 + 0×2 + 1×1 = <code>13₁₀</code></p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       ÜBUNGSMODUS
+       ═══════════════════════════════════ -->
+  <div class="section-title" style="margin-top:56px;">
+    <div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan));">🏋️</div>
+    <h2>Übungen</h2>
+  </div>
+
+  <div class="mode-tabs">
+    <div class="mode-tab active" data-mode="dec2bin">Dez → Bin</div>
+    <div class="mode-tab" data-mode="bin2dec">Bin → Dez</div>
+    <div class="mode-tab" data-mode="add">Addition</div>
+    <div class="mode-tab" data-mode="sub">Subtraktion</div>
+  </div>
+
+  <div class="score-bar">
+    <div class="score-item"><div class="score-dot" style="background:var(--green);"></div> Richtig: <span id="score-correct">0</span></div>
+    <div class="score-item"><div class="score-dot" style="background:var(--red);"></div> Falsch: <span id="score-wrong">0</span></div>
+    <div class="score-item"><div class="score-dot" style="background:var(--yellow);"></div> Serie: <span id="score-streak">0</span> 🔥</div>
+  </div>
+
+  <div class="exercise-area" id="exercise-area">
+    <!-- dynamically filled -->
+  </div>
+
+  <!-- ═══════════════════════════════════
+       GLOSSAR – LERNKARTEN
+       ═══════════════════════════════════ -->
+  <div class="glossary-section" id="glossary-section">
+    <div class="section-title">
+      <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--cyan));">📖</div>
+      <h2>Glossar – Fachbegriffe lernen</h2>
+    </div>
+
+    <div class="glossary-progress-bar">
+      <div class="gp-text">Lernfortschritt</div>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-progress-fill" style="width:0%"></div></div>
+      <div class="gp-count" id="glossary-progress-count">0 / 8 gemeistert</div>
+    </div>
+
+    <div class="glossary-grid" id="glossary-grid"></div>
+    <div class="glossary-learn" id="glossary-learn"></div>
+  </div>
+
+  <div class="glossary-tooltip" id="glossary-tooltip">
+    <div class="gt-name"></div>
+    <div class="gt-short"></div>
+    <div class="gt-link">Klicken zum Lernen</div>
+  </div>
+</div>
+
+<script>
+// ── Bit Toggle Playground ──
+const bitToggles = document.getElementById('bit-toggles');
+const bitResult = document.getElementById('bit-result');
+let bits = [0,0,0,0,0,0,0,0];
+
+for (let i = 7; i >= 0; i--) {
+  const cell = document.createElement('div');
+  cell.className = 'bit-cell';
+  cell.innerHTML = `<div class="bit-val">0</div><div class="bit-pow">2${superscript(i)}</div>`;
+  cell.addEventListener('click', () => {
+    bits[7-i] = bits[7-i] ? 0 : 1;
+    cell.classList.toggle('on', bits[7-i] === 1);
+    cell.querySelector('.bit-val').textContent = bits[7-i];
+    cell.querySelector('.bit-val').style.color = bits[7-i] ? 'var(--cyan)' : 'var(--text)';
+    updateBitResult();
+  });
+  bitToggles.appendChild(cell);
+}
+
+function superscript(n) {
+  const sup = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+  return String(n).split('').map(d => sup[+d]).join('');
+}
+
+function updateBitResult() {
+  const binStr = bits.join('');
+  let dec = 0;
+  for (let i = 0; i < 8; i++) dec += bits[i] * Math.pow(2, 7-i);
+  bitResult.innerHTML = `Dezimal: <strong>${dec}</strong> &nbsp;│&nbsp; Binär: <strong>${binStr}</strong>`;
+}
+
+// ── Exercise Engine ──
+let mode = 'dec2bin';
+let currentTask = null;
+let score = { correct: 0, wrong: 0, streak: 0 };
+
+const modes = {
+  dec2bin: { label: 'DEZIMAL → BINÄR', generate: genDec2Bin },
+  bin2dec: { label: 'BINÄR → DEZIMAL', generate: genBin2Dec },
+  add: { label: 'BINÄRE ADDITION', generate: genAdd },
+  sub: { label: 'BINÄRE SUBTRAKTION', generate: genSub },
+};
+
+// Tab switching
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    mode = tab.dataset.mode;
+    newTask();
+  });
+});
+
+function rand(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
+function toBin(n) { return n.toString(2); }
+function padBin(s, len) { return s.padStart(len, '0'); }
+
+function genDec2Bin() {
+  const n = rand(1, 255);
+  return {
+    display: `<span style="color:var(--yellow)">${n}</span><sub style="font-size:14px;color:var(--muted)">10</sub>`,
+    sub: 'Gib die Dualzahl ein (ohne führende Nullen)',
+    answer: toBin(n),
+    suffix: '₂',
+    solution: buildDivSolution(n),
+    inputPlaceholder: 'z.B. 1101',
+  };
+}
+
+function genBin2Dec() {
+  const n = rand(1, 255);
+  const bin = toBin(n);
+  return {
+    display: `<span style="color:var(--cyan)">${bin}</span><sub style="font-size:14px;color:var(--muted)">2</sub>`,
+    sub: 'Gib die Dezimalzahl ein',
+    answer: String(n),
+    suffix: '₁₀',
+    solution: buildPlaceSolution(bin, n),
+    inputPlaceholder: 'z.B. 42',
+  };
+}
+
+function genAdd() {
+  const a = rand(1, 127);
+  const b = rand(1, 128);
+  const sum = a + b;
+  const binA = toBin(a), binB = toBin(b), binSum = toBin(sum);
+  const len = Math.max(binA.length, binB.length);
+  return {
+    display: `<span style="color:var(--cyan)">${padBin(binA,len)}</span><br><span style="color:var(--green)">+ ${padBin(binB,len)}</span>`,
+    sub: `(${a} + ${b} = ${sum} im Dezimalsystem)`,
+    answer: binSum,
+    suffix: '₂',
+    solution: buildAddSolution(a, b),
+    inputPlaceholder: 'Ergebnis binär',
+  };
+}
+
+function genSub() {
+  let a = rand(2, 255);
+  let b = rand(1, a);
+  const diff = a - b;
+  const binA = toBin(a), binB = toBin(b), binDiff = toBin(diff);
+  const len = Math.max(binA.length, binB.length);
+  return {
+    display: `<span style="color:var(--cyan)">${padBin(binA,len)}</span><br><span style="color:var(--pink)">− ${padBin(binB,len)}</span>`,
+    sub: `(${a} − ${b} = ${diff} im Dezimalsystem)`,
+    answer: binDiff,
+    suffix: '₂',
+    solution: buildSubSolution(a, b),
+    inputPlaceholder: 'Ergebnis binär',
+  };
+}
+
+// ── Solution Builders ──
+function buildDivSolution(n) {
+  let lines = [];
+  let v = n;
+  while (v > 0) {
+    const r = v % 2;
+    const q = Math.floor(v / 2);
+    lines.push(`<span class="step">${v} ÷ 2 = ${q}</span>  Rest <span class="carry">${r}</span>`);
+    v = q;
+  }
+  lines.push('');
+  lines.push(`Reste von unten lesen → <span class="result">${toBin(n)}₂</span>`);
+  return lines.join('\n');
+}
+
+function buildPlaceSolution(bin, dec) {
+  let parts = [];
+  for (let i = 0; i < bin.length; i++) {
+    const pos = bin.length - 1 - i;
+    if (bin[i] === '1') parts.push(`<span class="carry">1</span>×${Math.pow(2,pos)}`);
+  }
+  return `${parts.join(' + ')}\n= <span class="result">${dec}₁₀</span>`;
+}
+
+function buildAddSolution(a, b) {
+  const sum = a + b;
+  const binA = toBin(a), binB = toBin(b), binSum = toBin(sum);
+  const len = Math.max(binA.length, binB.length) + 1;
+  const pA = padBin(binA, len), pB = padBin(binB, len), pS = padBin(binSum, len);
+  
+  let carries = '';
+  let carry = 0;
+  let carryArr = new Array(len).fill(' ');
+  for (let i = len-1; i >= 0; i--) {
+    const dA = +pA[i], dB = +pB[i];
+    const s = dA + dB + carry;
+    carry = s >= 2 ? 1 : 0;
+    if (carry && i > 0) carryArr[i-1] = '1';
+  }
+  
+  const carryLine = carryArr.map(c => c === '1' ? `<span class="carry">${c}</span>` : ' ').join('');
+  return `Übertrag:  ${carryLine}\n           ${pA}\n        <span class="step">+  ${pB}</span>\n        ─────${'─'.repeat(len)}\n        =  <span class="result">${pS}</span>₂  (= ${sum}₁₀)\n\n<span style="color:var(--muted)">Regeln: 0+0=0, 0+1=1, 1+1=10 (0 Übertrag 1), 1+1+1=11 (1 Übertrag 1)</span>`;
+}
+
+function buildSubSolution(a, b) {
+  const diff = a - b;
+  const binA = toBin(a), binB = toBin(b), binD = toBin(diff);
+  const len = Math.max(binA.length, binB.length);
+  const pA = padBin(binA, len), pB = padBin(binB, len), pD = padBin(binD, len);
+  
+  return `           ${pA}\n        <span class="step">−  ${pB}</span>\n        ─────${'─'.repeat(len)}\n        =  <span class="result">${pD}</span>₂  (= ${diff}₁₀)\n\n<span style="color:var(--muted)">Tipp: Im Zweifelsfall dezimal rechnen\nund das Ergebnis zurück umwandeln.</span>`;
+}
+
+// ── Render Exercise ──
+function newTask() {
+  currentTask = modes[mode].generate();
+  const area = document.getElementById('exercise-area');
+  area.innerHTML = `
+    <div class="exercise-label">${modes[mode].label}</div>
+    <div class="task-display">${currentTask.display}</div>
+    <div class="task-sub">${currentTask.sub}</div>
+    <div class="input-row">
+      <input type="text" id="user-answer" placeholder="${currentTask.inputPlaceholder}" autocomplete="off" spellcheck="false">
+      <span class="suffix">${currentTask.suffix}</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-check">Prüfen ↵</button>
+      <button class="btn btn-secondary" id="btn-show">Lösung zeigen</button>
+      <button class="btn btn-secondary" id="btn-skip">Überspringen →</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="solution-box" id="solution-box"></div>
+  `;
+
+  const input = document.getElementById('user-answer');
+  input.focus();
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+  document.getElementById('btn-check').addEventListener('click', checkAnswer);
+  document.getElementById('btn-show').addEventListener('click', showSolution);
+  document.getElementById('btn-skip').addEventListener('click', newTask);
+}
+
+function checkAnswer() {
+  const input = document.getElementById('user-answer');
+  const fb = document.getElementById('feedback');
+  const raw = input.value.trim().replace(/^0+/, '') || '0';
+  const correct = currentTask.answer.replace(/^0+/, '') || '0';
+
+  if (!input.value.trim()) return;
+
+  if (raw === correct) {
+    input.classList.add('correct');
+    input.classList.remove('wrong');
+    fb.textContent = '✓ Richtig! Weiter so!';
+    fb.className = 'feedback correct';
+    score.correct++;
+    score.streak++;
+    updateScore();
+    setTimeout(newTask, 1200);
+  } else {
+    input.classList.add('wrong');
+    input.classList.remove('correct');
+    fb.textContent = `✗ Falsch – die richtige Antwort ist: ${currentTask.answer}`;
+    fb.className = 'feedback wrong';
+    score.wrong++;
+    score.streak = 0;
+    updateScore();
+    showSolution();
+  }
+}
+
+function showSolution() {
+  const box = document.getElementById('solution-box');
+  box.innerHTML = currentTask.solution;
+  box.classList.add('show');
+}
+
+function updateScore() {
+  document.getElementById('score-correct').textContent = score.correct;
+  document.getElementById('score-wrong').textContent = score.wrong;
+  document.getElementById('score-streak').textContent = score.streak;
+}
+
+// Init
+newTask();
+
+// ══════════════════════════════════════════════
+//  GLOSSAR – Interaktives Lern-System
+// ══════════════════════════════════════════════
+
+const GLOSSARY_KEY = 'glossary-dualzahlen';
+
+const glossaryTerms = [
+  {
+    id: 'dualsystem',
+    term: 'Dualsystem',
+    icon: '🔢',
+    short: 'Zahlensystem zur Basis 2 mit den Ziffern 0 und 1.',
+    definition: 'Das Dualsystem (auch Binärsystem) ist ein Stellenwertsystem zur Basis 2. Es verwendet ausschließlich die Ziffern 0 und 1. Jede Stelle repräsentiert eine Zweierpotenz (2⁰, 2¹, 2², …). Es ist das fundamentale Zahlensystem der digitalen Datenverarbeitung, da elektronische Schaltungen zwei Zustände (an/aus, Spannung/keine Spannung) unterscheiden können.',
+    analogy: 'Stell dir einen Lichtschalter vor: Er kennt nur AN (1) und AUS (0). Wenn du 8 Schalter nebeneinander hast, kannst du mit ihren Kombinationen 256 verschiedene Zahlen darstellen – genau wie ein Byte im Computer.',
+    hints: [
+      'Das Dualsystem wird auch Binärsystem genannt – beide Begriffe sind synonym.',
+      'Die größte Zahl mit n Bits ist 2ⁿ − 1. Mit 8 Bits: 2⁸ − 1 = 255.',
+      'Jede Stelle im Dualsystem hat den doppelten Wert der rechten Nachbarstelle: 1, 2, 4, 8, 16, 32, …'
+    ],
+    questions: {
+      fill: {
+        q: 'Das Dualsystem ist ein Stellenwertsystem zur Basis ___.',
+        a: '2',
+        accept: ['2', 'zwei']
+      },
+      choice: {
+        q: 'Welche Ziffern werden im Dualsystem verwendet?',
+        options: ['0 und 1', '0 bis 9', '0 bis 7', '0 bis F'],
+        correct: 0
+      },
+      explain: {
+        q: 'Erkläre, warum Computer das Dualsystem verwenden und nicht das Dezimalsystem.',
+        keywords: ['zwei', 'zustände', 'an', 'aus', 'spannung', 'schaltung', 'elektronisch', 'strom', 'bit', 'transistor']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'hexadezimalsystem',
+    term: 'Hexadezimalsystem',
+    icon: '🔷',
+    short: 'Zahlensystem zur Basis 16 (Ziffern 0–9, A–F).',
+    definition: 'Das Hexadezimalsystem ist ein Stellenwertsystem zur Basis 16. Es verwendet die Ziffern 0–9 und die Buchstaben A–F (A=10, B=11, C=12, D=13, E=14, F=15). Es wird häufig in der Informatik verwendet, weil sich jeweils 4 Binärstellen exakt auf eine Hexadezimalziffer abbilden lassen. Dadurch lassen sich lange Binärzahlen kompakt darstellen.',
+    analogy: 'Hexadezimal ist wie eine Kurzschrift für Binärzahlen: Statt 8 Nullen und Einsen aufzuschreiben (z. B. 11111111₂), schreibst du einfach FF₁₆. Wie eine Abkürzung, die Platz spart, aber die gleiche Information enthält.',
+    hints: [
+      'Jede Hex-Ziffer entspricht genau 4 Bits: F₁₆ = 1111₂, A₁₆ = 1010₂.',
+      'Hex wird oft mit dem Präfix 0x geschrieben, z. B. 0xFF für 255.',
+      'Farben in HTML nutzen Hex: #FF0000 = Rot (je 2 Hex-Ziffern für R, G, B).'
+    ],
+    questions: {
+      fill: {
+        q: 'Das Hexadezimalsystem hat die Basis ___.',
+        a: '16',
+        accept: ['16', 'sechzehn']
+      },
+      choice: {
+        q: 'Welcher Hexadezimalwert entspricht der Dezimalzahl 15?',
+        options: ['F', 'E', '10', 'FF'],
+        correct: 0
+      },
+      explain: {
+        q: 'Warum wird das Hexadezimalsystem in der Informatik bevorzugt gegenüber dem Dezimalsystem zur Darstellung von Binärdaten?',
+        keywords: ['4', 'bit', 'binär', 'kompakt', 'abbilden', 'kürzer', 'darstellung', 'stelle', 'umrechnung', 'einfach']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'oktalsystem',
+    term: 'Oktalsystem',
+    icon: '🔶',
+    short: 'Zahlensystem zur Basis 8 (Ziffern 0–7).',
+    definition: 'Das Oktalsystem ist ein Stellenwertsystem zur Basis 8. Es verwendet die Ziffern 0 bis 7. Jede Oktalziffer entspricht genau 3 Binärstellen. Das Oktalsystem wird unter anderem in Unix/Linux-Dateiberechtigungen verwendet (z. B. chmod 755). Historisch war es auch bei frühen Computern verbreitet, die Wortlängen als Vielfache von 3 Bit nutzten.',
+    analogy: 'Stell dir vor, du gruppierst immer 3 Lichtschalter zu einem Paket. Jedes Paket kann 8 verschiedene Kombinationen haben (000 bis 111), also eine Oktalziffer (0 bis 7). Das ist effizienter als jede einzelne Stelle binär aufzuschreiben.',
+    hints: [
+      'Jede Oktalziffer entspricht genau 3 Bits: 7₈ = 111₂, 5₈ = 101₂.',
+      'chmod 755: 7=rwx (111₂), 5=r-x (101₂) – Oktalsystem in der Praxis.',
+      'Zum Umrechnen Binär→Oktal: Von rechts 3er-Gruppen bilden und einzeln umwandeln.'
+    ],
+    questions: {
+      fill: {
+        q: 'Jede Oktalziffer entspricht genau ___ Binärstellen.',
+        a: '3',
+        accept: ['3', 'drei']
+      },
+      choice: {
+        q: 'Welche Ziffer kommt im Oktalsystem NICHT vor?',
+        options: ['8', '7', '0', '5'],
+        correct: 0
+      },
+      explain: {
+        q: 'Erkläre den Zusammenhang zwischen Oktalziffern und Binärdarstellung.',
+        keywords: ['3', 'bit', 'gruppe', 'binär', 'stelle', '8', 'kombination', 'umrechnung', 'zuordnung']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'dezimalsystem',
+    term: 'Dezimalsystem',
+    icon: '🔟',
+    short: 'Zahlensystem zur Basis 10 – unser Alltagssystem.',
+    definition: 'Das Dezimalsystem ist das im Alltag gebräuchliche Stellenwertsystem zur Basis 10. Es verwendet die Ziffern 0 bis 9. Jede Stelle hat den zehnfachen Wert der rechten Nachbarstelle (Einer, Zehner, Hunderter, Tausender, …). Der Wert einer Zahl ergibt sich aus der Summe aller Ziffern multipliziert mit ihrer jeweiligen Zehnerpotenz.',
+    analogy: 'Das Dezimalsystem ist wie ein Kilometerstand im Auto: Die rechte Stelle zählt Einer, die nächste Zehner, dann Hunderter. Wenn eine Stelle von 9 auf 0 springt, erhöht sich die nächste Stelle um 1 – genau wie ein Übertrag.',
+    hints: [
+      'Die Basis 10 bedeutet: jede Stelle kann 10 verschiedene Werte annehmen (0–9).',
+      'Der Stellenwert der n-ten Stelle (von rechts, bei 0 beginnend) ist 10ⁿ.',
+      'Beispiel: 347₁₀ = 3×10² + 4×10¹ + 7×10⁰ = 300 + 40 + 7.'
+    ],
+    questions: {
+      fill: {
+        q: 'Das Dezimalsystem verwendet ___ verschiedene Ziffern.',
+        a: '10',
+        accept: ['10', 'zehn']
+      },
+      choice: {
+        q: 'Was ist der Stellenwert der dritten Stelle von rechts im Dezimalsystem (bei 0 beginnend gezählt)?',
+        options: ['100 (10²)', '1000 (10³)', '10 (10¹)', '8 (2³)'],
+        correct: 0
+      },
+      explain: {
+        q: 'Erkläre das Prinzip des Stellenwertsystems am Beispiel des Dezimalsystems.',
+        keywords: ['stelle', 'wert', 'potenz', 'basis', '10', 'ziffer', 'position', 'multipliziert', 'summe']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'stellenwertsystem',
+    term: 'Stellenwertsystem',
+    icon: '📐',
+    short: 'System, bei dem der Wert einer Ziffer von ihrer Position abhängt.',
+    definition: 'Ein Stellenwertsystem (auch Positionssystem) ist ein Zahlensystem, in dem der Wert einer Ziffer durch ihre Position (Stelle) innerhalb der Zahl bestimmt wird. Der Stellenwert ergibt sich aus der Basis b hoch der Stellennummer n (bⁿ). Der Gesamtwert einer Zahl ist die Summe aller Produkte aus Ziffer und zugehörigem Stellenwert. Dual-, Oktal-, Dezimal- und Hexadezimalsystem sind alles Stellenwertsysteme.',
+    analogy: 'Denk an ein Hotel: Die gleiche Zimmernummer „5" hat eine andere Bedeutung je nachdem, auf welchem Stockwerk sie steht. Im Erdgeschoss ist es Zimmer 5, im 1. Stock Zimmer 50 (5×10¹). Die Position gibt der Ziffer ihren Wert.',
+    hints: [
+      'Die allgemeine Formel: Wert = Σ (zᵢ × bⁱ), wobei zᵢ die Ziffer an Stelle i und b die Basis ist.',
+      'Im Gegensatz dazu: Römische Zahlen (I, V, X) sind KEIN Stellenwertsystem.',
+      'Die Umrechnung zwischen Stellenwertsystemen nutzt wiederholte Division (mit Restbildung) oder die Stellenwertmethode.'
+    ],
+    questions: {
+      fill: {
+        q: 'Der Stellenwert der n-ten Stelle berechnet sich als Basis hoch ___.',
+        a: 'n',
+        accept: ['n', 'position', 'stellennummer']
+      },
+      choice: {
+        q: 'Welches ist KEIN Stellenwertsystem?',
+        options: ['Römische Zahlen', 'Dualsystem', 'Oktalsystem', 'Hexadezimalsystem'],
+        correct: 0
+      },
+      explain: {
+        q: 'Erkläre, was ein Stellenwertsystem ist und wie sich der Gesamtwert einer Zahl berechnet.',
+        keywords: ['position', 'stelle', 'basis', 'potenz', 'ziffer', 'wert', 'summe', 'multipliziert']
+      }
+    },
+    difficulty: 2
+  },
+  {
+    id: 'zweierkomplement',
+    term: 'Zweierkomplement',
+    icon: '➖',
+    short: 'Darstellung negativer Zahlen im Binärsystem.',
+    definition: 'Das Zweierkomplement ist die in der Informatik gebräuchlichste Methode zur Darstellung negativer ganzer Zahlen im Binärsystem. Es wird gebildet, indem alle Bits invertiert werden (Einerkomplement) und anschließend 1 addiert wird. Das höchstwertige Bit (MSB) dient als Vorzeichenbit: 0 = positiv, 1 = negativ. Bei n Bits reicht der Darstellungsbereich von −2ⁿ⁻¹ bis 2ⁿ⁻¹−1. Bei 8 Bits also von −128 bis +127.',
+    analogy: 'Stell dir einen Kilometerzähler vor, der bei 999 wieder auf 000 springt. Die Zahl 999 könnte auch als „−1" interpretiert werden, 998 als „−2" usw. Das Zweierkomplement funktioniert genauso, nur im Binärsystem: Man „wickelt" die Zahlen um den Maximalwert herum.',
+    hints: [
+      'Bildung: Alle Bits invertieren (0→1, 1→0), dann +1 addieren.',
+      'Beispiel (8 Bit): +5 = 00000101₂ → invertiert: 11111010₂ → +1 = 11111011₂ = −5.',
+      'Vorteil: Addition und Subtraktion funktionieren mit derselben Hardware-Schaltung.'
+    ],
+    questions: {
+      fill: {
+        q: 'Zur Bildung des Zweierkomplements werden alle Bits invertiert und dann ___ addiert.',
+        a: '1',
+        accept: ['1', 'eins', 'eine 1']
+      },
+      choice: {
+        q: 'Welchen Wertebereich hat das Zweierkomplement bei 8 Bit?',
+        options: ['−128 bis +127', '−127 bis +128', '0 bis 255', '−256 bis +255'],
+        correct: 0
+      },
+      explain: {
+        q: 'Beschreibe die Schritte zur Bildung des Zweierkomplements und nenne den Hauptvorteil dieser Darstellung.',
+        keywords: ['invertier', 'bit', 'addier', '1', 'vorzeichen', 'negativ', 'addition', 'subtraktion', 'komplement', 'hardware']
+      }
+    },
+    difficulty: 3
+  },
+  {
+    id: 'bit-byte',
+    term: 'Bit und Byte',
+    icon: '💾',
+    short: 'Grundlegende Einheiten der digitalen Informationsspeicherung.',
+    definition: 'Ein Bit (Binary Digit) ist die kleinste Informationseinheit in der digitalen Datenverarbeitung. Es kann genau zwei Zustände annehmen: 0 oder 1. Ein Byte besteht aus 8 Bits und kann somit 2⁸ = 256 verschiedene Werte darstellen (0 bis 255). Weitere Einheiten: 1 Kilobyte (KB) = 1024 Bytes, 1 Megabyte (MB) = 1024 KB, 1 Gigabyte (GB) = 1024 MB. In der Netzwerktechnik wird oft in Bits gemessen (z. B. Mbit/s), in der Speichertechnik in Bytes.',
+    analogy: 'Ein Bit ist wie eine einzelne Ja/Nein-Frage. Ein Byte ist wie ein Fragebogen mit 8 Ja/Nein-Fragen – damit kannst du schon 256 verschiedene Antwort-Kombinationen abbilden, z. B. einen Buchstaben (ASCII).',
+    hints: [
+      'Bit wird mit kleinem „b" abgekürzt, Byte mit großem „B": 100 Mbit/s ≠ 100 MB/s.',
+      'Mit n Bits lassen sich 2ⁿ verschiedene Werte darstellen.',
+      'Ein Nibble (halbes Byte) = 4 Bits = eine Hexadezimalziffer.'
+    ],
+    questions: {
+      fill: {
+        q: 'Ein Byte besteht aus ___ Bits.',
+        a: '8',
+        accept: ['8', 'acht']
+      },
+      choice: {
+        q: 'Wie viele verschiedene Werte kann ein Byte darstellen?',
+        options: ['256', '128', '8', '1024'],
+        correct: 0
+      },
+      explain: {
+        q: 'Erkläre den Unterschied zwischen Bit und Byte und nenne die gängigen größeren Einheiten.',
+        keywords: ['bit', 'byte', '8', 'kleinste', 'einheit', '256', 'kilobyte', 'megabyte', 'gigabyte', '1024', 'speicher']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'ueberlauf',
+    term: 'Überlauf (Overflow)',
+    icon: '⚠️',
+    short: 'Fehler bei Überschreitung des darstellbaren Zahlenbereichs.',
+    definition: 'Ein Überlauf (engl. Overflow) tritt auf, wenn das Ergebnis einer arithmetischen Operation den darstellbaren Zahlenbereich überschreitet. Bei vorzeichenlosen 8-Bit-Zahlen tritt ein Überlauf auf, wenn das Ergebnis größer als 255 ist. Bei vorzeichenbehafteten Zahlen im Zweierkomplement kann ein Überlauf z. B. auftreten, wenn zwei positive Zahlen addiert werden und das Ergebnis als negativ interpretiert wird. Der Überlauf wird in der CPU durch ein spezielles Overflow-Flag signalisiert.',
+    analogy: 'Stell dir einen dreistelligen Kilometerzähler vor: Nach 999 km springt er auf 000 zurück. Der Zähler hat einen „Überlauf" – die Information „1000 km" kann nicht mehr dargestellt werden. Genauso kann ein 8-Bit-Register nach 11111111₂ (255) nicht weiter zählen und springt auf 00000000₂ (0).',
+    hints: [
+      'Bei 8 Bit unsigned: 255 + 1 = 0 (Überlauf, der Übertrag geht verloren).',
+      'Bei Zweierkomplement (8 Bit): 127 + 1 = −128 (Vorzeichenüberlauf).',
+      'Das Carry-Flag zeigt einen Übertrag an, das Overflow-Flag einen Vorzeichenüberlauf.'
+    ],
+    questions: {
+      fill: {
+        q: 'Bei vorzeichenlosen 8-Bit-Zahlen tritt ein Überlauf auf, wenn das Ergebnis größer als ___ ist.',
+        a: '255',
+        accept: ['255']
+      },
+      choice: {
+        q: 'Was passiert bei einem Überlauf einer vorzeichenlosen 8-Bit-Addition (255 + 1)?',
+        options: ['Das Ergebnis wird 0', 'Das Ergebnis wird 256', 'Ein Fehler wird ausgelöst', 'Das Ergebnis wird −1'],
+        correct: 0
+      },
+      explain: {
+        q: 'Erkläre, was ein Überlauf ist und wann er bei vorzeichenbehafteten Zahlen auftritt.',
+        keywords: ['ergebnis', 'bereich', 'darstellbar', 'überschreitet', 'bit', 'vorzeichen', 'positiv', 'negativ', 'overflow', 'flag']
+      }
+    },
+    difficulty: 2
+  }
+];
+
+// Term-Map for tooltip highlighting: maps text variants to term IDs
+const glossaryTermMap = {
+  'dualsystem': 'dualsystem',
+  'binärsystem': 'dualsystem',
+  'binär': 'dualsystem',
+  'dualzahl': 'dualsystem',
+  'dualzahlen': 'dualsystem',
+  'binärzahl': 'dualsystem',
+  'hexadezimalsystem': 'hexadezimalsystem',
+  'hexadezimal': 'hexadezimalsystem',
+  'hex': 'hexadezimalsystem',
+  'oktalsystem': 'oktalsystem',
+  'oktal': 'oktalsystem',
+  'dezimalsystem': 'dezimalsystem',
+  'dezimal': 'dezimalsystem',
+  'dezimalzahl': 'dezimalsystem',
+  'stellenwertsystem': 'stellenwertsystem',
+  'stellenwert': 'stellenwertsystem',
+  'stellenwertmethode': 'stellenwertsystem',
+  'positionssystem': 'stellenwertsystem',
+  'zweierkomplement': 'zweierkomplement',
+  'komplement': 'zweierkomplement',
+  'einerkomplement': 'zweierkomplement',
+  'bit': 'bit-byte',
+  'byte': 'bit-byte',
+  'bits': 'bit-byte',
+  'bytes': 'bit-byte',
+  'nibble': 'bit-byte',
+  'überlauf': 'ueberlauf',
+  'overflow': 'ueberlauf',
+  'übertrag': 'ueberlauf',
+  'carry': 'ueberlauf'
+};
+
+// ── Glossary State ──
+let glossaryState = {};
+
+function loadGlossaryState() {
+  try {
+    const raw = localStorage.getItem(GLOSSARY_KEY);
+    if (raw) glossaryState = JSON.parse(raw);
+  } catch(e) { glossaryState = {}; }
+  // Ensure every term has an entry
+  glossaryTerms.forEach(t => {
+    if (!glossaryState[t.id]) {
+      glossaryState[t.id] = { level: 0, phase: 0, hintsUsed: 0, attempts: 0, lastSeen: null };
+    }
+  });
+}
+
+function saveGlossaryState() {
+  localStorage.setItem(GLOSSARY_KEY, JSON.stringify(glossaryState));
+}
+
+function getGlossaryMastered() {
+  return glossaryTerms.filter(t => glossaryState[t.id] && glossaryState[t.id].level >= 3).length;
+}
+
+// ── Glossary Progress ──
+function updateGlossaryProgress() {
+  const mastered = getGlossaryMastered();
+  const total = glossaryTerms.length;
+  const pct = Math.round((mastered / total) * 100);
+  const fill = document.getElementById('glossary-progress-fill');
+  const count = document.getElementById('glossary-progress-count');
+  if (fill) fill.style.width = pct + '%';
+  if (count) count.textContent = mastered + ' / ' + total + ' gemeistert';
+}
+
+// ── Render Glossary Grid ──
+function renderGlossaryGrid() {
+  const grid = document.getElementById('glossary-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  glossaryTerms.forEach(t => {
+    const st = glossaryState[t.id] || { level: 0 };
+    const card = document.createElement('div');
+    card.className = 'glossary-card';
+    card.dataset.level = st.level;
+    card.dataset.id = t.id;
+    card.innerHTML = `
+      <div class="gc-level"></div>
+      <div class="gc-icon">${t.icon}</div>
+      <div class="gc-term">${t.term}</div>
+      <div class="gc-short">${t.short}</div>
+    `;
+    card.addEventListener('click', () => openGlossaryLearn(t.id));
+    grid.appendChild(card);
+  });
+  updateGlossaryProgress();
+}
+
+// ── Open Learning Panel ──
+let currentGlossaryTerm = null;
+let glossaryDisplayPhase = null; // temporary phase override for review (not persisted)
+let currentGlossaryHints = 0;
+
+function openGlossaryLearn(termId) {
+  const t = glossaryTerms.find(x => x.id === termId);
+  if (!t) return;
+  currentGlossaryTerm = t;
+  currentGlossaryHints = 0;
+  const st = glossaryState[t.id];
+  st.lastSeen = Date.now();
+  saveGlossaryState();
+
+  // Mark active card
+  document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
+  const activeCard = document.querySelector(`.glossary-card[data-id="${t.id}"]`);
+  if (activeCard) activeCard.classList.add('active');
+
+  const panel = document.getElementById('glossary-learn');
+  const phases = ['Verstehen', 'Lückentext', 'Auswahl', 'Erklären'];
+  const actualPhase = Math.min(st.phase, 3);
+  const displayPhase = (glossaryDisplayPhase !== null && glossaryDisplayPhase <= actualPhase) ? glossaryDisplayPhase : actualPhase;
+  glossaryDisplayPhase = null; // reset after use
+
+  let phaseHTML = phases.map((p, i) => {
+    let cls = 'gl-phase';
+    if (i < actualPhase) cls += ' done';
+    else if (i === actualPhase) cls += ' current';
+    const clickable = i <= actualPhase;
+    const onclick = clickable ? ` onclick="glossaryGoToPhase(${i})"` : '';
+    return `<div class="${cls}"${onclick}>${p}</div>`;
+  }).join('');
+
+  let contentHTML = '';
+  if (displayPhase === 0) {
+    contentHTML = buildPhase0(t);
+  } else if (displayPhase === 1) {
+    contentHTML = buildPhase1(t);
+  } else if (displayPhase === 2) {
+    contentHTML = buildPhase2(t);
+  } else {
+    contentHTML = buildPhase3(t);
+  }
+
+  panel.innerHTML = `
+    <div class="gl-header">
+      <h3>${t.icon} ${t.term}</h3>
+      <button class="gl-close" onclick="closeGlossaryLearn()">&times;</button>
+    </div>
+    <div class="gl-phase-indicator">${phaseHTML}</div>
+    <div class="gl-content" id="gl-content">${contentHTML}</div>
+  `;
+  panel.classList.add('visible');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function closeGlossaryLearn() {
+  const panel = document.getElementById('glossary-learn');
+  panel.classList.remove('visible');
+  document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
+  currentGlossaryTerm = null;
+}
+
+function glossaryGoToPhase(idx) {
+  if (!currentGlossaryTerm) return;
+  const actualPhase = Math.min(glossaryState[currentGlossaryTerm.id].phase, 3);
+  if (idx > actualPhase) return; // can only go back to earlier or current phase
+  glossaryDisplayPhase = idx;
+  openGlossaryLearn(currentGlossaryTerm.id);
+}
+
+// ── Phase 0: Verstehen (read definition + analogy) ──
+function buildPhase0(t) {
+  let hintsHTML = t.hints.map((h, i) => `<div class="gl-hint" id="gl-hint-${i}">${h}</div>`).join('');
+  return `
+    <div class="gl-analogy">💡 ${t.analogy}</div>
+    <div class="gl-definition">${t.definition}</div>
+    <div class="gl-hints">${hintsHTML}</div>
+    <button class="gl-hint-btn" onclick="showGlossaryHint()">💡 Hinweis anzeigen</button>
+    <div style="margin-top:8px">
+      <button class="gl-btn primary" onclick="advanceGlossaryPhase()">Verstanden – weiter</button>
+    </div>
+  `;
+}
+
+// ── Phase 1: Lückentext (fill in the blank) ──
+function buildPhase1(t) {
+  const q = t.questions.fill;
+  return `
+    <div class="gl-question">${q.q}</div>
+    <input type="text" class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben…" autocomplete="off" onkeydown="if(event.key==='Enter')checkGlossaryFill()">
+    <div>
+      <button class="gl-btn primary" onclick="checkGlossaryFill()">Prüfen</button>
+    </div>
+    <div id="gl-feedback-area"></div>
+  `;
+}
+
+// ── Phase 2: Multiple Choice ──
+function buildPhase2(t) {
+  const q = t.questions.choice;
+  let choicesHTML = q.options.map((opt, i) =>
+    `<button class="gl-choice" data-idx="${i}" onclick="checkGlossaryChoice(this, ${i}, ${q.correct})">${opt}</button>`
+  ).join('');
+  return `
+    <div class="gl-question">${q.q}</div>
+    <div class="gl-choices">${choicesHTML}</div>
+    <div id="gl-feedback-area"></div>
+  `;
+}
+
+// ── Phase 3: Erklären (free text with keyword matching) ──
+function buildPhase3(t) {
+  const q = t.questions.explain;
+  return `
+    <div class="gl-question">${q.q}</div>
+    <textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten…"></textarea>
+    <div>
+      <button class="gl-btn primary" onclick="checkGlossaryExplain()">Antwort prüfen</button>
+    </div>
+    <div id="gl-feedback-area"></div>
+  `;
+}
+
+// ── Show Hint ──
+function showGlossaryHint() {
+  if (!currentGlossaryTerm) return;
+  const hint = document.getElementById('gl-hint-' + currentGlossaryHints);
+  if (hint) {
+    hint.classList.add('visible');
+    currentGlossaryHints++;
+    if (glossaryState[currentGlossaryTerm.id]) {
+      glossaryState[currentGlossaryTerm.id].hintsUsed++;
+      saveGlossaryState();
+    }
+  }
+}
+
+// ── Advance Phase ──
+function advanceGlossaryPhase() {
+  if (!currentGlossaryTerm) return;
+  const st = glossaryState[currentGlossaryTerm.id];
+  if (st.phase < 3) {
+    st.phase++;
+    // Update level based on phase progress
+    if (st.phase >= 1 && st.level < 1) st.level = 1;
+    saveGlossaryState();
+    renderGlossaryGrid();
+    openGlossaryLearn(currentGlossaryTerm.id);
+  } else {
+    // Completed all phases
+    st.level = 3;
+    saveGlossaryState();
+    renderGlossaryGrid();
+    closeGlossaryLearn();
+  }
+}
+
+// ── Check Fill Answer ──
+function checkGlossaryFill() {
+  if (!currentGlossaryTerm) return;
+  const input = document.getElementById('gl-fill-input');
+  const fb = document.getElementById('gl-feedback-area');
+  const userAnswer = input.value.trim().toLowerCase();
+  const q = currentGlossaryTerm.questions.fill;
+  const isCorrect = q.accept.some(a => a.toLowerCase() === userAnswer);
+
+  glossaryState[currentGlossaryTerm.id].attempts++;
+
+  if (isCorrect) {
+    fb.innerHTML = `<div class="gl-feedback success">Richtig! Die Antwort ist <strong>${q.a}</strong>.</div>
+      <div style="margin-top:12px"><button class="gl-btn primary" onclick="advanceGlossaryPhase()">Weiter</button></div>`;
+    input.style.borderColor = 'var(--green)';
+  } else {
+    fb.innerHTML = `<div class="gl-feedback error">Nicht ganz. Die richtige Antwort ist: <strong>${q.a}</strong>. Versuche es dir zu merken!</div>
+      <div style="margin-top:12px"><button class="gl-btn primary" onclick="openGlossaryLearn('${currentGlossaryTerm.id}')">Nochmal lernen</button></div>`;
+    input.style.borderColor = 'var(--red)';
+    // Reset phase to re-read
+    glossaryState[currentGlossaryTerm.id].phase = 0;
+  }
+  saveGlossaryState();
+}
+
+// ── Check Choice Answer ──
+function checkGlossaryChoice(btn, idx, correctIdx) {
+  if (!currentGlossaryTerm) return;
+  const fb = document.getElementById('gl-feedback-area');
+  const allBtns = document.querySelectorAll('.gl-choice');
+
+  glossaryState[currentGlossaryTerm.id].attempts++;
+
+  // Disable all buttons
+  allBtns.forEach(b => {
+    b.style.pointerEvents = 'none';
+    if (parseInt(b.dataset.idx) === correctIdx) b.classList.add('correct');
+  });
+
+  if (idx === correctIdx) {
+    btn.classList.add('correct');
+    fb.innerHTML = `<div class="gl-feedback success">Richtig!</div>
+      <div style="margin-top:12px"><button class="gl-btn primary" onclick="advanceGlossaryPhase()">Weiter</button></div>`;
+  } else {
+    btn.classList.add('wrong');
+    fb.innerHTML = `<div class="gl-feedback error">Leider falsch. Die richtige Antwort ist markiert.</div>
+      <div style="margin-top:12px"><button class="gl-btn primary" onclick="openGlossaryLearn('${currentGlossaryTerm.id}')">Nochmal lernen</button></div>`;
+    glossaryState[currentGlossaryTerm.id].phase = 0;
+  }
+  saveGlossaryState();
+}
+
+// ── Check Explain Answer ──
+function checkGlossaryExplain() {
+  if (!currentGlossaryTerm) return;
+  const input = document.getElementById('gl-explain-input');
+  const fb = document.getElementById('gl-feedback-area');
+  const userText = input.value.trim().toLowerCase();
+  const q = currentGlossaryTerm.questions.explain;
+
+  glossaryState[currentGlossaryTerm.id].attempts++;
+
+  if (userText.length < 10) {
+    fb.innerHTML = `<div class="gl-feedback info">Bitte schreibe eine ausführlichere Erklärung (mindestens ein paar Wörter).</div>`;
+    return;
+  }
+
+  const found = [];
+  const missing = [];
+  q.keywords.forEach(kw => {
+    if (userText.includes(kw.toLowerCase())) {
+      found.push(kw);
+    } else {
+      missing.push(kw);
+    }
+  });
+
+  const ratio = found.length / q.keywords.length;
+  let keywordsHTML = found.map(k => `<span class="gl-keyword found">${k}</span>`).join('') +
+                     missing.map(k => `<span class="gl-keyword missing">${k}</span>`).join('');
+
+  if (ratio >= 0.5) {
+    const st = glossaryState[currentGlossaryTerm.id];
+    if (ratio >= 0.7) st.level = 3;
+    else if (st.level < 2) st.level = 2;
+    fb.innerHTML = `<div class="gl-feedback success">Gut erklärt! ${found.length} von ${q.keywords.length} Schlüsselbegriffen erkannt.</div>
+      <div style="margin-top:8px">${keywordsHTML}</div>
+      <div style="margin-top:12px"><button class="gl-btn primary" onclick="advanceGlossaryPhase()">Abschließen</button></div>`;
+  } else {
+    fb.innerHTML = `<div class="gl-feedback error">Noch nicht ganz vollständig. Nur ${found.length} von ${q.keywords.length} Schlüsselbegriffen erkannt. Versuche mehr Details einzubeziehen.</div>
+      <div style="margin-top:8px">${keywordsHTML}</div>
+      <div style="margin-top:12px">
+        <button class="gl-btn primary" onclick="openGlossaryLearn('${currentGlossaryTerm.id}')">Nochmal lernen</button>
+      </div>`;
+    glossaryState[currentGlossaryTerm.id].phase = 0;
+  }
+  saveGlossaryState();
+  renderGlossaryGrid();
+}
+
+// ── Tooltip System ──
+const glossaryTooltip = document.getElementById('glossary-tooltip');
+
+function initGlossaryTooltips() {
+  // Highlight glossary terms in method-card paragraphs and method-card headings
+  const containers = document.querySelectorAll('.method-card p, .task-sub, .exercise-label, header p');
+  containers.forEach(container => {
+    highlightGlossaryTermsInElement(container);
+  });
+}
+
+function highlightGlossaryTermsInElement(el) {
+  if (!el || !el.innerHTML) return;
+  // Build regex from termMap keys (longest first to avoid partial matches)
+  const keys = Object.keys(glossaryTermMap).sort((a, b) => b.length - a.length);
+  if (keys.length === 0) return;
+  const pattern = new RegExp('\\b(' + keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'gi');
+
+  // Only process text nodes to avoid breaking HTML
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+  const textNodes = [];
+  while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+  textNodes.forEach(node => {
+    const text = node.textContent;
+    if (!pattern.test(text)) return;
+    pattern.lastIndex = 0;
+
+    const span = document.createElement('span');
+    let lastIdx = 0;
+    let match;
+    pattern.lastIndex = 0;
+    while ((match = pattern.exec(text)) !== null) {
+      // Add text before match
+      if (match.index > lastIdx) {
+        span.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+      }
+      // Create glossary term element
+      const termSpan = document.createElement('span');
+      termSpan.className = 'glossary-term';
+      termSpan.textContent = match[0];
+      termSpan.dataset.glossaryId = glossaryTermMap[match[0].toLowerCase()];
+      termSpan.addEventListener('mouseenter', showGlossaryTooltip);
+      termSpan.addEventListener('mouseleave', hideGlossaryTooltip);
+      termSpan.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = e.target.dataset.glossaryId;
+        if (id) {
+          openGlossaryLearn(id);
+          document.getElementById('glossary-section').scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+      span.appendChild(termSpan);
+      lastIdx = match.index + match[0].length;
+    }
+    // Add remaining text
+    if (lastIdx < text.length) {
+      span.appendChild(document.createTextNode(text.slice(lastIdx)));
+    }
+    node.parentNode.replaceChild(span, node);
+  });
+}
+
+function showGlossaryTooltip(e) {
+  const id = e.target.dataset.glossaryId;
+  const t = glossaryTerms.find(x => x.id === id);
+  if (!t || !glossaryTooltip) return;
+
+  glossaryTooltip.querySelector('.gt-name').textContent = t.term;
+  glossaryTooltip.querySelector('.gt-short').textContent = t.short;
+  glossaryTooltip.style.display = 'block';
+
+  const rect = e.target.getBoundingClientRect();
+  let top = rect.bottom + 8;
+  let left = rect.left;
+  // Keep tooltip in viewport
+  if (left + 260 > window.innerWidth) left = window.innerWidth - 270;
+  if (left < 10) left = 10;
+  if (top + 120 > window.innerHeight) top = rect.top - 120;
+
+  glossaryTooltip.style.top = top + 'px';
+  glossaryTooltip.style.left = left + 'px';
+}
+
+function hideGlossaryTooltip() {
+  if (glossaryTooltip) glossaryTooltip.style.display = 'none';
+}
+
+// ── Initialize Glossary ──
+function initGlossary() {
+  loadGlossaryState();
+  renderGlossaryGrid();
+  updateGlossaryProgress();
+  // Delay tooltip init so DOM is ready
+  setTimeout(initGlossaryTooltips, 300);
+}
+
+initGlossary();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

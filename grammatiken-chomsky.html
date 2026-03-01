@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Formale Grammatiken & Chomsky</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.st{display:flex;align-items:center;gap:12px;margin:52px 0 18px}.st .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;color:#fff}.st h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}.card h3{font-size:14px;font-weight:700;margin-bottom:8px}.card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.c1::before{background:var(--cyan)}.c2::before{background:var(--green)}.c3::before{background:var(--pink)}.c4::before{background:var(--purple)}
+.mono{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan)}
+.pyramid{display:flex;flex-direction:column;align-items:center;gap:4px;margin:12px 0}
+.plevel{border-radius:10px;padding:14px 20px;text-align:center;cursor:pointer;transition:all .3s;border:2px solid transparent;font-weight:600;font-size:14px}
+.plevel:hover{transform:scale(1.02)}.plevel.active{border-color:#fff;box-shadow:0 0 20px rgba(255,255,255,.1)}
+.detail-panel{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;margin-top:12px;display:none;animation:fadeUp .4s ease}.detail-panel.show{display:block}
+.detail-panel h4{font-size:15px;font-weight:700;margin-bottom:12px}.detail-panel .dp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.detail-panel .dp-item{background:rgba(255,255,255,.03);border-radius:8px;padding:10px}.detail-panel .dp-label{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}.detail-panel .dp-val{font-size:13px;font-weight:500}
+
+.derive-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.derive-form{display:flex;gap:8px;margin-bottom:16px;align-items:end;flex-wrap:wrap}
+.derive-form select{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px;color:var(--text);outline:none}
+.sentential{font-family:'JetBrains Mono',monospace;font-size:20px;margin:16px 0;min-height:40px;padding:12px;background:rgba(255,255,255,.03);border-radius:10px;word-break:break-all}
+.sentential .nt{color:var(--cyan);cursor:pointer;padding:2px 4px;border-radius:4px;transition:background .2s}.sentential .nt:hover{background:rgba(56,189,248,.15)}
+.sentential .t{color:var(--green)}
+.rule-picker{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+.rule-opt{font-family:'JetBrains Mono',monospace;font-size:13px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;transition:all .2s}.rule-opt:hover{border-color:var(--accent);background:rgba(108,99,255,.1)}
+.history{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:2;padding:10px;background:rgba(255,255,255,.02);border-radius:8px;max-height:120px;overflow-y:auto;margin-top:12px}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#5a52e0}.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:rgba(255,255,255,.1)}
+
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}.tab{font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}.tab:hover{color:var(--text)}.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.quiz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}.score-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:4px}
+.q-text{font-size:15px;font-weight:600;margin:12px 0}.q-rules{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(255,255,255,.03);padding:12px;border-radius:8px;margin:8px 0;line-height:1.8;color:var(--cyan)}
+.q-options{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.q-opt{padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);cursor:pointer;font-size:14px;transition:all .2s}.q-opt:hover{border-color:var(--accent)}.q-opt.correct{border-color:var(--green);background:rgba(81,207,102,.1)}.q-opt.wrong{border-color:var(--red);background:rgba(255,107,107,.1)}.q-opt.disabled{pointer-events:none;opacity:.7}
+.feedback{margin-top:8px;padding:10px;border-radius:8px;font-size:13px;font-weight:600;display:none}.feedback.show{display:block}.feedback.ok{background:rgba(81,207,102,.1);color:var(--green)}.feedback.fail{background:rgba(255,107,107,.1);color:var(--red)}
+.btn-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+
+.tbl-wrap{overflow-x:auto;margin-top:12px}table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:12px}th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}td:first-child{font-weight:600;color:var(--text)}tr:last-child td{border-bottom:none}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px}.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.detail-panel .dp-grid{grid-template-columns:1fr}}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div><div class="glow-orb one"></div><div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">← Zurück zur Übersicht</a>
+<header><div class="tag">TGI06 · Theoretische Informatik</div><h1>Formale Grammatiken & Chomsky</h1><p>Chomsky-Hierarchie, Ableitungen und Grammatiktypen interaktiv lernen</p></header>
+
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">📚</div><h2>Grundbegriffe</h2></div>
+<div class="cards">
+<div class="card c1"><h3>📝 Formale Grammatik</h3><p>G = (N, T, P, S)<br><strong>N</strong> = Nichtterminale (Variablen)<br><strong>T</strong> = Terminale (Alphabet)<br><strong>P</strong> = Produktionsregeln<br><strong>S</strong> = Startsymbol (S ∈ N)</p></div>
+<div class="card c2"><h3>🔄 Ableitung</h3><p>Ersetzung von Nichtterminalen durch rechte Seite einer Regel:<br><span class="mono">S ⇒ aSb ⇒ aaSbb ⇒ aabb</span><br>Jeder Schritt wendet genau eine Regel an.</p></div>
+<div class="card c3"><h3>🗂️ Sprache L(G)</h3><p>Die Menge aller Wörter aus Terminalen, die aus S ableitbar sind:<br><span class="mono">L(G) = {w ∈ T* | S ⇒* w}</span></p></div>
+</div>
+
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">🔺</div><h2>Chomsky-Hierarchie</h2></div>
+<div class="pyramid">
+<div class="plevel" style="width:40%;background:rgba(81,207,102,.12);color:var(--green)" onclick="showLevel(3)" id="lv3">Typ 3 – Reguläre Grammatiken</div>
+<div class="plevel" style="width:55%;background:rgba(56,189,248,.12);color:var(--cyan)" onclick="showLevel(2)" id="lv2">Typ 2 – Kontextfreie Grammatiken</div>
+<div class="plevel" style="width:70%;background:rgba(251,191,36,.12);color:var(--yellow)" onclick="showLevel(1)" id="lv1">Typ 1 – Kontextsensitive Grammatiken</div>
+<div class="plevel" style="width:85%;background:rgba(255,107,107,.12);color:var(--red)" onclick="showLevel(0)" id="lv0">Typ 0 – Unbeschränkte Grammatiken</div>
+</div>
+<div class="detail-panel" id="level-detail"></div>
+
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">🧪</div><h2>Ableitungs-Simulator</h2></div>
+<div class="derive-wrap">
+<div class="derive-form">
+<select id="grammar-select" onchange="loadGrammar()">
+<option value="0">G1: S → aSb | ε (aⁿbⁿ)</option>
+<option value="1">G2: S → aS | bA | ε, A → bA | b</option>
+<option value="2">G3: S → (S) | SS | ε (Klammern)</option>
+<option value="3">G4: S → 0S1 | 01</option>
+</select>
+<button class="btn btn-secondary" onclick="resetDerivation()">↺ Reset</button>
+</div>
+<div id="rules-display" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:8px"></div>
+<div class="sentential" id="sentential"></div>
+<div class="rule-picker" id="rule-picker"></div>
+<div class="history" id="derive-history"></div>
+</div>
+
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--pink),var(--purple))">🏋️</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" onclick="setQuizMode(0)">Typ bestimmen</div>
+<div class="tab" onclick="setQuizMode(1)">Automat zuordnen</div>
+<div class="tab" onclick="setQuizMode(2)">Wahr/Falsch</div>
+</div>
+<div class="quiz-wrap">
+<div class="score-bar"><span><span class="score-dot" style="background:var(--green)"></span>Richtig: <span id="sc">0</span></span><span><span class="score-dot" style="background:var(--red)"></span>Falsch: <span id="sw">0</span></span><span><span class="score-dot" style="background:var(--yellow)"></span>Serie: <span id="ss">0</span></span></div>
+<div id="quiz-area"></div>
+</div>
+
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">📋</div><h2>Vergleichstabelle</h2></div>
+<div class="tbl-wrap"><table>
+<thead><tr><th>Typ</th><th>Regelform</th><th>Automat</th><th>Beispiel</th><th>Wortproblem</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--green)">3 (Regulär)</td><td>A → aB | a</td><td>DEA / NEA</td><td>a*b*</td><td>entscheidbar</td></tr>
+<tr><td style="color:var(--cyan)">2 (Kontextfrei)</td><td>A → γ</td><td>Kellerautomat</td><td>aⁿbⁿ</td><td>entscheidbar</td></tr>
+<tr><td style="color:var(--yellow)">1 (Kontextsens.)</td><td>αAβ → αγβ, |γ|≥1</td><td>Linear beschr. TM</td><td>aⁿbⁿcⁿ</td><td>entscheidbar</td></tr>
+<tr><td style="color:var(--red)">0 (Unbeschränkt)</td><td>α → β</td><td>Turingmaschine</td><td>Halteproblem-K.</td><td>semi-entsch.</td></tr>
+</tbody></table></div>
+
+  <!-- ═══════════════════════════════
+       BEGRIFFE LERNEN
+       ═══════════════════════════════ -->
+  <div class="glossary-section">
+    <div class="st">
+      <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">🧠</div>
+      <h2>Begriffe lernen</h2>
+      <span style="font-size:13px;color:var(--muted);font-weight:300;margin-left:auto" id="glossary-sub">0 / 8 gemeistert</span>
+    </div>
+
+    <div class="glossary-progress-bar">
+      <span class="gp-text">Fortschritt</span>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <span class="gp-count" id="glossary-count">0%</span>
+    </div>
+
+    <div class="glossary-grid" id="glossary-grid"></div>
+
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" onclick="glossaryClose()">✕</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
+  </div>
+
+<div class="summary">
+<div class="summary-card"><h4>💡 Hierarchie</h4><p>Jede reguläre Sprache ist auch kontextfrei, jede kontextfreie auch kontextsensitiv, usw. Typ 3 ⊂ Typ 2 ⊂ Typ 1 ⊂ Typ 0.</p></div>
+<div class="summary-card"><h4>🎯 Prüfungstipp</h4><p>Erkenne den Typ an der Regelform: Rechts nur ein Terminal + optional ein Nichtterminal = Typ 3. Links nur ein Nichtterminal = Typ 2.</p></div>
+<div class="summary-card"><h4>🧩 Automat-Zuordnung</h4><p>Typ 3 → DEA/NEA, Typ 2 → Kellerautomat (PDA), Typ 1 → LBA, Typ 0 → Turingmaschine. Stärkerer Automat = mächtigere Sprachen.</p></div>
+</div>
+</div>
+<script>
+function saveProgress(id,d){const a=JSON.parse(localStorage.getItem('trainer-progress')||'{}');a[id]={...a[id],...d,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(a));}
+saveProgress('grammatiken-chomsky',{status:'in-progress'});
+
+const levels=[
+{typ:0,name:'Typ 0 – Unbeschränkt',color:'var(--red)',regel:'α → β (keine Einschränkung)',automat:'Turingmaschine',beispiel:'Komplement des Halteproblems',wort:'Semi-entscheidbar (nur aufzählbar)',abschluss:'∪, ∩, ·, * (nicht ¬)'},
+{typ:1,name:'Typ 1 – Kontextsensitiv',color:'var(--yellow)',regel:'αAβ → αγβ mit |γ| ≥ 1',automat:'Linear beschränkte Turingmaschine (LBA)',beispiel:'L = {aⁿbⁿcⁿ | n ≥ 1}',wort:'Entscheidbar',abschluss:'∪, ∩, ·, * (nicht ¬)'},
+{typ:2,name:'Typ 2 – Kontextfrei',color:'var(--cyan)',regel:'A → γ (links ein einzelnes Nichtterminal)',automat:'Kellerautomat (PDA)',beispiel:'L = {aⁿbⁿ | n ≥ 0}',wort:'Entscheidbar (CYK-Algorithmus)',abschluss:'∪, ·, * (nicht ∩, ¬)'},
+{typ:3,name:'Typ 3 – Regulär',color:'var(--green)',regel:'A → aB | a (rechtslinear) oder A → Ba | a (linkslinear)',automat:'DEA / NEA',beispiel:'L = a*b* (beliebig viele a, dann b)',wort:'Entscheidbar',abschluss:'∪, ∩, ·, *, ¬ (alle!)'}
+];
+function showLevel(t){
+  document.querySelectorAll('.plevel').forEach((p,i)=>p.classList.toggle('active',i===(3-t)));
+  const l=levels[t],d=document.getElementById('level-detail');
+  d.innerHTML=`<h4 style="color:${l.color}">${l.name}</h4><div class="dp-grid">
+  <div class="dp-item"><div class="dp-label">Regelform</div><div class="dp-val">${l.regel}</div></div>
+  <div class="dp-item"><div class="dp-label">Erkennender Automat</div><div class="dp-val">${l.automat}</div></div>
+  <div class="dp-item"><div class="dp-label">Beispielsprache</div><div class="dp-val">${l.beispiel}</div></div>
+  <div class="dp-item"><div class="dp-label">Wortproblem</div><div class="dp-val">${l.wort}</div></div>
+  <div class="dp-item" style="grid-column:1/-1"><div class="dp-label">Abschlusseigenschaften</div><div class="dp-val">${l.abschluss}</div></div></div>`;
+  d.classList.add('show');
+}
+
+const grammars=[
+  {name:'aⁿbⁿ',rules:[['S','aSb'],['S','ε']],start:'S'},
+  {name:'a*b+',rules:[['S','aS'],['S','bA'],['S','ε'],['A','bA'],['A','b']],start:'S'},
+  {name:'Klammern',rules:[['S','(S)'],['S','SS'],['S','ε']],start:'S'},
+  {name:'0ⁿ1ⁿ',rules:[['S','0S1'],['S','01']],start:'S'}
+];
+let currentGrammar=0,sentForm='',deriveHist=[];
+function loadGrammar(){
+  currentGrammar=parseInt(document.getElementById('grammar-select').value);
+  resetDerivation();
+}
+function resetDerivation(){
+  const g=grammars[currentGrammar];
+  sentForm=g.start;deriveHist=[g.start];
+  document.getElementById('rules-display').textContent='Regeln: '+g.rules.map(r=>r[0]+' → '+r[1]).join(' | ');
+  renderSentential();renderHistory();document.getElementById('rule-picker').innerHTML='';
+}
+function renderSentential(){
+  const el=document.getElementById('sentential');
+  let html='';
+  for(const ch of sentForm){
+    if(ch>='A'&&ch<='Z')html+=`<span class="nt" onclick="pickNT('${ch}')">${ch}</span>`;
+    else html+=`<span class="t">${ch==='ε'?'ε':ch}</span>`;
+  }
+  el.innerHTML=html||'<span class="t">ε</span>';
+}
+function renderHistory(){document.getElementById('derive-history').innerHTML=deriveHist.join(' ⇒ ');}
+function pickNT(nt){
+  const g=grammars[currentGrammar];
+  const applicable=g.rules.filter(r=>r[0]===nt);
+  const picker=document.getElementById('rule-picker');
+  picker.innerHTML=`<span style="font-size:12px;color:var(--muted)">Wähle Regel für ${nt}:</span> `+applicable.map(r=>`<div class="rule-opt" onclick="applyRule('${nt}','${r[1]}')">${r[0]} → ${r[1]}</div>`).join('');
+}
+function applyRule(nt,rhs){
+  const idx=sentForm.indexOf(nt);
+  if(idx===-1)return;
+  const replacement=rhs==='ε'?'':rhs;
+  sentForm=sentForm.substring(0,idx)+replacement+sentForm.substring(idx+1);
+  if(!sentForm)sentForm='ε';
+  deriveHist.push(sentForm==='ε'?'ε':sentForm);
+  renderSentential();renderHistory();document.getElementById('rule-picker').innerHTML='';
+}
+loadGrammar();
+
+// Quiz
+let qMode=0,score={c:0,w:0,s:0};
+const typQuestions=[
+  {rules:'S → aS | a',answer:3,exp:'Rechtslinear: rechts maximal ein Nichtterminal nach einem Terminal → Typ 3'},
+  {rules:'S → aSb | ε',answer:2,exp:'Links einzelnes Nichtterminal, rechts beliebig → Typ 2 (kontextfrei)'},
+  {rules:'S → aA, A → bS | b',answer:3,exp:'Alle Regeln rechtslinear → Typ 3 (regulär)'},
+  {rules:'aB → ab, S → aSb | ab',answer:1,exp:'Regel "aB → ab" hat links Kontext → Typ 1 (kontextsensitiv)'},
+  {rules:'S → SS | aSb | ε',answer:2,exp:'Links immer einzelnes Nichtterminal → Typ 2'},
+  {rules:'AB → BA, S → AB, A → a, B → b',answer:0,exp:'Regel "AB → BA" – links kein einzelnes NT mit Kontext, freie Ersetzung → Typ 0'},
+  {rules:'S → 0S1 | 01',answer:2,exp:'Links einzelnes NT → Typ 2'},
+  {rules:'S → aAb, aA → aaAb | ab',answer:1,exp:'"aA → aaAb" hat Kontext links → Typ 1'}
+];
+const automatQuestions=[
+  {q:'Welcher Automat erkennt Typ-3-Sprachen?',opts:['Turingmaschine','Kellerautomat','DEA/NEA','Linear beschr. TM'],ans:2},
+  {q:'Welcher Automat erkennt kontextfreie Sprachen?',opts:['DEA','Kellerautomat (PDA)','Turingmaschine','Keiner'],ans:1},
+  {q:'Welchem Typ entspricht ein Kellerautomat?',opts:['Typ 0','Typ 1','Typ 2','Typ 3'],ans:2},
+  {q:'Welche Sprache kann KEIN DEA erkennen?',opts:['a*b*','(ab)*','aⁿbⁿ','a(a|b)*'],ans:2},
+  {q:'Typ-1-Grammatiken werden erkannt von?',opts:['DEA','PDA','Linear beschränkte TM','Unbeschränkte TM'],ans:2}
+];
+const tfQuestions=[
+  {q:'Jede reguläre Sprache ist auch kontextfrei.',ans:true,exp:'Typ 3 ⊂ Typ 2 – reguläre Sprachen sind eine Teilmenge der kontextfreien.'},
+  {q:'Kontextfreie Sprachen sind unter Schnitt abgeschlossen.',ans:false,exp:'Kontextfreie Sprachen sind NICHT unter Schnitt (∩) abgeschlossen.'},
+  {q:'Das Wortproblem für Typ-0-Sprachen ist entscheidbar.',ans:false,exp:'Nur semi-entscheidbar (aufzählbar). Die TM könnte endlos laufen.'},
+  {q:'Reguläre Sprachen sind unter Komplement abgeschlossen.',ans:true,exp:'Reguläre Sprachen sind unter allen Operationen abgeschlossen (∪,∩,*,·,¬).'},
+  {q:'Die Sprache {aⁿbⁿ | n≥0} ist regulär.',ans:false,exp:'Pumping-Lemma zeigt: aⁿbⁿ ist NICHT regulär, aber kontextfrei (Typ 2).'},
+  {q:'Eine Typ-2-Grammatik hat links immer genau ein Nichtterminal.',ans:true,exp:'Kontextfrei: A → γ, wobei A ein einzelnes Nichtterminal ist.'}
+];
+let qIdx=0;
+function setQuizMode(m){qMode=m;document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===m));qIdx=0;genQuiz();}
+function genQuiz(){
+  const area=document.getElementById('quiz-area');
+  if(qMode===0){
+    const q=typQuestions[qIdx%typQuestions.length];
+    area.innerHTML=`<div class="q-text">Welcher Chomsky-Typ?</div><div class="q-rules">${q.rules}</div>
+    <div class="q-options">${[0,1,2,3].map(t=>`<div class="q-opt" onclick="ansTyp(${t},this)">Typ ${t}${t===3?' (regulär)':t===2?' (kontextfrei)':t===1?' (kontextsensitiv)':' (unbeschränkt)'}</div>`).join('')}</div>
+    <div class="feedback" id="fb"></div><div class="btn-row"><button class="btn btn-secondary" onclick="qIdx++;genQuiz()">Nächste →</button></div>`;
+  }else if(qMode===1){
+    const q=automatQuestions[qIdx%automatQuestions.length];
+    area.innerHTML=`<div class="q-text">${q.q}</div>
+    <div class="q-options">${q.opts.map((o,i)=>`<div class="q-opt" onclick="ansAut(${i},${q.ans},this)">${o}</div>`).join('')}</div>
+    <div class="feedback" id="fb"></div><div class="btn-row"><button class="btn btn-secondary" onclick="qIdx++;genQuiz()">Nächste →</button></div>`;
+  }else{
+    const q=tfQuestions[qIdx%tfQuestions.length];
+    area.innerHTML=`<div class="q-text">${q.q}</div>
+    <div class="q-options"><div class="q-opt" onclick="ansTF(true,${q.ans},this,'${q.exp.replace(/'/g,"\\'")}')">✓ Wahr</div><div class="q-opt" onclick="ansTF(false,${q.ans},this,'${q.exp.replace(/'/g,"\\'")}')">✗ Falsch</div></div>
+    <div class="feedback" id="fb"></div><div class="btn-row"><button class="btn btn-secondary" onclick="qIdx++;genQuiz()">Nächste →</button></div>`;
+  }
+}
+function ansTyp(t,el){
+  const q=typQuestions[qIdx%typQuestions.length];
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.add('disabled'));
+  if(t===q.answer){el.classList.add('correct');score.c++;score.s++;showFb(true,q.exp);}
+  else{el.classList.add('wrong');score.w++;score.s=0;showFb(false,q.exp);}
+  updScore();
+}
+function ansAut(i,ans,el){
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.add('disabled'));
+  if(i===ans){el.classList.add('correct');score.c++;score.s++;showFb(true,'Richtig!');}
+  else{el.classList.add('wrong');score.w++;score.s=0;document.querySelectorAll('.q-opt')[ans].classList.add('correct');showFb(false,'Falsch.');}
+  updScore();
+}
+function ansTF(v,ans,el,exp){
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.add('disabled'));
+  if(v===ans){el.classList.add('correct');score.c++;score.s++;showFb(true,exp);}
+  else{el.classList.add('wrong');score.w++;score.s=0;showFb(false,exp);}
+  updScore();
+}
+function showFb(ok,msg){const f=document.getElementById('fb');f.className='feedback show '+(ok?'ok':'fail');f.textContent=(ok?'✓ ':'✗ ')+msg;}
+function updScore(){document.getElementById('sc').textContent=score.c;document.getElementById('sw').textContent=score.w;document.getElementById('ss').textContent=score.s;if(score.c>=8)saveProgress('grammatiken-chomsky',{status:'completed',score:score.c});}
+genQuiz();
+
+// ════════════════════════════════════
+//  GLOSSARY LEARNING SYSTEM
+// ════════════════════════════════════
+const GLOSSARY = [
+  {
+    term: 'Formale Grammatik',
+    short: 'G = (N, T, P, S) – Regelsystem zur Erzeugung von Sprachen',
+    definition: 'Eine formale Grammatik ist ein mathematisches Modell G = (N, T, P, S), bestehend aus Nichtterminalen (N), Terminalen (T), Produktionsregeln (P) und einem Startsymbol (S). Sie beschreibt, welche Wörter zu einer formalen Sprache gehören.',
+    analogy: '💡 Wie ein Kochrezept: Die Zutaten (Terminale) sind das Endergebnis, die Arbeitsschritte (Regeln) sagen dir, wie du sie zusammensetzen darfst, und du startest immer beim gleichen ersten Schritt (Startsymbol).',
+    hints: [
+      'G besteht aus vier Komponenten: N (Nichtterminale), T (Terminale), P (Produktionsregeln), S (Startsymbol)',
+      'Das Startsymbol S ist immer ein Element der Nichtterminale (S ∈ N)',
+      'Durch wiederholtes Anwenden der Regeln in P werden Wörter aus T* erzeugt'
+    ],
+    questions: [
+      { type: 'fill', q: 'Eine formale Grammatik wird als Tupel G = (N, T, P, ___) definiert.', a: 'S', hint: 'Das Symbol, bei dem jede Ableitung beginnt' },
+      { type: 'choice', q: 'Was beschreiben die Produktionsregeln P einer Grammatik?', options: ['Die Menge aller möglichen Wörter', 'Wie Nichtterminale durch andere Symbole ersetzt werden können', 'Die Reihenfolge der Terminale im Alphabet', 'Den erkennenden Automaten'], correct: 1 },
+      { type: 'explain', q: 'Erkläre die vier Bestandteile einer formalen Grammatik und ihre Bedeutung.', keywords: ['Nichtterminale', 'Terminale', 'Produktionsregeln', 'Startsymbol', 'Ableitung', 'Sprache'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Chomsky-Hierarchie',
+    short: 'Vier Typen (0–3) ordnen Grammatiken nach Mächtigkeit',
+    definition: 'Die Chomsky-Hierarchie klassifiziert formale Grammatiken in vier Typen (0–3) nach zunehmenden Einschränkungen der Produktionsregeln. Typ 3 (regulär) ist am stärksten eingeschränkt, Typ 0 (unbeschränkt) am wenigsten. Jeder Typ ist eine echte Teilmenge des nächsthöheren.',
+    analogy: '💡 Wie eine Pyramide mit vier Stockwerken: Unten (Typ 0) ist am größten und kann alles. Je höher du gehst, desto kleiner und spezialisierter wird es – aber dafür einfacher zu handhaben!',
+    hints: [
+      'Benannt nach dem Linguisten Noam Chomsky (1956)',
+      'Typ 3 ⊂ Typ 2 ⊂ Typ 1 ⊂ Typ 0 – jeder Typ ist Teilmenge des nächsten',
+      'Jedem Typ ist ein eigener Automatentyp zugeordnet (DEA, PDA, LBA, TM)'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die Chomsky-Hierarchie hat ___ Typen (0 bis 3).', a: '4', alt: ['vier'], hint: 'Von Typ 0 bis Typ 3' },
+      { type: 'choice', q: 'Welche Aussage über die Chomsky-Hierarchie ist korrekt?', options: ['Typ 0 ist die kleinste Klasse', 'Typ 3 ist die mächtigste Klasse', 'Typ 3 ⊂ Typ 2 ⊂ Typ 1 ⊂ Typ 0', 'Alle Typen sind gleich mächtig'], correct: 2 },
+      { type: 'explain', q: 'Erkläre die Chomsky-Hierarchie und die Beziehung zwischen den vier Typen.', keywords: ['Typ 0', 'Typ 3', 'Teilmenge', 'Grammatik', 'Produktionsregeln', 'Einschränkung', 'Automat'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Reguläre Grammatik',
+    short: 'Typ 3 – Regeln der Form A → aB oder A → a',
+    definition: 'Eine reguläre Grammatik (Typ 3) hat nur Regeln der Form A → aB oder A → a (rechtslinear) bzw. A → Ba oder A → a (linkslinear). Sie erzeugt genau die regulären Sprachen, die von endlichen Automaten (DEA/NEA) erkannt werden.',
+    analogy: '💡 Wie eine Einbahnstraße: Du kannst nur in eine Richtung lesen – entweder von links nach rechts oder umgekehrt, aber nie gemischt. Einfach und vorhersagbar!',
+    hints: [
+      'Rechtslinear: A → aB oder A → a (Nichtterminal steht immer rechts)',
+      'Linkslinear: A → Ba oder A → a (Nichtterminal steht immer links)',
+      'Wird von DEA/NEA erkannt – unter allen Operationen (∪, ∩, ·, *, ¬) abgeschlossen'
+    ],
+    questions: [
+      { type: 'fill', q: 'Eine rechtslineare Grammatik hat Regeln der Form A → aB oder A → ___.', a: 'a', hint: 'Nur ein Terminal, kein Nichtterminal' },
+      { type: 'choice', q: 'Welcher Automat erkennt Typ-3-Sprachen?', options: ['Turingmaschine', 'Kellerautomat', 'DEA / NEA', 'Linear beschränkte TM'], correct: 2 },
+      { type: 'explain', q: 'Erkläre, was eine reguläre Grammatik ist und welche Einschränkungen ihre Regeln haben.', keywords: ['rechtslinear', 'linkslinear', 'Typ 3', 'DEA', 'NEA', 'Terminal', 'Nichtterminal'], minKeywords: 3 }
+    ],
+    difficulty: 2
+  },
+  {
+    term: 'Kontextfreie Grammatik',
+    short: 'Typ 2 – links immer genau ein Nichtterminal',
+    definition: 'Eine kontextfreie Grammatik (Typ 2) hat Regeln der Form A → γ, wobei A ein einzelnes Nichtterminal ist und γ eine beliebige Folge aus Terminalen und Nichtterminalen. Die Ersetzung erfolgt unabhängig vom Kontext (den umgebenden Symbolen).',
+    analogy: '💡 Wie ein Wörterbuch: Jedes Wort (Nichtterminal) hat eine feste Definition (rechte Seite), egal in welchem Satz es vorkommt. Der Kontext spielt keine Rolle!',
+    hints: [
+      'Links steht immer genau EIN Nichtterminal – kein Kontext drum herum',
+      'Rechts darf beliebig viel stehen: Terminale, Nichtterminale, gemischt',
+      'Wird vom Kellerautomaten (PDA) erkannt – wichtig für Programmiersprachen'
+    ],
+    questions: [
+      { type: 'fill', q: 'Bei einer kontextfreien Grammatik steht links immer genau ein ___.', a: 'Nichtterminal', alt: ['NT', 'Variable'], hint: 'Ein großer Buchstabe wie A, B, S' },
+      { type: 'choice', q: 'Welche Sprache ist kontextfrei, aber NICHT regulär?', options: ['a*b*', '(ab)*', 'aⁿbⁿ', 'a(a|b)*'], correct: 2 },
+      { type: 'explain', q: 'Erkläre den Unterschied zwischen kontextfreien und regulären Grammatiken.', keywords: ['Nichtterminal', 'Kontext', 'Typ 2', 'Typ 3', 'Kellerautomat', 'Regelform', 'rechtslinear'], minKeywords: 3 }
+    ],
+    difficulty: 2
+  },
+  {
+    term: 'Kontextsensitive Grammatik',
+    short: 'Typ 1 – Kontext bestimmt die Ersetzung',
+    definition: 'Eine kontextsensitive Grammatik (Typ 1) hat Regeln der Form αAβ → αγβ, wobei der Kontext (α und β) erhalten bleibt und |γ| ≥ 1 gilt. Die Ersetzung eines Nichtterminals hängt also von seiner Umgebung ab. Die Wörter werden nie kürzer.',
+    analogy: '💡 Wie Benimmregeln: Was du tun darfst, hängt davon ab, WO du bist. "Laut reden" ist auf dem Fußballplatz (Kontext) ok, in der Bibliothek (anderer Kontext) nicht!',
+    hints: [
+      'Regelform: αAβ → αγβ – der Kontext α und β bleibt links und rechts stehen',
+      'Wichtig: |γ| ≥ 1, d.h. die Satzform wird nie kürzer (monoton)',
+      'Wird von linear beschränkten Turingmaschinen (LBA) erkannt'
+    ],
+    questions: [
+      { type: 'fill', q: 'Bei Typ-1-Grammatiken hat die Regelform αAβ → αγβ die Bedingung |γ| ≥ ___.', a: '1', alt: ['eins'], hint: 'Die Satzform darf nicht kürzer werden' },
+      { type: 'choice', q: 'Welche Sprache ist kontextsensitiv, aber NICHT kontextfrei?', options: ['aⁿbⁿ', 'a*b*', 'aⁿbⁿcⁿ', '(ab)*'], correct: 2 },
+      { type: 'explain', q: 'Erkläre, was "kontextsensitiv" bedeutet und wie sich Typ-1-Regeln von Typ-2-Regeln unterscheiden.', keywords: ['Kontext', 'αAβ', 'Umgebung', 'monoton', 'LBA', 'Typ 1', 'kürzer'], minKeywords: 3 }
+    ],
+    difficulty: 3
+  },
+  {
+    term: 'Produktionsregel',
+    short: 'Ersetzungsvorschrift α → β in einer Grammatik',
+    definition: 'Eine Produktionsregel (auch Ersetzungsregel) hat die Form α → β und legt fest, wie eine Zeichenkette α durch eine andere Zeichenkette β ersetzt werden darf. Die Menge aller Produktionsregeln P bestimmt, welche Ableitungen in einer Grammatik möglich sind.',
+    analogy: '💡 Wie Spielregeln bei einem Brettspiel: Jede Regel sagt dir genau, was du in welcher Situation tun darfst. Ohne Regeln kein Spiel – ohne Produktionsregeln keine Sprache!',
+    hints: [
+      'Geschrieben als α → β: linke Seite (α) wird durch rechte Seite (β) ersetzt',
+      'Die linke Seite enthält mindestens ein Nichtterminal',
+      'Der Typ der Grammatik wird durch die Form der Produktionsregeln bestimmt'
+    ],
+    questions: [
+      { type: 'fill', q: 'Eine Produktionsregel hat die Form α → ___, wobei α durch die rechte Seite ersetzt wird.', a: 'β', alt: ['beta'], hint: 'Der griechische Buchstabe für die rechte Seite' },
+      { type: 'choice', q: 'Was bestimmt den Chomsky-Typ einer Grammatik?', options: ['Die Anzahl der Terminale', 'Die Form der Produktionsregeln', 'Das Startsymbol', 'Die Länge der erzeugten Wörter'], correct: 1 },
+      { type: 'explain', q: 'Erkläre, was Produktionsregeln sind und wie sie den Typ einer Grammatik bestimmen.', keywords: ['Ersetzung', 'linke Seite', 'rechte Seite', 'Nichtterminal', 'Ableitung', 'Typ', 'Einschränkung'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Terminal',
+    short: 'Endsymbole des Alphabets – nicht weiter ersetzbar',
+    definition: 'Terminale (auch Terminalsymbole) sind die Grundzeichen des Alphabets T einer Grammatik. Sie erscheinen im fertigen Wort und können nicht weiter durch Regeln ersetzt werden. Im Gegensatz dazu stehen Nichtterminale (Variablen), die als Platzhalter bei Ableitungen dienen.',
+    analogy: '💡 Wie Buchstaben im Alphabet: "a", "b", "c" sind fertige Bausteine. Du kannst sie verwenden, aber nicht weiter zerlegen. Die Nichtterminale sind wie Abkürzungen, die man noch auflösen muss!',
+    hints: [
+      'Terminale = kleine Buchstaben (a, b, c, 0, 1) – das fertige Alphabet',
+      'Nichtterminale = große Buchstaben (S, A, B) – Hilfsvariablen bei der Ableitung',
+      'Ein Wort der Sprache besteht NUR aus Terminalen (w ∈ T*)'
+    ],
+    questions: [
+      { type: 'fill', q: 'Ein fertiges Wort der Sprache L(G) besteht ausschließlich aus ___.', a: 'Terminalen', alt: ['Terminalsymbolen', 'Terminale'], hint: 'Die Zeichen, die nicht weiter ersetzt werden können' },
+      { type: 'choice', q: 'Welche Symbole sind Terminale in der Grammatik G mit T = {a, b}?', options: ['S und A', 'a und b', 'S, A, a und b', 'Nur das Startsymbol'], correct: 1 },
+      { type: 'explain', q: 'Erkläre den Unterschied zwischen Terminalen und Nichtterminalen in einer formalen Grammatik.', keywords: ['Terminal', 'Nichtterminal', 'Alphabet', 'ersetzbar', 'Variable', 'Wort', 'Ableitung'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Ableitung',
+    short: 'Schrittweise Ersetzung von S zum fertigen Wort',
+    definition: 'Eine Ableitung ist eine Folge von Regelanwendungen, die ausgehend vom Startsymbol S schrittweise Nichtterminale durch die rechte Seite von Produktionsregeln ersetzt, bis ein Wort aus Terminalen entsteht. Man schreibt S ⇒ ... ⇒* w.',
+    analogy: '💡 Wie eine Kettenreaktion: Du startest mit einem Dominostein (S), der den nächsten umwirft (Regel anwenden), der wieder den nächsten umwirft – bis am Ende das fertige Muster (Wort) dasteht!',
+    hints: [
+      'Start ist immer das Startsymbol S',
+      'Pro Schritt wird genau EIN Nichtterminal durch eine Regelanwendung ersetzt',
+      'Die Ableitung ist fertig, wenn nur noch Terminale übrig sind (w ∈ T*)'
+    ],
+    questions: [
+      { type: 'fill', q: 'Bei einer Ableitung wird pro Schritt genau ein ___ ersetzt.', a: 'Nichtterminal', alt: ['NT', 'Variable'], hint: 'Die großen Buchstaben in der Satzform' },
+      { type: 'choice', q: 'Was bedeutet S ⇒* w?', options: ['S wird in genau einem Schritt zu w', 'S wird in null oder mehr Schritten zu w abgeleitet', 'w wird zu S rückwärts abgeleitet', 'S und w sind identisch'], correct: 1 },
+      { type: 'explain', q: 'Erkläre den Ableitungsprozess einer formalen Grammatik anhand eines Beispiels.', keywords: ['Startsymbol', 'Nichtterminal', 'Regel', 'Ersetzung', 'Terminal', 'Schritt', 'Wort'], minKeywords: 3 }
+    ],
+    difficulty: 2
+  }
+];
+
+// ── State Management ──
+const glossaryState = { levels: {}, current: null, hintIdx: 0 };
+
+function glossaryLoad() {
+  try {
+    const s = localStorage.getItem('glossary-grammatiken');
+    if (s) glossaryState.levels = JSON.parse(s);
+  } catch(e) {}
+  GLOSSARY.forEach(g => { if (!(g.term in glossaryState.levels)) glossaryState.levels[g.term] = 0; });
+}
+
+function glossarySave() {
+  localStorage.setItem('glossary-grammatiken', JSON.stringify(glossaryState.levels));
+}
+
+// ── Grid Rendering ──
+function glossaryRenderGrid() {
+  const grid = document.getElementById('glossary-grid');
+  grid.innerHTML = '';
+  const icons = ['\u2753', '\uD83D\uDCA1', '\uD83D\uDD0D', '\u2B50'];
+  GLOSSARY.forEach(g => {
+    const lv = glossaryState.levels[g.term] || 0;
+    const c = document.createElement('div');
+    c.className = 'glossary-card' + (glossaryState.current === g.term ? ' active' : '');
+    c.dataset.level = lv;
+    c.onclick = () => glossaryOpen(g.term);
+    c.innerHTML = '<div class="gc-icon">' + icons[lv] + '</div><div class="gc-term">' + g.term + '</div><div class="gc-short">' + g.short + '</div><div class="gc-level"></div>';
+    grid.appendChild(c);
+  });
+  glossaryUpdateProgress();
+}
+
+function glossaryUpdateProgress() {
+  const mastered = GLOSSARY.filter(g => glossaryState.levels[g.term] >= 3).length;
+  const total = GLOSSARY.length;
+  const pct = Math.round(mastered / total * 100);
+  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
+  document.getElementById('glossary-fill').style.width = pct + '%';
+  document.getElementById('glossary-count').textContent = pct + '%';
+}
+
+// ── Open Term ──
+function glossaryOpen(term) {
+  const g = GLOSSARY.find(t => t.term === term);
+  if (!g) return;
+  glossaryState.current = term;
+  glossaryState.hintIdx = 0;
+  const lv = glossaryState.levels[term] || 0;
+
+  document.getElementById('gl-title').textContent = g.term;
+  glossaryRenderPhases(lv);
+
+  if (lv === 0) glossaryPhase1(g);
+  else if (lv === 1) glossaryPhase2(g);
+  else if (lv === 2) glossaryPhase3(g);
+  else glossaryMastered(g);
+
+  document.getElementById('glossary-learn').classList.add('visible');
+  glossaryRenderGrid();
+  document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function glossaryRenderPhases(lv, activePhase) {
+  if (activePhase === undefined) activePhase = lv;
+  const names = ['\uD83D\uDCA1 Kennenlernen', '\uD83D\uDD0D \u00dcberpr\u00fcfen', '\u2B50 Beweisen'];
+  document.getElementById('gl-phases').innerHTML = names.map((n, i) => {
+    let cls = 'gl-phase';
+    if (i === activePhase) cls += ' current';
+    else if (i <= lv - 1 || lv === 3) cls += ' done';
+    let onclick = '';
+    if (i <= lv || lv === 3) onclick = ' onclick="glossaryGoToPhase(' + i + ')"';
+    return '<div class="' + cls + '"' + onclick + '>' + n + '</div>';
+  }).join('');
+}
+
+function glossaryGoToPhase(phaseIdx) {
+  const term = glossaryState.current;
+  const g = GLOSSARY.find(t => t.term === term);
+  if (!g) return;
+  glossaryState.hintIdx = 0;
+  const lv = glossaryState.levels[term] || 0;
+  glossaryRenderPhases(lv, phaseIdx);
+  if (phaseIdx === 0) glossaryPhase1(g);
+  else if (phaseIdx === 1) glossaryPhase2(g);
+  else if (phaseIdx === 2) glossaryPhase3(g);
+}
+
+// ── Phase 1: Kennenlernen ──
+function glossaryPhase1(g) {
+  const el = document.getElementById('gl-content');
+  let html = '<div class="gl-analogy">' + g.analogy + '</div>';
+  html += '<div class="gl-definition">' + g.definition + '</div>';
+  html += '<div class="gl-hints" id="gl-hints">';
+  g.hints.forEach((h, i) => {
+    html += '<div class="gl-hint' + (i === 0 ? ' visible' : '') + '" id="gh-' + i + '">' + h + '</div>';
+  });
+  html += '</div>';
+  if (g.hints.length > 1) html += '<button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">N\u00e4chster Hinweis \u2192</button>';
+  html += '<button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden! \u2713</button>';
+  el.innerHTML = html;
+}
+
+function glossaryNextHint() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  if (!g) return;
+  glossaryState.hintIdx++;
+  if (glossaryState.hintIdx < g.hints.length) {
+    document.getElementById('gh-' + glossaryState.hintIdx).classList.add('visible');
+  }
+  if (glossaryState.hintIdx >= g.hints.length - 1) {
+    const btn = document.getElementById('gl-hint-btn');
+    if (btn) btn.style.display = 'none';
+  }
+}
+
+// ── Phase 2: Überprüfen ──
+function glossaryPhase2(g) {
+  const q = g.questions.find(x => x.type === 'fill') || g.questions.find(x => x.type === 'choice') || g.questions[0];
+  const el = document.getElementById('gl-content');
+  if (q.type === 'fill') {
+    el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+      '<input type="text" class="gl-input" id="gl-answer" placeholder="Deine Antwort..." onkeydown="if(event.key===\'Enter\')glossaryCheckFill()">' +
+      (q.hint ? '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Tipp: ' + q.hint + '</div>' : '') +
+      '<button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
+  } else if (q.type === 'choice') {
+    el.innerHTML = '<div class="gl-question">' + q.q + '</div><div class="gl-choices">' +
+      q.options.map((o, i) => '<button class="gl-choice" onclick="glossaryCheckChoice(' + i + ')">' + o + '</button>').join('') +
+      '</div><div id="gl-feedback"></div>';
+  }
+}
+
+function glossaryCheckFill() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'fill');
+  const val = document.getElementById('gl-answer').value.trim();
+  const fb = document.getElementById('gl-feedback');
+  const ok = [q.a, ...(q.alt || [])].some(a => val.toLowerCase() === a.toLowerCase());
+  if (ok) {
+    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89 "' + q.a + '" ist korrekt.</div>';
+    setTimeout(() => glossaryLevelUp(), 1200);
+  } else {
+    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist: <strong>' + q.a + '</strong>. Versuch es nochmal!</div>';
+    document.getElementById('gl-answer').value = '';
+    document.getElementById('gl-answer').focus();
+  }
+}
+
+function glossaryCheckChoice(idx) {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'choice');
+  const btns = document.querySelectorAll('.gl-choice');
+  const fb = document.getElementById('gl-feedback');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  if (idx === q.correct) {
+    btns[idx].classList.add('correct');
+    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89</div>';
+    setTimeout(() => glossaryLevelUp(), 1200);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist markiert.</div>';
+    setTimeout(() => {
+      btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('wrong', 'correct'); });
+      fb.innerHTML = '';
+    }, 2500);
+  }
+}
+
+// ── Phase 3: Beweisen ──
+function glossaryPhase3(g) {
+  const q = g.questions.find(x => x.type === 'explain');
+  if (!q) { glossaryLevelUp(); return; }
+  const el = document.getElementById('gl-content');
+  el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+    '<textarea class="gl-input" id="gl-answer" placeholder="Erkl\u00e4re in eigenen Worten..." rows="4"></textarea>' +
+    '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Verwende Fachbegriffe \u2013 je mehr Schl\u00fcsselw\u00f6rter du nennst, desto besser!</div>' +
+    '<button class="gl-btn primary" onclick="glossaryCheckExplain()">Antwort pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
+}
+
+function glossaryCheckExplain() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'explain');
+  const val = document.getElementById('gl-answer').value.trim().toLowerCase();
+  const fb = document.getElementById('gl-feedback');
+  if (!val) { fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe eine Erkl\u00e4rung!</div>'; return; }
+
+  const found = [], missing = [];
+  q.keywords.forEach(kw => {
+    if (val.includes(kw.toLowerCase())) found.push(kw); else missing.push(kw);
+  });
+  const kwHtml = found.map(k => '<span class="gl-keyword found">\u2713 ' + k + '</span>').join('') +
+                 missing.map(k => '<span class="gl-keyword missing">\u2717 ' + k + '</span>').join('');
+
+  if (found.length >= (q.minKeywords || 3)) {
+    fb.innerHTML = '<div class="gl-feedback success">Sehr gut! \uD83C\uDF89 Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt!<br>' + kwHtml + '</div>';
+    setTimeout(() => glossaryLevelUp(), 1800);
+  } else {
+    fb.innerHTML = '<div class="gl-feedback info">Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt (' + (q.minKeywords || 3) + ' ben\u00f6tigt):<br>' + kwHtml +
+      '<br><span style="font-size:12px;margin-top:6px;display:inline-block">Versuch es nochmal \u2013 nutze die fehlenden Begriffe!</span></div>';
+  }
+}
+
+// ── Mastered View ──
+function glossaryMastered(g) {
+  document.getElementById('gl-content').innerHTML =
+    '<div style="text-align:center;padding:20px 0">' +
+    '<div style="font-size:48px;margin-bottom:12px">\u2B50</div>' +
+    '<div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px">Gemeistert!</div>' +
+    '<div style="font-size:13px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.6">' +
+    'Du hast <strong style="color:var(--text)">' + g.term + '</strong> vollst\u00e4ndig gelernt. ' + g.short + '</div>' +
+    '<button class="gl-btn" style="margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)" onclick="glossaryReset(\'' + g.term + '\')">Nochmal lernen \u21BA</button></div>';
+}
+
+function glossaryLevelUp() {
+  const term = glossaryState.current;
+  let lv = (glossaryState.levels[term] || 0) + 1;
+  if (lv > 3) lv = 3;
+  glossaryState.levels[term] = lv;
+  glossarySave();
+  glossaryOpen(term);
+}
+
+function glossaryReset(term) {
+  glossaryState.levels[term] = 0;
+  glossarySave();
+  glossaryOpen(term);
+}
+
+function glossaryClose() {
+  document.getElementById('glossary-learn').classList.remove('visible');
+  glossaryState.current = null;
+  glossaryRenderGrid();
+}
+
+// ── Term Highlighting in Content ──
+function glossaryHighlightTerms() {
+  const termMap = {};
+  GLOSSARY.forEach(g => { termMap[g.term.toLowerCase()] = g.term; });
+  // German variants and plurals
+  termMap['grammatik'] = 'Formale Grammatik';
+  termMap['grammatiken'] = 'Formale Grammatik';
+  termMap['formalen grammatik'] = 'Formale Grammatik';
+  termMap['chomsky'] = 'Chomsky-Hierarchie';
+  termMap['hierarchie'] = 'Chomsky-Hierarchie';
+  termMap['reguläre grammatiken'] = 'Reguläre Grammatik';
+  termMap['reguläre grammatik'] = 'Reguläre Grammatik';
+  termMap['kontextfreie grammatiken'] = 'Kontextfreie Grammatik';
+  termMap['kontextfreie grammatik'] = 'Kontextfreie Grammatik';
+  termMap['kontextsensitive grammatiken'] = 'Kontextsensitive Grammatik';
+  termMap['kontextsensitive grammatik'] = 'Kontextsensitive Grammatik';
+  termMap['kontextsensitiv'] = 'Kontextsensitive Grammatik';
+  termMap['kontextfrei'] = 'Kontextfreie Grammatik';
+  termMap['regulär'] = 'Reguläre Grammatik';
+  termMap['produktionsregeln'] = 'Produktionsregel';
+  termMap['produktionsregel'] = 'Produktionsregel';
+  termMap['ersetzungsregel'] = 'Produktionsregel';
+  termMap['terminale'] = 'Terminal';
+  termMap['terminalsymbole'] = 'Terminal';
+  termMap['terminalsymbol'] = 'Terminal';
+  termMap['nichtterminale'] = 'Terminal';
+  termMap['nichtterminal'] = 'Terminal';
+  termMap['ableitungen'] = 'Ableitung';
+
+  const allTerms = Object.keys(termMap).sort((a, b) => b.length - a.length);
+  const escaped = allTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  const pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
+
+  document.querySelectorAll('.card p, .summary-card p, .detail-panel .dp-val').forEach(el => {
+    if (el.dataset.glDone) return;
+    el.dataset.glDone = '1';
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n;
+    while (n = walker.nextNode()) nodes.push(n);
+
+    nodes.forEach(textNode => {
+      const txt = textNode.textContent;
+      pattern.lastIndex = 0;
+      if (!pattern.test(txt)) return;
+      pattern.lastIndex = 0;
+
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      while (m = pattern.exec(txt)) {
+        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        const span = document.createElement('span');
+        span.className = 'glossary-term';
+        span.dataset.term = termMap[m[0].toLowerCase()] || m[0];
+        span.textContent = m[0];
+        frag.appendChild(span);
+        last = pattern.lastIndex;
+      }
+      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+      textNode.parentNode.replaceChild(frag, textNode);
+    });
+  });
+}
+
+// ── Floating Tooltip ──
+const glTooltip = document.createElement('div');
+glTooltip.className = 'glossary-tooltip';
+document.body.appendChild(glTooltip);
+
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('.glossary-term');
+  if (!t) { glTooltip.style.display = 'none'; return; }
+  const g = GLOSSARY.find(x => x.term === t.dataset.term);
+  if (!g) return;
+  const lv = glossaryState.levels[g.term] || 0;
+  const labels = ['Noch nicht gelernt', 'Kennengelernt', '\u00dcberpr\u00fcft', 'Gemeistert \u2B50'];
+  glTooltip.innerHTML = '<div class="gt-name">' + g.term + '</div><div class="gt-short">' + g.short + '</div><div class="gt-link">' + labels[lv] + ' \u00b7 Klicke zum Lernen \u2192</div>';
+  const r = t.getBoundingClientRect();
+  glTooltip.style.display = 'block';
+  glTooltip.style.left = Math.max(8, r.left + r.width / 2 - 130) + 'px';
+  glTooltip.style.top = (r.top - glTooltip.offsetHeight - 8) + 'px';
+  if (parseFloat(glTooltip.style.top) < 8) glTooltip.style.top = (r.bottom + 8) + 'px';
+});
+
+document.addEventListener('mouseout', e => {
+  if (!e.target.closest('.glossary-term')) glTooltip.style.display = 'none';
+});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('.glossary-term');
+  if (t) { e.preventDefault(); glossaryOpen(t.dataset.term); }
+});
+
+// ── Initialize Glossary ──
+glossaryLoad();
+glossaryRenderGrid();
+glossaryHighlightTerms();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prüfungsvorbereitung – ITI & TGI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.glow-orb.three{background:var(--accent);top:50%;left:50%;transform:translate(-50%,-50%);opacity:.03}
+.container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 24px 80px}
+header{text-align:center;margin-bottom:36px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(26px,5vw,44px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:650px;margin:0 auto}
+
+/* Progress bar */
+.progress-wrap{margin-bottom:32px;animation:fadeUp .6s ease .1s both}
+.progress-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.progress-header .label{font-size:13px;font-weight:600;color:var(--text)}
+.progress-header .stats{display:flex;gap:16px}
+.progress-header .stat{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px}
+.stat .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.progress-track{height:8px;background:rgba(255,255,255,.04);border-radius:99px;overflow:hidden;border:1px solid var(--border)}
+.progress-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--cyan));transition:width .6s ease}
+
+/* Search & Filter */
+.toolbar{display:flex;gap:12px;margin-bottom:32px;flex-wrap:wrap;animation:fadeUp .6s ease .15s both}
+.search-box{flex:1;min-width:200px;position:relative}
+.search-box input{width:100%;font-family:'Outfit',sans-serif;font-size:14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px 10px 38px;color:var(--text);outline:none;transition:border .2s}
+.search-box input:focus{border-color:var(--accent)}
+.search-box input::placeholder{color:var(--muted)}
+.search-box .icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap}
+.chip:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.chip.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Week sections */
+.week-section{margin-top:40px;animation:fadeUp .6s ease both}
+.week-section:nth-child(1){animation-delay:.2s}
+.week-section:nth-child(2){animation-delay:.25s}
+.week-section:nth-child(3){animation-delay:.3s}
+.week-section:nth-child(4){animation-delay:.35s}
+.section-title{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+.section-title .ic{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.section-title .count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:.5px}
+
+/* Topic grid */
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.topic-card{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;text-decoration:none;color:var(--text);transition:all .25s;overflow:hidden;cursor:pointer;display:block}
+.topic-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.topic-card:hover{border-color:rgba(255,255,255,.12);transform:translateY(-2px)}
+.topic-card .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.topic-card .card-icon{font-size:22px}
+.topic-card .badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;padding:3px 8px;border-radius:6px;text-transform:uppercase;font-weight:700}
+.badge-iti{background:rgba(56,189,248,.1);color:var(--cyan);border:1px solid rgba(56,189,248,.2)}
+.badge-tgi{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2)}
+.badge-gdi{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.2)}
+.badge-mix{background:rgba(251,146,60,.1);color:var(--orange);border:1px solid rgba(251,146,60,.2)}
+.topic-card h3{font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.3}
+.topic-card .desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.5;margin-bottom:12px}
+.card-footer{display:flex;justify-content:space-between;align-items:center}
+.status{font-family:'JetBrains Mono',monospace;font-size:10px;display:flex;align-items:center;gap:5px;letter-spacing:.3px}
+.status .s-dot{width:7px;height:7px;border-radius:50%}
+.status-not .s-dot{background:var(--muted);opacity:.4}
+.status-not{color:var(--muted)}
+.status-progress .s-dot{background:var(--yellow)}
+.status-progress{color:var(--yellow)}
+.status-done .s-dot{background:var(--green)}
+.status-done{color:var(--green)}
+.card-arrow{color:var(--muted);font-size:14px;transition:transform .2s}
+.topic-card:hover .card-arrow{transform:translateX(3px);color:var(--text)}
+
+/* Color coding for card top borders */
+.topic-card.iti::before{background:linear-gradient(90deg,var(--cyan),#6cb4ee)}
+.topic-card.tgi::before{background:linear-gradient(90deg,var(--purple),var(--pink))}
+.topic-card.gdi::before{background:linear-gradient(90deg,var(--yellow),var(--orange))}
+.topic-card.mix::before{background:linear-gradient(90deg,var(--orange),var(--red))}
+
+/* Hidden state for filtering */
+.topic-card.hidden{display:none}
+.week-section.hidden{display:none}
+
+/* Footer */
+.footer{text-align:center;margin-top:60px;padding-top:24px;border-top:1px solid var(--border);animation:fadeUp .6s ease .4s both}
+.footer p{font-size:12px;color:var(--muted);font-weight:300}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.topic-grid{grid-template-columns:1fr}.toolbar{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="glow-orb three"></div>
+
+<div class="container">
+<header>
+<div class="tag">4-Wochen Lernplan</div>
+<h1>Prüfungsvorbereitung ITI & TGI</h1>
+<p>Interaktive Trainer für IT-Infrastruktur und Technische Grundlagen der Informatik – alle Themen auf einen Blick</p>
+</header>
+
+<div class="progress-wrap">
+<div class="progress-header">
+<span class="label">Gesamtfortschritt</span>
+<div class="stats">
+<div class="stat"><div class="dot" style="background:var(--green)"></div><span id="done-count">0</span> erledigt</div>
+<div class="stat"><div class="dot" style="background:var(--yellow)"></div><span id="prog-count">0</span> begonnen</div>
+<div class="stat"><div class="dot" style="background:var(--muted);opacity:.4"></div><span id="todo-count">26</span> offen</div>
+</div>
+</div>
+<div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+</div>
+
+<div class="toolbar">
+<div class="search-box">
+<span class="icon">&#128269;</span>
+<input type="text" id="search" placeholder="Thema suchen...">
+</div>
+<div class="filters">
+<div class="chip active" data-filter="all">Alle</div>
+<div class="chip" data-filter="w1">Woche 1</div>
+<div class="chip" data-filter="w2">Woche 2</div>
+<div class="chip" data-filter="w3">Woche 3</div>
+<div class="chip" data-filter="w4">Woche 4</div>
+<div class="chip" data-filter="iti">ITI</div>
+<div class="chip" data-filter="tgi">TGI</div>
+</div>
+</div>
+
+<!-- Navigator -->
+<div style="margin-bottom:32px;animation:fadeUp .6s ease .18s both">
+<a class="topic-card mix" href="lern-navigator.html" style="border:2px solid rgba(251,146,60,.3);background:linear-gradient(135deg,rgba(251,146,60,.05),rgba(108,99,255,.05));padding:24px">
+<div class="card-top"><span class="card-icon" style="font-size:28px">🧭</span><span class="badge badge-mix" style="font-size:10px;padding:4px 10px">NAVIGATOR</span></div>
+<h3 style="font-size:18px;margin-bottom:8px">Lern-Navigator – Mission Control</h3>
+<div class="desc" style="font-size:13px;margin-bottom:14px" id="nav-card-desc">25 Lernpakete in 4 Phasen – dein Begleiter durch den gesamten Prüfungsstoff</div>
+<div class="card-footer">
+<div style="display:flex;gap:16px;align-items:center">
+<span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--orange)" id="nav-card-stat">Lade...</span>
+</div>
+<span class="card-arrow" style="font-size:18px">&#8594;</span>
+</div>
+</a>
+</div>
+<script>
+(function(){
+  try {
+    var done=0,total=0;
+    for(var b=1;b<=25;b++){for(var t=0;t<6;t++){var v=localStorage.getItem('navigator-batch-'+b+'-task-'+t);if(v!==null){total++;if(v==='1')done++;}}}
+    var batchesDone=0;
+    var batchTasks=[4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4];
+    for(var b=1;b<=25;b++){var allDone=true;for(var t=0;t<batchTasks[b-1];t++){if(localStorage.getItem('navigator-batch-'+b+'-task-'+t)!=='1'){allDone=false;break;}}if(allDone&&localStorage.getItem('navigator-batch-'+b+'-task-0')!==null)batchesDone++;}
+    var pct=total?Math.round(done/total*100):0;
+    var el=document.getElementById('nav-card-stat');
+    if(el)el.textContent=pct+'% · '+batchesDone+'/25 Pakete';
+    var nextId=0;
+    for(var b=1;b<=25;b++){var allDone=true;for(var t=0;t<batchTasks[b-1];t++){if(localStorage.getItem('navigator-batch-'+b+'-task-'+t)!=='1'){allDone=false;break;}}if(!allDone||localStorage.getItem('navigator-batch-'+b+'-task-0')===null){nextId=b;break;}}
+    if(nextId>0){var desc=document.getElementById('nav-card-desc');if(desc)desc.textContent='Nächstes Paket: #'+nextId+' – Starte jetzt!';}
+  }catch(e){}
+})();
+</script>
+
+<!-- Lernleitfäden -->
+<div class="guide-section" style="margin-bottom:32px">
+<div class="section-title">
+<div class="ic" style="background:linear-gradient(135deg,var(--accent),var(--green))">📖</div>
+<h2>Lernleitfäden</h2>
+</div>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+<a class="topic-card tgi" href="lernleitfaden-tgi.html" data-tags="tgi" style="border-left:3px solid var(--purple)">
+<div class="card-top"><span class="card-icon">📖</span><span class="badge badge-tgi">LEITFADEN</span></div>
+<h3>Lernleitfaden TGI</h3>
+<div class="desc">Prioritäten, Zusammenfassungen, 30 Übungsaufgaben, Formeln & Checkliste – GDI01, TGI01, TGI02, TGI06</div>
+<div class="card-footer"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--purple)">5 Sektionen</span><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="lernleitfaden-iti.html" data-tags="iti" style="border-left:3px solid var(--cyan)">
+<div class="card-top"><span class="card-icon">📖</span><span class="badge badge-iti">LEITFADEN</span></div>
+<h3>Lernleitfaden ITI</h3>
+<div class="desc">Prioritäten, Zusammenfassungen, 30 Übungsaufgaben, Formeln & Checkliste – ITI21 bis ITI26</div>
+<div class="card-footer"><span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--cyan)">5 Sektionen</span><span class="card-arrow">&#8594;</span></div>
+</a>
+</div>
+</div>
+
+<div id="weeks-container">
+
+<!-- WOCHE 1 -->
+<div class="week-section" data-week="w1">
+<div class="section-title">
+<div class="ic" style="background:linear-gradient(135deg,var(--accent),var(--cyan))">1</div>
+<h2>Woche 1 – Grundlagen</h2>
+<span class="count" data-week-count="w1"></span>
+</div>
+<div class="topic-grid">
+<a class="topic-card iti" href="osi-tcpip.html" data-id="osi-tcpip" data-tags="iti w1">
+<div class="card-top"><span class="card-icon">🌐</span><span class="badge badge-iti">ITI21</span></div>
+<h3>OSI-Modell & TCP/IP</h3>
+<div class="desc">7 Schichten, TCP/IP-Vergleich, Schichtenarchitektur, Eselsbrücken</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="netz-vermittlung.html" data-id="netz-vermittlung" data-tags="iti w1">
+<div class="card-top"><span class="card-icon">🔗</span><span class="badge badge-iti">ITI21</span></div>
+<h3>Netzklassifikation & Vermittlung</h3>
+<div class="desc">PAN, LAN, MAN, WAN, Leitungs-, Paket- & Nachrichtenvermittlung</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card gdi" href="eva-algo-kontroll.html" data-id="eva-algo-kontroll" data-tags="gdi w1">
+<div class="card-top"><span class="card-icon">⚙️</span><span class="badge badge-gdi">GDI01</span></div>
+<h3>EVA-Prinzip & Kontrollstrukturen</h3>
+<div class="desc">Eingabe-Verarbeitung-Ausgabe, Algorithmusbegriff, Schleifen, Bedingungen</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card gdi" href="dualzahlen-trainer.html" data-id="dualzahlen" data-tags="gdi w1">
+<div class="card-top"><span class="card-icon">🔢</span><span class="badge badge-gdi">GDI01</span></div>
+<h3>Dualzahlen-Trainer</h3>
+<div class="desc">Dezimal ↔ Binär, Addition, Subtraktion, Zweierkomplement</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="shannon-trainer.html" data-id="shannon" data-tags="iti w1">
+<div class="card-top"><span class="card-icon">📊</span><span class="badge badge-iti">ITI22</span></div>
+<h3>Informationsgehalt & Entropie</h3>
+<div class="desc">Shannon-Entropie, Informationsgehalt, Entscheidungsgehalt berechnen</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card gdi" href="logik-addierer.html" data-id="logik-addierer" data-tags="gdi w1">
+<div class="card-top"><span class="card-icon">🔌</span><span class="badge badge-gdi">GDI01</span></div>
+<h3>Logische Schaltungen & Addierer</h3>
+<div class="desc">AND, OR, NOT, XOR, Halbaddierer, Volladdierer, Wahrheitstabellen</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="nyquist-shannon.html" data-id="nyquist-shannon" data-tags="iti w1">
+<div class="card-top"><span class="card-icon">📡</span><span class="badge badge-iti">ITI22</span></div>
+<h3>Nyquist & Shannon-Hartley</h3>
+<div class="desc">Abtasttheorem, Kanalkapazität, Signalverarbeitung berechnen</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="datenstrukturen.html" data-id="datenstrukturen" data-tags="tgi w1">
+<div class="card-top"><span class="card-icon">📦</span><span class="badge badge-tgi">TGI01</span></div>
+<h3>Datenstrukturen & ADTs</h3>
+<div class="desc">Stack, Queue, verkettete Liste – Operationen und Komplexität</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="medien-ethernet.html" data-id="medien-ethernet" data-tags="iti w1">
+<div class="card-top"><span class="card-icon">🔧</span><span class="badge badge-iti">ITI23</span></div>
+<h3>Übertragungsmedien & Ethernet</h3>
+<div class="desc">Twisted Pair, LWL, Ethernet-Standards, Kabelkategorien</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="sortier-trainer.html" data-id="sortier" data-tags="tgi w1">
+<div class="card-top"><span class="card-icon">📈</span><span class="badge badge-tgi">TGI01</span></div>
+<h3>Sortieralgorithmen (Einfache)</h3>
+<div class="desc">BubbleSort, SelectionSort, InsertionSort – Schritt für Schritt</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+</div>
+</div>
+
+<!-- WOCHE 2 -->
+<div class="week-section" data-week="w2">
+<div class="section-title">
+<div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">2</div>
+<h2>Woche 2 – Kernthemen vertiefen</h2>
+<span class="count" data-week-count="w2"></span>
+</div>
+<div class="topic-grid">
+<a class="topic-card iti" href="subnetting-trainer.html" data-id="subnetting" data-tags="iti w2">
+<div class="card-top"><span class="card-icon">🖧</span><span class="badge badge-iti">ITI24</span></div>
+<h3>IP-Adressierung & Subnetting</h3>
+<div class="desc">Subnetting, CIDR, Netzadresse, Broadcast, Host-Berechnung</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="tcp-udp-routing.html" data-id="tcp-udp-routing" data-tags="iti w2">
+<div class="card-top"><span class="card-icon">🔄</span><span class="badge badge-iti">ITI24</span></div>
+<h3>TCP vs. UDP & Routing</h3>
+<div class="desc">3-Way-Handshake, Protokollvergleich, RIP, OSPF, BGP</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="quickmergeheap-trainer.html" data-id="quickmergeheap" data-tags="tgi w2">
+<div class="card-top"><span class="card-icon">🔀</span><span class="badge badge-tgi">TGI02</span></div>
+<h3>QuickSort, MergeSort & HeapSort</h3>
+<div class="desc">Erweiterte Sortieralgorithmen – Schritt für Schritt mit Visualisierung</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="hashing-trainer.html" data-id="hashing" data-tags="tgi w2">
+<div class="card-top"><span class="card-icon">#️⃣</span><span class="badge badge-tgi">TGI02</span></div>
+<h3>Hashing & Kollisionsbehandlung</h3>
+<div class="desc">Divisionsrestverfahren, Chaining, Open Addressing, Lastfaktor</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="switch-router-vlan.html" data-id="switch-router-vlan" data-tags="iti w2">
+<div class="card-top"><span class="card-icon">🖥️</span><span class="badge badge-iti">ITI25</span></div>
+<h3>Switch, Router, STP & VLAN</h3>
+<div class="desc">Collision-/Broadcast-Domain, Spanning Tree, VLANs</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="vlsm-verkabelung.html" data-id="vlsm-verkabelung" data-tags="iti w2">
+<div class="card-top"><span class="card-icon">🔌</span><span class="badge badge-iti">ITI25</span></div>
+<h3>VLSM & Strukturierte Verkabelung</h3>
+<div class="desc">Variable Subnetzmasken, Verkabelungshierarchie, Patchpanels</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="grammatiken-chomsky.html" data-id="grammatiken-chomsky" data-tags="tgi w2">
+<div class="card-top"><span class="card-icon">📐</span><span class="badge badge-tgi">TGI06</span></div>
+<h3>Formale Grammatiken & Chomsky</h3>
+<div class="desc">Chomsky-Hierarchie (Typ 0–3), Ableitungen, Produktionsregeln</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="dea-nea-trainer.html" data-id="dea-nea" data-tags="tgi w2">
+<div class="card-top"><span class="card-icon">🤖</span><span class="badge badge-tgi">TGI06</span></div>
+<h3>DEA & NEA Automaten</h3>
+<div class="desc">Deterministische/nichtdeterministische endliche Automaten, Zustandstabellen</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+</div>
+</div>
+
+<!-- WOCHE 3 -->
+<div class="week-section" data-week="w3">
+<div class="section-title">
+<div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">3</div>
+<h2>Woche 3 – Fortgeschrittene Themen</h2>
+<span class="count" data-week-count="w3"></span>
+</div>
+<div class="topic-grid">
+<a class="topic-card iti" href="anwendungsprotokolle.html" data-id="anwendungsprotokolle" data-tags="iti w3">
+<div class="card-top"><span class="card-icon">🌍</span><span class="badge badge-iti">ITI26</span></div>
+<h3>Anwendungsprotokolle</h3>
+<div class="desc">HTTP, DNS, SMTP/POP3/IMAP, DHCP – Ports, Abläufe, Sequenzdiagramme</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="kryptographie-rsa.html" data-id="kryptographie-rsa" data-tags="iti w3">
+<div class="card-top"><span class="card-icon">🔐</span><span class="badge badge-iti">ITI26</span></div>
+<h3>Kryptographie & RSA</h3>
+<div class="desc">Symmetrisch/Asymmetrisch, RSA-Berechnung, Digitale Signaturen</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="o-notation-master.html" data-id="o-notation-master" data-tags="tgi w3">
+<div class="card-top"><span class="card-icon">📉</span><span class="badge badge-tgi">TGI02</span></div>
+<h3>O-Notation & Master-Theorem</h3>
+<div class="desc">Wachstumsraten, Master-Theorem (3 Fälle), P vs. NP</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="snmp-cia-trainer.html" data-id="snmp-cia" data-tags="iti w3">
+<div class="card-top"><span class="card-icon">🛡️</span><span class="badge badge-iti">ITI26</span></div>
+<h3>SNMP, CIA-Triade & Netzwerkmanagement</h3>
+<div class="desc">SNMP-Operationen, CIA-Dreieck, FCAPS-Modell</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="nea-dea-regex.html" data-id="nea-dea-regex" data-tags="tgi w3">
+<div class="card-top"><span class="card-icon">🔄</span><span class="badge badge-tgi">TGI06</span></div>
+<h3>NEA→DEA Konvertierung & Regex</h3>
+<div class="desc">Potenzmengenkonstruktion, Reguläre Ausdrücke, Thompson-Konstruktion</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card iti" href="mac-csma-wlan.html" data-id="mac-csma-wlan" data-tags="iti w3">
+<div class="card-top"><span class="card-icon">📶</span><span class="badge badge-iti">ITI23</span></div>
+<h3>MAC-Schicht, CSMA & WLAN</h3>
+<div class="desc">CSMA/CD vs. CSMA/CA, BSS/ESS/IBSS, 802.11-Standards</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+<a class="topic-card tgi" href="kellerautomat-turing.html" data-id="kellerautomat-turing" data-tags="tgi w3">
+<div class="card-top"><span class="card-icon">🧮</span><span class="badge badge-tgi">TGI07</span></div>
+<h3>Kellerautomaten & Turingmaschinen</h3>
+<div class="desc">PDA mit Stack, Turingmaschine mit Band, Schritt-Simulation</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+</div>
+</div>
+
+<!-- WOCHE 4 -->
+<div class="week-section" data-week="w4">
+<div class="section-title">
+<div class="ic" style="background:linear-gradient(135deg,var(--orange),var(--red))">4</div>
+<h2>Woche 4 – Prüfungssimulation</h2>
+<span class="count" data-week-count="w4"></span>
+</div>
+<div class="topic-grid">
+<a class="topic-card mix" href="mock-exam.html" data-id="mock-exam" data-tags="iti tgi w4">
+<div class="card-top"><span class="card-icon">🎯</span><span class="badge badge-mix">PRÜFUNG</span></div>
+<h3>Probeprüfungs-Simulator</h3>
+<div class="desc">Kombinierte Probeprüfung mit Timer – ITI & TGI Fragen, Auswertung mit Empfehlungen</div>
+<div class="card-footer"><div class="status status-not"><div class="s-dot"></div>Nicht gestartet</div><span class="card-arrow">&#8594;</span></div>
+</a>
+</div>
+</div>
+</div>
+
+<div class="footer">
+<p>Prüfungsvorbereitung ITI & TGI – 4-Wochen-Lernplan mit interaktiven Trainern</p>
+</div>
+</div>
+
+<script>
+const ALL_IDS=[...document.querySelectorAll('.topic-card')].map(c=>c.dataset.id);
+const TOTAL=ALL_IDS.length;
+
+function getProgress(){
+  try{return JSON.parse(localStorage.getItem('trainer-progress')||'{}');}catch(e){return{};}
+}
+
+function updateUI(){
+  const prog=getProgress();
+  let done=0,inProg=0,todo=0;
+  document.querySelectorAll('.topic-card').forEach(card=>{
+    const id=card.dataset.id;
+    const p=prog[id];
+    const statusEl=card.querySelector('.status');
+    if(p&&p.status==='completed'){
+      statusEl.className='status status-done';
+      statusEl.innerHTML='<div class="s-dot"></div>Abgeschlossen';
+      done++;
+    }else if(p&&p.status==='in-progress'){
+      statusEl.className='status status-progress';
+      statusEl.innerHTML='<div class="s-dot"></div>Begonnen';
+      inProg++;
+    }else{
+      statusEl.className='status status-not';
+      statusEl.innerHTML='<div class="s-dot"></div>Nicht gestartet';
+      todo++;
+    }
+  });
+  document.getElementById('done-count').textContent=done;
+  document.getElementById('prog-count').textContent=inProg;
+  document.getElementById('todo-count').textContent=todo;
+  const pct=TOTAL>0?Math.round((done/TOTAL)*100):0;
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.querySelectorAll('[data-week-count]').forEach(el=>{
+    const w=el.dataset.weekCount;
+    const cards=document.querySelectorAll(`.topic-card[data-tags*="${w}"]`);
+    let wd=0;cards.forEach(c=>{const p2=prog[c.dataset.id];if(p2&&p2.status==='completed')wd++;});
+    el.textContent=wd+'/'+cards.length+' erledigt';
+  });
+}
+
+// Search
+document.getElementById('search').addEventListener('input',function(){
+  const q=this.value.toLowerCase().trim();
+  document.querySelectorAll('.topic-card').forEach(card=>{
+    const text=(card.querySelector('h3').textContent+' '+card.querySelector('.desc').textContent).toLowerCase();
+    card.classList.toggle('hidden',q&&!text.includes(q));
+  });
+  document.querySelectorAll('.week-section').forEach(sec=>{
+    const visible=sec.querySelectorAll('.topic-card:not(.hidden)');
+    sec.classList.toggle('hidden',visible.length===0);
+  });
+});
+
+// Filter chips
+document.querySelectorAll('.chip').forEach(chip=>{
+  chip.addEventListener('click',function(){
+    document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+    this.classList.add('active');
+    const f=this.dataset.filter;
+    if(f==='all'){
+      document.querySelectorAll('.topic-card').forEach(c=>c.classList.remove('hidden'));
+      document.querySelectorAll('.week-section').forEach(s=>s.classList.remove('hidden'));
+    }else if(f.startsWith('w')){
+      document.querySelectorAll('.week-section').forEach(s=>{
+        s.classList.toggle('hidden',s.dataset.week!==f);
+      });
+      document.querySelectorAll('.topic-card').forEach(c=>c.classList.remove('hidden'));
+    }else{
+      document.querySelectorAll('.week-section').forEach(s=>s.classList.remove('hidden'));
+      document.querySelectorAll('.topic-card').forEach(card=>{
+        const tags=card.dataset.tags;
+        card.classList.toggle('hidden',!tags.includes(f));
+      });
+      document.querySelectorAll('.week-section').forEach(sec=>{
+        const visible=sec.querySelectorAll('.topic-card:not(.hidden)');
+        sec.classList.toggle('hidden',visible.length===0);
+      });
+    }
+  });
+});
+
+updateUI();
+window.addEventListener('focus',updateUI);
+</script>
+</body>
+</html>

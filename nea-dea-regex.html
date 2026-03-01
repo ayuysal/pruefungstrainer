@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEA→DEA & Regex Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card code{font-family:'JetBrains Mono',monospace;font-size:12px;background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px;color:var(--cyan)}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}.card.c5::before{background:var(--orange)}.card.c6::before{background:var(--yellow)}
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.calc-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:end}
+.calc-row label{font-size:12px;font-weight:600;display:block;margin-bottom:4px}
+.calc-row input,.calc-row select{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;width:180px}
+.calc-row input:focus{border-color:var(--accent)}
+.calc-btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:#fff;transition:all .25s}
+.calc-btn:hover{background:#5a52e0;transform:translateY(-1px)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.result-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px}
+.result-item .rl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.result-item .rv{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cyan);font-weight:600;word-break:break-all}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:16px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace;line-height:1.6}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none;white-space:pre-wrap}
+.solution-box.show{display:block}
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.nea-select{font-family:'JetBrains Mono',monospace;font-size:13px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);outline:none;cursor:pointer;margin-bottom:16px}
+.nea-select:focus{border-color:var(--accent)}
+.step-btn{font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;transition:all .25s;background:var(--accent);color:#fff;margin:4px}
+.step-btn:hover{background:#5a52e0}
+.step-btn.outline{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.step-btn.outline:hover{border-color:var(--accent);color:var(--text)}
+.step-log{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.9;color:var(--muted);max-height:400px;overflow-y:auto;padding-right:8px}
+.step-log .highlight{color:var(--cyan);font-weight:600}
+.step-log .new-state{color:var(--green);font-weight:600}
+.step-log .final{color:var(--pink);font-weight:600}
+.regex-test-area{display:flex;gap:12px;flex-wrap:wrap;align-items:end;margin-bottom:16px}
+.regex-test-area input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:180px}
+.regex-test-area input:focus{border-color:var(--accent)}
+.match-result{display:inline-block;padding:4px 12px;border-radius:6px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;margin:4px}
+.match-yes{background:rgba(81,207,102,.12);color:var(--green);border:1px solid rgba(81,207,102,.3)}
+.match-no{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.3)}
+.test-words-area{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">TGI06 &middot; Formale Sprachen</div>
+<h1>NEA &rarr; DEA & Reguläre Ausdrücke</h1>
+<p>Potenzmengenkonstruktion, Epsilon-Hülle, Regex-Syntax und Thompson-Konstruktion &ndash; interaktiv üben</p>
+</header>
+
+<!-- ==================== REFERENCE ==================== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#9881; Potenzmengenkonstruktion</h3>
+<ul>
+<li>Jeder DEA-Zustand = Menge von NEA-Zuständen</li>
+<li>Start: &epsilon;-Hülle des NEA-Startzustands</li>
+<li>Für jedes Symbol: Vereinigung aller erreichbaren Zustände + &epsilon;-Hülle</li>
+<li>Endzustand im DEA: enthält mindestens einen NEA-Endzustand</li>
+</ul></div>
+<div class="card c2"><h3>&#949; Epsilon-Hülle</h3>
+<p>Die &epsilon;-Hülle eines Zustands q ist die Menge aller Zustände, die von q aus über beliebig viele &epsilon;-Übergänge erreichbar sind (einschliesslich q selbst).</p>
+<p style="margin-top:6px"><code>&epsilon;-Hülle({q}) = {q} &cup; alle über &epsilon; erreichbaren</code></p></div>
+<div class="card c3"><h3>&#128196; Regex-Syntax</h3>
+<ul>
+<li><code>ab</code> &ndash; Konkatenation</li>
+<li><code>a|b</code> &ndash; Alternative (oder)</li>
+<li><code>a*</code> &ndash; Kleene-Stern (0 oder mehr)</li>
+<li><code>a+</code> &ndash; Kleene-Plus (1 oder mehr)</li>
+<li><code>a?</code> &ndash; Optional (0 oder 1)</li>
+<li><code>(ab|cd)*</code> &ndash; Gruppierung mit Klammern</li>
+</ul></div>
+<div class="card c4"><h3>&#128736; Thompson-Konstruktion</h3>
+<p>Algorithmus zur Umwandlung eines regulären Ausdrucks in einen NEA:</p>
+<ul>
+<li>Einzelzeichen &rarr; Zwei Zustände mit einem Übergang</li>
+<li>Konkatenation &rarr; Verkettung zweier NEAs</li>
+<li>Alternative &rarr; Neuer Start/Ende mit &epsilon;-Übergängen</li>
+<li>Kleene-Stern &rarr; &epsilon;-Schleifen und Bypass</li>
+</ul></div>
+<div class="card c5"><h3>&#8596; Aequivalenz</h3>
+<p>Reguläre Ausdrücke &harr; DEA/NEA &harr; Reguläre Grammatiken (Typ 3) &ndash; alle beschreiben exakt die Klasse der regulären Sprachen.</p>
+<p style="margin-top:6px">Jede Darstellung kann in jede andere umgewandelt werden.</p></div>
+<div class="card c6"><h3>&#127919; Wichtige Beispiele</h3>
+<ul>
+<li><code>a*b</code> &ndash; beliebig viele a, dann ein b</li>
+<li><code>(a|b)*</code> &ndash; alle Wörter über {a,b}</li>
+<li><code>a*ba*</code> &ndash; genau ein b, beliebig viele a</li>
+<li><code>(ab)*</code> &ndash; Wiederholung von ab</li>
+<li><code>a(a|b)*b</code> &ndash; beginnt mit a, endet mit b</li>
+</ul></div>
+</div>
+
+<!-- ==================== INTERACTIVE POTENZMENGEN ==================== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#9881;</div><h2>Interaktive Potenzmengenkonstruktion</h2></div>
+<div class="calc-wrap">
+<div style="margin-bottom:12px">
+<label style="font-size:12px;font-weight:600;display:block;margin-bottom:6px">NEA-Beispiel wählen:</label>
+<select class="nea-select" id="nea-example" onchange="loadNEA()">
+<option value="0">NEA 1: a*b (mit &epsilon;-Übergängen)</option>
+<option value="1">NEA 2: (a|b)*a</option>
+<option value="2">NEA 3: ab*|b (mit &epsilon;)</option>
+<option value="3">NEA 4: a*ba* (mit &epsilon;)</option>
+</select>
+</div>
+<div id="nea-table-area"></div>
+<div style="margin-top:16px">
+<button class="step-btn" onclick="pmNextStep()">Nächster Schritt &rarr;</button>
+<button class="step-btn outline" onclick="pmAllSteps()">Alle Schritte zeigen</button>
+<button class="step-btn outline" onclick="pmReset()">Zurücksetzen</button>
+</div>
+<div class="step-log" id="pm-log"></div>
+<div id="dea-table-area" style="margin-top:16px"></div>
+</div>
+
+<!-- ==================== REGEX TESTER ==================== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--pink),var(--purple))">&#128269;</div><h2>Interaktiver Regex-Tester</h2></div>
+<div class="calc-wrap">
+<div class="regex-test-area">
+<div style="flex:2;min-width:200px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Regulärer Ausdruck</label><input type="text" id="regex-input" value="a*b" placeholder="z.B. (a|b)*a"></div>
+<div style="flex:2;min-width:200px"><label style="font-size:12px;font-weight:600;display:block;margin-bottom:4px">Testwörter (kommagetrennt)</label><input type="text" id="regex-words" value="b, ab, aab, ba, a, aaab, bb" placeholder="z.B. ab, ba, aab"></div>
+<button class="calc-btn" onclick="testRegex()">Testen</button>
+</div>
+<div class="test-words-area" id="regex-results"></div>
+<div style="margin-top:12px;font-size:12px;color:var(--muted)">Alphabet: a,b. Syntax: <code>a|b</code> <code>a*</code> <code>a+</code> <code>a?</code> <code>()</code> &ndash; Der Ausdruck muss das gesamte Wort matchen.</div>
+</div>
+
+<!-- ==================== EXERCISES ==================== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#127947;</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="potenz" onclick="setMode('potenz')">Potenzmenge</div>
+<div class="tab" data-mode="ehuelle" onclick="setMode('ehuelle')">&epsilon;-Hülle</div>
+<div class="tab" data-mode="regex-create" onclick="setMode('regex-create')">Regex erstellen</div>
+<div class="tab" data-mode="regex-check" onclick="setMode('regex-check')">Regex prüfen</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- ==================== GLOSSARY ==================== -->
+<div class="glossary-section" id="glossary-section">
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--cyan))">&#128218;</div><h2>Glossar &ndash; Begriffe meistern</h2></div>
+<div class="glossary-progress-bar"><span class="gp-text">Fortschritt</span><div class="gp-bar"><div class="gp-fill" id="gp-fill" style="width:0%"></div></div><span class="gp-count" id="gp-count">0 / 8 gemeistert</span></div>
+<div class="glossary-grid" id="glossary-grid"></div>
+<div class="glossary-learn" id="glossary-learn"></div>
+</div>
+<div id="glossary-tooltip" class="glossary-tooltip"><div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">Klicken zum Lernen &darr;</div></div>
+
+<!-- ==================== SUMMARY ==================== -->
+<div class="summary">
+<div class="summary-card"><h4>&#128161; Merke</h4><p>Die Potenzmengenkonstruktion kann im schlimmsten Fall 2^n DEA-Zustände erzeugen (n = Anzahl NEA-Zustände). In der Praxis sind es meist deutlich weniger, da viele Zustandsmengen nicht erreichbar sind.</p></div>
+<div class="summary-card"><h4>&#127919; Prüfungstipp</h4><p>NEA&rarr;DEA kommt sehr häufig in Klausuren! Immer zuerst die &epsilon;-Hülle des Startzustands berechnen. Dann systematisch für jedes Eingabesymbol die Folgezustände bestimmen. Tabelle anlegen!</p></div>
+<div class="summary-card"><h4>&#129513; Regex-Trick</h4><p>Ueberlege dir: Was ist das Alphabet? Was ist das Muster? Teste mit kurzen Wörtern. Denke an Randfälle: leeres Wort &epsilon;, kuerzestes/laengstes Wort. a* beinhaltet auch &epsilon;!</p></div>
+<div class="summary-card"><h4>&#128203; Aequivalenz-Kette</h4><p>Regex &rarr; NEA (Thompson) &rarr; DEA (Potenzmenge) &rarr; minimaler DEA (Minimierung). Jeder Schritt hat einen Standardalgorithmus &ndash; alle auswendig können!</p></div>
+</div>
+</div>
+
+<script>
+// ==================== PROGRESS ====================
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('nea-dea-regex',{status:'in-progress'});
+
+// ==================== NEA DEFINITIONS ====================
+const NEA_EXAMPLES=[
+  {name:"a*b (mit eps)",states:['q0','q1','q2','q3'],alphabet:['a','b'],start:'q0',finals:['q3'],
+   transitions:{q0:{eps:['q1']},q1:{a:['q1'],eps:['q2']},q2:{b:['q3']},q3:{}}},
+  {name:"(a|b)*a",states:['q0','q1','q2'],alphabet:['a','b'],start:'q0',finals:['q2'],
+   transitions:{q0:{a:['q0','q2'],b:['q0']},q1:{},q2:{}}},
+  {name:"ab*|b (mit eps)",states:['q0','q1','q2','q3','q4'],alphabet:['a','b'],start:'q0',finals:['q3','q4'],
+   transitions:{q0:{eps:['q1','q4']},q1:{a:['q2']},q2:{b:['q2'],eps:['q3']},q3:{},q4:{b:['q3']}}},
+  {name:"a*ba* (mit eps)",states:['q0','q1','q2'],alphabet:['a','b'],start:'q0',finals:['q2'],
+   transitions:{q0:{a:['q0'],b:['q1']},q1:{eps:['q2']},q2:{a:['q2']}}}
+];
+
+// ==================== HELPER: EPSILON CLOSURE ====================
+function epsClosure(nea,stateSet){
+  const stack=[...stateSet],result=new Set(stateSet);
+  while(stack.length){
+    const s=stack.pop();
+    const epsTargets=(nea.transitions[s]&&nea.transitions[s].eps)||[];
+    for(const t of epsTargets){if(!result.has(t)){result.add(t);stack.push(t);}}
+  }
+  return [...result].sort();
+}
+function move(nea,stateSet,symbol){
+  const result=new Set();
+  for(const s of stateSet){
+    const targets=(nea.transitions[s]&&nea.transitions[s][symbol])||[];
+    for(const t of targets)result.add(t);
+  }
+  return [...result].sort();
+}
+function setKey(arr){return '{'+arr.join(',')+'}';}
+function isFinal(nea,stateSet){return stateSet.some(s=>nea.finals.includes(s));}
+
+// ==================== POTENZMENGEN INTERACTIVE ====================
+let pmState={nea:null,queue:[],visited:{},deaTransitions:{},deaStates:[],stepIdx:0,done:false};
+
+function loadNEA(){
+  const idx=parseInt(document.getElementById('nea-example').value);
+  const nea=NEA_EXAMPLES[idx];
+  pmState.nea=nea;
+  renderNEATable(nea);
+  pmReset();
+}
+
+function renderNEATable(nea){
+  const area=document.getElementById('nea-table-area');
+  let h='<div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--accent)">NEA-Übergangstabelle</div><div class="table-wrap"><table><thead><tr><th>Zustand</th>';
+  for(const a of nea.alphabet)h+='<th>'+a+'</th>';
+  h+='<th>&epsilon;</th></tr></thead><tbody>';
+  for(const s of nea.states){
+    const isStart=s===nea.start,isFin=nea.finals.includes(s);
+    const prefix=(isStart?'&rarr; ':'')+(isFin?'* ':'');
+    h+='<tr><td>'+prefix+s+'</td>';
+    for(const a of nea.alphabet){
+      const t=(nea.transitions[s]&&nea.transitions[s][a])||[];
+      h+='<td>'+(t.length?setKey(t):'&empty;')+'</td>';
+    }
+    const eps=(nea.transitions[s]&&nea.transitions[s].eps)||[];
+    h+='<td>'+(eps.length?setKey(eps):'&empty;')+'</td>';
+    h+='</tr>';
+  }
+  h+='</tbody></table></div>';
+  area.innerHTML=h;
+}
+
+function pmReset(){
+  const nea=pmState.nea;if(!nea)return;
+  const startClosure=epsClosure(nea,[nea.start]);
+  const startKey=setKey(startClosure);
+  pmState.queue=[{stateSet:startClosure,key:startKey}];
+  pmState.visited={};pmState.deaTransitions={};pmState.deaStates=[startKey];pmState.stepIdx=0;pmState.done=false;
+  document.getElementById('pm-log').innerHTML='<span class="highlight">Start:</span> &epsilon;-Hülle('+nea.start+') = '+startKey+(isFinal(nea,startClosure)?' <span class="final">[Endzustand]</span>':'');
+  document.getElementById('dea-table-area').innerHTML='';
+}
+
+function pmNextStep(){
+  if(pmState.done)return;
+  const nea=pmState.nea;if(!nea)return;
+  if(pmState.queue.length===0){pmState.done=true;renderDEATable();document.getElementById('pm-log').innerHTML+='<br><br><span class="new-state">Konstruktion abgeschlossen!</span>';return;}
+  const current=pmState.queue.shift();
+  if(pmState.visited[current.key])return pmNextStep();
+  pmState.visited[current.key]=true;
+  pmState.deaTransitions[current.key]={};
+  const log=document.getElementById('pm-log');
+  log.innerHTML+='<br><br><span class="highlight">Bearbeite: '+current.key+'</span>';
+  for(const a of nea.alphabet){
+    const moved=move(nea,current.stateSet,a);
+    const closed=epsClosure(nea,moved);
+    const key=closed.length?setKey(closed):'{}';
+    pmState.deaTransitions[current.key][a]=key;
+    if(key!=='{}'&&!pmState.visited[key]&&!pmState.deaStates.includes(key)){
+      pmState.deaStates.push(key);
+      pmState.queue.push({stateSet:closed,key:key});
+    }
+    const fin=closed.length&&isFinal(nea,closed)?' <span class="final">[Endzustand]</span>':'';
+    log.innerHTML+='<br>&nbsp;&nbsp;&delta;('+current.key+', '+a+') = &epsilon;-Hülle('+setKey(moved)+') = '+(key==='{}' ? '&empty;' : '<span class="new-state">'+key+'</span>')+fin;
+  }
+  log.scrollTop=log.scrollHeight;
+  if(pmState.queue.length===0||Object.keys(pmState.visited).length>=pmState.deaStates.length){renderDEATable();}
+}
+
+function pmAllSteps(){while(!pmState.done)pmNextStep();}
+
+function renderDEATable(){
+  const nea=pmState.nea;if(!nea)return;
+  const area=document.getElementById('dea-table-area');
+  const startKey=setKey(epsClosure(nea,[nea.start]));
+  let h='<div style="font-size:12px;font-weight:600;margin-bottom:8px;margin-top:16px;color:var(--green)">Resultierender DEA</div><div class="table-wrap"><table><thead><tr><th>DEA-Zustand</th>';
+  for(const a of nea.alphabet)h+='<th>'+a+'</th>';
+  h+='<th>Endzustand?</th></tr></thead><tbody>';
+  for(const sk of pmState.deaStates){
+    if(!pmState.deaTransitions[sk])continue;
+    const stateSet=sk.replace(/[{}]/g,'').split(',').filter(Boolean);
+    const isStart=sk===startKey,fin=isFinal(nea,stateSet);
+    h+='<tr><td>'+(isStart?'&rarr; ':'')+sk+'</td>';
+    for(const a of nea.alphabet){
+      const t=pmState.deaTransitions[sk][a]||'&empty;';
+      h+='<td>'+(t==='{}'?'&empty;':t)+'</td>';
+    }
+    h+='<td style="color:'+(fin?'var(--green)':'var(--muted)')+'">'+(fin?'Ja':'Nein')+'</td></tr>';
+  }
+  h+='</tbody></table></div>';
+  area.innerHTML=h;
+}
+
+loadNEA();
+
+// ==================== REGEX TESTER ====================
+function buildRegex(pattern){
+  // Convert our simple regex syntax to JS regex
+  // Our alphabet is a,b but we also handle general chars
+  try{
+    let p=pattern.trim();
+    // Validate: only allow a-z, |, *, +, ?, (, )
+    if(/[^a-z|*+?()\\]/.test(p))return null;
+    const re=new RegExp('^('+p+')$');
+    return re;
+  }catch(e){return null;}
+}
+
+function testRegex(){
+  const pattern=document.getElementById('regex-input').value.trim();
+  const wordsStr=document.getElementById('regex-words').value;
+  const words=wordsStr.split(',').map(w=>w.trim()).filter(Boolean);
+  const area=document.getElementById('regex-results');
+  const re=buildRegex(pattern);
+  if(!re){area.innerHTML='<span class="match-result match-no">Ungültiger Ausdruck!</span>';return;}
+  let html='';
+  for(const w of words){
+    const display=w||'&epsilon;';
+    const matches=re.test(w);
+    html+='<span class="match-result '+(matches?'match-yes':'match-no')+'">'+display+' '+(matches?'&#10003;':'&#10007;')+'</span>';
+  }
+  area.innerHTML=html;
+}
+testRegex();
+
+// ==================== EXERCISES ====================
+let mode='potenz';
+let score={correct:0,wrong:0,streak:0};
+let currentTask={};
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+
+// ---- EXERCISE GENERATORS ----
+
+function genPotenzTask(){
+  // Small NEA, ask for a specific DEA state transition
+  const neas=[
+    {states:['q0','q1'],alphabet:['a','b'],start:'q0',finals:['q1'],
+     transitions:{q0:{a:['q0','q1'],b:['q0']},q1:{}}},
+    {states:['q0','q1','q2'],alphabet:['a','b'],start:'q0',finals:['q2'],
+     transitions:{q0:{a:['q1'],b:['q0']},q1:{a:['q2'],b:['q0']},q2:{a:['q2'],b:['q2']}}},
+    {states:['q0','q1'],alphabet:['a','b'],start:'q0',finals:['q1'],
+     transitions:{q0:{a:['q0'],b:['q0','q1']},q1:{}}},
+    {states:['q0','q1','q2'],alphabet:['a','b'],start:'q0',finals:['q2'],
+     transitions:{q0:{a:['q0','q1']},q1:{b:['q2']},q2:{}}},
+    {states:['q0','q1'],alphabet:['a','b'],start:'q0',finals:['q0'],
+     transitions:{q0:{a:['q1'],b:['q0']},q1:{a:['q0'],b:['q1']}}},
+  ];
+  const nea=neas[rand(0,neas.length-1)];
+  // Build DEA
+  const startCl=epsClosure(nea,[nea.start]);
+  const startKey=setKey(startCl);
+  const visited={},trans={},allStates=[startKey];
+  const queue=[{ss:startCl,k:startKey}];
+  while(queue.length){
+    const c=queue.shift();if(visited[c.k])continue;visited[c.k]=true;trans[c.k]={};
+    for(const a of nea.alphabet){
+      const m=move(nea,c.ss,a),cl=epsClosure(nea,m),k=cl.length?setKey(cl):'{}';
+      trans[c.k][a]=k;
+      if(k!=='{}'&&!visited[k]&&!allStates.includes(k)){allStates.push(k);queue.push({ss:cl,k:k});}
+    }
+  }
+  // Pick a random state and symbol to ask about
+  const validStates=allStates.filter(s=>trans[s]);
+  const askState=validStates[rand(0,validStates.length-1)];
+  const askSymbol=nea.alphabet[rand(0,nea.alphabet.length-1)];
+  const answer=trans[askState][askSymbol];
+  const answerDisplay=answer==='{}'?'leer':answer;
+  // Build NEA table as question
+  let tableHtml='<div class="table-wrap"><table><thead><tr><th>Zustand</th>';
+  for(const a of nea.alphabet)tableHtml+='<th>'+a+'</th>';
+  tableHtml+='</tr></thead><tbody>';
+  for(const s of nea.states){
+    const pre=(s===nea.start?'&rarr; ':'')+(nea.finals.includes(s)?'* ':'');
+    tableHtml+='<tr><td>'+pre+s+'</td>';
+    for(const a of nea.alphabet){
+      const t=(nea.transitions[s]&&nea.transitions[s][a])||[];
+      tableHtml+='<td>'+(t.length?setKey(t):'&empty;')+'</td>';
+    }
+    tableHtml+='</tr>';
+  }
+  tableHtml+='</tbody></table></div>';
+  // Solution
+  const stateArr=askState.replace(/[{}]/g,'').split(',').filter(Boolean);
+  let sol='Zustände in '+askState+':\n';
+  const targets=[];
+  for(const s of stateArr){
+    const t=(nea.transitions[s]&&nea.transitions[s][askSymbol])||[];
+    sol+=' '+s+' --'+askSymbol+'--> '+(t.length?setKey(t):'{}')+'\n';
+    for(const x of t)if(!targets.includes(x))targets.push(x);
+  }
+  targets.sort();
+  const closedTargets=epsClosure(nea,targets);
+  sol+='Vereinigung: '+(targets.length?setKey(targets):'{}')+'\n';
+  sol+='eps-Hülle: '+(closedTargets.length?setKey(closedTargets):'{}')+'\n';
+  sol+='Ergebnis: '+answerDisplay;
+
+  return{
+    q:tableHtml+'<div style="margin-top:12px">Berechne <strong>&delta;_DEA('+askState+', '+askSymbol+')</strong> mittels Potenzmengenkonstruktion.</div>',
+    hint:'Gib die Zustandsmenge an, z.B. {q0,q1} oder leer',
+    answer:answerDisplay,
+    solution:sol,
+    normalize:v=>{let n=v.replace(/\s/g,'');if(n==='leer'||n==='{}'||n==='empty'||n==='{}')return 'leer';return n;}
+  };
+}
+
+function genEhuelleTask(){
+  const configs=[
+    {states:['q0','q1','q2','q3'],eps:{q0:['q1'],q1:['q2']},askState:'q0',answer:['q0','q1','q2']},
+    {states:['q0','q1','q2','q3'],eps:{q0:['q1','q2'],q2:['q3']},askState:'q0',answer:['q0','q1','q2','q3']},
+    {states:['q0','q1','q2'],eps:{q1:['q2'],q2:['q0']},askState:'q1',answer:['q0','q1','q2']},
+    {states:['q0','q1','q2','q3'],eps:{q0:['q1'],q1:[],q2:['q3']},askState:'q2',answer:['q2','q3']},
+    {states:['q0','q1','q2','q3'],eps:{q0:['q1'],q1:['q2'],q2:['q3']},askState:'q0',answer:['q0','q1','q2','q3']},
+    {states:['q0','q1','q2','q3'],eps:{q0:['q2'],q2:['q3'],q3:['q1']},askState:'q0',answer:['q0','q1','q2','q3']},
+    {states:['q0','q1','q2'],eps:{q0:[],q1:['q2']},askState:'q0',answer:['q0']},
+    {states:['q0','q1','q2','q3','q4'],eps:{q0:['q1','q3'],q1:['q2'],q3:['q4']},askState:'q0',answer:['q0','q1','q2','q3','q4']},
+  ];
+  const cfg=configs[rand(0,configs.length-1)];
+  // Build eps table
+  let tableHtml='<div class="table-wrap"><table><thead><tr><th>Zustand</th><th>&epsilon;-Übergänge</th></tr></thead><tbody>';
+  for(const s of cfg.states){
+    const eps=cfg.eps[s]||[];
+    tableHtml+='<tr><td>'+s+'</td><td>'+(eps.length?setKey(eps):'&empty;')+'</td></tr>';
+  }
+  tableHtml+='</tbody></table></div>';
+  const ansStr=setKey(cfg.answer);
+  let sol='Starte mit '+cfg.askState+':\n';
+  sol+='Schritt 0: {'+cfg.askState+'}\n';
+  // simulate
+  const visited=new Set([cfg.askState]),queue=[cfg.askState];
+  let step=1;
+  while(queue.length){
+    const s=queue.shift();
+    const eps=cfg.eps[s]||[];
+    for(const t of eps){
+      if(!visited.has(t)){
+        visited.add(t);queue.push(t);
+        sol+='Schritt '+step+': '+s+' --eps--> '+t+' => '+setKey([...visited].sort())+'\n';
+        step++;
+      }
+    }
+  }
+  sol+='Ergebnis: '+ansStr;
+  return{
+    q:tableHtml+'<div style="margin-top:12px">Berechne <strong>&epsilon;-Hülle('+cfg.askState+')</strong></div>',
+    hint:'Gib die Zustandsmenge an, z.B. {q0,q1,q2}',
+    answer:ansStr,
+    solution:sol,
+    normalize:v=>v.replace(/\s/g,'')
+  };
+}
+
+function genRegexCreateTask(){
+  const tasks=[
+    {desc:'Alle Wörter über {a,b}, die mit "a" beginnen',answers:['a(a|b)*','a[ab]*'],regex:/^a[ab]*$/,sol:'a(a|b)* -- beginnt mit a, dann beliebige Folge von a und b'},
+    {desc:'Alle Wörter über {a,b}, die mit "b" enden',answers:['(a|b)*b','[ab]*b'],regex:/^[ab]*b$/,sol:'(a|b)*b -- beliebige Folge, dann b am Ende'},
+    {desc:'Alle Wörter über {a,b} mit gerader Länge (inkl. leer)',answers:['((a|b)(a|b))*','([ab][ab])*','([ab]{2})*'],regex:/^([ab][ab])*$/,sol:'((a|b)(a|b))* -- Paare von beliebigen Zeichen'},
+    {desc:'Alle Wörter, die nur aus "a" bestehen (inkl. leer)',answers:['a*'],regex:/^a*$/,sol:'a* -- null oder mehr a'},
+    {desc:'Alle Wörter über {a,b} mit mindestens einem "b"',answers:['(a|b)*b(a|b)*','[ab]*b[ab]*'],regex:/^[ab]*b[ab]*$/,sol:'(a|b)*b(a|b)* -- irgendwo mindestens ein b'},
+    {desc:'Alle Wörter über {a,b} mit genau einem "b"',answers:['a*ba*'],regex:/^a*ba*$/,sol:'a*ba* -- beliebig viele a, dann genau ein b, dann beliebig viele a'},
+    {desc:'Nur das leere Wort und "ab"',answers:['(ab)?','(|ab)'],regex:/^(ab)?$/,sol:'(ab)? -- optional ab'},
+    {desc:'Alle Wörter über {a,b}, die "ab" als Teilwort enthalten',answers:['(a|b)*ab(a|b)*','[ab]*ab[ab]*'],regex:/^[ab]*ab[ab]*$/,sol:'(a|b)*ab(a|b)* -- irgendwo das Teilwort ab'},
+    {desc:'Wörter über {a,b}, die mit "a" beginnen und mit "b" enden',answers:['a(a|b)*b'],regex:/^a[ab]*b$/,sol:'a(a|b)*b -- a am Anfang, beliebige Mitte, b am Ende'},
+    {desc:'Wiederholungen von "ab" (inkl. leer)',answers:['(ab)*'],regex:/^(ab)*$/,sol:'(ab)* -- null oder mehr Wiederholungen von ab'},
+  ];
+  const t=tasks[rand(0,tasks.length-1)];
+  // Generate test words
+  const testWords=['','a','b','aa','ab','ba','bb','aaa','aab','aba','abb','baa','bab','bba','bbb','abab','abba','aabb','abbb','aaab'];
+  return{
+    q:'Schreibe einen regulären Ausdruck für:<br><strong style="color:var(--cyan)">'+t.desc+'</strong><br><span style="font-size:11px;color:var(--muted)">Alphabet: {a, b}</span>',
+    hint:'z.B. a*b oder (a|b)*',
+    answer:t.answers[0],
+    solution:t.sol,
+    validate:v=>{
+      try{
+        const re=new RegExp('^('+v.trim()+')$');
+        // Test against all test words
+        for(const w of testWords){
+          if(re.test(w)!==t.regex.test(w))return false;
+        }
+        return true;
+      }catch(e){return false;}
+    }
+  };
+}
+
+function genRegexCheckTask(){
+  const regexes=[
+    {regex:'a*b',words:[{w:'b',m:true},{w:'ab',m:true},{w:'aab',m:true},{w:'a',m:false},{w:'ba',m:false},{w:'bb',m:false},{w:'aaab',m:true}]},
+    {regex:'(a|b)*a',words:[{w:'a',m:true},{w:'ba',m:true},{w:'aa',m:true},{w:'b',m:false},{w:'ab',m:false},{w:'aba',m:true},{w:'bba',m:true}]},
+    {regex:'a*ba*',words:[{w:'b',m:true},{w:'ab',m:true},{w:'ba',m:true},{w:'aba',m:true},{w:'bb',m:false},{w:'a',m:false},{w:'aabaa',m:true}]},
+    {regex:'(ab)*',words:[{w:'',m:true},{w:'ab',m:true},{w:'abab',m:true},{w:'a',m:false},{w:'ba',m:false},{w:'aba',m:false},{w:'ababab',m:true}]},
+    {regex:'(a|b)*',words:[{w:'',m:true},{w:'a',m:true},{w:'b',m:true},{w:'ab',m:true},{w:'abba',m:true},{w:'bbb',m:true},{w:'aaa',m:true}]},
+    {regex:'a(a|b)*b',words:[{w:'ab',m:true},{w:'aab',m:true},{w:'abb',m:true},{w:'a',m:false},{w:'b',m:false},{w:'ba',m:false},{w:'aabb',m:true}]},
+    {regex:'(ab|ba)*',words:[{w:'',m:true},{w:'ab',m:true},{w:'ba',m:true},{w:'abba',m:true},{w:'abab',m:true},{w:'aa',m:false},{w:'aba',m:false}]},
+    {regex:'a+b+',words:[{w:'ab',m:true},{w:'aab',m:true},{w:'abb',m:true},{w:'aabb',m:true},{w:'a',m:false},{w:'b',m:false},{w:'ba',m:false},{w:'',m:false}]},
+  ];
+  const r=regexes[rand(0,regexes.length-1)];
+  // Pick 4 words randomly
+  const selected=shuffle(r.words).slice(0,4);
+  const askWord=selected[0];
+  const answerStr=askWord.m?'ja':'nein';
+  const displayWord=askWord.w||'eps (leeres Wort)';
+  let sol='Regex: '+r.regex+'\n';
+  sol+='Wort: '+(askWord.w||'eps')+'\n';
+  if(askWord.m){sol+='Das Wort wird vom Ausdruck akzeptiert.\n';}else{sol+='Das Wort wird NICHT akzeptiert.\n';}
+  sol+='Alle Ergebnisse:\n';
+  for(const w of r.words){sol+='  '+(w.w||'eps')+' => '+(w.m?'JA':'NEIN')+'\n';}
+  return{
+    q:'Regex: <strong style="color:var(--cyan);font-family:JetBrains Mono,monospace">'+r.regex+'</strong><br><br>Gehört das Wort <strong style="color:var(--orange);font-family:JetBrains Mono,monospace">"'+displayWord+'"</strong> zur Sprache?',
+    hint:'Antwort: ja oder nein',
+    answer:answerStr,
+    solution:sol,
+    normalize:v=>{const n=v.trim().toLowerCase();if(n==='ja'||n==='yes'||n==='j'||n==='true')return 'ja';if(n==='nein'||n==='no'||n==='n'||n==='false')return 'nein';return n;}
+  };
+}
+
+// ---- EXERCISE ENGINE ----
+function genTask(){
+  if(mode==='potenz')return genPotenzTask();
+  if(mode==='ehuelle')return genEhuelleTask();
+  if(mode==='regex-create')return genRegexCreateTask();
+  if(mode==='regex-check')return genRegexCheckTask();
+}
+
+function newTask(){
+  currentTask=genTask();
+  const area=document.getElementById('exercise-area');
+  const labels={potenz:'Potenzmengenkonstruktion',ehuelle:'Epsilon-Hülle berechnen','regex-create':'Regulären Ausdruck erstellen','regex-check':'Wort prüfen'};
+  area.innerHTML=
+    '<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">'+labels[mode]+'</div>'+
+    '<div class="task-display" style="font-size:14px;line-height:1.8">'+currentTask.q+'</div>'+
+    '<div class="task-sub">'+currentTask.hint+'</div>'+
+    '<div class="input-row"><input type="text" id="user-answer" placeholder="Deine Antwort..." autocomplete="off"></div>'+
+    '<div class="btn-row">'+
+      '<button class="btn btn-primary" onclick="checkAnswer()">Prüfen &#8629;</button>'+
+      '<button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>'+
+      '<button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>'+
+    '</div>'+
+    '<div class="feedback" id="fb"></div>'+
+    '<div class="solution-box" id="sol"></div>';
+  const inp=document.getElementById('user-answer');
+  inp.focus();
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+}
+
+function checkAnswer(){
+  const inp=document.getElementById('user-answer');
+  const fb=document.getElementById('fb');
+  const v=inp.value.trim();
+  if(!v)return;
+  let isCorrect=false;
+  if(currentTask.validate){
+    isCorrect=currentTask.validate(v);
+  }else{
+    const norm=currentTask.normalize?currentTask.normalize(v):v.replace(/\s/g,'');
+    const expected=currentTask.normalize?currentTask.normalize(currentTask.answer):currentTask.answer.replace(/\s/g,'');
+    isCorrect=(norm===expected);
+  }
+  if(isCorrect){
+    inp.classList.add('correct');fb.textContent='Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('nea-dea-regex',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  }else{
+    inp.classList.add('wrong');
+    fb.textContent='Falsch! Richtige Antwort: '+currentTask.answer;
+    fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function showSolution(){const s=document.getElementById('sol');s.textContent=currentTask.solution;s.classList.add('show');}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+newTask();
+
+// ==================== GLOSSARY SYSTEM ====================
+(function(){
+const GLOSSARY_KEY='glossary-nea-dea-regex';
+const GLOSSARY_TERMS=[
+{
+  term:'DEA',
+  short:'Deterministischer Endlicher Automat',
+  icon:'\u2699',
+  definition:'Ein DEA (Deterministischer Endlicher Automat) ist ein 5-Tupel (Q, \u03A3, \u03B4, q\u2080, F). Er hat f\u00FCr jeden Zustand und jedes Eingabesymbol genau einen definierten Folgezustand. Dadurch ist der Berechnungsweg f\u00FCr jede Eingabe eindeutig bestimmt. DEAs akzeptieren genau die Klasse der regul\u00E4ren Sprachen.',
+  analogy:'Stell dir einen DEA wie eine Einbahnstra\u00DFe vor: An jeder Kreuzung (Zustand) gibt es f\u00FCr jede Richtungsangabe (Symbol) genau eine M\u00F6glichkeit weiterzufahren \u2013 kein Zögern, kein Raten.',
+  hints:[
+    'DEA steht f\u00FCr Deterministischer Endlicher Automat \u2013 \u201Edeterministisch\u201C bedeutet: eindeutig bestimmt.',
+    'Ein DEA hat genau einen Folgezustand pro Zustand und Symbol. Es gibt keine \u03B5-\u00DCberg\u00E4nge.',
+    'Formal: DEA = (Q, \u03A3, \u03B4, q\u2080, F) mit \u03B4: Q \u00D7 \u03A3 \u2192 Q als totale Funktion.'
+  ],
+  questions:{
+    fill:{q:'Ein DEA hat f\u00FCr jeden Zustand und jedes Eingabesymbol genau _____ Folgezustand.',a:'einen',keywords:['einen','ein','1','genau einen']},
+    choice:{q:'Was unterscheidet einen DEA von einem NEA?',choices:['Der DEA hat f\u00FCr jedes Symbol genau einen Folgezustand','Der DEA kann mehr Sprachen erkennen','Der DEA hat keine Endzust\u00E4nde','Der DEA nutzt immer \u03B5-\u00DCberg\u00E4nge'],correct:0},
+    explain:{q:'Erkl\u00E4re, warum ein DEA als \u201Edeterministisch\u201C bezeichnet wird.',keywords:['eindeutig','genau ein','Folgezustand','bestimmt','kein Nichtdeterminismus']}
+  },
+  difficulty:1
+},
+{
+  term:'NEA',
+  short:'Nichtdeterministischer Endlicher Automat',
+  icon:'\uD83D\uDD00',
+  definition:'Ein NEA (Nichtdeterministischer Endlicher Automat) ist ein 5-Tupel (Q, \u03A3, \u03B4, q\u2080, F), wobei die \u00DCbergangsfunktion \u03B4: Q \u00D7 (\u03A3 \u222A {\u03B5}) \u2192 P(Q) eine Menge von Folgezust\u00E4nden liefert. Ein Wort wird akzeptiert, wenn mindestens ein m\u00F6glicher Berechnungsweg in einem Endzustand endet.',
+  analogy:'Ein NEA ist wie ein Labyrinth mit mehreren Wegen: An manchen Kreuzungen (Zust\u00E4nden) kannst du dich aufteilen und gleichzeitig verschiedene Wege ausprobieren. Wenn auch nur ein Weg zum Ziel f\u00FChrt, hast du gewonnen.',
+  hints:[
+    'NEA = Nichtdeterministischer Endlicher Automat \u2013 mehrere Folgezust\u00E4nde sind m\u00F6glich.',
+    'NEAs erlauben \u03B5-\u00DCberg\u00E4nge (Zustands\u00FCberg\u00E4nge ohne Eingabe) und mehrere Folgezust\u00E4nde pro Symbol.',
+    'Jeder NEA kann mit der Potenzmengenkonstruktion in einen \u00E4quivalenten DEA umgewandelt werden.'
+  ],
+  questions:{
+    fill:{q:'Ein NEA kann f\u00FCr ein Symbol _____ oder mehr Folgezust\u00E4nde haben.',a:'null',keywords:['null','0','zero','keine','keinen','kein']},
+    choice:{q:'Wann akzeptiert ein NEA ein Eingabewort?',choices:['Wenn mindestens ein Berechnungsweg in einem Endzustand endet','Wenn alle Berechnungswege in Endzust\u00E4nden enden','Wenn der einzige Berechnungsweg in einem Endzustand endet','Wenn kein Berechnungsweg in einer Sackgasse endet'],correct:0},
+    explain:{q:'Erkl\u00E4re, was Nichtdeterminismus bei endlichen Automaten bedeutet.',keywords:['mehrere','Folgezust\u00E4nde','gleichzeitig','Wege','M\u00F6glichkeiten','epsilon','Berechnungsweg']}
+  },
+  difficulty:1
+},
+{
+  term:'Regul\u00E4rer Ausdruck',
+  short:'Beschreibung regul\u00E4rer Sprachen (Regex)',
+  icon:'\uD83D\uDD0D',
+  definition:'Ein regul\u00E4rer Ausdruck (Regex) ist eine formale Notation zur Beschreibung regul\u00E4rer Sprachen. Er besteht aus Zeichen des Alphabets und Operatoren: Konkatenation (ab), Alternative (a|b), Kleene-Stern (a*). Regul\u00E4re Ausdr\u00FCcke sind \u00E4quivalent zu DEA/NEA und Typ-3-Grammatiken.',
+  analogy:'Ein Regex ist wie ein Rezept: Es beschreibt ein Muster, nach dem W\u00F6rter aufgebaut sein m\u00FCssen. Wie ein Kochrezept, das sagt \u201Eerst Mehl, dann Eier, beliebig oft r\u00FChren\u201C, sagt ein Regex z.B. \u201Eerst a, dann beliebig viele b\u201C.',
+  hints:[
+    'Die drei Grundoperationen sind: Konkatenation, Alternative (|) und Kleene-Stern (*).',
+    'a* bedeutet \u201Enull oder mehr Wiederholungen von a\u201C, also auch das leere Wort \u03B5.',
+    'Regul\u00E4re Ausdr\u00FCcke \u2194 NEA \u2194 DEA \u2194 Typ-3-Grammatiken \u2013 alle beschreiben dieselbe Sprachklasse.'
+  ],
+  questions:{
+    fill:{q:'Der Kleene-Stern a* bedeutet _____ oder mehr Wiederholungen von a.',a:'null',keywords:['null','0','zero','keine','kein']},
+    choice:{q:'Welche Sprache beschreibt der Ausdruck (a|b)*?',choices:['Alle W\u00F6rter \u00FCber {a,b}, inklusive \u03B5','Nur W\u00F6rter, die mit a oder b beginnen','Alle W\u00F6rter au\u00DFer dem leeren Wort','Nur die W\u00F6rter a und b'],correct:0},
+    explain:{q:'Nenne die drei Grundoperationen regul\u00E4rer Ausdr\u00FCcke und erkl\u00E4re sie kurz.',keywords:['Konkatenation','Alternative','Kleene','Stern','Vereinigung','Verkettung']}
+  },
+  difficulty:1
+},
+{
+  term:'Zustand',
+  short:'Konfiguration eines Automaten (State)',
+  icon:'\u26AA',
+  definition:'Ein Zustand (engl. State) repr\u00E4sentiert eine bestimmte Konfiguration des Automaten zu einem Zeitpunkt der Berechnung. Die Menge aller Zust\u00E4nde Q ist endlich. Es gibt einen Startzustand q\u2080 \u2208 Q und eine Menge von Endzust\u00E4nden (akzeptierenden Zust\u00E4nden) F \u2286 Q.',
+  analogy:'Zust\u00E4nde sind wie R\u00E4ume in einem Geb\u00E4ude. Du startest im Eingangsbereich (Startzustand), gehst durch verschiedene R\u00E4ume (Zustands\u00FCberg\u00E4nge) und versuchst, einen markierten Raum (Endzustand) zu erreichen.',
+  hints:[
+    'Jeder Automat hat eine endliche Menge von Zust\u00E4nden Q.',
+    'Es gibt genau einen Startzustand q\u2080 und eine (m\u00F6glicherweise leere) Menge von Endzust\u00E4nden F.',
+    'In DEAs ist zu jedem Zeitpunkt genau ein Zustand aktiv; in NEAs k\u00F6nnen es mehrere gleichzeitig sein.'
+  ],
+  questions:{
+    fill:{q:'Die Menge aller Zust\u00E4nde eines endlichen Automaten ist immer _____.',a:'endlich',keywords:['endlich','finite','begrenzt']},
+    choice:{q:'Wie viele Startzust\u00E4nde hat ein DEA oder NEA?',choices:['Genau einen','Mindestens einen, beliebig viele m\u00F6glich','Keinen, der wird zur Laufzeit bestimmt','Genau zwei'],correct:0},
+    explain:{q:'Erkl\u00E4re den Unterschied zwischen Startzustand und Endzustand.',keywords:['Startzustand','Beginn','Endzustand','akzeptier','Berechnung','Start','Ende','q0','F']}
+  },
+  difficulty:0
+},
+{
+  term:'\u00DCbergangsfunktion',
+  short:'Transitionsfunktion \u03B4 des Automaten',
+  icon:'\u27A1',
+  definition:'Die \u00DCbergangsfunktion (Transitionsfunktion) \u03B4 definiert, in welchen Zustand der Automat bei einer bestimmten Eingabe wechselt. Beim DEA: \u03B4: Q \u00D7 \u03A3 \u2192 Q (genau ein Folgezustand). Beim NEA: \u03B4: Q \u00D7 (\u03A3 \u222A {\u03B5}) \u2192 P(Q) (Menge von Folgezust\u00E4nden, inkl. \u03B5-\u00DCberg\u00E4nge).',
+  analogy:'Die \u00DCbergangsfunktion ist wie ein Fahrplan: Sie sagt dir, wenn du am Bahnhof X (Zustand) bist und Linie Y (Symbol) nimmst, an welchem Bahnhof (Folgezustand) du ankommst.',
+  hints:[
+    '\u03B4 ist das griechische Delta und steht f\u00FCr die \u00DCbergangsfunktion.',
+    'Beim DEA ist \u03B4 eine totale Funktion (genau ein Ergebnis), beim NEA liefert sie eine Menge.',
+    'Die \u00DCbergangsfunktion wird oft als Tabelle oder als Zustandsdiagramm mit Pfeilen dargestellt.'
+  ],
+  questions:{
+    fill:{q:'Beim DEA ist die \u00DCbergangsfunktion \u03B4: Q \u00D7 \u03A3 \u2192 _____ definiert.',a:'Q',keywords:['Q','Zustandsmenge']},
+    choice:{q:'Was liefert die \u00DCbergangsfunktion eines NEA?',choices:['Eine Menge von Folgezust\u00E4nden (Teilmenge von Q)','Genau einen Folgezustand','Ein Zeichen aus dem Alphabet','Einen Wahrheitswert (akzeptiert/nicht)'],correct:0},
+    explain:{q:'Erkl\u00E4re den Unterschied der \u00DCbergangsfunktion bei DEA und NEA.',keywords:['\u03B4','Funktion','Menge','genau ein','P(Q)','Potenzmenge','deterministisch','nichtdeterministisch','epsilon']}
+  },
+  difficulty:2
+},
+{
+  term:'Akzeptierende Zust\u00E4nde',
+  short:'Endzust\u00E4nde F \u2286 Q',
+  icon:'\u2705',
+  definition:'Akzeptierende Zust\u00E4nde (Endzust\u00E4nde) sind die Teilmenge F \u2286 Q der Zust\u00E4nde, in denen der Automat ein Eingabewort akzeptiert. Wenn die Berechnung nach Lesen des gesamten Wortes in einem Endzustand endet, geh\u00F6rt das Wort zur erkannten Sprache. F kann auch leer sein (dann wird kein Wort akzeptiert).',
+  analogy:'Endzust\u00E4nde sind wie Ziellinien in einem Rennen. Egal welchen Weg du nimmst \u2013 wenn du am Ende \u00FCber eine Ziellinie l\u00E4ufst, hast du gewonnen (Wort akzeptiert). Kommst du woanders an, hast du verloren.',
+  hints:[
+    'Endzust\u00E4nde werden in Diagrammen mit Doppelkreis und in Tabellen mit * markiert.',
+    'F \u2286 Q: Die Endzustandsmenge ist eine Teilmenge der Zustandsmenge \u2013 kann auch leer sein.',
+    'Ein DEA mit F = Q akzeptiert jedes Wort; mit F = \u2205 akzeptiert er kein Wort.'
+  ],
+  questions:{
+    fill:{q:'Endzust\u00E4nde werden in Zustandsdiagrammen mit einem _____ dargestellt.',a:'Doppelkreis',keywords:['Doppelkreis','doppelten Kreis','doppelt','double circle']},
+    choice:{q:'Was passiert, wenn F (Endzustandsmenge) leer ist?',choices:['Der Automat akzeptiert kein einziges Wort','Der Automat akzeptiert alle W\u00F6rter','Der Automat ist ung\u00FCltig','Der Automat akzeptiert nur \u03B5'],correct:0},
+    explain:{q:'Erkl\u00E4re, wann ein DEA ein Wort akzeptiert.',keywords:['Endzustand','lesen','gesamtes Wort','F','akzeptier','Berechnung','endet']}
+  },
+  difficulty:1
+},
+{
+  term:'Alphabet',
+  short:'Eingabealphabet \u03A3 des Automaten',
+  icon:'\uD83D\uDD24',
+  definition:'Das Alphabet (Eingabealphabet) \u03A3 ist die endliche, nichtleere Menge von Symbolen, aus denen die Eingabew\u00F6rter gebildet werden. \u03A3* bezeichnet die Menge aller W\u00F6rter (inklusive des leeren Wortes \u03B5), die aus Symbolen von \u03A3 gebildet werden k\u00F6nnen. Eine formale Sprache L ist eine Teilmenge von \u03A3*.',
+  analogy:'Das Alphabet ist wie der Satz an Bausteinen, die du verwenden darfst. Wenn \u03A3 = {a, b}, dann sind a und b deine einzigen Bausteine. Alle W\u00F6rter m\u00FCssen aus diesen Bausteinen zusammengesetzt werden.',
+  hints:[
+    '\u03A3 (Sigma) ist immer endlich und nicht leer \u2013 z.B. \u03A3 = {a, b} oder \u03A3 = {0, 1}.',
+    '\u03A3* = Kleene-Abschluss: Alle endlichen W\u00F6rter \u00FCber \u03A3, inklusive \u03B5 (leeres Wort).',
+    'Das Alphabet \u03B5 ist KEIN Element von \u03A3, sondern ein spezielles leeres Wort der L\u00E4nge 0.'
+  ],
+  questions:{
+    fill:{q:'\u03A3* bezeichnet die Menge aller _____ \u00FCber dem Alphabet, inklusive \u03B5.',a:'W\u00F6rter',keywords:['W\u00F6rter','Worte','Zeichenketten','Strings']},
+    choice:{q:'Was gilt f\u00FCr das Alphabet \u03A3?',choices:['Es ist endlich und nicht leer','Es kann unendlich viele Symbole enthalten','Es enth\u00E4lt immer das leere Wort \u03B5','Es muss mindestens 2 Symbole haben'],correct:0},
+    explain:{q:'Erkl\u00E4re den Unterschied zwischen \u03A3 und \u03A3*.',keywords:['\u03A3','Sigma','endlich','Symbole','\u03A3*','Kleene','W\u00F6rter','alle','epsilon','leer']}
+  },
+  difficulty:0
+},
+{
+  term:'Potenzmengenkonstruktion',
+  short:'Umwandlung NEA \u2192 DEA',
+  icon:'\u26A1',
+  definition:'Die Potenzmengenkonstruktion ist ein Algorithmus zur Umwandlung eines NEA in einen \u00E4quivalenten DEA. Jeder DEA-Zustand entspricht einer Teilmenge der NEA-Zust\u00E4nde (Element der Potenzmenge P(Q)). Der Startzustand ist die \u03B5-H\u00FClle des NEA-Starts. Im schlimmsten Fall entstehen 2^n DEA-Zust\u00E4nde bei n NEA-Zust\u00E4nden.',
+  analogy:'Stell dir vor, du verfolgst alle m\u00F6glichen Wege gleichzeitig auf einer Landkarte. Die Potenzmengenkonstruktion b\u00FCndelt alle aktuell m\u00F6glichen Positionen (NEA-Zust\u00E4nde) zu einer einzigen Markierung (DEA-Zustand). So wird aus \u201Evielleicht hier, vielleicht da\u201C ein eindeutiges \u201Egenau hier\u201C.',
+  hints:[
+    'Schritt 1: Startzustand des DEA = \u03B5-H\u00FClle(q\u2080) des NEA.',
+    'Schritt 2: F\u00FCr jeden DEA-Zustand und jedes Symbol: Vereinigung aller NEA-\u00DCberg\u00E4nge + \u03B5-H\u00FClle.',
+    'Ein DEA-Zustand ist Endzustand, wenn er mindestens einen NEA-Endzustand enth\u00E4lt. Maximal 2^n DEA-Zust\u00E4nde.'
+  ],
+  questions:{
+    fill:{q:'Bei n NEA-Zust\u00E4nden kann die Potenzmengenkonstruktion maximal _____ DEA-Zust\u00E4nde erzeugen.',a:'2^n',keywords:['2^n','2 hoch n','zwei hoch n','2n','exponentiell']},
+    choice:{q:'Was ist der Startzustand des konstruierten DEA?',choices:['Die \u03B5-H\u00FClle des NEA-Startzustands','Der NEA-Startzustand selbst','Die Menge aller NEA-Zust\u00E4nde','Die leere Menge'],correct:0},
+    explain:{q:'Beschreibe die Schritte der Potenzmengenkonstruktion.',keywords:['\u03B5-H\u00FClle','Startzustand','Vereinigung','\u00DCberg\u00E4nge','Potenzmenge','Teilmenge','NEA','DEA','Folgezust\u00E4nde']}
+  },
+  difficulty:2
+}
+];
+
+const TERM_MAP={};
+GLOSSARY_TERMS.forEach((t,i)=>{
+  const base=t.term.toLowerCase();
+  TERM_MAP[base]=i;
+});
+// Variants
+TERM_MAP['dea']=0;TERM_MAP['deterministischer endlicher automat']=0;TERM_MAP['dfa']=0;TERM_MAP['deterministisch']=0;
+TERM_MAP['nea']=1;TERM_MAP['nichtdeterministischer endlicher automat']=1;TERM_MAP['nfa']=1;TERM_MAP['nichtdeterministisch']=1;
+TERM_MAP['regulärer ausdruck']=2;TERM_MAP['regex']=2;TERM_MAP['regexp']=2;TERM_MAP['reguläre ausdrücke']=2;TERM_MAP['regul\u00E4rer ausdruck']=2;
+TERM_MAP['zustand']=3;TERM_MAP['state']=3;TERM_MAP['zust\u00E4nde']=3;TERM_MAP['zustaende']=3;
+TERM_MAP['\u00FCbergangsfunktion']=4;TERM_MAP['transitionsfunktion']=4;TERM_MAP['übergangsfunktion']=4;TERM_MAP['delta']=4;TERM_MAP['\u03B4']=4;TERM_MAP['transition']=4;
+TERM_MAP['akzeptierende zust\u00E4nde']=5;TERM_MAP['endzust\u00E4nde']=5;TERM_MAP['endzustand']=5;TERM_MAP['akzeptierende zustaende']=5;TERM_MAP['endzustaende']=5;TERM_MAP['final states']=5;
+TERM_MAP['alphabet']=6;TERM_MAP['eingabealphabet']=6;TERM_MAP['sigma']=6;TERM_MAP['\u03A3']=6;
+TERM_MAP['potenzmengenkonstruktion']=7;TERM_MAP['teilmengenkonstruktion']=7;TERM_MAP['subset construction']=7;TERM_MAP['potenzmengen']=7;TERM_MAP['nea\u2192dea']=7;TERM_MAP['nea-dea']=7;TERM_MAP['nea dea umwandlung']=7;
+
+function loadGlossaryState(){try{return JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){return {};}}
+function saveGlossaryState(s){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(s));}
+
+function getLevel(termIdx){const s=loadGlossaryState();return(s[termIdx]&&s[termIdx].level)||0;}
+function setLevel(termIdx,level){const s=loadGlossaryState();if(!s[termIdx])s[termIdx]={};s[termIdx].level=Math.min(3,Math.max(0,level));saveGlossaryState(s);}
+
+function getMastered(){let c=0;for(let i=0;i<GLOSSARY_TERMS.length;i++){if(getLevel(i)>=3)c++;}return c;}
+
+function updateProgressBar(){
+  const m=getMastered(),total=GLOSSARY_TERMS.length;
+  const pct=Math.round(m/total*100);
+  document.getElementById('gp-fill').style.width=pct+'%';
+  document.getElementById('gp-count').textContent=m+' / '+total+' gemeistert';
+}
+
+function renderGlossaryGrid(){
+  const grid=document.getElementById('glossary-grid');
+  let html='';
+  GLOSSARY_TERMS.forEach((t,i)=>{
+    const lv=getLevel(i);
+    html+='<div class="glossary-card" data-level="'+lv+'" data-idx="'+i+'" onclick="window._glossaryOpen('+i+')">';
+    html+='<div class="gc-level"></div>';
+    html+='<div class="gc-icon">'+t.icon+'</div>';
+    html+='<div class="gc-term">'+t.term+'</div>';
+    html+='<div class="gc-short">'+t.short+'</div>';
+    html+='</div>';
+  });
+  grid.innerHTML=html;
+  updateProgressBar();
+}
+
+// ---- LEARN FLOW ----
+let glCurrent=null,glPhase=0,glHintsShown=0,glAnswered=false;
+const PHASES=['Analogie','Definition','Hinweise','L\u00FCckentext','Multiple Choice','Erkl\u00E4ren'];
+
+window._glossaryOpen=function(idx){
+  glCurrent=idx;glPhase=0;glHintsShown=0;glAnswered=false;
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',parseInt(c.dataset.idx)===idx));
+  const panel=document.getElementById('glossary-learn');
+  panel.classList.add('visible');
+  renderGlossaryPhase();
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+};
+
+function renderGlossaryPhase(){
+  const t=GLOSSARY_TERMS[glCurrent];
+  const panel=document.getElementById('glossary-learn');
+  let h='<div class="gl-header"><h3>'+t.icon+' '+t.term+'</h3><button class="gl-close" onclick="window._glossaryClose()">\u00D7</button></div>';
+  h+='<div class="gl-phase-indicator">';
+  PHASES.forEach((p,i)=>{
+    const cls=i<glPhase?'done':i===glPhase?'current':'';
+    const click=i<=glPhase?' onclick="window._glGoToPhase('+i+')"':'';
+    h+='<div class="gl-phase '+cls+'"'+click+'>'+p+'</div>';
+  });
+  h+='</div><div class="gl-content">';
+
+  if(glPhase===0){
+    h+='<div class="gl-analogy">\uD83D\uDCA1 '+t.analogy+'</div>';
+    h+='<button class="gl-btn primary" onclick="window._glossaryNext()">Weiter \u2192</button>';
+  }else if(glPhase===1){
+    h+='<div class="gl-definition">'+t.definition+'</div>';
+    h+='<button class="gl-btn primary" onclick="window._glossaryNext()">Weiter \u2192</button>';
+  }else if(glPhase===2){
+    h+='<div class="gl-hints">';
+    t.hints.forEach((hint,i)=>{h+='<div class="gl-hint'+(i<glHintsShown?' visible':'')+'">'+hint+'</div>';});
+    h+='</div>';
+    if(glHintsShown<t.hints.length)h+='<button class="gl-hint-btn" onclick="window._glossaryShowHint()">N\u00E4chster Hinweis \u2192</button>';
+    h+='<button class="gl-btn primary" onclick="window._glossaryNext()">Weiter \u2192</button>';
+  }else if(glPhase===3){
+    const fq=t.questions.fill;
+    h+='<div class="gl-question">'+fq.q+'</div>';
+    h+='<input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben..." autocomplete="off">';
+    h+='<button class="gl-btn primary" onclick="window._glossaryCheckFill()">Pr\u00FCfen</button>';
+    h+='<div id="gl-fill-fb"></div>';
+  }else if(glPhase===4){
+    const cq=t.questions.choice;
+    h+='<div class="gl-question">'+cq.q+'</div>';
+    h+='<div class="gl-choices">';
+    cq.choices.forEach((c,i)=>{h+='<button class="gl-choice" data-ci="'+i+'" onclick="window._glossaryCheckChoice('+i+')">'+c+'</button>';});
+    h+='</div><div id="gl-choice-fb"></div>';
+  }else if(glPhase===5){
+    const eq=t.questions.explain;
+    h+='<div class="gl-question">'+eq.q+'</div>';
+    h+='<textarea class="gl-input" id="gl-explain-input" placeholder="Erkl\u00E4re in eigenen Worten..."></textarea>';
+    h+='<button class="gl-btn primary" onclick="window._glossaryCheckExplain()">Pr\u00FCfen</button>';
+    h+='<div id="gl-explain-fb"></div>';
+  }
+
+  h+='</div>';
+  panel.innerHTML=h;
+  if(glPhase===3){const inp=document.getElementById('gl-fill-input');if(inp){inp.focus();inp.addEventListener('keydown',function(e){if(e.key==='Enter')window._glossaryCheckFill();});}}
+  if(glPhase===5){const inp=document.getElementById('gl-explain-input');if(inp)inp.focus();}
+}
+
+window._glossaryNext=function(){
+  glPhase++;glHintsShown=0;glAnswered=false;
+  if(glPhase>=PHASES.length){
+    const lv=getLevel(glCurrent);
+    setLevel(glCurrent,Math.min(3,lv+1));
+    renderGlossaryGrid();
+    window._glossaryClose();
+    return;
+  }
+  renderGlossaryPhase();
+};
+
+window._glGoToPhase=function(idx){
+  glPhase=idx;glHintsShown=0;glAnswered=false;
+  renderGlossaryPhase();
+};
+
+window._glossaryClose=function(){
+  document.getElementById('glossary-learn').classList.remove('visible');
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
+  glCurrent=null;
+};
+
+window._glossaryShowHint=function(){
+  glHintsShown++;
+  renderGlossaryPhase();
+};
+
+window._glossaryCheckFill=function(){
+  if(glAnswered)return;
+  const inp=document.getElementById('gl-fill-input');
+  const val=inp.value.trim().toLowerCase();
+  if(!val)return;
+  const t=GLOSSARY_TERMS[glCurrent];
+  const fq=t.questions.fill;
+  const ok=fq.keywords.some(k=>val.includes(k.toLowerCase()));
+  glAnswered=true;
+  const fb=document.getElementById('gl-fill-fb');
+  if(ok){
+    fb.innerHTML='<div class="gl-feedback success">Richtig! \u2714</div>';
+    setTimeout(()=>window._glossaryNext(),1200);
+  }else{
+    fb.innerHTML='<div class="gl-feedback error">Die erwartete Antwort war: <strong>'+fq.a+'</strong></div>';
+    const lv=getLevel(glCurrent);setLevel(glCurrent,Math.max(0,lv-1));renderGlossaryGrid();
+    setTimeout(()=>{glAnswered=false;window._glossaryNext();},2200);
+  }
+};
+
+window._glossaryCheckChoice=function(ci){
+  if(glAnswered)return;
+  const t=GLOSSARY_TERMS[glCurrent];
+  const cq=t.questions.choice;
+  glAnswered=true;
+  document.querySelectorAll('.gl-choice').forEach(b=>{
+    const idx=parseInt(b.dataset.ci);
+    if(idx===cq.correct)b.classList.add('correct');
+    else if(idx===ci)b.classList.add('wrong');
+    b.style.pointerEvents='none';
+  });
+  const fb=document.getElementById('gl-choice-fb');
+  if(ci===cq.correct){
+    fb.innerHTML='<div class="gl-feedback success">Richtig! \u2714</div>';
+    setTimeout(()=>window._glossaryNext(),1200);
+  }else{
+    fb.innerHTML='<div class="gl-feedback error">Falsch! Die richtige Antwort ist markiert.</div>';
+    const lv=getLevel(glCurrent);setLevel(glCurrent,Math.max(0,lv-1));renderGlossaryGrid();
+    setTimeout(()=>{glAnswered=false;window._glossaryNext();},2200);
+  }
+};
+
+window._glossaryCheckExplain=function(){
+  if(glAnswered)return;
+  const inp=document.getElementById('gl-explain-input');
+  const val=inp.value.trim().toLowerCase();
+  if(val.length<10){document.getElementById('gl-explain-fb').innerHTML='<div class="gl-feedback info">Bitte schreibe mindestens einen kurzen Satz.</div>';return;}
+  const t=GLOSSARY_TERMS[glCurrent];
+  const eq=t.questions.explain;
+  glAnswered=true;
+  const found=[],missing=[];
+  eq.keywords.forEach(k=>{
+    if(val.includes(k.toLowerCase()))found.push(k);else missing.push(k);
+  });
+  const fb=document.getElementById('gl-explain-fb');
+  const score=found.length/eq.keywords.length;
+  let kwHtml='<div style="margin-top:8px">';
+  found.forEach(k=>{kwHtml+='<span class="gl-keyword found">\u2714 '+k+'</span>';});
+  missing.forEach(k=>{kwHtml+='<span class="gl-keyword missing">\u2718 '+k+'</span>';});
+  kwHtml+='</div>';
+  if(score>=0.4){
+    fb.innerHTML='<div class="gl-feedback success">Gut erkl\u00E4rt! '+found.length+'/'+eq.keywords.length+' Schl\u00FCsselw\u00F6rter erkannt.'+kwHtml+'</div>';
+    setTimeout(()=>window._glossaryNext(),2000);
+  }else{
+    fb.innerHTML='<div class="gl-feedback error">Versuche mehr Fachbegriffe zu verwenden. '+found.length+'/'+eq.keywords.length+' erkannt.'+kwHtml+'</div>';
+    const lv=getLevel(glCurrent);setLevel(glCurrent,Math.max(0,lv-1));renderGlossaryGrid();
+    setTimeout(()=>{glAnswered=false;window._glossaryNext();},3000);
+  }
+};
+
+// ---- TOOLTIP ----
+const tooltip=document.getElementById('glossary-tooltip');
+document.addEventListener('mouseover',function(e){
+  const el=e.target.closest('.glossary-term');
+  if(!el)return;
+  const idx=parseInt(el.dataset.glossaryIdx);
+  if(isNaN(idx))return;
+  const t=GLOSSARY_TERMS[idx];
+  tooltip.querySelector('.gt-name').textContent=t.icon+' '+t.term;
+  tooltip.querySelector('.gt-short').textContent=t.short+' \u2013 '+t.definition.substring(0,100)+'\u2026';
+  tooltip.style.display='block';
+  const rect=el.getBoundingClientRect();
+  let left=rect.left,top=rect.bottom+8;
+  if(left+270>window.innerWidth)left=window.innerWidth-280;
+  if(top+120>window.innerHeight)top=rect.top-130;
+  tooltip.style.left=left+'px';tooltip.style.top=top+'px';
+});
+document.addEventListener('mouseout',function(e){
+  if(e.target.closest('.glossary-term'))tooltip.style.display='none';
+});
+document.addEventListener('click',function(e){
+  const el=e.target.closest('.glossary-term');
+  if(!el)return;
+  const idx=parseInt(el.dataset.glossaryIdx);
+  if(isNaN(idx))return;
+  e.preventDefault();
+  document.getElementById('glossary-section').scrollIntoView({behavior:'smooth'});
+  setTimeout(()=>window._glossaryOpen(idx),400);
+});
+
+// ---- HIGHLIGHT TERMS IN PAGE ----
+function highlightGlossaryTerms(){
+  const selectors='.card p, .card li, .task-sub, .summary-card p, header p';
+  const containers=document.querySelectorAll(selectors);
+  const termPatterns=[
+    {pattern:/\bDEA\b/g,idx:0},
+    {pattern:/\bNEA\b/g,idx:1},
+    {pattern:/\bRegex\b/gi,idx:2},
+    {pattern:/\bRegul\u00E4re[rn]?\s+Ausdr[uü]ck[es]*/gi,idx:2},
+    {pattern:/\bZustand(?:s|es)?\b/g,idx:3},
+    {pattern:/\bZust\u00E4nde[n]?\b/g,idx:3},
+    {pattern:/\b\u00DCbergangsfunktion\b/gi,idx:4},
+    {pattern:/\bTransitionsfunktion\b/gi,idx:4},
+    {pattern:/\bEndzust[aä]nd[en]*\b/gi,idx:5},
+    {pattern:/\bakzeptierende[nr]?\s+Zust[aä]nd[en]*/gi,idx:5},
+    {pattern:/\bAlphabet[es]*\b/gi,idx:6},
+    {pattern:/\bPotenzmengenkonstruktion\b/gi,idx:7}
+  ];
+  containers.forEach(container=>{
+    if(container.querySelector('.glossary-term'))return;
+    let html=container.innerHTML;
+    const replacements=[];
+    termPatterns.forEach(tp=>{
+      html=html.replace(tp.pattern,match=>{
+        return '<span class="glossary-term" data-glossary-idx="'+tp.idx+'">'+match+'</span>';
+      });
+    });
+    container.innerHTML=html;
+  });
+}
+
+// ---- INIT ----
+renderGlossaryGrid();
+highlightGlossaryTerms();
+
+})();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

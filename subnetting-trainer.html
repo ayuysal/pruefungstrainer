@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Subnetting & CIDR Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}
+
+/* Calculator */
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.calc-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:end}
+.calc-row label{font-size:12px;font-weight:600;display:block;margin-bottom:4px}
+.calc-row input,.calc-row select{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;width:180px}
+.calc-row input:focus{border-color:var(--accent)}
+.calc-btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:#fff;transition:all .25s}
+.calc-btn:hover{background:#5a52e0;transform:translateY(-1px)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.result-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px}
+.result-item .rl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.result-item .rv{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cyan);font-weight:600}
+
+/* Bit visualizer */
+.bit-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.bit-row{display:flex;gap:2px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.bit-group{display:flex;gap:1px;margin:0 6px}
+.bit-cell{width:30px;height:34px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;border-radius:4px;cursor:pointer;transition:all .15s;border:1px solid var(--border)}
+.bit-cell.net{background:rgba(56,189,248,.12);color:var(--cyan);border-color:rgba(56,189,248,.3)}
+.bit-cell.host{background:rgba(244,114,182,.12);color:var(--pink);border-color:rgba(244,114,182,.3)}
+.bit-cell:hover{transform:scale(1.1)}
+.octet-labels{display:flex;justify-content:center;gap:2px;margin-bottom:12px}
+.octet-label{width:calc(8*31px + 7px + 12px);text-align:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;color:var(--text)}
+.prefix-slider{width:100%;margin:12px 0}
+.prefix-display{text-align:center;font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);margin-bottom:8px}
+
+/* Exercise */
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none}
+.solution-box.show{display:block}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.bit-cell{width:24px;height:28px;font-size:11px}.octet-label{font-size:11px}}
+
+/* ── Glossary Learning System ── */
+.glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+.glossary-term:hover{color:var(--cyan)}
+.glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+.glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+.glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+.glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+.glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+.glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+.glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+.glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+.glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+.glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+.glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+.glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+.glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+.glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+.glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+.glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+.glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+.glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+.glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+.glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+.glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+.glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+.glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+.glossary-card[data-level="3"] .gc-level{background:var(--green)}
+.glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+.glossary-learn.visible{display:block}
+.gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.gl-header h3{font-size:17px;font-weight:700}
+.gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+.gl-close:hover{border-color:var(--red);color:var(--red)}
+.gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+.gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+.gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+.gl-content{min-height:120px}
+.gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+.gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+.gl-hints{margin-bottom:16px}
+.gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+.gl-hint.visible{display:block;animation:fadeUp .2s ease}
+.gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+.gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+.gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.gl-btn:hover{transform:translateY(-1px)}
+.gl-btn.primary{background:var(--accent);color:#fff}
+.gl-btn.primary:hover{background:#7c74ff}
+.gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+.gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+.gl-input:focus{border-color:var(--accent)}
+textarea.gl-input{min-height:80px;resize:vertical}
+.gl-choices{display:grid;gap:6px;margin-bottom:14px}
+.gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+.gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+.gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+.gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+.gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+.gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+.gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+.gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+.gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+.gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+.gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">ITI24 · Netzwerke</div>
+<h1>IP-Adressierung & Subnetting</h1>
+<p>Subnetting, CIDR, Netz- und Broadcastadressen berechnen – interaktiv üben</p>
+</header>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">📚</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>🔢 IP-Adressstruktur</h3><p>32 Bit, aufgeteilt in 4 Oktette (je 8 Bit). Besteht aus Netz- und Hostanteil.</p><ul><li>Klasse A: 1.0.0.0 – 126.x.x.x (/8) · Privat: 10.0.0.0/8</li><li>Klasse B: 128.0.0.0 – 191.255.x.x (/16) · Privat: 172.16.0.0/12</li><li>Klasse C: 192.0.0.0 – 223.255.255.x (/24) · Privat: 192.168.0.0/16</li></ul></div>
+<div class="card c2"><h3>📐 CIDR-Notation</h3><p>Classless Inter-Domain Routing ersetzt starre Klassen.</p><ul><li>/24 = 255.255.255.0 (256 Adr.)</li><li>/25 = 255.255.255.128 (128)</li><li>/26 = 255.255.255.192 (64)</li><li>/27 = 255.255.255.224 (32)</li><li>/28 = 255.255.255.240 (16)</li><li>/30 = 255.255.255.252 (4)</li></ul></div>
+<div class="card c3"><h3>🧮 Formeln</h3><p><strong>Hosts</strong> = 2<sup>(32−prefix)</sup> − 2<br><strong>Netzadresse</strong> = IP AND Maske<br><strong>Broadcast</strong> = Netzadresse OR (NOT Maske)<br><strong>Erster Host</strong> = Netzadresse + 1<br><strong>Letzter Host</strong> = Broadcast − 1</p></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">🖩</div><h2>Subnet-Rechner</h2></div>
+<div class="calc-wrap">
+<div class="calc-row">
+<div><label>IP-Adresse</label><input type="text" id="calc-ip" value="192.168.1.100" placeholder="z.B. 192.168.1.100"></div>
+<div><label>Prefix (/CIDR)</label><input type="number" id="calc-prefix" value="24" min="0" max="32" style="width:80px"></div>
+<button class="calc-btn" onclick="calculate()">Berechnen</button>
+</div>
+<div class="result-grid" id="calc-results"></div>
+<div id="calc-binary" style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2;color:var(--muted)"></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--pink),var(--purple))">🔧</div><h2>Bit-Level Visualizer</h2></div>
+<div class="bit-wrap">
+<div class="prefix-display">Prefix: /<span id="viz-prefix">24</span> — <span id="viz-mask">255.255.255.0</span></div>
+<input type="range" class="prefix-slider" id="prefix-slider" min="0" max="32" value="24" oninput="updateBitViz()">
+<div class="bit-row" id="bit-row"></div>
+<div class="octet-labels" id="octet-labels"></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">🏋️</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="net" onclick="setMode('net')">Netzadresse</div>
+<div class="tab" data-mode="bc" onclick="setMode('bc')">Broadcast</div>
+<div class="tab" data-mode="hosts" onclick="setMode('hosts')">Hosts</div>
+<div class="tab" data-mode="prefix" onclick="setMode('prefix')">Prefix finden</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">📋</div><h2>IP-Klassen Übersicht</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Klasse</th><th>Bereich</th><th>Default-Maske</th><th>Privat</th><th>Netze</th><th>Hosts/Netz</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--cyan)">A</td><td>1.0.0.0 – 126.x.x.x</td><td>/8 (255.0.0.0)</td><td>10.0.0.0/8</td><td>126</td><td>16.777.214</td></tr>
+<tr><td style="color:var(--green)">B</td><td>128.0.0.0 – 191.255.x.x</td><td>/16 (255.255.0.0)</td><td>172.16.0.0/12</td><td>16.384</td><td>65.534</td></tr>
+<tr><td style="color:var(--pink)">C</td><td>192.0.0.0 – 223.255.255.x</td><td>/24 (255.255.255.0)</td><td>192.168.0.0/16</td><td>2.097.152</td><td>254</td></tr>
+<tr><td style="color:var(--yellow)">D</td><td>224.0.0.0 – 239.x.x.x</td><td>—</td><td>—</td><td colspan="2">Multicast</td></tr>
+<tr><td style="color:var(--muted)">E</td><td>240.0.0.0 – 255.x.x.x</td><td>—</td><td>—</td><td colspan="2">Reserviert</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ═══════════════════════════════
+     BEGRIFFE LERNEN
+     ═══════════════════════════════ -->
+<div class="glossary-section">
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">🧠</div>
+    <h2>Begriffe lernen</h2>
+    <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
+  </div>
+
+  <div class="glossary-progress-bar">
+    <span class="gp-text">Fortschritt</span>
+    <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+    <span class="gp-count" id="glossary-count">0%</span>
+  </div>
+
+  <div class="glossary-grid" id="glossary-grid"></div>
+
+  <div class="glossary-learn" id="glossary-learn">
+    <div class="gl-header">
+      <h3 id="gl-title"></h3>
+      <button class="gl-close" onclick="glossaryClose()">✕</button>
+    </div>
+    <div class="gl-phase-indicator" id="gl-phases"></div>
+    <div class="gl-content" id="gl-content"></div>
+  </div>
+</div>
+
+<div class="summary">
+<div class="summary-card"><h4>💡 Merke</h4><p>Die Netzadresse hat alle Hostbits auf 0, die Broadcastadresse alle Hostbits auf 1. Beide sind nicht als Hostadressen nutzbar.</p></div>
+<div class="summary-card"><h4>🎯 Prüfungstipp</h4><p>Subnetting-Aufgaben kommen fast immer dran! Übe die AND-Operation im Kopf: Schreibe IP und Maske binär, AND-verknüpfe sie Bit für Bit.</p></div>
+<div class="summary-card"><h4>🧩 CIDR vs. Classful</h4><p>CIDR erlaubt beliebige Prefixlängen statt nur /8, /16, /24. Das spart IP-Adressen durch bedarfsgerechte Zuteilung.</p></div>
+</div>
+</div>
+
+<script>
+// Progress
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('subnetting',{status:'in-progress'});
+
+// Subnet Calculator
+function ipToArr(s){return s.trim().split('.').map(Number);}
+function arrToIp(a){return a.join('.');}
+function prefixToMask(p){const m=[];for(let i=0;i<4;i++){const bits=Math.min(8,Math.max(0,p-i*8));m.push(256-Math.pow(2,8-bits));}return m;}
+function toBin(n,pad=8){return n.toString(2).padStart(pad,'0');}
+function calculate(){
+  const ip=ipToArr(document.getElementById('calc-ip').value);
+  const prefix=parseInt(document.getElementById('calc-prefix').value);
+  if(ip.length!==4||ip.some(o=>isNaN(o)||o<0||o>255)||isNaN(prefix)||prefix<0||prefix>32){
+    document.getElementById('calc-results').innerHTML='<div class="result-item"><div class="rl">Fehler</div><div class="rv" style="color:var(--red)">Ungültige Eingabe</div></div>';return;}
+  const mask=prefixToMask(prefix);
+  const net=ip.map((o,i)=>o&mask[i]);
+  const invMask=mask.map(o=>255-o);
+  const bc=net.map((o,i)=>o|invMask[i]);
+  const first=[...net];first[3]+=1;
+  const last=[...bc];last[3]-=1;
+  const hosts=Math.pow(2,32-prefix)-2;
+  const r=document.getElementById('calc-results');
+  r.innerHTML=`
+    <div class="result-item"><div class="rl">Subnetzmaske</div><div class="rv">${arrToIp(mask)}</div></div>
+    <div class="result-item"><div class="rl">Netzadresse</div><div class="rv">${arrToIp(net)}</div></div>
+    <div class="result-item"><div class="rl">Broadcast</div><div class="rv">${arrToIp(bc)}</div></div>
+    <div class="result-item"><div class="rl">Erster Host</div><div class="rv">${prefix<31?arrToIp(first):'—'}</div></div>
+    <div class="result-item"><div class="rl">Letzter Host</div><div class="rv">${prefix<31?arrToIp(last):'—'}</div></div>
+    <div class="result-item"><div class="rl">Nutzbare Hosts</div><div class="rv">${hosts>0?hosts:0}</div></div>`;
+  const b=document.getElementById('calc-binary');
+  b.innerHTML=`<div>IP:&nbsp;&nbsp;&nbsp;&nbsp;${ip.map(o=>toBin(o)).join('.')}</div><div>Maske: ${mask.map(o=>toBin(o)).join('.')}</div><div>Netz:&nbsp;&nbsp;${net.map(o=>toBin(o)).join('.')}</div><div>BC:&nbsp;&nbsp;&nbsp;&nbsp;${bc.map(o=>toBin(o)).join('.')}</div>`;
+}
+calculate();
+
+// Bit Visualizer
+let bits=new Array(32).fill(0);
+bits[0]=1;bits[1]=1;bits[2]=0;bits[3]=0;bits[4]=0;bits[5]=0;bits[6]=0;bits[7]=0;
+bits[8]=1;bits[9]=0;bits[10]=1;bits[11]=0;bits[12]=1;bits[13]=0;bits[14]=0;bits[15]=0;
+bits[16]=0;bits[17]=0;bits[18]=0;bits[19]=0;bits[20]=0;bits[21]=0;bits[22]=0;bits[23]=1;
+bits[24]=0;bits[25]=1;bits[26]=1;bits[27]=0;bits[28]=0;bits[29]=1;bits[30]=0;bits[31]=0;
+
+function updateBitViz(){
+  const prefix=parseInt(document.getElementById('prefix-slider').value);
+  document.getElementById('viz-prefix').textContent=prefix;
+  document.getElementById('viz-mask').textContent=arrToIp(prefixToMask(prefix));
+  const row=document.getElementById('bit-row');
+  row.innerHTML='';
+  for(let g=0;g<4;g++){
+    const group=document.createElement('div');group.className='bit-group';
+    for(let b=0;b<8;b++){
+      const idx=g*8+b;
+      const cell=document.createElement('div');
+      cell.className='bit-cell '+(idx<prefix?'net':'host');
+      cell.textContent=bits[idx];
+      cell.onclick=()=>{bits[idx]=bits[idx]?0:1;updateBitViz();};
+      group.appendChild(cell);
+    }
+    row.appendChild(group);
+  }
+  const labels=document.getElementById('octet-labels');
+  labels.innerHTML='';
+  for(let g=0;g<4;g++){
+    const lbl=document.createElement('div');lbl.className='octet-label';
+    let val=0;for(let b=0;b<8;b++)val+=bits[g*8+b]*Math.pow(2,7-b);
+    lbl.textContent=val;labels.appendChild(lbl);
+  }
+}
+updateBitViz();
+
+// Exercise
+let mode='net';
+let score={correct:0,wrong:0,streak:0};
+let currentTask={};
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+
+function genTask(){
+  const prefixes=[24,25,26,27,28,29,30];
+  const prefix=prefixes[rand(0,prefixes.length-1)];
+  const ip=[rand(1,223),rand(0,255),rand(0,255),rand(1,254)];
+  const mask=prefixToMask(prefix);
+  const net=ip.map((o,i)=>o&mask[i]);
+  const inv=mask.map(o=>255-o);
+  const bc=net.map((o,i)=>o|inv[i]);
+  const hosts=Math.pow(2,32-prefix)-2;
+  if(mode==='net')return{q:`${arrToIp(ip)}/${prefix}`,answer:arrToIp(net),solution:`IP: ${ip.map(o=>toBin(o)).join('.')}\nMaske: ${mask.map(o=>toBin(o)).join('.')}\nAND: ${net.map(o=>toBin(o)).join('.')}\n= ${arrToIp(net)}`};
+  if(mode==='bc')return{q:`${arrToIp(ip)}/${prefix}`,answer:arrToIp(bc),solution:`Netzadresse: ${arrToIp(net)}\nInverse Maske: ${arrToIp(inv)}\nNetz OR InvMask: ${arrToIp(bc)}`};
+  if(mode==='hosts'){return{q:`/${prefix}`,answer:String(hosts),solution:`Hostbits = 32 − ${prefix} = ${32-prefix}\nHosts = 2^${32-prefix} − 2 = ${Math.pow(2,32-prefix)} − 2 = ${hosts}`};}
+  if(mode==='prefix'){const needed=hosts;const answer=prefix;return{q:`${needed} Hosts benötigt`,answer:'/'+answer,solution:`Benötigte Hostbits: ⌈log₂(${needed}+2)⌉ = ${32-prefix}\nPrefix = 32 − ${32-prefix} = /${prefix}`};}
+}
+
+function newTask(){
+  currentTask=genTask();
+  const area=document.getElementById('exercise-area');
+  const labels={net:'Berechne die Netzadresse',bc:'Berechne die Broadcastadresse',hosts:'Wie viele nutzbare Hosts?',prefix:'Welchen Prefix brauchst du?'};
+  area.innerHTML=`
+    <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${labels[mode]}</div>
+    <div class="task-display">${currentTask.q}</div>
+    <div class="task-sub">${mode==='prefix'?'Gib den minimalen Prefix an (z.B. /26)':mode==='hosts'?'Gib die Anzahl als Zahl ein':'Gib die Adresse ein (z.B. 192.168.1.0)'}</div>
+    <div class="input-row"><input type="text" id="user-answer" placeholder="Deine Antwort..." autocomplete="off"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkAnswer()">Prüfen ↵</button>
+      <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+      <button class="btn btn-secondary" onclick="newTask()">Überspringen →</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="solution-box" id="sol"></div>`;
+  const inp=document.getElementById('user-answer');
+  inp.focus();
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+}
+
+function checkAnswer(){
+  const inp=document.getElementById('user-answer');
+  const fb=document.getElementById('fb');
+  const v=inp.value.trim();
+  if(!v)return;
+  if(v===currentTask.answer||v.replace(/\s/g,'')===currentTask.answer.replace(/\s/g,'')){
+    inp.classList.add('correct');fb.textContent='✓ Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('subnetting',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  }else{
+    inp.classList.add('wrong');fb.textContent='✗ Falsch – richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+function showSolution(){const s=document.getElementById('sol');s.textContent=currentTask.solution;s.classList.add('show');}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+newTask();
+
+// ════════════════════════════════════
+//  GLOSSARY LEARNING SYSTEM
+// ════════════════════════════════════
+const GLOSSARY = [
+  {
+    term: 'Subnetzmaske',
+    short: 'Trennt Netz- von Hostanteil einer IP',
+    definition: 'Die Subnetzmaske ist ein 32-Bit-Wert, der festlegt, welcher Teil einer IP-Adresse das Netzwerk identifiziert (Netzanteil) und welcher den einzelnen Host (Hostanteil). Alle Netz-Bits sind 1, alle Host-Bits sind 0.',
+    analogy: '\uD83D\uDCA1 Wie eine Postleitzahl: Sie teilt die Adresse in "Region" (Netz) und "Stra\u00dfe+Hausnummer" (Host) auf!',
+    hints: [
+      'Die Maske besteht aus lauter Einsen (links) gefolgt von lauter Nullen (rechts)',
+      'Beispiel /24: 11111111.11111111.11111111.00000000 = 255.255.255.0',
+      'Per AND-Verkn\u00fcpfung mit der IP erh\u00e4lt man die Netzadresse'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die Subnetzmaske f\u00fcr /24 lautet 255.255.255.___', a: '0', hint: '24 Bits = 3 volle Oktette \u2192 letztes Oktett ist 0' },
+      { type: 'choice', q: 'Was ergibt IP AND Subnetzmaske?', options: ['Die Broadcastadresse', 'Die Netzadresse', 'Die Hostadresse', 'Die Gateway-Adresse'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re, wie man mit einer Subnetzmaske die Netzadresse berechnet.', keywords: ['AND', 'Netzanteil', 'Hostanteil', 'Bits', 'Netzadresse', 'bin\u00e4r'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'CIDR',
+    short: 'Classless Inter-Domain Routing',
+    definition: 'CIDR (Classless Inter-Domain Routing) ersetzt das starre Klassensystem (A/B/C) durch flexible Prefixl\u00e4ngen. Statt fester /8, /16, /24-Grenzen kann jede Prefixl\u00e4nge von /0 bis /32 verwendet werden.',
+    analogy: '\uD83D\uDCA1 Wie beim Pizza bestellen: Statt nur S, M, L kannst du exakt die Gr\u00f6\u00dfe w\u00e4hlen, die du brauchst \u2013 keine Verschwendung!',
+    hints: [
+      'CIDR steht f\u00fcr "Classless Inter-Domain Routing"',
+      'Schreibweise: IP/Prefix, z.B. 192.168.1.0/26',
+      'Erlaubt beliebige Prefixl\u00e4ngen statt nur /8, /16, /24'
+    ],
+    questions: [
+      { type: 'fill', q: 'CIDR steht f\u00fcr Classless Inter-Domain ___.', a: 'Routing', hint: 'Es geht um Wegewahl im Netz' },
+      { type: 'choice', q: 'Was ist der Hauptvorteil von CIDR gegen\u00fcber Classful Routing?', options: ['Schnellere Daten\u00fcbertragung', 'Flexible Netzgr\u00f6\u00dfen statt fester Klassen', 'Bessere Verschl\u00fcsselung', 'Mehr verf\u00fcgbare IP-Adressen insgesamt'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re, warum CIDR besser ist als das alte Klassensystem.', keywords: ['Klassen', 'flexibel', 'Prefix', 'Verschwendung', 'bedarfsgerecht'], minKeywords: 2 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Netzadresse',
+    short: 'Erste Adresse eines Subnetzes (Hostbits=0)',
+    definition: 'Die Netzadresse ist die erste Adresse eines Subnetzes. Sie hat alle Hostbits auf 0 gesetzt und identifiziert das gesamte Netzwerk. Sie ist NICHT als Hostadresse nutzbar.',
+    analogy: '\uD83D\uDCA1 Wie der Stra\u00dfenname ohne Hausnummer: "Berliner Stra\u00dfe" beschreibt die ganze Stra\u00dfe, aber kein einzelnes Haus!',
+    hints: [
+      'Alle Hostbits stehen auf 0',
+      'Berechnung: IP AND Subnetzmaske',
+      'Die Netzadresse ist NICHT als Hostadresse verwendbar'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die Netzadresse berechnet sich durch IP ___ Subnetzmaske.', a: 'AND', alt: ['and', 'UND'], hint: 'Eine bitweise logische Verkn\u00fcpfung' },
+      { type: 'choice', q: 'Warum kann die Netzadresse nicht als Hostadresse verwendet werden?', options: ['Sie ist zu lang', 'Sie identifiziert das gesamte Netzwerk, nicht einen einzelnen Host', 'Sie geh\u00f6rt dem Router', 'Sie ist immer 0.0.0.0'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re, was die Netzadresse ist und wie man sie berechnet.', keywords: ['Hostbits', 'AND', 'Subnetzmaske', 'Netzwerk', '0', 'erste'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Broadcast',
+    short: 'Letzte Adresse eines Subnetzes (Hostbits=1)',
+    definition: 'Die Broadcastadresse ist die letzte Adresse eines Subnetzes. Sie hat alle Hostbits auf 1 gesetzt. Ein Paket an die Broadcastadresse erreicht ALLE Hosts im Subnetz gleichzeitig.',
+    analogy: '\uD83D\uDCA1 Wie eine Durchsage \u00fcber Lautsprecher: Die Nachricht erreicht ALLE Personen im Raum gleichzeitig!',
+    hints: [
+      'Alle Hostbits stehen auf 1',
+      'Berechnung: Netzadresse OR inverse Maske',
+      'Auch die Broadcastadresse ist NICHT als Hostadresse nutzbar'
+    ],
+    questions: [
+      { type: 'fill', q: 'Bei der Broadcastadresse sind alle Hostbits auf ___ gesetzt.', a: '1', hint: 'Das Gegenteil der Netzadresse' },
+      { type: 'choice', q: 'Was passiert mit einem Paket an die Broadcastadresse?', options: ['Es wird gel\u00f6scht', 'Es erreicht alle Hosts im Subnetz', 'Es geht nur an den Router', 'Es wird zwischengespeichert'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen Netzadresse und Broadcastadresse.', keywords: ['Hostbits', 'Netzadresse', '0', '1', 'alle Hosts', 'Subnetz', 'OR'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Prefix',
+    short: 'Anzahl der Netzwerk-Bits (/24, /26 etc.)',
+    definition: 'Der Prefix gibt an, wie viele Bits der IP-Adresse zum Netzanteil geh\u00f6ren. Er wird in CIDR-Notation mit Schr\u00e4gstrich geschrieben, z.B. /24 bedeutet 24 Netz-Bits und 8 Host-Bits.',
+    analogy: '\uD83D\uDCA1 Wie ein Zaun im Garten: Je weiter der Zaun reicht (mehr Prefix-Bits), desto kleiner ist der freie Bereich (weniger Hosts)!',
+    hints: [
+      'Geschrieben als /Zahl, z.B. /24, /26, /28',
+      'Je gr\u00f6\u00dfer der Prefix, desto weniger Hosts im Subnetz',
+      'Hosts = 2^(32\u2212Prefix) \u2212 2'
+    ],
+    questions: [
+      { type: 'fill', q: 'Ein /26-Prefix hat ___ Host-Bits.', a: '6', hint: '32 \u2212 26 = ?' },
+      { type: 'choice', q: 'Welcher Prefix erlaubt die meisten Hosts?', options: ['/28 (14 Hosts)', '/26 (62 Hosts)', '/24 (254 Hosts)', '/30 (2 Hosts)'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re den Zusammenhang zwischen Prefixl\u00e4nge und Anzahl der Hosts.', keywords: ['Netz-Bits', 'Host-Bits', '32', 'gr\u00f6\u00dfer', 'kleiner', 'Formel'], minKeywords: 2 }
+    ],
+    difficulty: 2
+  },
+  {
+    term: 'Oktett',
+    short: '8-Bit-Abschnitt einer IP-Adresse',
+    definition: 'Ein Oktett ist ein 8-Bit-Abschnitt (1 Byte) einer IP-Adresse. Eine IPv4-Adresse besteht aus genau 4 Oktetten, durch Punkte getrennt. Jedes Oktett kann Werte von 0 bis 255 annehmen.',
+    analogy: '\uD83D\uDCA1 Wie die vier Zifferngruppen einer Telefonnummer: Jede Gruppe hat ihren eigenen Bereich, zusammen ergeben sie die komplette Nummer!',
+    hints: [
+      'Oktett = 8 Bits = 1 Byte',
+      'Eine IPv4-Adresse hat genau 4 Oktette',
+      'Wertebereich pro Oktett: 0 bis 255 (2^8 \u2212 1)'
+    ],
+    questions: [
+      { type: 'fill', q: 'Ein Oktett besteht aus ___ Bits.', a: '8', hint: 'Octo = acht (lateinisch)' },
+      { type: 'choice', q: 'Welcher Wert ist KEIN g\u00fcltiger Oktett-Wert?', options: ['0', '128', '255', '256'], correct: 3 },
+      { type: 'explain', q: 'Erkl\u00e4re, was ein Oktett ist und welche Rolle es in IPv4-Adressen spielt.', keywords: ['8 Bit', 'Byte', 'IPv4', '4 Oktette', '0', '255'], minKeywords: 2 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Hostanteil',
+    short: 'Der Teil der IP, der den einzelnen Host identifiziert',
+    definition: 'Der Hostanteil ist der rechte Teil einer IP-Adresse (bestimmt durch die Subnetzmaske), der den einzelnen Host innerhalb eines Netzwerks identifiziert. Die Anzahl der Host-Bits bestimmt, wie viele Ger\u00e4te adressierbar sind.',
+    analogy: '\uD83D\uDCA1 Wie die Hausnummer in einer Adresse: Die Stra\u00dfe ist das Netz, die Hausnummer identifiziert das einzelne Haus!',
+    hints: [
+      'Alles rechts von der Subnetzmaske (wo die Nullen stehen)',
+      'Hostbits alle 0 = Netzadresse, alle 1 = Broadcast',
+      'Nutzbare Hosts = 2^(Hostbits) \u2212 2'
+    ],
+    questions: [
+      { type: 'fill', q: 'Bei einem /24-Netz gibt es ___ Host-Bits.', a: '8', hint: '32 \u2212 24 = ?' },
+      { type: 'choice', q: 'Warum werden bei der Host-Berechnung 2 abgezogen?', options: ['Wegen der Firewall und dem DNS', 'Netzadresse und Broadcastadresse sind nicht nutzbar', 'Router und Switch brauchen je eine Adresse', 'IPv4 reserviert immer 2 Adressen f\u00fcr NAT'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re, warum bei 2^n Host-Adressen nur 2^n \u2212 2 nutzbar sind.', keywords: ['Netzadresse', 'Broadcast', 'Hostbits', '0', '1', 'nutzbar', 'reserviert'], minKeywords: 3 }
+    ],
+    difficulty: 2
+  },
+  {
+    term: 'AND-Operation',
+    short: 'Bitweise Verkn\u00fcpfung zur Netzadress-Berechnung',
+    definition: 'Die AND-Operation (UND-Verkn\u00fcpfung) wird bitweise auf IP-Adresse und Subnetzmaske angewandt, um die Netzadresse zu berechnen. Ergebnis ist 1 nur wenn BEIDE Bits 1 sind.',
+    analogy: '\uD83D\uDCA1 Wie ein Filter: Nur wo BEIDE Seiten "Ja" sagen (1), kommt auch "Ja" raus. Sagt eine Seite "Nein" (0), ist das Ergebnis "Nein"!',
+    hints: [
+      '1 AND 1 = 1, alles andere = 0',
+      'Die Maske "filtert" den Netzanteil heraus',
+      'Netz-Bits der IP bleiben erhalten, Host-Bits werden auf 0 gesetzt'
+    ],
+    questions: [
+      { type: 'fill', q: '1 AND 0 ergibt ___.', a: '0', hint: 'Beide m\u00fcssen 1 sein f\u00fcr eine 1' },
+      { type: 'choice', q: 'Was ist das Ergebnis von 11000000 AND 11111111?', options: ['00000000', '11111111', '11000000', '00111111'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re, wie die AND-Operation zur Berechnung der Netzadresse verwendet wird.', keywords: ['IP', 'Subnetzmaske', 'bitweise', 'Netzanteil', 'Hostbits', '0', '1'], minKeywords: 3 }
+    ],
+    difficulty: 2
+  }
+];
+
+// ── State Management ──
+const glossaryState = { levels: {}, current: null, hintIdx: 0 };
+
+function glossaryLoad() {
+  try {
+    const s = localStorage.getItem('glossary-subnetting');
+    if (s) glossaryState.levels = JSON.parse(s);
+  } catch(e) {}
+  GLOSSARY.forEach(g => { if (!(g.term in glossaryState.levels)) glossaryState.levels[g.term] = 0; });
+}
+
+function glossarySave() {
+  localStorage.setItem('glossary-subnetting', JSON.stringify(glossaryState.levels));
+}
+
+// ── Grid Rendering ──
+function glossaryRenderGrid() {
+  const grid = document.getElementById('glossary-grid');
+  grid.innerHTML = '';
+  const icons = ['\u2753', '\uD83D\uDCA1', '\uD83D\uDD0D', '\u2B50'];
+  GLOSSARY.forEach(g => {
+    const lv = glossaryState.levels[g.term] || 0;
+    const c = document.createElement('div');
+    c.className = 'glossary-card' + (glossaryState.current === g.term ? ' active' : '');
+    c.dataset.level = lv;
+    c.onclick = () => glossaryOpen(g.term);
+    c.innerHTML = '<div class="gc-icon">' + icons[lv] + '</div><div class="gc-term">' + g.term + '</div><div class="gc-short">' + g.short + '</div><div class="gc-level"></div>';
+    grid.appendChild(c);
+  });
+  glossaryUpdateProgress();
+}
+
+function glossaryUpdateProgress() {
+  const mastered = GLOSSARY.filter(g => glossaryState.levels[g.term] >= 3).length;
+  const total = GLOSSARY.length;
+  const pct = Math.round(mastered / total * 100);
+  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
+  document.getElementById('glossary-fill').style.width = pct + '%';
+  document.getElementById('glossary-count').textContent = pct + '%';
+}
+
+// ── Open Term ──
+function glossaryOpen(term) {
+  const g = GLOSSARY.find(t => t.term === term);
+  if (!g) return;
+  glossaryState.current = term;
+  glossaryState.hintIdx = 0;
+  const lv = glossaryState.levels[term] || 0;
+
+  document.getElementById('gl-title').textContent = g.term;
+  glossaryRenderPhases(lv);
+
+  if (lv === 0) glossaryPhase1(g);
+  else if (lv === 1) glossaryPhase2(g);
+  else if (lv === 2) glossaryPhase3(g);
+  else glossaryMastered(g);
+
+  document.getElementById('glossary-learn').classList.add('visible');
+  glossaryRenderGrid();
+  document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function glossaryRenderPhases(lv, activePhase) {
+  if (activePhase === undefined) activePhase = lv;
+  const names = ['\uD83D\uDCA1 Kennenlernen', '\uD83D\uDD0D \u00dcberpr\u00fcfen', '\u2B50 Beweisen'];
+  document.getElementById('gl-phases').innerHTML = names.map((n, i) => {
+    let cls = 'gl-phase';
+    if (i === activePhase) cls += ' current';
+    else if (i < lv || lv === 3) cls += ' done';
+    else if (i === lv && i !== activePhase) cls += ' current';
+    const clickable = i <= lv || lv === 3;
+    const onclick = clickable ? ' onclick="glossaryGoToPhase(' + i + ')"' : '';
+    return '<div class="' + cls + '"' + onclick + '>' + n + '</div>';
+  }).join('');
+}
+
+function glossaryGoToPhase(phaseIdx) {
+  const term = glossaryState.current;
+  const g = GLOSSARY.find(t => t.term === term);
+  if (!g) return;
+  glossaryState.hintIdx = 0;
+  const lv = glossaryState.levels[term] || 0;
+  glossaryRenderPhases(lv, phaseIdx);
+  if (phaseIdx === 0) glossaryPhase1(g);
+  else if (phaseIdx === 1) glossaryPhase2(g);
+  else if (phaseIdx === 2) glossaryPhase3(g);
+}
+
+// ── Phase 1: Kennenlernen ──
+function glossaryPhase1(g) {
+  const el = document.getElementById('gl-content');
+  let html = '<div class="gl-analogy">' + g.analogy + '</div>';
+  html += '<div class="gl-definition">' + g.definition + '</div>';
+  html += '<div class="gl-hints" id="gl-hints">';
+  g.hints.forEach((h, i) => {
+    html += '<div class="gl-hint' + (i === 0 ? ' visible' : '') + '" id="gh-' + i + '">' + h + '</div>';
+  });
+  html += '</div>';
+  if (g.hints.length > 1) html += '<button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">N\u00e4chster Hinweis \u2192</button>';
+  html += '<button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden! \u2713</button>';
+  el.innerHTML = html;
+}
+
+function glossaryNextHint() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  if (!g) return;
+  glossaryState.hintIdx++;
+  if (glossaryState.hintIdx < g.hints.length) {
+    document.getElementById('gh-' + glossaryState.hintIdx).classList.add('visible');
+  }
+  if (glossaryState.hintIdx >= g.hints.length - 1) {
+    const btn = document.getElementById('gl-hint-btn');
+    if (btn) btn.style.display = 'none';
+  }
+}
+
+// ── Phase 2: Überprüfen ──
+function glossaryPhase2(g) {
+  const q = g.questions.find(x => x.type === 'fill') || g.questions.find(x => x.type === 'choice') || g.questions[0];
+  const el = document.getElementById('gl-content');
+  if (q.type === 'fill') {
+    el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+      '<input type="text" class="gl-input" id="gl-answer" placeholder="Deine Antwort..." onkeydown="if(event.key===\'Enter\')glossaryCheckFill()">' +
+      (q.hint ? '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Tipp: ' + q.hint + '</div>' : '') +
+      '<button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
+  } else if (q.type === 'choice') {
+    el.innerHTML = '<div class="gl-question">' + q.q + '</div><div class="gl-choices">' +
+      q.options.map((o, i) => '<button class="gl-choice" onclick="glossaryCheckChoice(' + i + ')">' + o + '</button>').join('') +
+      '</div><div id="gl-feedback"></div>';
+  }
+}
+
+function glossaryCheckFill() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'fill');
+  const val = document.getElementById('gl-answer').value.trim();
+  const fb = document.getElementById('gl-feedback');
+  const ok = [q.a, ...(q.alt || [])].some(a => val.toLowerCase() === a.toLowerCase());
+  if (ok) {
+    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89 "' + q.a + '" ist korrekt.</div>';
+    setTimeout(() => glossaryLevelUp(), 1200);
+  } else {
+    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist: <strong>' + q.a + '</strong>. Versuch es nochmal!</div>';
+    document.getElementById('gl-answer').value = '';
+    document.getElementById('gl-answer').focus();
+  }
+}
+
+function glossaryCheckChoice(idx) {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'choice');
+  const btns = document.querySelectorAll('.gl-choice');
+  const fb = document.getElementById('gl-feedback');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  if (idx === q.correct) {
+    btns[idx].classList.add('correct');
+    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89</div>';
+    setTimeout(() => glossaryLevelUp(), 1200);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist markiert.</div>';
+    setTimeout(() => {
+      btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('wrong', 'correct'); });
+      fb.innerHTML = '';
+    }, 2500);
+  }
+}
+
+// ── Phase 3: Beweisen ──
+function glossaryPhase3(g) {
+  const q = g.questions.find(x => x.type === 'explain');
+  if (!q) { glossaryLevelUp(); return; }
+  const el = document.getElementById('gl-content');
+  el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+    '<textarea class="gl-input" id="gl-answer" placeholder="Erkl\u00e4re in eigenen Worten..." rows="4"></textarea>' +
+    '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Verwende Fachbegriffe \u2013 je mehr Schl\u00fcsselw\u00f6rter du nennst, desto besser!</div>' +
+    '<button class="gl-btn primary" onclick="glossaryCheckExplain()">Antwort pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
+}
+
+function glossaryCheckExplain() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'explain');
+  const val = document.getElementById('gl-answer').value.trim().toLowerCase();
+  const fb = document.getElementById('gl-feedback');
+  if (!val) { fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe eine Erkl\u00e4rung!</div>'; return; }
+
+  const found = [], missing = [];
+  q.keywords.forEach(kw => {
+    if (val.includes(kw.toLowerCase())) found.push(kw); else missing.push(kw);
+  });
+  const kwHtml = found.map(k => '<span class="gl-keyword found">\u2713 ' + k + '</span>').join('') +
+                 missing.map(k => '<span class="gl-keyword missing">\u2717 ' + k + '</span>').join('');
+
+  if (found.length >= (q.minKeywords || 3)) {
+    fb.innerHTML = '<div class="gl-feedback success">Sehr gut! \uD83C\uDF89 Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt!<br>' + kwHtml + '</div>';
+    setTimeout(() => glossaryLevelUp(), 1800);
+  } else {
+    fb.innerHTML = '<div class="gl-feedback info">Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt (' + (q.minKeywords || 3) + ' ben\u00f6tigt):<br>' + kwHtml +
+      '<br><span style="font-size:12px;margin-top:6px;display:inline-block">Versuch es nochmal \u2013 nutze die fehlenden Begriffe!</span></div>';
+  }
+}
+
+// ── Mastered View ──
+function glossaryMastered(g) {
+  document.getElementById('gl-content').innerHTML =
+    '<div style="text-align:center;padding:20px 0">' +
+    '<div style="font-size:48px;margin-bottom:12px">\u2B50</div>' +
+    '<div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px">Gemeistert!</div>' +
+    '<div style="font-size:13px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.6">' +
+    'Du hast <strong style="color:var(--text)">' + g.term + '</strong> vollst\u00e4ndig gelernt. ' + g.short + '</div>' +
+    '<button class="gl-btn" style="margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)" onclick="glossaryReset(\'' + g.term + '\')">Nochmal lernen \u21BA</button></div>';
+}
+
+function glossaryLevelUp() {
+  const term = glossaryState.current;
+  let lv = (glossaryState.levels[term] || 0) + 1;
+  if (lv > 3) lv = 3;
+  glossaryState.levels[term] = lv;
+  glossarySave();
+  glossaryOpen(term);
+}
+
+function glossaryReset(term) {
+  glossaryState.levels[term] = 0;
+  glossarySave();
+  glossaryOpen(term);
+}
+
+function glossaryClose() {
+  document.getElementById('glossary-learn').classList.remove('visible');
+  glossaryState.current = null;
+  glossaryRenderGrid();
+}
+
+// ── Term Highlighting in Reference Cards ──
+function glossaryHighlightTerms() {
+  const termMap = {};
+  GLOSSARY.forEach(g => { termMap[g.term.toLowerCase()] = g.term; });
+  termMap['subnetzmasken'] = 'Subnetzmaske';
+  termMap['broadcastadresse'] = 'Broadcast';
+  termMap['broadcastadressen'] = 'Broadcast';
+  termMap['netzadressen'] = 'Netzadresse';
+  termMap['prefixl\u00e4nge'] = 'Prefix';
+  termMap['prefixl\u00e4ngen'] = 'Prefix';
+  termMap['oktette'] = 'Oktett';
+  termMap['oktetten'] = 'Oktett';
+
+  const allTerms = Object.keys(termMap).sort((a, b) => b.length - a.length);
+  const pattern = new RegExp('\\b(' + allTerms.join('|') + ')\\b', 'gi');
+
+  document.querySelectorAll('.card p, .card li, .summary-card p').forEach(el => {
+    if (el.dataset.glDone) return;
+    el.dataset.glDone = '1';
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n;
+    while (n = walker.nextNode()) nodes.push(n);
+
+    nodes.forEach(textNode => {
+      const txt = textNode.textContent;
+      pattern.lastIndex = 0;
+      if (!pattern.test(txt)) return;
+      pattern.lastIndex = 0;
+
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      while (m = pattern.exec(txt)) {
+        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        const span = document.createElement('span');
+        span.className = 'glossary-term';
+        span.dataset.term = termMap[m[0].toLowerCase()] || m[0];
+        span.textContent = m[0];
+        frag.appendChild(span);
+        last = pattern.lastIndex;
+      }
+      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+      textNode.parentNode.replaceChild(frag, textNode);
+    });
+  });
+}
+
+// ── Floating Tooltip ──
+const glTooltip = document.createElement('div');
+glTooltip.className = 'glossary-tooltip';
+document.body.appendChild(glTooltip);
+
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('.glossary-term');
+  if (!t) { glTooltip.style.display = 'none'; return; }
+  const g = GLOSSARY.find(x => x.term === t.dataset.term);
+  if (!g) return;
+  const lv = glossaryState.levels[g.term] || 0;
+  const labels = ['Noch nicht gelernt', 'Kennengelernt', '\u00dcberpr\u00fcft', 'Gemeistert \u2B50'];
+  glTooltip.innerHTML = '<div class="gt-name">' + g.term + '</div><div class="gt-short">' + g.short + '</div><div class="gt-link">' + labels[lv] + ' \u00b7 Klicke zum Lernen \u2192</div>';
+  const r = t.getBoundingClientRect();
+  glTooltip.style.display = 'block';
+  glTooltip.style.left = Math.max(8, r.left + r.width / 2 - 130) + 'px';
+  glTooltip.style.top = (r.top - glTooltip.offsetHeight - 8) + 'px';
+  if (parseFloat(glTooltip.style.top) < 8) glTooltip.style.top = (r.bottom + 8) + 'px';
+});
+
+document.addEventListener('mouseout', e => {
+  if (!e.target.closest('.glossary-term')) glTooltip.style.display = 'none';
+});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('.glossary-term');
+  if (t) { e.preventDefault(); glossaryOpen(t.dataset.term); }
+});
+
+// ── Initialize Glossary ──
+glossaryLoad();
+glossaryRenderGrid();
+glossaryHighlightTerms();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCP vs. UDP & Routing Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}
+
+/* Comparison Tool */
+.compare-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.compare-col{border-radius:10px;padding:16px;position:relative}
+.compare-col.tcp{background:rgba(56,189,248,.04);border:1px solid rgba(56,189,248,.15)}
+.compare-col.udp{background:rgba(244,114,182,.04);border:1px solid rgba(244,114,182,.15)}
+.compare-col h3{font-size:15px;font-weight:700;margin-bottom:12px;text-align:center}
+.compare-col.tcp h3{color:var(--cyan)}
+.compare-col.udp h3{color:var(--pink)}
+.compare-row{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;margin-bottom:4px;font-size:13px;font-weight:300;color:var(--muted);cursor:pointer;transition:all .2s}
+.compare-row:hover,.compare-row.hl{background:rgba(255,255,255,.05);color:var(--text)}
+.compare-row .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.compare-col.tcp .dot{background:var(--cyan)}
+.compare-col.udp .dot{background:var(--pink)}
+.compare-label{text-align:center;font-size:11px;color:var(--muted);margin-top:12px;font-family:'JetBrains Mono',monospace}
+
+/* Exercise */
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace;line-height:1.5}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none}
+.solution-box.show{display:block}
+.choice-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.choice-btn{font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px 24px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;transition:all .2s;font-weight:600}
+.choice-btn:hover{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.choice-btn.selected-correct{border-color:var(--green);background:rgba(81,207,102,.1);color:var(--green)}
+.choice-btn.selected-wrong{border-color:var(--red);background:rgba(255,107,107,.1);color:var(--red)}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.compare-grid{grid-template-columns:1fr}.choice-btn{padding:10px 16px;font-size:12px}}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">ITI24 &middot; Netzwerke</div>
+<h1>TCP vs. UDP & Routing</h1>
+<p>Transportprotokolle, Handshake, Portnummern und Routing-Protokolle &ndash; interaktiv lernen und üben</p>
+</header>
+
+<!-- ===== REFERENZ ===== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#128257; TCP &ndash; Transmission Control Protocol</h3>
+<ul>
+<li><strong>Verbindungsorientiert</strong> &ndash; Verbindungsaufbau vor Datentransfer</li>
+<li><strong>Zuverlässig</strong> &ndash; Bestätigungen (ACK), Neuübertragung bei Verlust</li>
+<li><strong>Flusskontrolle</strong> &ndash; Sliding-Window-Verfahren</li>
+<li><strong>Reihenfolge</strong> &ndash; Sequenznummern garantieren korrekte Reihenfolge</li>
+<li><strong>Header:</strong> 20&ndash;60 Bytes (größer als UDP)</li>
+<li><strong>Einsatz:</strong> HTTP, HTTPS, FTP, SSH, SMTP, POP3, IMAP</li>
+</ul></div>
+<div class="card c2"><h3>&#9889; UDP &ndash; User Datagram Protocol</h3>
+<ul>
+<li><strong>Verbindungslos</strong> &ndash; kein Verbindungsaufbau nötig</li>
+<li><strong>Unzuverlässig</strong> &ndash; keine Bestätigungen, keine Neuübertragung</li>
+<li><strong>Keine Flusskontrolle</strong> &ndash; Sender sendet ohne Rücksicht</li>
+<li><strong>Keine Reihenfolge</strong> &ndash; Pakete können vertauscht ankommen</li>
+<li><strong>Header:</strong> 8 Bytes (minimal)</li>
+<li><strong>Einsatz:</strong> DNS, DHCP, VoIP, Streaming, Gaming, TFTP</li>
+</ul></div>
+<div class="card c3"><h3>&#129309; TCP 3-Way-Handshake</h3>
+<p>Verbindungsaufbau in drei Schritten:</p>
+<ul>
+<li><strong>Schritt 1 &ndash; SYN:</strong> Client sendet SYN-Paket (Seq=x)</li>
+<li><strong>Schritt 2 &ndash; SYN-ACK:</strong> Server antwortet mit SYN+ACK (Seq=y, Ack=x+1)</li>
+<li><strong>Schritt 3 &ndash; ACK:</strong> Client bestaetigtt mit ACK (Seq=x+1, Ack=y+1)</li>
+</ul>
+<p style="margin-top:8px"><strong>Verbindungsabbau:</strong> 4-Way &ndash; FIN, ACK, FIN, ACK</p></div>
+<div class="card c4"><h3>&#128451; TCP-Header Felder</h3>
+<ul>
+<li><strong>Source Port / Dest Port</strong> (je 16 Bit)</li>
+<li><strong>Sequenznummer</strong> (32 Bit) &ndash; Position der Daten</li>
+<li><strong>Bestätigungsnummer</strong> (32 Bit) &ndash; nächste erwartete Seq</li>
+<li><strong>Flags:</strong> SYN, ACK, FIN, RST, PSH, URG</li>
+<li><strong>Window Size</strong> (16 Bit) &ndash; Flusskontrolle</li>
+<li><strong>Checksum</strong> (16 Bit) &ndash; Fehlererkennung</li>
+</ul></div>
+</div>
+
+<div class="cards" style="margin-top:12px">
+<div class="card c1"><h3>&#128739; RIP &ndash; Routing Information Protocol</h3>
+<ul>
+<li><strong>Typ:</strong> Distance-Vector</li>
+<li><strong>Algorithmus:</strong> Bellman-Ford</li>
+<li><strong>Metrik:</strong> Hop Count (max. 15 Hops)</li>
+<li><strong>Updates:</strong> Alle 30 Sekunden (gesamte Routing-Tabelle)</li>
+<li><strong>Konvergenz:</strong> Langsam, anfaellig für Routing-Loops</li>
+<li><strong>Einsatz:</strong> Kleine Netzwerke</li>
+</ul></div>
+<div class="card c2"><h3>&#127760; OSPF &ndash; Open Shortest Path First</h3>
+<ul>
+<li><strong>Typ:</strong> Link-State</li>
+<li><strong>Algorithmus:</strong> Dijkstra (SPF)</li>
+<li><strong>Metrik:</strong> Kosten (basierend auf Bandbreite)</li>
+<li><strong>Areas:</strong> Hierarchisch mit Backbone-Area 0</li>
+<li><strong>Konvergenz:</strong> Schnell, loop-frei</li>
+<li><strong>Einsatz:</strong> Grosse Unternehmensnetzwerke (IGP)</li>
+</ul></div>
+<div class="card c3"><h3>&#127758; BGP &ndash; Border Gateway Protocol</h3>
+<ul>
+<li><strong>Typ:</strong> Path-Vector</li>
+<li><strong>Metrik:</strong> AS-Pfad, Policies</li>
+<li><strong>AS-Nummern:</strong> Jedes autonome System hat eine eindeutige ASN</li>
+<li><strong>Einsatz:</strong> Inter-Domain Routing (zwischen ISPs)</li>
+<li><strong>Läuft über:</strong> TCP Port 179</li>
+<li><strong>Konvergenz:</strong> Langsam, aber stabil und skalierbar</li>
+</ul></div>
+</div>
+
+<!-- ===== INTERAKTIVER VERGLEICH ===== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#128260;</div><h2>Interaktiver Vergleich: TCP vs. UDP</h2></div>
+<div class="compare-wrap">
+<p style="font-size:12px;color:var(--muted);margin-bottom:16px;text-align:center">Fahre mit der Maus über eine Eigenschaft, um die Unterschiede hervorzuheben</p>
+<div class="compare-grid">
+<div class="compare-col tcp">
+<h3>TCP</h3>
+<div class="compare-row" data-pair="conn"><span class="dot"></span>Verbindungsorientiert</div>
+<div class="compare-row" data-pair="rel"><span class="dot"></span>Zuverlässige Zustellung</div>
+<div class="compare-row" data-pair="order"><span class="dot"></span>Reihenfolge garantiert</div>
+<div class="compare-row" data-pair="flow"><span class="dot"></span>Flusskontrolle (Window)</div>
+<div class="compare-row" data-pair="hdr"><span class="dot"></span>Header: 20&ndash;60 Bytes</div>
+<div class="compare-row" data-pair="speed"><span class="dot"></span>Langsamer (Overhead)</div>
+<div class="compare-row" data-pair="handshake"><span class="dot"></span>3-Way-Handshake</div>
+<div class="compare-row" data-pair="use"><span class="dot"></span>HTTP, FTP, SSH, E-Mail</div>
+</div>
+<div class="compare-col udp">
+<h3>UDP</h3>
+<div class="compare-row" data-pair="conn"><span class="dot"></span>Verbindungslos</div>
+<div class="compare-row" data-pair="rel"><span class="dot"></span>Keine Zustellgarantie</div>
+<div class="compare-row" data-pair="order"><span class="dot"></span>Keine Reihenfolge</div>
+<div class="compare-row" data-pair="flow"><span class="dot"></span>Keine Flusskontrolle</div>
+<div class="compare-row" data-pair="hdr"><span class="dot"></span>Header: 8 Bytes</div>
+<div class="compare-row" data-pair="speed"><span class="dot"></span>Schneller (kein Overhead)</div>
+<div class="compare-row" data-pair="handshake"><span class="dot"></span>Kein Handshake</div>
+<div class="compare-row" data-pair="use"><span class="dot"></span>DNS, DHCP, VoIP, Streaming</div>
+</div>
+</div>
+<div class="compare-label">Hover über eine Zeile zum Hervorheben</div>
+</div>
+
+<!-- ===== UEBUNGSMODUS ===== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#127947;&#65039;</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="tcpudp" onclick="setMode('tcpudp')">TCP vs UDP</div>
+<div class="tab" data-mode="ports" onclick="setMode('ports')">Port-Nummern</div>
+<div class="tab" data-mode="handshake" onclick="setMode('handshake')">Handshake</div>
+<div class="tab" data-mode="routing" onclick="setMode('routing')">Routing</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- ===== PORTNUMMERN TABELLE ===== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--orange),var(--yellow))">&#128204;</div><h2>Wichtige Portnummern</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Dienst</th><th>Port</th><th>Protokoll</th><th>Beschreibung</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--cyan)">FTP (Daten)</td><td>20</td><td>TCP</td><td>Datentransfer</td></tr>
+<tr><td style="color:var(--cyan)">FTP (Steuerung)</td><td>21</td><td>TCP</td><td>Steuerungskanal</td></tr>
+<tr><td style="color:var(--green)">SSH</td><td>22</td><td>TCP</td><td>Sichere Shell-Verbindung</td></tr>
+<tr><td style="color:var(--yellow)">Telnet</td><td>23</td><td>TCP</td><td>Unsichere Fernsteuerung</td></tr>
+<tr><td style="color:var(--pink)">SMTP</td><td>25</td><td>TCP</td><td>E-Mail-Versand</td></tr>
+<tr><td style="color:var(--purple)">DNS</td><td>53</td><td>TCP/UDP</td><td>Namensauflösung</td></tr>
+<tr><td style="color:var(--orange)">DHCP (Server)</td><td>67</td><td>UDP</td><td>IP-Adressvergabe</td></tr>
+<tr><td style="color:var(--orange)">DHCP (Client)</td><td>68</td><td>UDP</td><td>IP-Adressvergabe</td></tr>
+<tr><td style="color:var(--cyan)">HTTP</td><td>80</td><td>TCP</td><td>Webseiten (unverschlüsselt)</td></tr>
+<tr><td style="color:var(--pink)">POP3</td><td>110</td><td>TCP</td><td>E-Mail-Abruf</td></tr>
+<tr><td style="color:var(--pink)">IMAP</td><td>143</td><td>TCP</td><td>E-Mail-Verwaltung</td></tr>
+<tr><td style="color:var(--green)">HTTPS</td><td>443</td><td>TCP</td><td>Webseiten (verschlüsselt)</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== TCP vs UDP VERGLEICHSTABELLE ===== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#128203;</div><h2>TCP vs. UDP &ndash; Zusammenfassung</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Merkmal</th><th style="color:var(--cyan)">TCP</th><th style="color:var(--pink)">UDP</th></tr></thead>
+<tbody>
+<tr><td>Verbindung</td><td>Verbindungsorientiert</td><td>Verbindungslos</td></tr>
+<tr><td>Zuverlässigkeit</td><td>Ja (ACKs, Retransmission)</td><td>Nein</td></tr>
+<tr><td>Reihenfolge</td><td>Garantiert (Seq-Nummern)</td><td>Nicht garantiert</td></tr>
+<tr><td>Flusskontrolle</td><td>Ja (Sliding Window)</td><td>Nein</td></tr>
+<tr><td>Fehlererkennung</td><td>Checksum (Pflicht)</td><td>Checksum (optional bei IPv4)</td></tr>
+<tr><td>Header-Größe</td><td>20&ndash;60 Bytes</td><td>8 Bytes</td></tr>
+<tr><td>Geschwindigkeit</td><td>Langsamer</td><td>Schneller</td></tr>
+<tr><td>Handshake</td><td>3-Way-Handshake</td><td>Keiner</td></tr>
+<tr><td>Broadcast/Multicast</td><td>Nein</td><td>Ja</td></tr>
+<tr><td>Typische Dienste</td><td>HTTP, FTP, SSH, SMTP</td><td>DNS, DHCP, VoIP, Streaming</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ===== ZUSAMMENFASSUNG ===== -->
+<div class="summary">
+<div class="summary-card"><h4>&#128161; Merke</h4><p>TCP = zuverlässig, aber langsamer (Overhead durch Handshake, ACKs). UDP = schnell, aber ohne Garantie. Wahl haengt vom Anwendungsfall ab.</p></div>
+<div class="summary-card"><h4>&#127919; Prüfungstipp</h4><p>Portnummern auswendig lernen! Häufige Frage: &laquo;Welches Protokoll nutzt welchen Port?&raquo; Merke: 80=HTTP, 443=HTTPS, 22=SSH, 53=DNS, 25=SMTP.</p></div>
+<div class="summary-card"><h4>&#129513; Routing-Vergleich</h4><p>RIP = einfach (Distance-Vector, max 15 Hops). OSPF = schnelle Konvergenz (Link-State, Dijkstra). BGP = Internet-Backbone (Path-Vector, AS-Nummern).</p></div>
+<div class="summary-card"><h4>&#128274; Handshake merken</h4><p>SYN &rarr; SYN-ACK &rarr; ACK &ndash; wie ein Telefongespräch: &laquo;Hallo?&raquo; &ndash; &laquo;Ja, hallo!&raquo; &ndash; &laquo;Gut, lass uns reden.&raquo;</p></div>
+</div>
+
+<!-- ===== GLOSSAR ===== -->
+<div class="glossary-section" id="glossary-section">
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128218;</div><h2>Glossar &ndash; Begriffe aktiv lernen</h2></div>
+<div class="glossary-progress-bar">
+  <div class="gp-text">Lernfortschritt</div>
+  <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+  <div class="gp-count" id="glossary-count">0 / 8 gemeistert</div>
+</div>
+<div class="glossary-grid" id="glossary-grid"></div>
+<div class="glossary-learn" id="glossary-learn">
+  <div class="gl-header"><h3 id="gl-title"></h3><button class="gl-close" onclick="closeGlossaryLearn()">&times;</button></div>
+  <div class="gl-phase-indicator" id="gl-phases"></div>
+  <div class="gl-content" id="gl-content"></div>
+</div>
+</div>
+<div id="glossary-tooltip" class="glossary-tooltip">
+  <div class="gt-name" id="gt-name"></div>
+  <div class="gt-short" id="gt-short"></div>
+  <div class="gt-link">Klicke zum Lernen &#8595;</div>
+</div>
+</div>
+
+<script>
+// ===== PROGRESS =====
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('tcp-udp-routing',{status:'in-progress'});
+
+// ===== INTERACTIVE COMPARISON =====
+document.querySelectorAll('.compare-row').forEach(row=>{
+  row.addEventListener('mouseenter',()=>{
+    const pair=row.dataset.pair;
+    document.querySelectorAll('.compare-row').forEach(r=>{r.classList.toggle('hl',r.dataset.pair===pair);});
+  });
+  row.addEventListener('mouseleave',()=>{
+    document.querySelectorAll('.compare-row').forEach(r=>r.classList.remove('hl'));
+  });
+});
+
+// ===== EXERCISE ENGINE =====
+let mode='tcpudp';
+let score={correct:0,wrong:0,streak:0};
+let currentTask={};
+let answered=false;
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pick(arr){return arr[rand(0,arr.length-1)];}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));answered=false;newTask();}
+
+// --- TCP vs UDP questions ---
+const tcpudpQuestions=[
+  {q:'Ein Benutzer streamt ein Live-Video. Welches Protokoll?',a:'UDP',hint:'Streaming nutzt UDP wegen geringer Latenz. Einzelne verlorene Pakete sind akzeptabel.'},
+  {q:'Eine Datei wird per FTP heruntergeladen. Welches Protokoll?',a:'TCP',hint:'FTP nutzt TCP (Port 20/21), da die Datei vollstaendig und fehlerfrei ankommen muss.'},
+  {q:'Ein VoIP-Telefonat wird geführt. Welches Protokoll?',a:'UDP',hint:'VoIP nutzt UDP. Echtzeitkommunikation duldet keine Verzögerung durch Neuübertragung.'},
+  {q:'Eine Webseite wird per HTTPS geladen. Welches Protokoll?',a:'TCP',hint:'HTTPS läuft über TCP (Port 443). Zuverlässigkeit ist hier wichtig.'},
+  {q:'Ein DNS-Lookup wird durchgeführt. Welches Protokoll?',a:'UDP',hint:'DNS nutzt standardmaessig UDP (Port 53) für schnelle, kurze Anfragen.'},
+  {q:'Ein E-Mail wird per SMTP versendet. Welches Protokoll?',a:'TCP',hint:'SMTP (Port 25) nutzt TCP, da E-Mails vollstaendig zugestellt werden müssen.'},
+  {q:'Ein Online-Spiel sendet Positionsdaten. Welches Protokoll?',a:'UDP',hint:'Gaming nutzt UDP für minimale Latenz. Veraltete Positionsdaten sind wertlos.'},
+  {q:'Ein SSH-Terminal wird geoeffnet. Welches Protokoll?',a:'TCP',hint:'SSH (Port 22) nutzt TCP für zuverlässige, verschlüsselte Verbindung.'},
+  {q:'Ein DHCP-Client fordert eine IP-Adresse an. Welches Protokoll?',a:'UDP',hint:'DHCP nutzt UDP (Port 67/68), da der Client noch keine IP-Adresse hat.'},
+  {q:'Eine grosse Datei wird zuverlässig übertragen. Welches Protokoll?',a:'TCP',hint:'Zuverlässige Dateiübertragung benötigt TCP (Bestätigungen, Neuübertragung).'},
+  {q:'Ein TFTP-Transfer wird gestartet. Welches Protokoll?',a:'UDP',hint:'TFTP (Trivial FTP) nutzt UDP (Port 69) für einfache, schnelle Übertragung.'},
+  {q:'Ein Browser ruft eine HTTP-Seite auf. Welches Protokoll?',a:'TCP',hint:'HTTP (Port 80) nutzt TCP. Webseiten müssen vollstaendig geladen werden.'},
+  {q:'Multicast-Video wird im Netzwerk verteilt. Welches Protokoll?',a:'UDP',hint:'Multicast funktioniert nur mit UDP. TCP unterstützt kein Multicast.'},
+  {q:'POP3 ruft E-Mails vom Server ab. Welches Protokoll?',a:'TCP',hint:'POP3 (Port 110) nutzt TCP für zuverlässigen E-Mail-Abruf.'},
+];
+
+// --- Port questions ---
+const portQuestions=[
+  {q:'HTTP',a:'80'},{q:'HTTPS',a:'443'},{q:'FTP (Daten)',a:'20'},{q:'FTP (Steuerung)',a:'21'},
+  {q:'SSH',a:'22'},{q:'Telnet',a:'23'},{q:'SMTP',a:'25'},{q:'DNS',a:'53'},
+  {q:'DHCP (Server)',a:'67'},{q:'DHCP (Client)',a:'68'},{q:'POP3',a:'110'},{q:'IMAP',a:'143'},
+];
+
+// --- Handshake questions ---
+const handshakeQuestions=[
+  {q:'Der Client moechte eine TCP-Verbindung aufbauen. Was sendet er zuerst?',a:'SYN',opts:['SYN','ACK','SYN-ACK','FIN'],hint:'Schritt 1: Der Client sendet ein SYN-Paket zum Server.'},
+  {q:'Der Server empfängt ein SYN-Paket. Was antwortet er?',a:'SYN-ACK',opts:['SYN','ACK','SYN-ACK','FIN'],hint:'Schritt 2: Der Server antwortet mit SYN-ACK (Synchronisation + Bestätigung).'},
+  {q:'Der Client empfängt SYN-ACK. Was sendet er als Letztes?',a:'ACK',opts:['SYN','ACK','SYN-ACK','RST'],hint:'Schritt 3: Der Client bestaetigtt mit ACK. Verbindung steht.'},
+  {q:'Welches Flag wird zum Verbindungsabbau genutzt?',a:'FIN',opts:['SYN','ACK','FIN','RST'],hint:'FIN (Finish) signalisiert den Wunsch, die Verbindung zu beenden.'},
+  {q:'Welches Flag erzwingt einen sofortigen Verbindungsabbruch?',a:'RST',opts:['FIN','RST','PSH','URG'],hint:'RST (Reset) bricht die Verbindung sofort ab, ohne ordentlichen Abbau.'},
+  {q:'Reihenfolge des 3-Way-Handshake?',a:'SYN, SYN-ACK, ACK',opts:['SYN, SYN-ACK, ACK','ACK, SYN, SYN-ACK','SYN-ACK, SYN, ACK','SYN, ACK, SYN-ACK'],hint:'Korrekte Reihenfolge: 1) SYN 2) SYN-ACK 3) ACK'},
+  {q:'Wie viele Schritte hat der TCP-Verbindungsabbau?',a:'4',opts:['2','3','4','5'],hint:'4-Way-Teardown: FIN, ACK, FIN, ACK (jede Seite sendet FIN und erhält ACK).'},
+  {q:'Welches Feld im TCP-Header nummeriert die Datenbytes?',a:'Sequenznummer',opts:['Sequenznummer','Window Size','Checksum','Portnummer'],hint:'Die Sequenznummer (32 Bit) gibt die Position der Daten im Bytestrom an.'},
+];
+
+// --- Routing questions ---
+const routingQuestions=[
+  {q:'Welchen Algorithmus verwendet RIP?',a:'Bellman-Ford',opts:['Dijkstra','Bellman-Ford','Floyd-Warshall','A*'],hint:'RIP ist ein Distance-Vector-Protokoll und nutzt den Bellman-Ford-Algorithmus.'},
+  {q:'Welchen Algorithmus verwendet OSPF?',a:'Dijkstra',opts:['Bellman-Ford','Dijkstra','Kruskal','Prim'],hint:'OSPF ist ein Link-State-Protokoll und nutzt den Dijkstra-Algorithmus (Shortest Path First).'},
+  {q:'Wie viele Hops erlaubt RIP maximal?',a:'15',opts:['10','15','16','255'],hint:'RIP erlaubt maximal 15 Hops. 16 bedeutet "unreachable" (nicht erreichbar).'},
+  {q:'Welcher Routing-Protokolltyp ist BGP?',a:'Path-Vector',opts:['Distance-Vector','Link-State','Path-Vector','Hybrid'],hint:'BGP ist ein Path-Vector-Protokoll. Es tauscht komplette AS-Pfade aus.'},
+  {q:'OSPF organisiert Netzwerke in...?',a:'Areas',opts:['Zonen','Areas','Domains','Regionen'],hint:'OSPF nutzt Areas. Area 0 ist die Backbone-Area, an die alle anderen Areas angebunden sind.'},
+  {q:'Welcher TCP-Port wird von BGP verwendet?',a:'179',opts:['80','143','179','520'],hint:'BGP läuft über TCP Port 179 für zuverlässige Kommunikation zwischen AS-Routern.'},
+  {q:'Welches Protokoll ist ein IGP (Interior Gateway Protocol)?',a:'OSPF',opts:['BGP','OSPF','EGP','ICMP'],hint:'OSPF ist ein IGP für Routing innerhalb eines autonomen Systems. BGP ist ein EGP.'},
+  {q:'Wie oft sendet RIP seine komplette Routing-Tabelle?',a:'Alle 30 Sekunden',opts:['Alle 10 Sekunden','Alle 30 Sekunden','Alle 60 Sekunden','Nur bei Aenderungen'],hint:'RIP sendet alle 30 Sekunden die gesamte Routing-Tabelle an seine Nachbarn.'},
+  {q:'Welche Metrik verwendet OSPF?',a:'Kosten (Bandbreite)',opts:['Hop Count','Kosten (Bandbreite)','Verzögerung','MTU'],hint:'OSPF berechnet Kosten basierend auf der Bandbreite der Links. Höhere Bandbreite = niedrigere Kosten.'},
+  {q:'Was identifiziert ein autonomes System eindeutig?',a:'AS-Nummer (ASN)',opts:['IP-Adresse','MAC-Adresse','AS-Nummer (ASN)','VLAN-ID'],hint:'Jedes autonome System hat eine eindeutige AS-Nummer (ASN), vergeben durch die IANA.'},
+  {q:'Welches Routing-Protokoll eignet sich für kleine Netzwerke?',a:'RIP',opts:['RIP','OSPF','BGP','IS-IS'],hint:'RIP ist einfach zu konfigurieren und eignet sich für kleine Netzwerke (max. 15 Hops).'},
+  {q:'OSPF-Konvergenz ist im Vergleich zu RIP...?',a:'Schneller',opts:['Schneller','Langsamer','Gleich','Unbestimmt'],hint:'OSPF konvergiert schneller als RIP dank Link-State-Updates und Dijkstra-Algorithmus.'},
+];
+
+function genTask(){
+  if(mode==='tcpudp'){
+    const q=pick(tcpudpQuestions);
+    return{type:'choice',q:q.q,answer:q.a,opts:shuffle(['TCP','UDP']),hint:q.hint};
+  }
+  if(mode==='ports'){
+    const q=pick(portQuestions);
+    return{type:'input',q:`Welchen Port nutzt ${q.q}?`,answer:q.a,hint:`${q.q} verwendet Port ${q.a}.`};
+  }
+  if(mode==='handshake'){
+    const q=pick(handshakeQuestions);
+    return{type:'choice',q:q.q,answer:q.a,opts:shuffle(q.opts),hint:q.hint};
+  }
+  if(mode==='routing'){
+    const q=pick(routingQuestions);
+    return{type:'choice',q:q.q,answer:q.a,opts:shuffle(q.opts),hint:q.hint};
+  }
+}
+
+function newTask(){
+  answered=false;
+  currentTask=genTask();
+  const area=document.getElementById('exercise-area');
+  const labels={tcpudp:'Welches Transportprotokoll passt?',ports:'Gib die Portnummer ein',handshake:'TCP-Handshake & Header',routing:'Routing-Protokolle'};
+
+  let inputHTML='';
+  if(currentTask.type==='choice'){
+    inputHTML=`<div class="choice-btns">${currentTask.opts.map(o=>`<button class="choice-btn" onclick="checkChoice(this,'${o.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div>`;
+  }else{
+    inputHTML=`<div class="input-row"><input type="text" id="user-answer" placeholder="Portnummer eingeben..." autocomplete="off"></div>`;
+  }
+
+  area.innerHTML=`
+    <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${labels[mode]}</div>
+    <div class="task-display">${currentTask.q}</div>
+    <div class="task-sub">${currentTask.type==='input'?'Gib die Portnummer als Zahl ein':'Wähle die richtige Antwort'}</div>
+    ${inputHTML}
+    <div class="btn-row">
+      ${currentTask.type==='input'?'<button class="btn btn-primary" onclick="checkInput()">Prüfen &#8629;</button>':''}
+      <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+      <button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="solution-box" id="sol"></div>`;
+
+  if(currentTask.type==='input'){
+    const inp=document.getElementById('user-answer');
+    inp.focus();
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkInput();});
+  }
+}
+
+function checkChoice(btn,value){
+  if(answered)return;
+  answered=true;
+  const fb=document.getElementById('fb');
+  if(value===currentTask.answer){
+    btn.classList.add('selected-correct');
+    fb.textContent='\u2713 Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('tcp-udp-routing',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  }else{
+    btn.classList.add('selected-wrong');
+    document.querySelectorAll('.choice-btn').forEach(b=>{
+      if(b.textContent===currentTask.answer)b.classList.add('selected-correct');
+    });
+    fb.textContent='\u2717 Falsch \u2013 richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function checkInput(){
+  if(answered)return;
+  const inp=document.getElementById('user-answer');
+  const fb=document.getElementById('fb');
+  const v=inp.value.trim();
+  if(!v)return;
+  answered=true;
+  if(v===currentTask.answer){
+    inp.classList.add('correct');fb.textContent='\u2713 Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('tcp-udp-routing',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  }else{
+    inp.classList.add('wrong');fb.textContent='\u2717 Falsch \u2013 richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function showSolution(){const s=document.getElementById('sol');s.textContent=currentTask.hint;s.classList.add('show');}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+newTask();
+
+// ===== GLOSSARY SYSTEM =====
+const GLOSSARY_KEY='glossary-tcp-udp-routing';
+const glossaryTerms=[
+  {
+    term:'TCP',short:'Transmission Control Protocol',icon:'&#128257;',difficulty:1,
+    definition:'TCP (Transmission Control Protocol) ist ein verbindungsorientiertes Transportprotokoll der Schicht 4 im OSI-Modell. Es stellt eine zuverlässige, geordnete und fehlergeprüfte Übertragung von Datenströmen zwischen Anwendungen sicher. TCP nutzt Sequenznummern, Bestätigungen (ACKs) und Neuübertragungen, um Datenverlust zu verhindern.',
+    analogy:'Stell dir TCP wie ein Einschreiben bei der Post vor: Du bekommst eine Bestätigung, dass der Brief angekommen ist. Falls nicht, wird er erneut gesendet. Alles kommt in der richtigen Reihenfolge an.',
+    hints:['TCP arbeitet auf Schicht 4 (Transport) des OSI-Modells.','Der 3-Way-Handshake (SYN, SYN-ACK, ACK) baut die Verbindung auf.','Flusskontrolle per Sliding-Window-Verfahren verhindert Überlastung des Empfängers.'],
+    questions:[
+      {type:'fill',q:'TCP ist ein ________-orientiertes Transportprotokoll.',a:'verbindungs',keywords:['verbindungs','verbindungsorientiert']},
+      {type:'choice',q:'Welches Verfahren nutzt TCP zur Flusskontrolle?',correct:'Sliding Window',wrong:['Round Robin','Token Passing','CSMA/CD']},
+      {type:'explain',q:'Erkläre, warum TCP für HTTP/HTTPS verwendet wird, aber nicht für Live-Streaming.',keywords:['zuverlässig','bestätigung','ack','reihenfolge','latenz','overhead','verzögerung','neuübertragung']}
+    ]
+  },
+  {
+    term:'UDP',short:'User Datagram Protocol',icon:'&#9889;',difficulty:1,
+    definition:'UDP (User Datagram Protocol) ist ein verbindungsloses Transportprotokoll der Schicht 4. Es bietet keine Garantie für Zustellung, Reihenfolge oder Fehlerfreiheit. Dafür ist es sehr schnell und effizient, da kein Verbindungsaufbau und keine Bestätigungen nötig sind. Der Header umfasst nur 8 Bytes.',
+    analogy:'UDP ist wie ein Brief ohne Einschreiben: Du wirfst ihn in den Briefkasten und hoffst, dass er ankommt. Schnell, aber ohne Garantie. Ideal, wenn Geschwindigkeit wichtiger ist als Vollständigkeit.',
+    hints:['UDP hat einen minimalen Header von nur 8 Bytes (vs. 20-60 bei TCP).','Typische UDP-Dienste: DNS (Port 53), DHCP (Port 67/68), VoIP, Streaming.','UDP unterstützt Broadcast und Multicast, TCP nicht.'],
+    questions:[
+      {type:'fill',q:'Der UDP-Header ist nur ________ Bytes groß.',a:'8',keywords:['8']},
+      {type:'choice',q:'Welcher Dienst nutzt typischerweise UDP?',correct:'DNS',wrong:['HTTP','FTP','SSH']},
+      {type:'explain',q:'Erkläre, warum UDP für VoIP und Online-Gaming bevorzugt wird.',keywords:['latenz','geschwindigkeit','schnell','echtzeit','verzögerung','overhead','verbindungslos']}
+    ]
+  },
+  {
+    term:'Drei-Wege-Handshake',short:'TCP-Verbindungsaufbau in 3 Schritten',icon:'&#129309;',difficulty:2,
+    definition:'Der Drei-Wege-Handshake (3-Way-Handshake) ist das Verfahren, mit dem TCP eine Verbindung aufbaut. In drei Schritten synchronisieren Client und Server ihre Sequenznummern: 1) Client sendet SYN (Seq=x), 2) Server antwortet mit SYN-ACK (Seq=y, Ack=x+1), 3) Client bestätigt mit ACK (Seq=x+1, Ack=y+1). Erst danach beginnt der Datenaustausch.',
+    analogy:'Wie ein Telefongespräch: „Hallo, hörst du mich?" (SYN) – „Ja, ich höre dich, hörst du mich?" (SYN-ACK) – „Ja, perfekt, lass uns reden!" (ACK). Beide Seiten bestätigen die Bereitschaft.',
+    hints:['SYN = Synchronize, ACK = Acknowledge – die beiden wichtigsten TCP-Flags.','Der Verbindungsabbau erfolgt mit 4 Schritten: FIN, ACK, FIN, ACK.','Jede Seite wählt eine zufällige initiale Sequenznummer (ISN).'],
+    questions:[
+      {type:'fill',q:'Im zweiten Schritt des Handshakes antwortet der Server mit ________.',a:'SYN-ACK',keywords:['syn-ack','synack','syn+ack']},
+      {type:'choice',q:'Wie viele Schritte hat der TCP-Verbindungsaufbau?',correct:'3',wrong:['2','4','5']},
+      {type:'explain',q:'Beschreibe die drei Schritte des TCP-Handshakes und nenne die verwendeten Flags.',keywords:['syn','ack','syn-ack','sequenznummer','client','server','verbindung']}
+    ]
+  },
+  {
+    term:'Port',short:'Logische Adresse für Netzwerkdienste',icon:'&#128451;',difficulty:1,
+    definition:'Ein Port ist eine 16-Bit-Nummer (0–65535), die zusammen mit einer IP-Adresse einen eindeutigen Kommunikationsendpunkt (Socket) bildet. Ports ermöglichen es, mehrere Netzwerkdienste auf einem Rechner gleichzeitig zu betreiben. Well-Known Ports (0–1023) sind für Standarddienste reserviert (z.B. HTTP=80, HTTPS=443, SSH=22).',
+    analogy:'Wenn die IP-Adresse die Hausnummer eines Gebäudes ist, dann ist der Port die Wohnungsnummer. Verschiedene Dienste (Bewohner) teilen sich dieselbe IP-Adresse (Haus), sind aber über verschiedene Ports (Wohnungen) erreichbar.',
+    hints:['Well-Known Ports: 0–1023 (HTTP=80, HTTPS=443, SSH=22, DNS=53).','Registrierte Ports: 1024–49151 (z.B. MySQL=3306).','Dynamische/Ephemeral Ports: 49152–65535 (vom Betriebssystem vergeben).'],
+    questions:[
+      {type:'fill',q:'Portnummern umfassen den Bereich von 0 bis ________.',a:'65535',keywords:['65535']},
+      {type:'choice',q:'Welcher Port gehört zu HTTPS?',correct:'443',wrong:['80','22','25']},
+      {type:'explain',q:'Erkläre den Unterschied zwischen Well-Known Ports und Ephemeral Ports.',keywords:['well-known','0','1023','ephemeral','dynamisch','49152','65535','reserviert','betriebssystem']}
+    ]
+  },
+  {
+    term:'Flusskontrolle',short:'Mechanismus zur Vermeidung von Überlastung',icon:'&#128167;',difficulty:2,
+    definition:'Die Flusskontrolle (Flow Control) ist ein Mechanismus in TCP, der verhindert, dass ein schneller Sender einen langsameren Empfänger mit Daten überflutet. TCP nutzt das Sliding-Window-Verfahren: Der Empfänger teilt dem Sender über das Window-Size-Feld im TCP-Header mit, wie viele Bytes er aktuell aufnehmen kann.',
+    analogy:'Wie ein Kellner, der nur so viele Speisen bringt, wie Platz auf dem Tisch ist. Der Gast (Empfänger) sagt: „Ich habe noch Platz für 3 Teller" (Window Size). Der Kellner (Sender) schickt nicht mehr als das.',
+    hints:['Das Window-Size-Feld im TCP-Header ist 16 Bit groß.','Window Scaling (Option) erweitert die effektive Window-Größe auf bis zu 1 GB.','Flusskontrolle schützt den Empfänger, Staukontrolle (Congestion Control) schützt das Netzwerk.'],
+    questions:[
+      {type:'fill',q:'TCP nutzt das ________-Verfahren zur Flusskontrolle.',a:'Sliding-Window',keywords:['sliding-window','sliding window','schiebefenster']},
+      {type:'choice',q:'Was teilt der Empfänger dem Sender über die Window Size mit?',correct:'Wie viele Bytes er noch aufnehmen kann',wrong:['Die maximale Paketgröße','Die aktuelle Bandbreite','Die Anzahl offener Verbindungen']},
+      {type:'explain',q:'Erkläre, warum UDP keine Flusskontrolle besitzt und welche Konsequenzen das hat.',keywords:['verbindungslos','paketverlust','sender','empfänger','überlast','geschwindigkeit','keine bestätigung']}
+    ]
+  },
+  {
+    term:'Routing',short:'Wegfindung für Pakete im Netzwerk',icon:'&#128739;',difficulty:2,
+    definition:'Routing ist der Prozess der Wegfindung (Pfadbestimmung) für Datenpakete durch ein Netzwerk von der Quelle zum Ziel. Router analysieren die Ziel-IP-Adresse jedes Pakets und leiten es anhand ihrer Routing-Tabelle an den nächsten Hop weiter. Man unterscheidet statisches Routing (manuell) und dynamisches Routing (automatisch über Protokolle wie RIP, OSPF, BGP).',
+    analogy:'Routing funktioniert wie ein Navigationssystem: Jede Kreuzung (Router) hat einen Wegweiser (Routing-Tabelle), der sagt, in welche Richtung ein Paket weitergeleitet werden muss, um sein Ziel zu erreichen.',
+    hints:['Statisches Routing: Manuell konfigurierte Routen, geeignet für kleine Netze.','Dynamisches Routing: Protokolle wie RIP, OSPF, BGP tauschen automatisch Routeninformationen aus.','IGP (Interior Gateway Protocol) = innerhalb eines AS; EGP (Exterior) = zwischen AS.'],
+    questions:[
+      {type:'fill',q:'Router leiten Pakete anhand ihrer ________-Tabelle weiter.',a:'Routing',keywords:['routing','weiterleitungs']},
+      {type:'choice',q:'Welches Routing-Protokoll nutzt den Dijkstra-Algorithmus?',correct:'OSPF',wrong:['RIP','BGP','ICMP']},
+      {type:'explain',q:'Erkläre den Unterschied zwischen statischem und dynamischem Routing.',keywords:['statisch','dynamisch','manuell','automatisch','protokoll','routing-tabelle','konfigur']}
+    ]
+  },
+  {
+    term:'Hop',short:'Ein Weiterleitungsschritt zwischen Routern',icon:'&#128640;',difficulty:1,
+    definition:'Ein Hop bezeichnet einen einzelnen Weiterleitungsschritt eines Pakets von einem Router zum nächsten auf dem Weg zum Ziel. Die Anzahl der Hops (Hop Count) wird von manchen Routing-Protokollen als Metrik verwendet. Bei RIP ist die maximale Hop-Anzahl auf 15 begrenzt; 16 Hops gelten als „nicht erreichbar" (unreachable).',
+    analogy:'Wie Haltestellen einer Busfahrt: Jeder Halt (Router) ist ein Hop. Je mehr Haltestellen, desto länger dauert die Fahrt. Bei RIP sind maximal 15 Haltestellen erlaubt.',
+    hints:['RIP nutzt Hop Count als einzige Metrik – max. 15 Hops, 16 = unreachable.','OSPF nutzt nicht Hop Count, sondern Kosten basierend auf Bandbreite.','Mit dem traceroute-Befehl kann man die Hops zu einem Ziel anzeigen.'],
+    questions:[
+      {type:'fill',q:'RIP erlaubt maximal ________ Hops.',a:'15',keywords:['15']},
+      {type:'choice',q:'Was bedeutet bei RIP ein Hop Count von 16?',correct:'Ziel nicht erreichbar',wrong:['Optimale Route','Maximale Geschwindigkeit','Backup-Route']},
+      {type:'explain',q:'Erkläre, warum die Hop-Count-Beschränkung bei RIP ein Problem für große Netzwerke darstellt.',keywords:['15','16','unreachable','groß','netzwerk','skalier','begrenzt','entfernung']}
+    ]
+  },
+  {
+    term:'TTL',short:'Time to Live – Lebensdauer eines Pakets',icon:'&#9200;',difficulty:2,
+    definition:'TTL (Time to Live) ist ein Feld im IP-Header, das die maximale Lebensdauer eines Pakets begrenzt. Bei jedem Hop wird der TTL-Wert um 1 reduziert. Erreicht er 0, wird das Paket verworfen und eine ICMP-Fehlermeldung (Time Exceeded) an den Absender gesendet. TTL verhindert, dass Pakete endlos im Netzwerk kreisen (Routing-Loops).',
+    analogy:'TTL ist wie ein Countdown-Zähler auf einem Paket: Bei jeder Station (Router) wird eine Zahl abgezogen. Wenn der Zähler auf 0 steht, wird das Paket „entsorgt". Das verhindert, dass verlorene Pakete ewig im Netz kreisen.',
+    hints:['Typische TTL-Startwerte: 64 (Linux), 128 (Windows), 255 (Netzwerkgeräte).','TTL wird im IP-Header gespeichert (Schicht 3), nicht im TCP/UDP-Header.','Das Tool traceroute nutzt TTL systematisch, um den Pfad zu einem Ziel zu ermitteln.'],
+    questions:[
+      {type:'fill',q:'Bei jedem Hop wird der TTL-Wert um ________ reduziert.',a:'1',keywords:['1','eins']},
+      {type:'choice',q:'Was passiert, wenn der TTL-Wert eines Pakets 0 erreicht?',correct:'Das Paket wird verworfen',wrong:['Das Paket wird zurückgesendet','Der TTL wird zurückgesetzt','Das Paket wird dupliziert']},
+      {type:'explain',q:'Erkläre, warum TTL notwendig ist und wie traceroute dieses Feld nutzt.',keywords:['routing-loop','endlos','kreisen','verworfen','icmp','time exceeded','hop','zähler','pfad']}
+    ]
+  }
+];
+
+const glossaryTermMap={};
+glossaryTerms.forEach(t=>{
+  const key=t.term.toLowerCase();
+  glossaryTermMap[key]=t;
+  glossaryTermMap[t.short.toLowerCase()]=t;
+});
+// Additional variants for tooltip matching
+glossaryTermMap['tcp']=glossaryTerms[0];
+glossaryTermMap['transmission control protocol']=glossaryTerms[0];
+glossaryTermMap['udp']=glossaryTerms[1];
+glossaryTermMap['user datagram protocol']=glossaryTerms[1];
+glossaryTermMap['drei-wege-handshake']=glossaryTerms[2];
+glossaryTermMap['3-way-handshake']=glossaryTerms[2];
+glossaryTermMap['3-way handshake']=glossaryTerms[2];
+glossaryTermMap['handshake']=glossaryTerms[2];
+glossaryTermMap['tcp-handshake']=glossaryTerms[2];
+glossaryTermMap['tcp handshake']=glossaryTerms[2];
+glossaryTermMap['port']=glossaryTerms[3];
+glossaryTermMap['portnummer']=glossaryTerms[3];
+glossaryTermMap['portnummern']=glossaryTerms[3];
+glossaryTermMap['ports']=glossaryTerms[3];
+glossaryTermMap['flusskontrolle']=glossaryTerms[4];
+glossaryTermMap['flow control']=glossaryTerms[4];
+glossaryTermMap['sliding window']=glossaryTerms[4];
+glossaryTermMap['sliding-window']=glossaryTerms[4];
+glossaryTermMap['window size']=glossaryTerms[4];
+glossaryTermMap['routing']=glossaryTerms[5];
+glossaryTermMap['wegfindung']=glossaryTerms[5];
+glossaryTermMap['routing-tabelle']=glossaryTerms[5];
+glossaryTermMap['routingtabelle']=glossaryTerms[5];
+glossaryTermMap['hop']=glossaryTerms[6];
+glossaryTermMap['hops']=glossaryTerms[6];
+glossaryTermMap['hop count']=glossaryTerms[6];
+glossaryTermMap['hop-count']=glossaryTerms[6];
+glossaryTermMap['routing-hop']=glossaryTerms[6];
+glossaryTermMap['ttl']=glossaryTerms[7];
+glossaryTermMap['time to live']=glossaryTerms[7];
+glossaryTermMap['time-to-live']=glossaryTerms[7];
+
+let glossaryState={};
+function loadGlossaryState(){try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){glossaryState={};}}
+function saveGlossaryState(){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));}
+function getTermLevel(term){return(glossaryState[term]&&glossaryState[term].level)||0;}
+function setTermLevel(term,level){if(!glossaryState[term])glossaryState[term]={level:0,seen:0};glossaryState[term].level=Math.min(3,Math.max(0,level));glossaryState[term].seen=(glossaryState[term].seen||0)+1;saveGlossaryState();}
+
+function renderGlossaryGrid(){
+  loadGlossaryState();
+  const grid=document.getElementById('glossary-grid');
+  grid.innerHTML=glossaryTerms.map((t,i)=>{
+    const lv=getTermLevel(t.term);
+    return `<div class="glossary-card" data-level="${lv}" data-idx="${i}" onclick="openGlossaryLearn(${i})">
+      <div class="gc-level"></div>
+      <div class="gc-icon">${t.icon}</div>
+      <div class="gc-term">${t.term}</div>
+      <div class="gc-short">${t.short}</div>
+    </div>`;
+  }).join('');
+  updateGlossaryProgress();
+}
+
+function updateGlossaryProgress(){
+  loadGlossaryState();
+  const mastered=glossaryTerms.filter(t=>getTermLevel(t.term)>=3).length;
+  const pct=Math.round(mastered/glossaryTerms.length*100);
+  document.getElementById('glossary-fill').style.width=pct+'%';
+  document.getElementById('glossary-count').textContent=mastered+' / '+glossaryTerms.length+' gemeistert';
+}
+
+let glCurrentTerm=null;
+let glPhase=0;
+let glHintIdx=0;
+const phaseNames=['Analogie','Definition','Abfrage'];
+
+function openGlossaryLearn(idx){
+  glCurrentTerm=glossaryTerms[idx];
+  glPhase=0;glHintIdx=0;
+  const panel=document.getElementById('glossary-learn');
+  panel.classList.add('visible');
+  document.getElementById('gl-title').textContent=glCurrentTerm.icon+' '+glCurrentTerm.term;
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',parseInt(c.dataset.idx)===idx));
+  renderGlossaryPhase();
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeGlossaryLearn(){
+  document.getElementById('glossary-learn').classList.remove('visible');
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
+  glCurrentTerm=null;
+}
+
+window._glGoToPhase=function(idx){if(idx>glPhase)return;glPhase=idx;glHintIdx=0;renderGlossaryPhase();};
+
+function renderGlossaryPhase(){
+  const phases=document.getElementById('gl-phases');
+  phases.innerHTML=phaseNames.map((n,i)=>`<div class="gl-phase ${i===glPhase?'current':''} ${i<glPhase?'done':''}" ${i<=glPhase?`onclick="window._glGoToPhase(${i})"`:''}>${i<glPhase?'&#10003; ':''}${n}</div>`).join('');
+  const content=document.getElementById('gl-content');
+  if(glPhase===0){
+    content.innerHTML=`<div class="gl-analogy">&#128161; <strong>Analogie:</strong> ${glCurrentTerm.analogy}</div>
+      <button class="gl-btn primary" onclick="glPhase=1;renderGlossaryPhase();">Weiter zur Definition &#8594;</button>`;
+  }else if(glPhase===1){
+    glHintIdx=0;
+    content.innerHTML=`<div class="gl-definition">${glCurrentTerm.definition}</div>
+      <div class="gl-hints" id="gl-hints">${glCurrentTerm.hints.map((h,i)=>`<div class="gl-hint" id="gl-hint-${i}">&#128204; ${h}</div>`).join('')}</div>
+      <button class="gl-hint-btn" onclick="showGlossaryHint()">&#128161; Hinweis anzeigen</button>
+      <button class="gl-btn primary" onclick="glPhase=2;renderGlossaryPhase();">Weiter zur Abfrage &#8594;</button>`;
+  }else if(glPhase===2){
+    renderGlossaryQuestion();
+  }
+}
+
+function showGlossaryHint(){
+  if(glHintIdx<glCurrentTerm.hints.length){
+    document.getElementById('gl-hint-'+glHintIdx).classList.add('visible');
+    glHintIdx++;
+  }
+}
+
+function renderGlossaryQuestion(){
+  const content=document.getElementById('gl-content');
+  const qIdx=Math.min(getTermLevel(glCurrentTerm.term),glCurrentTerm.questions.length-1);
+  const q=glCurrentTerm.questions[qIdx];
+  let html=`<div class="gl-question">${q.q}</div>`;
+  if(q.type==='fill'){
+    html+=`<input type="text" class="gl-input" id="gl-answer" placeholder="Antwort eingeben..." autocomplete="off">
+      <button class="gl-btn primary" onclick="checkGlossaryFill()">Prüfen</button>
+      <div id="gl-fb"></div>`;
+  }else if(q.type==='choice'){
+    const opts=shuffle([q.correct,...q.wrong]);
+    html+=`<div class="gl-choices">${opts.map(o=>`<button class="gl-choice" onclick="checkGlossaryChoice(this,'${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div><div id="gl-fb"></div>`;
+  }else if(q.type==='explain'){
+    html+=`<textarea class="gl-input" id="gl-answer" placeholder="Deine Erklärung..." rows="3"></textarea>
+      <button class="gl-btn primary" onclick="checkGlossaryExplain()">Prüfen</button>
+      <div id="gl-fb"></div>`;
+  }
+  content.innerHTML=html;
+  const inp=document.getElementById('gl-answer');
+  if(inp){inp.focus();if(q.type==='fill')inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkGlossaryFill();});}
+}
+
+function checkGlossaryFill(){
+  const inp=document.getElementById('gl-answer');
+  const v=inp.value.trim().toLowerCase();
+  if(!v)return;
+  const q=glCurrentTerm.questions[Math.min(getTermLevel(glCurrentTerm.term),glCurrentTerm.questions.length-1)];
+  const ok=q.keywords.some(k=>v.includes(k.toLowerCase()));
+  const fb=document.getElementById('gl-fb');
+  if(ok){
+    fb.innerHTML=`<div class="gl-feedback success">&#10003; Richtig! Gut gemacht.</div>`;
+    glossaryLevelUp();
+  }else{
+    fb.innerHTML=`<div class="gl-feedback error">&#10007; Nicht ganz. Richtige Antwort: <strong>${q.a}</strong></div>`;
+    glossaryLevelDown();
+  }
+}
+
+function checkGlossaryChoice(btn,selected,correct){
+  const fb=document.getElementById('gl-fb');
+  document.querySelectorAll('.gl-choice').forEach(c=>{c.style.pointerEvents='none';});
+  if(selected===correct){
+    btn.classList.add('correct');
+    fb.innerHTML=`<div class="gl-feedback success">&#10003; Richtig!</div>`;
+    glossaryLevelUp();
+  }else{
+    btn.classList.add('wrong');
+    document.querySelectorAll('.gl-choice').forEach(c=>{if(c.textContent===correct)c.classList.add('correct');});
+    fb.innerHTML=`<div class="gl-feedback error">&#10007; Falsch. Richtig: <strong>${correct}</strong></div>`;
+    glossaryLevelDown();
+  }
+}
+
+function checkGlossaryExplain(){
+  const inp=document.getElementById('gl-answer');
+  const v=inp.value.trim().toLowerCase();
+  if(!v)return;
+  const q=glCurrentTerm.questions[Math.min(getTermLevel(glCurrentTerm.term),glCurrentTerm.questions.length-1)];
+  const found=q.keywords.filter(k=>v.includes(k.toLowerCase()));
+  const missing=q.keywords.filter(k=>!v.includes(k.toLowerCase()));
+  const fb=document.getElementById('gl-fb');
+  const pct=Math.round(found.length/q.keywords.length*100);
+  let html=`<div class="gl-feedback ${pct>=50?'success':'error'}">`;
+  html+=pct>=50?`&#10003; Gute Erklärung! (${pct}% der Schlüsselbegriffe)`:`&#10007; Noch nicht vollständig (${pct}% der Schlüsselbegriffe)`;
+  html+=`<div style="margin-top:8px">`;
+  found.forEach(k=>{html+=`<span class="gl-keyword found">${k}</span>`;});
+  missing.forEach(k=>{html+=`<span class="gl-keyword missing">${k}</span>`;});
+  html+=`</div></div>`;
+  fb.innerHTML=html;
+  if(pct>=50)glossaryLevelUp();else glossaryLevelDown();
+}
+
+function glossaryLevelUp(){
+  if(!glCurrentTerm)return;
+  const lv=getTermLevel(glCurrentTerm.term);
+  setTermLevel(glCurrentTerm.term,lv+1);
+  renderGlossaryGrid();
+  setTimeout(()=>{
+    const idx=glossaryTerms.indexOf(glCurrentTerm);
+    const next=glossaryTerms.find((t,i)=>i!==idx&&getTermLevel(t.term)<3);
+    if(next){
+      const fb=document.getElementById('gl-fb');
+      fb.innerHTML+=`<div style="margin-top:10px"><button class="gl-btn primary" onclick="openGlossaryLearn(${glossaryTerms.indexOf(next)})">Nächster Begriff: ${next.term} &#8594;</button></div>`;
+    }else if(glossaryTerms.every(t=>getTermLevel(t.term)>=3)){
+      const fb=document.getElementById('gl-fb');
+      fb.innerHTML+=`<div class="gl-feedback success" style="margin-top:10px">&#127942; Alle Begriffe gemeistert! Hervorragend!</div>`;
+    }
+  },300);
+}
+
+function glossaryLevelDown(){
+  if(!glCurrentTerm)return;
+  const lv=getTermLevel(glCurrentTerm.term);
+  if(lv>0)setTermLevel(glCurrentTerm.term,lv-1);
+  renderGlossaryGrid();
+  setTimeout(()=>{
+    const fb=document.getElementById('gl-fb');
+    fb.innerHTML+=`<div style="margin-top:10px"><button class="gl-btn primary" onclick="glPhase=0;renderGlossaryPhase();">Nochmal lernen &#8635;</button></div>`;
+  },300);
+}
+
+// ===== GLOSSARY TOOLTIPS =====
+function initGlossaryTooltips(){
+  const selectors=['.card p','.card li','.compare-row','.task-sub','.summary-card p','td','.section-title h2'];
+  const tooltip=document.getElementById('glossary-tooltip');
+  const ttName=document.getElementById('gt-name');
+  const ttShort=document.getElementById('gt-short');
+  const termPatterns=glossaryTerms.map(t=>{
+    const variants=[t.term];
+    if(t.term==='TCP')variants.push('Transmission Control Protocol');
+    if(t.term==='UDP')variants.push('User Datagram Protocol');
+    if(t.term==='Drei-Wege-Handshake')variants.push('3-Way-Handshake','3-Way Handshake','TCP-Handshake');
+    if(t.term==='Port')variants.push('Portnummer','Portnummern');
+    if(t.term==='Flusskontrolle')variants.push('Flow Control','Sliding Window','Window Size');
+    if(t.term==='Routing')variants.push('Routing-Tabelle');
+    if(t.term==='Hop')variants.push('Hops','Hop Count','Hop-Count');
+    if(t.term==='TTL')variants.push('Time to Live','Time-to-Live');
+    return{term:t,variants:variants};
+  });
+
+  selectors.forEach(sel=>{
+    document.querySelectorAll(sel).forEach(el=>{
+      if(el.querySelector('.glossary-term'))return;
+      let html=el.innerHTML;
+      termPatterns.forEach(tp=>{
+        tp.variants.forEach(v=>{
+          const regex=new RegExp('(?<!<[^>]*)\\b('+v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')\\b(?![^<]*>)','gi');
+          let replaced=false;
+          html=html.replace(regex,(match)=>{
+            if(replaced)return match;
+            replaced=true;
+            return `<span class="glossary-term" data-term="${tp.term.term}">${match}</span>`;
+          });
+        });
+      });
+      el.innerHTML=html;
+    });
+  });
+
+  document.addEventListener('mouseover',e=>{
+    const gt=e.target.closest('.glossary-term');
+    if(!gt)return;
+    const termKey=gt.dataset.term.toLowerCase();
+    const termData=glossaryTermMap[termKey];
+    if(!termData)return;
+    ttName.textContent=termData.term;
+    ttShort.textContent=termData.short+' — '+termData.definition.substring(0,100)+'...';
+    tooltip.style.display='block';
+    const rect=gt.getBoundingClientRect();
+    let tx=rect.left;
+    let ty=rect.bottom+8;
+    if(tx+270>window.innerWidth)tx=window.innerWidth-280;
+    if(ty+120>window.innerHeight)ty=rect.top-130;
+    if(tx<8)tx=8;
+    tooltip.style.left=tx+'px';
+    tooltip.style.top=ty+'px';
+  });
+
+  document.addEventListener('mouseout',e=>{
+    const gt=e.target.closest('.glossary-term');
+    if(gt)tooltip.style.display='none';
+  });
+
+  document.addEventListener('click',e=>{
+    const gt=e.target.closest('.glossary-term');
+    if(!gt)return;
+    const termKey=gt.dataset.term.toLowerCase();
+    const termData=glossaryTermMap[termKey];
+    if(!termData)return;
+    const idx=glossaryTerms.indexOf(termData);
+    if(idx>=0){
+      openGlossaryLearn(idx);
+      document.getElementById('glossary-section').scrollIntoView({behavior:'smooth'});
+    }
+  });
+}
+
+renderGlossaryGrid();
+initGlossaryTooltips();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

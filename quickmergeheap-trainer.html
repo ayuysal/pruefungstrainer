@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuickSort, MergeSort & HeapSort</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px}.card p,.card pre{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6}.card pre{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(255,255,255,.03);padding:10px;border-radius:8px;margin-top:8px;overflow-x:auto}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}
+.props{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:12px}.props .pl{color:var(--muted);font-weight:300}.props .pv{color:var(--text);font-weight:600;font-family:'JetBrains Mono',monospace;font-size:11px}
+
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.viz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:8px 18px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#5a52e0}.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.speed-wrap{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12px;color:var(--muted)}.speed-wrap input{width:80px}
+.bars{display:flex;align-items:flex-end;gap:3px;height:200px;padding:0 4px;margin-bottom:12px}
+.bar{flex:1;border-radius:4px 4px 0 0;transition:height .2s,background .2s;position:relative;min-width:12px;display:flex;align-items:flex-start;justify-content:center}
+.bar span{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding-top:4px;color:rgba(255,255,255,.8)}
+.bar.default{background:var(--accent)}.bar.comparing{background:var(--yellow)}.bar.swapping{background:var(--pink)}.bar.sorted{background:var(--green)}.bar.pivot{background:var(--cyan)}.bar.current{background:var(--orange)}
+.info-panel{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:13px;margin-bottom:12px;min-height:40px}
+.counters{display:flex;gap:16px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:12px}
+.log{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:11px;max-height:150px;overflow-y:auto;color:var(--muted);line-height:1.8}
+
+.table-wrap{overflow-x:auto;margin-top:12px}table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:12px}th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}td:first-child{font-weight:600;color:var(--text)}tr:last-child td{border-bottom:none}
+
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px}.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.bars{height:150px}}
+  .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div><div class="glow-orb one"></div><div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">← Zurück zur Übersicht</a>
+<header><div class="tag">TGI02 · Algorithmen</div><h1>QuickSort, MergeSort & HeapSort</h1><p>Erweiterte Sortieralgorithmen – Schritt für Schritt visualisiert</p></header>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">📚</div><h2>Algorithmen</h2></div>
+<div class="cards">
+<div class="card c1"><h3>⚡ QuickSort</h3><p>Divide-and-Conquer: Wähle Pivot, partitioniere Array, sortiere Teilarrays rekursiv.</p><pre>quicksort(A, lo, hi):
+  if lo < hi:
+    p = partition(A, lo, hi)
+    quicksort(A, lo, p-1)
+    quicksort(A, p+1, hi)</pre><div class="props"><span class="pl">Best</span><span class="pv">O(n log n)</span><span class="pl">Average</span><span class="pv">O(n log n)</span><span class="pl">Worst</span><span class="pv" style="color:var(--red)">O(n²)</span><span class="pl">Speicher</span><span class="pv">O(log n)</span><span class="pl">Stabil</span><span class="pv" style="color:var(--red)">Nein</span><span class="pl">In-Place</span><span class="pv" style="color:var(--green)">Ja</span></div></div>
+<div class="card c2"><h3>🔀 MergeSort</h3><p>Teile Array in Hälften, sortiere rekursiv, verschmelze (merge) sortierte Hälften.</p><pre>mergesort(A, lo, hi):
+  if lo < hi:
+    mid = (lo+hi)/2
+    mergesort(A, lo, mid)
+    mergesort(A, mid+1, hi)
+    merge(A, lo, mid, hi)</pre><div class="props"><span class="pl">Best</span><span class="pv">O(n log n)</span><span class="pl">Average</span><span class="pv">O(n log n)</span><span class="pl">Worst</span><span class="pv" style="color:var(--green)">O(n log n)</span><span class="pl">Speicher</span><span class="pv" style="color:var(--red)">O(n)</span><span class="pl">Stabil</span><span class="pv" style="color:var(--green)">Ja</span><span class="pl">In-Place</span><span class="pv" style="color:var(--red)">Nein</span></div></div>
+<div class="card c3"><h3>🏔️ HeapSort</h3><p>Baue Max-Heap, extrahiere wiederholt das Maximum und stelle Heap-Eigenschaft wieder her.</p><pre>heapsort(A):
+  buildMaxHeap(A)
+  for i = n-1 downto 1:
+    swap(A[0], A[i])
+    heapify(A, 0, i)</pre><div class="props"><span class="pl">Best</span><span class="pv">O(n log n)</span><span class="pl">Average</span><span class="pv">O(n log n)</span><span class="pl">Worst</span><span class="pv" style="color:var(--green)">O(n log n)</span><span class="pl">Speicher</span><span class="pv" style="color:var(--green)">O(1)</span><span class="pl">Stabil</span><span class="pv" style="color:var(--red)">Nein</span><span class="pl">In-Place</span><span class="pv" style="color:var(--green)">Ja</span></div></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">🎬</div><h2>Visualizer</h2></div>
+<div class="tabs">
+<div class="tab active" onclick="setAlgo('quick')">QuickSort</div>
+<div class="tab" onclick="setAlgo('merge')">MergeSort</div>
+<div class="tab" onclick="setAlgo('heap')">HeapSort</div>
+</div>
+<div class="viz-wrap">
+<div class="controls">
+<button class="btn btn-secondary" onclick="randomize()">🎲 Zufällig</button>
+<button class="btn btn-primary" id="btn-step" onclick="stepForward()">Nächster Schritt ▶</button>
+<button class="btn btn-secondary" id="btn-play" onclick="togglePlay()">Auto ▶▶</button>
+<button class="btn btn-secondary" onclick="resetViz()">↺ Reset</button>
+<div class="speed-wrap">🐢<input type="range" id="speed" min="50" max="800" value="300" oninput="speed=850-this.value">🐇</div>
+</div>
+<div class="bars" id="bars"></div>
+<div class="info-panel" id="info">Klicke "Zufällig" um zu starten</div>
+<div class="counters"><span>Vergleiche: <strong id="cnt-cmp">0</strong></span><span>Tausche: <strong id="cnt-swp">0</strong></span><span>Schritt: <strong id="cnt-step">0</strong>/<span id="cnt-total">0</span></span></div>
+<div class="log" id="log"></div>
+</div>
+
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">📋</div><h2>Vergleich aller Sortieralgorithmen</h2></div>
+<div class="table-wrap"><table>
+<thead><tr><th>Algorithmus</th><th>Best</th><th>Average</th><th>Worst</th><th>Speicher</th><th>Stabil</th></tr></thead>
+<tbody>
+<tr><td>BubbleSort</td><td>O(n)</td><td>O(n²)</td><td style="color:var(--red)">O(n²)</td><td>O(1)</td><td style="color:var(--green)">Ja</td></tr>
+<tr><td>SelectionSort</td><td>O(n²)</td><td>O(n²)</td><td style="color:var(--red)">O(n²)</td><td>O(1)</td><td style="color:var(--red)">Nein</td></tr>
+<tr><td>InsertionSort</td><td>O(n)</td><td>O(n²)</td><td style="color:var(--red)">O(n²)</td><td>O(1)</td><td style="color:var(--green)">Ja</td></tr>
+<tr><td style="color:var(--cyan)">QuickSort</td><td>O(n log n)</td><td>O(n log n)</td><td style="color:var(--red)">O(n²)</td><td>O(log n)</td><td style="color:var(--red)">Nein</td></tr>
+<tr><td style="color:var(--green)">MergeSort</td><td>O(n log n)</td><td>O(n log n)</td><td style="color:var(--green)">O(n log n)</td><td style="color:var(--red)">O(n)</td><td style="color:var(--green)">Ja</td></tr>
+<tr><td style="color:var(--pink)">HeapSort</td><td>O(n log n)</td><td>O(n log n)</td><td style="color:var(--green)">O(n log n)</td><td style="color:var(--green)">O(1)</td><td style="color:var(--red)">Nein</td></tr>
+</tbody></table></div>
+
+  <!-- ═══════════════════════════════
+       BEGRIFFE LERNEN
+       ═══════════════════════════════ -->
+  <div class="glossary-section">
+    <div class="section-title">
+      <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">🧠</div>
+      <h2>Begriffe lernen</h2>
+      <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
+    </div>
+    <div class="glossary-progress-bar">
+      <span class="gp-text">Fortschritt</span>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <span class="gp-count" id="glossary-count">0%</span>
+    </div>
+    <div class="glossary-grid" id="glossary-grid"></div>
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" onclick="glossaryClose()">✕</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
+  </div>
+
+<div class="summary">
+<div class="summary-card"><h4>💡 QuickSort</h4><p>In der Praxis oft der schnellste Algorithmus dank guter Cache-Nutzung. Worst-Case O(n²) lässt sich durch zufällige Pivotwahl vermeiden.</p></div>
+<div class="summary-card"><h4>🎯 MergeSort</h4><p>Garantiert O(n log n), stabil, ideal für verkettete Listen. Nachteil: benötigt O(n) Zusatzspeicher für das Merge.</p></div>
+<div class="summary-card"><h4>🧩 HeapSort</h4><p>Garantiert O(n log n) mit O(1) Zusatzspeicher. Nicht stabil, in der Praxis oft langsamer als QuickSort wegen schlechter Cache-Lokalität.</p></div>
+</div>
+</div>
+
+<script>
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('quickmergeheap',{status:'in-progress'});
+
+let algo='quick',arr=[],steps=[],stepIdx=0,playing=false,playTimer=null,speed=550;
+let cmpCount=0,swpCount=0;
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function setAlgo(a){algo=a;document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['quick','merge','heap'][i]===a));resetViz();}
+
+function randomize(){
+  arr=[];for(let i=0;i<16;i++)arr.push(rand(5,99));
+  genSteps();renderBars();
+  document.getElementById('info').textContent='Bereit – klicke "Nächster Schritt" oder "Auto"';
+  document.getElementById('log').innerHTML='';
+  document.getElementById('cnt-cmp').textContent='0';
+  document.getElementById('cnt-swp').textContent='0';
+  document.getElementById('cnt-step').textContent='0';
+  document.getElementById('cnt-total').textContent=steps.length;
+  cmpCount=0;swpCount=0;
+}
+
+function genSteps(){
+  steps=[];stepIdx=0;
+  const a=[...arr];
+  if(algo==='quick')qsSteps(a,0,a.length-1);
+  else if(algo==='merge')msSteps(a,0,a.length-1);
+  else hsSteps(a);
+  steps.push({arr:[...a],hl:a.map((_,i)=>({i,c:'sorted'})),info:'✓ Fertig sortiert!',type:'done'});
+}
+
+function qsSteps(a,lo,hi){
+  if(lo>=hi)return;
+  const pivot=a[hi];
+  steps.push({arr:[...a],hl:[{i:hi,c:'pivot'}],info:`Pivot gewählt: ${pivot} (Index ${hi})`,type:'cmp'});
+  let i=lo;
+  for(let j=lo;j<hi;j++){
+    steps.push({arr:[...a],hl:[{i:j,c:'comparing'},{i:hi,c:'pivot'}],info:`Vergleiche ${a[j]} mit Pivot ${pivot}`,type:'cmp'});
+    if(a[j]<=pivot){
+      if(i!==j){[a[i],a[j]]=[a[j],a[i]];steps.push({arr:[...a],hl:[{i,c:'swapping'},{i:j,c:'swapping'},{i:hi,c:'pivot'}],info:`Tausche ${a[j]} ↔ ${a[i]}`,type:'swp'});}
+      i++;
+    }
+  }
+  [a[i],a[hi]]=[a[hi],a[i]];
+  steps.push({arr:[...a],hl:[{i,c:'sorted'}],info:`Pivot ${pivot} an Position ${i} platziert`,type:'swp'});
+  qsSteps(a,lo,i-1);qsSteps(a,i+1,hi);
+}
+
+function msSteps(a,lo,hi){
+  if(lo>=hi)return;
+  const mid=Math.floor((lo+hi)/2);
+  steps.push({arr:[...a],hl:Array.from({length:hi-lo+1},(_,i)=>({i:lo+i,c:'comparing'})),info:`Teile [${lo}..${hi}] bei Mitte ${mid}`,type:'cmp'});
+  msSteps(a,lo,mid);msSteps(a,mid+1,hi);
+  const L=a.slice(lo,mid+1),R=a.slice(mid+1,hi+1);
+  let i=0,j=0,k=lo;
+  while(i<L.length&&j<R.length){
+    steps.push({arr:[...a],hl:[{i:lo+i,c:'comparing'},{i:mid+1+j,c:'comparing'}],info:`Merge: Vergleiche ${L[i]} und ${R[j]}`,type:'cmp'});
+    if(L[i]<=R[j]){a[k]=L[i];i++;}else{a[k]=R[j];j++;}
+    steps.push({arr:[...a],hl:[{i:k,c:'swapping'}],info:`Setze ${a[k]} an Position ${k}`,type:'swp'});
+    k++;
+  }
+  while(i<L.length){a[k]=L[i];steps.push({arr:[...a],hl:[{i:k,c:'swapping'}],info:`Setze ${L[i]} an Position ${k}`,type:'swp'});i++;k++;}
+  while(j<R.length){a[k]=R[j];steps.push({arr:[...a],hl:[{i:k,c:'swapping'}],info:`Setze ${R[j]} an Position ${k}`,type:'swp'});j++;k++;}
+}
+
+function hsSteps(a){
+  const n=a.length;
+  for(let i=Math.floor(n/2)-1;i>=0;i--)heapify(a,n,i,'Build');
+  for(let i=n-1;i>0;i--){
+    steps.push({arr:[...a],hl:[{i:0,c:'swapping'},{i,c:'swapping'}],info:`Tausche Maximum ${a[0]} ↔ ${a[i]}`,type:'swp'});
+    [a[0],a[i]]=[a[i],a[0]];
+    steps.push({arr:[...a],hl:[{i,c:'sorted'}],info:`${a[i]} ist sortiert`,type:'swp'});
+    heapify(a,i,0,'Extract');
+  }
+}
+function heapify(a,n,i,phase){
+  let largest=i,l=2*i+1,r=2*i+2;
+  if(l<n){steps.push({arr:[...a],hl:[{i:l,c:'comparing'},{i:largest,c:'current'}],info:`${phase}: Vergleiche ${a[l]} mit ${a[largest]}`,type:'cmp'});if(a[l]>a[largest])largest=l;}
+  if(r<n){steps.push({arr:[...a],hl:[{i:r,c:'comparing'},{i:largest,c:'current'}],info:`${phase}: Vergleiche ${a[r]} mit ${a[largest]}`,type:'cmp'});if(a[r]>a[largest])largest=r;}
+  if(largest!==i){
+    steps.push({arr:[...a],hl:[{i,c:'swapping'},{i:largest,c:'swapping'}],info:`${phase}: Tausche ${a[i]} ↔ ${a[largest]}`,type:'swp'});
+    [a[i],a[largest]]=[a[largest],a[i]];
+    heapify(a,n,largest,phase);
+  }
+}
+
+function renderBars(step){
+  const cont=document.getElementById('bars');cont.innerHTML='';
+  const data=step?step.arr:arr;const hlMap={};
+  if(step)step.hl.forEach(h=>hlMap[h.i]=h.c);
+  const maxV=Math.max(...data,1);
+  data.forEach((v,i)=>{
+    const bar=document.createElement('div');
+    bar.className='bar '+(hlMap[i]||'default');
+    bar.style.height=Math.max(8,v/maxV*100)+'%';
+    bar.innerHTML=`<span>${v}</span>`;
+    cont.appendChild(bar);
+  });
+}
+
+function stepForward(){
+  if(stepIdx>=steps.length)return;
+  const step=steps[stepIdx];
+  renderBars(step);
+  document.getElementById('info').textContent=step.info;
+  if(step.type==='cmp')cmpCount++;
+  if(step.type==='swp')swpCount++;
+  document.getElementById('cnt-cmp').textContent=cmpCount;
+  document.getElementById('cnt-swp').textContent=swpCount;
+  stepIdx++;
+  document.getElementById('cnt-step').textContent=stepIdx;
+  const log=document.getElementById('log');
+  log.innerHTML=`<div>${stepIdx}. ${step.info}</div>`+log.innerHTML;
+  if(step.type==='done'){stopPlay();saveProgress('quickmergeheap',{status:'completed'});}
+}
+
+function togglePlay(){
+  if(playing)stopPlay();
+  else{playing=true;document.getElementById('btn-play').textContent='⏸ Pause';playTimer=setInterval(()=>{if(stepIdx>=steps.length)stopPlay();else stepForward();},speed);}
+}
+function stopPlay(){playing=false;clearInterval(playTimer);document.getElementById('btn-play').textContent='Auto ▶▶';}
+function resetViz(){stopPlay();if(arr.length)genSteps();renderBars();document.getElementById('info').textContent='Bereit';document.getElementById('log').innerHTML='';cmpCount=0;swpCount=0;document.getElementById('cnt-cmp').textContent='0';document.getElementById('cnt-swp').textContent='0';document.getElementById('cnt-step').textContent='0';}
+
+renderBars();randomize();
+
+/* ═══════════════════════════════════════════
+   GLOSSAR – Begriffe-Lernsystem
+   ═══════════════════════════════════════════ */
+const GLOSSARY_KEY='glossary-quickmergeheap';
+const glossaryTerms=[
+  {
+    id:'pivot',term:'Pivot',icon:'🎯',short:'Vergleichselement beim Partitionieren',
+    definition:'Das Pivot-Element ist das Referenzelement, anhand dessen beim QuickSort das Array partitioniert wird. Alle Elemente kleiner oder gleich dem Pivot kommen in die linke Teilfolge, alle größeren in die rechte. Die Wahl des Pivots beeinflusst die Effizienz des Algorithmus erheblich.',
+    analogy:'Stell dir vor, du sortierst einen Stapel Prüfungen nach Note. Du nimmst eine Prüfung heraus (das Pivot) und legst alle besseren Noten nach links, alle schlechteren nach rechts. Je repräsentativer deine gewählte Prüfung, desto gleichmäßiger die beiden Stapel.',
+    hints:['Das Pivot wird oft als letztes, erstes oder mittleres Element gewählt.','Die Median-of-Three-Strategie wählt den Median aus erstem, mittlerem und letztem Element.','Ein ungünstig gewähltes Pivot (z. B. stets das Minimum) führt zum Worst-Case O(n²).'],
+    questions:[
+      {type:'fill',q:'Beim QuickSort wird das Array anhand des ____-Elements in zwei Teilfolgen aufgeteilt.',a:'pivot',hint:'Das Referenzelement zum Partitionieren'},
+      {type:'choice',q:'Was passiert bei QuickSort, wenn stets das kleinste Element als Pivot gewählt wird?',options:['Der Algorithmus wird schneller','Es entsteht der Worst-Case O(n²)','Das Array wird nicht sortiert','Der Speicherverbrauch sinkt auf O(1)'],correct:1},
+      {type:'explain',q:'Erkläre, warum die Pivotwahl die Laufzeit von QuickSort beeinflusst.',keywords:['Pivot','Partition','Teilfolgen','gleichmäßig','Worst-Case','O(n²)'],minKeywords:3}
+    ],difficulty:1
+  },
+  {
+    id:'divideconquer',term:'Divide & Conquer',icon:'✂️',short:'Teile-und-Herrsche-Prinzip',
+    definition:'Divide and Conquer (Teile und Herrsche) ist ein algorithmisches Paradigma, bei dem ein Problem rekursiv in kleinere Teilprobleme zerlegt wird, diese unabhängig gelöst und die Teillösungen zu einer Gesamtlösung kombiniert werden. Alle drei Algorithmen (QuickSort, MergeSort, HeapSort) nutzen dieses Prinzip.',
+    analogy:'Wie beim Aufräumen eines großen Zimmers: Statt alles auf einmal zu ordnen, teilst du das Zimmer in Bereiche, räumst jeden einzeln auf und am Ende ist alles sauber. Die Teilbereiche kannst du wiederum aufteilen – bis jeder Bereich nur noch ein Objekt enthält.',
+    hints:['Drei Schritte: Divide (Teilen), Conquer (Lösen), Combine (Zusammenführen).','Bei MergeSort liegt die Hauptarbeit im Combine-Schritt (Merge).','Bei QuickSort liegt die Hauptarbeit im Divide-Schritt (Partition).'],
+    questions:[
+      {type:'fill',q:'Das Divide-and-Conquer-Prinzip besteht aus drei Schritten: Teilen, Lösen und ____.',a:'kombinieren',hint:'Die Teillösungen werden zu einer Gesamtlösung ...'},
+      {type:'choice',q:'Bei welchem Algorithmus liegt die Hauptarbeit im Divide-Schritt?',options:['MergeSort','HeapSort','QuickSort','BubbleSort'],correct:2},
+      {type:'explain',q:'Beschreibe das Divide-and-Conquer-Prinzip und wie es bei MergeSort angewendet wird.',keywords:['Teilen','Teilprobleme','rekursiv','Merge','Hälften','kombinieren'],minKeywords:3}
+    ],difficulty:1
+  },
+  {
+    id:'quicksort',term:'QuickSort',icon:'⚡',short:'Schnelles Sortieren durch Partitionierung',
+    definition:'QuickSort ist ein vergleichsbasierter Sortieralgorithmus, der das Divide-and-Conquer-Prinzip nutzt. Er wählt ein Pivot-Element, partitioniert das Array so, dass kleinere Elemente links und größere rechts stehen, und sortiert die Teilarrays rekursiv. Durchschnittlich O(n log n), im Worst-Case O(n²). In-Place, aber nicht stabil.',
+    analogy:'Wie ein Bibliothekar, der Bücher sortiert: Er wählt ein Referenzbuch (Pivot), legt alle Bücher mit früheren Titeln nach links, alle späteren nach rechts, und wiederholt das für jeden Stapel – bis alle Bücher in Ordnung stehen.',
+    hints:['QuickSort ist in der Praxis oft schneller als MergeSort wegen guter Cache-Lokalität.','Der Worst-Case tritt bei bereits sortierten Arrays mit ungünstiger Pivotwahl auf.','Randomisierte Pivotwahl macht den Worst-Case extrem unwahrscheinlich.'],
+    questions:[
+      {type:'fill',q:'QuickSort hat im Worst-Case eine Laufzeit von O(____).',a:'n²',hint:'Quadratisch – wenn die Partition stets maximal ungleich ist'},
+      {type:'choice',q:'Welche Eigenschaft hat QuickSort NICHT?',options:['In-Place','Durchschnittlich O(n log n)','Stabil','Vergleichsbasiert'],correct:2},
+      {type:'explain',q:'Erkläre den Ablauf von QuickSort und warum er in der Praxis oft bevorzugt wird.',keywords:['Pivot','Partition','rekursiv','In-Place','Cache','O(n log n)'],minKeywords:3}
+    ],difficulty:2
+  },
+  {
+    id:'mergesort',term:'MergeSort',icon:'🔀',short:'Stabiles Sortieren durch Verschmelzen',
+    definition:'MergeSort ist ein stabiler Sortieralgorithmus nach dem Divide-and-Conquer-Prinzip. Das Array wird rekursiv halbiert, bis Einzelelemente vorliegen, und dann werden sortierte Teilfolgen paarweise verschmolzen (merge). Laufzeit immer O(n log n), benötigt aber O(n) zusätzlichen Speicher.',
+    analogy:'Wie das Mischen zweier sortierter Kartendecks: Du hast zwei sortierte Stapel und legst immer die kleinere der beiden oberen Karten auf einen neuen Stapel. So entsteht ein sortierter Gesamtstapel – und genau das macht der Merge-Schritt.',
+    hints:['MergeSort garantiert O(n log n) auch im Worst-Case – anders als QuickSort.','Der Merge-Schritt vergleicht die jeweils ersten Elemente beider Teilfolgen.','Ideal für verkettete Listen, da dort kein zusätzlicher Speicher nötig ist.'],
+    questions:[
+      {type:'fill',q:'MergeSort benötigt O(____) zusätzlichen Speicher für den Merge-Schritt.',a:'n',hint:'Proportional zur Eingabegröße'},
+      {type:'choice',q:'Warum ist MergeSort besonders gut für verkettete Listen geeignet?',options:['Weil er schneller ist als QuickSort','Weil kein zusätzlicher Speicher für das Mergen nötig ist','Weil er instabil ist','Weil er nur O(1) Speicher braucht'],correct:1},
+      {type:'explain',q:'Erkläre, warum MergeSort stabil ist und was das für die Praxis bedeutet.',keywords:['stabil','Reihenfolge','gleiche Schlüssel','Merge','Teilfolgen','beibehalten'],minKeywords:2}
+    ],difficulty:2
+  },
+  {
+    id:'heapsort',term:'HeapSort',icon:'🏔️',short:'Sortieren mit Heap-Datenstruktur',
+    definition:'HeapSort nutzt die Heap-Datenstruktur zum Sortieren. Zunächst wird ein Max-Heap aufgebaut (buildMaxHeap). Dann wird wiederholt das Maximum (Wurzel) mit dem letzten Element getauscht und der Heap verkleinert. Laufzeit stets O(n log n), In-Place mit O(1) Zusatzspeicher, aber nicht stabil.',
+    analogy:'Wie ein Turnier: Der Gewinner (Maximum) steht ganz oben. Nach jedem Finale wird der Sieger entnommen und auf die Ergebnisliste gesetzt. Ein neues Turnier unter den verbliebenen Teilnehmern bestimmt den nächsten Platz.',
+    hints:['BuildMaxHeap hat eine Laufzeit von O(n), nicht O(n log n).','Heapify stellt die Heap-Eigenschaft für einen Knoten in O(log n) wieder her.','HeapSort hat schlechtere Cache-Lokalität als QuickSort, daher in der Praxis oft langsamer.'],
+    questions:[
+      {type:'fill',q:'HeapSort benötigt O(____) zusätzlichen Speicher und sortiert damit In-Place.',a:'1',hint:'Konstanter Speicherverbrauch'},
+      {type:'choice',q:'Was ist der erste Schritt bei HeapSort?',options:['Das Array wird halbiert','Ein Max-Heap wird aufgebaut','Das Minimum wird gesucht','Zwei Teilarrays werden verschmolzen'],correct:1},
+      {type:'explain',q:'Beschreibe, wie HeapSort das Maximum nutzt, um das Array zu sortieren.',keywords:['Max-Heap','Wurzel','Maximum','tauschen','Heapify','verkleinern'],minKeywords:3}
+    ],difficulty:2
+  },
+  {
+    id:'heap',term:'Heap',icon:'🌳',short:'Baumbasierte Datenstruktur mit Ordnung',
+    definition:'Ein Heap ist ein vollständiger Binärbaum, der als Array dargestellt wird. Im Max-Heap gilt: Jeder Knoten ist größer oder gleich seinen Kindern (Heap-Eigenschaft). Im Min-Heap umgekehrt. Kinder von Index i liegen bei 2i+1 und 2i+2, der Elternknoten bei ⌊(i-1)/2⌋.',
+    analogy:'Wie eine Firmenhierarchie: Der Chef (Wurzel) hat das höchste Gehalt. Jeder Vorgesetzte verdient mindestens so viel wie seine direkten Untergebenen. Diese Struktur lässt sich effizient in einer Namensliste (Array) abbilden.',
+    hints:['Ein Heap ist kein vollständig sortierter Baum – nur die Eltern-Kind-Beziehung ist geordnet.','Die Wurzel eines Max-Heaps enthält stets das größte Element.','Einfügen und Entfernen kosten jeweils O(log n).'],
+    questions:[
+      {type:'fill',q:'Im Max-Heap ist jeder Knoten ____ oder gleich seinen Kindern.',a:'größer',hint:'Die Heap-Eigenschaft besagt, dass Eltern dominieren'},
+      {type:'choice',q:'Wo liegen die Kinder eines Knotens mit Index i im Array?',options:['i+1 und i+2','2i und 2i+1','2i+1 und 2i+2','i/2 und i/2+1'],correct:2},
+      {type:'explain',q:'Erkläre, warum ein Heap als Array dargestellt werden kann und welche Vorteile das hat.',keywords:['vollständig','Binärbaum','Array','Index','Kinder','Elternknoten'],minKeywords:3}
+    ],difficulty:2
+  },
+  {
+    id:'inplace',term:'In-Place',icon:'📦',short:'Sortierung ohne zusätzlichen Speicher',
+    definition:'Ein Sortieralgorithmus arbeitet In-Place, wenn er nur O(1) oder O(log n) zusätzlichen Speicher benötigt – also kein zweites Array gleicher Größe anlegt. QuickSort und HeapSort sind In-Place, MergeSort hingegen nicht, da es O(n) Zusatzspeicher für den Merge-Schritt benötigt.',
+    analogy:'Wie das Umordnen von Büchern in einem einzigen Regal: Du tauschst Bücher innerhalb des Regals, ohne ein zweites Regal zu benötigen. MergeSort hingegen braucht ein Hilfsregal, um die Bücher zwischenzulagern.',
+    hints:['In-Place bedeutet nicht, dass gar kein Zusatzspeicher verwendet wird – der Rekursionsstack zählt mit.','QuickSort braucht O(log n) Speicher für den Rekursionsstack.','HeapSort ist der speichereffizienteste der drei Algorithmen mit O(1).'],
+    questions:[
+      {type:'fill',q:'MergeSort ist ____ In-Place, da es O(n) zusätzlichen Speicher benötigt.',a:'nicht',hint:'MergeSort braucht ein Hilfsarray'},
+      {type:'choice',q:'Welcher Algorithmus hat den geringsten Speicherverbrauch?',options:['QuickSort – O(log n)','MergeSort – O(n)','HeapSort – O(1)','InsertionSort – O(n)'],correct:2},
+      {type:'explain',q:'Erkläre den Unterschied im Speicherverbrauch von QuickSort, MergeSort und HeapSort.',keywords:['In-Place','Zusatzspeicher','O(1)','O(n)','O(log n)','Rekursionsstack'],minKeywords:3}
+    ],difficulty:1
+  },
+  {
+    id:'stabilitaet',term:'Stabilität',icon:'⚖️',short:'Erhalt der relativen Reihenfolge',
+    definition:'Ein Sortierverfahren ist stabil, wenn Elemente mit gleichem Schlüsselwert nach dem Sortieren in derselben relativen Reihenfolge stehen wie vorher. MergeSort ist stabil, QuickSort und HeapSort sind es nicht. Stabilität ist wichtig beim Sortieren nach mehreren Kriterien.',
+    analogy:'Stell dir vor, du sortierst Schüler nach Nachname. Zwei Schüler heißen "Müller" – Anna und Ben. Bei einem stabilen Verfahren bleibt Anna vor Ben, wenn sie vorher schon so standen. Bei einem instabilen könnte sich ihre Reihenfolge ändern.',
+    hints:['Stabilität ist relevant, wenn nach mehreren Schlüsseln sortiert wird (z. B. erst nach Name, dann nach Note).','MergeSort ist stabil, weil beim Merge gleiche Elemente aus der linken Teilfolge bevorzugt werden.','QuickSort kann durch das Vertauschen über weite Distanzen die relative Reihenfolge zerstören.'],
+    questions:[
+      {type:'fill',q:'Ein stabiles Sortierverfahren erhält die relative ____ gleicher Elemente.',a:'reihenfolge',hint:'Die Anordnung gleicher Schlüssel bleibt bestehen'},
+      {type:'choice',q:'Welcher der drei Algorithmen ist stabil?',options:['QuickSort','HeapSort','MergeSort','Keiner von ihnen'],correct:2},
+      {type:'explain',q:'Erkläre, warum Stabilität beim Sortieren nach mehreren Kriterien wichtig ist.',keywords:['stabil','Reihenfolge','gleiche Schlüssel','Kriterien','beibehalten','MergeSort'],minKeywords:2}
+    ],difficulty:1
+  }
+];
+
+/* ── Term-Map für Highlighting ── */
+const glossaryTermMap={};
+glossaryTerms.forEach(t=>{
+  const variants=[t.term.toLowerCase()];
+  if(t.id==='pivot')variants.push('pivot','pivotelement','pivot-element','pivotwahl');
+  if(t.id==='divideconquer')variants.push('divide and conquer','divide-and-conquer','teile und herrsche','divide & conquer','divide&conquer');
+  if(t.id==='quicksort')variants.push('quicksort','quick sort','quick-sort');
+  if(t.id==='mergesort')variants.push('mergesort','merge sort','merge-sort','verschmelzen','merge');
+  if(t.id==='heapsort')variants.push('heapsort','heap sort','heap-sort');
+  if(t.id==='heap')variants.push('heap','max-heap','min-heap','maxheap','heapify','heap-eigenschaft');
+  if(t.id==='inplace')variants.push('in-place','in place','inplace','zusatzspeicher');
+  if(t.id==='stabilitaet')variants.push('stabilität','stabil','instabil','stabiles','stabilen');
+  variants.forEach(v=>{glossaryTermMap[v]=t.id;});
+});
+
+/* ── State ── */
+let glossaryState={};
+let glossaryActiveTerm=null;
+let glossaryPhase=0;
+let glossaryHintIdx=0;
+
+function glossaryLoadState(){
+  try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){glossaryState={};}
+}
+function glossarySaveState(){
+  localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));
+}
+function glossaryGetLevel(id){return(glossaryState[id]&&glossaryState[id].level)||0;}
+function glossarySetLevel(id,lvl){
+  if(!glossaryState[id])glossaryState[id]={level:0,phases:[]};
+  glossaryState[id].level=Math.min(3,Math.max(0,lvl));
+  glossarySaveState();glossaryUpdateProgress();glossaryRenderGrid();
+}
+function glossaryCompletePhase(id,phase){
+  if(!glossaryState[id])glossaryState[id]={level:0,phases:[]};
+  if(!glossaryState[id].phases.includes(phase))glossaryState[id].phases.push(phase);
+  const done=glossaryState[id].phases.length;
+  if(done>=4)glossaryState[id].level=3;
+  else if(done>=3)glossaryState[id].level=2;
+  else if(done>=1)glossaryState[id].level=1;
+  glossarySaveState();glossaryUpdateProgress();glossaryRenderGrid();
+}
+
+/* ── Progress ── */
+function glossaryUpdateProgress(){
+  const total=glossaryTerms.length;
+  const mastered=glossaryTerms.filter(t=>glossaryGetLevel(t.id)>=3).length;
+  const pct=Math.round(mastered/total*100);
+  document.getElementById('glossary-sub').textContent=`${mastered} / ${total} gemeistert`;
+  document.getElementById('glossary-fill').style.width=pct+'%';
+  document.getElementById('glossary-count').textContent=pct+'%';
+}
+
+/* ── Grid ── */
+function glossaryRenderGrid(){
+  const grid=document.getElementById('glossary-grid');grid.innerHTML='';
+  glossaryTerms.forEach(t=>{
+    const lvl=glossaryGetLevel(t.id);
+    const card=document.createElement('div');
+    card.className='glossary-card'+(glossaryActiveTerm===t.id?' active':'');
+    card.dataset.level=lvl;
+    card.innerHTML=`<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
+    card.onclick=()=>glossaryOpen(t.id);
+    grid.appendChild(card);
+  });
+}
+
+/* ── Open / Close ── */
+function glossaryOpen(id){
+  glossaryActiveTerm=id;glossaryPhase=0;glossaryHintIdx=0;
+  glossaryRenderGrid();
+  const panel=document.getElementById('glossary-learn');
+  panel.classList.add('visible');
+  const term=glossaryTerms.find(t=>t.id===id);
+  document.getElementById('gl-title').textContent=term.icon+' '+term.term;
+  glossaryRenderPhases();glossaryRenderContent();
+  panel.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function glossaryClose(){
+  glossaryActiveTerm=null;glossaryPhase=0;
+  document.getElementById('glossary-learn').classList.remove('visible');
+  glossaryRenderGrid();
+}
+
+/* ── Phases ── */
+const PHASES=['Analogie','Definition','Lückentext','Multiple Choice','Erklärung'];
+function glossaryGoToPhase(idx){
+  if(idx>glossaryPhase)return;
+  glossaryPhase=idx;glossaryHintIdx=0;
+  glossaryRenderPhases();glossaryRenderContent();
+}
+function glossaryRenderPhases(){
+  const cont=document.getElementById('gl-phases');cont.innerHTML='';
+  const termState=glossaryState[glossaryActiveTerm]||{phases:[]};
+  PHASES.forEach((p,i)=>{
+    const el=document.createElement('span');
+    el.className='gl-phase'+(i===glossaryPhase?' current':'')+(termState.phases&&termState.phases.includes(i)?' done':'');
+    el.textContent=p;
+    if(i<=glossaryPhase){el.onclick=()=>glossaryGoToPhase(i);}
+    cont.appendChild(el);
+  });
+}
+
+/* ── Content Rendering ── */
+function glossaryRenderContent(){
+  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
+  const cont=document.getElementById('gl-content');cont.innerHTML='';
+  glossaryHintIdx=0;
+
+  if(glossaryPhase===0){
+    cont.innerHTML=`<div class="gl-analogy">💡 ${term.analogy}</div><button class="gl-btn primary" onclick="glossaryNext()">Verstanden → weiter</button>`;
+  }else if(glossaryPhase===1){
+    let hintsHTML='<div class="gl-hints" id="gl-hints">';
+    term.hints.forEach((h,i)=>{hintsHTML+=`<div class="gl-hint" id="gl-hint-${i}">💡 ${h}</div>`;});
+    hintsHTML+='</div>';
+    cont.innerHTML=`<div class="gl-definition">${term.definition}</div>${hintsHTML}<button class="gl-hint-btn" onclick="glossaryShowHint()">💡 Hinweis anzeigen</button><br><button class="gl-btn primary" onclick="glossaryNext()">Verstanden → weiter</button>`;
+  }else if(glossaryPhase===2){
+    glossaryRenderFill(term);
+  }else if(glossaryPhase===3){
+    glossaryRenderChoice(term);
+  }else if(glossaryPhase===4){
+    glossaryRenderExplain(term);
+  }
+  glossaryRenderPhases();
+}
+
+function glossaryShowHint(){
+  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
+  if(glossaryHintIdx<term.hints.length){
+    document.getElementById('gl-hint-'+glossaryHintIdx).classList.add('visible');
+    glossaryHintIdx++;
+  }
+}
+
+function glossaryNext(){
+  glossaryCompletePhase(glossaryActiveTerm,glossaryPhase);
+  glossaryPhase++;
+  if(glossaryPhase>=PHASES.length){
+    glossaryClose();return;
+  }
+  glossaryRenderContent();
+}
+
+/* ── Fill (Lückentext) ── */
+function glossaryRenderFill(term){
+  const q=term.questions.find(x=>x.type==='fill');
+  const cont=document.getElementById('gl-content');
+  cont.innerHTML=`<div class="gl-question">${q.q}</div><input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben…" autocomplete="off"><div style="display:flex;gap:8px;align-items:center"><button class="gl-btn primary" onclick="glossaryCheckFill()">Prüfen</button><button class="gl-hint-btn" onclick="glossaryFillHint()">💡 Hinweis</button></div><div id="gl-fill-feedback"></div>`;
+  document.getElementById('gl-fill-input').addEventListener('keydown',e=>{if(e.key==='Enter')glossaryCheckFill();});
+}
+function glossaryFillHint(){
+  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
+  const q=term.questions.find(x=>x.type==='fill');
+  document.getElementById('gl-fill-feedback').innerHTML=`<div class="gl-feedback info">💡 ${q.hint}</div>`;
+}
+function glossaryCheckFill(){
+  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
+  const q=term.questions.find(x=>x.type==='fill');
+  const input=document.getElementById('gl-fill-input').value.trim().toLowerCase();
+  const correct=q.a.toLowerCase();
+  const fb=document.getElementById('gl-fill-feedback');
+  if(input===correct){
+    fb.innerHTML=`<div class="gl-feedback success">✓ Richtig! Die Antwort ist "${q.a}".</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Weiter →</button>`;
+  }else{
+    fb.innerHTML=`<div class="gl-feedback error">✗ Leider falsch. Versuche es nochmal oder schau dir den Hinweis an.</div>`;
+  }
+}
+
+/* ── Choice (Multiple Choice) ── */
+function glossaryRenderChoice(term){
+  const q=term.questions.find(x=>x.type==='choice');
+  const cont=document.getElementById('gl-content');
+  let choicesHTML='<div class="gl-choices">';
+  q.options.forEach((opt,i)=>{
+    choicesHTML+=`<button class="gl-choice" data-idx="${i}" onclick="glossaryCheckChoice(this,${i},${q.correct})">${opt}</button>`;
+  });
+  choicesHTML+='</div>';
+  cont.innerHTML=`<div class="gl-question">${q.q}</div>${choicesHTML}<div id="gl-choice-feedback"></div>`;
+}
+function glossaryCheckChoice(btn,idx,correct){
+  const buttons=document.querySelectorAll('.gl-choice');
+  const already=document.querySelector('.gl-choice.correct,.gl-choice.wrong');
+  if(already)return;
+  buttons.forEach((b,i)=>{
+    if(i===correct)b.classList.add('correct');
+    else if(i===idx)b.classList.add('wrong');
+    b.style.pointerEvents='none';
+  });
+  const fb=document.getElementById('gl-choice-feedback');
+  if(idx===correct){
+    fb.innerHTML=`<div class="gl-feedback success">✓ Richtig!</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Weiter →</button>`;
+  }else{
+    fb.innerHTML=`<div class="gl-feedback error">✗ Falsch. Die richtige Antwort ist markiert.</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Trotzdem weiter →</button>`;
+  }
+}
+
+/* ── Explain (Erklärung) ── */
+function glossaryRenderExplain(term){
+  const q=term.questions.find(x=>x.type==='explain');
+  const cont=document.getElementById('gl-content');
+  cont.innerHTML=`<div class="gl-question">${q.q}</div><textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten…"></textarea><button class="gl-btn primary" onclick="glossaryCheckExplain()">Prüfen</button><div id="gl-explain-feedback"></div>`;
+}
+function glossaryCheckExplain(){
+  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
+  const q=term.questions.find(x=>x.type==='explain');
+  const input=document.getElementById('gl-explain-input').value.trim().toLowerCase();
+  const fb=document.getElementById('gl-explain-feedback');
+  if(input.length<10){
+    fb.innerHTML=`<div class="gl-feedback error">Bitte schreibe eine ausführlichere Erklärung (mindestens ein paar Wörter).</div>`;
+    return;
+  }
+  const found=[];const missing=[];
+  q.keywords.forEach(kw=>{
+    if(input.includes(kw.toLowerCase()))found.push(kw);else missing.push(kw);
+  });
+  let kwHTML='<div style="margin-top:8px">';
+  found.forEach(k=>{kwHTML+=`<span class="gl-keyword found">✓ ${k}</span>`;});
+  missing.forEach(k=>{kwHTML+=`<span class="gl-keyword missing">✗ ${k}</span>`;});
+  kwHTML+='</div>';
+  if(found.length>=q.minKeywords){
+    fb.innerHTML=`<div class="gl-feedback success">✓ Gute Erklärung! ${found.length}/${q.keywords.length} Schlüsselbegriffe erkannt.${kwHTML}</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Abschließen ✓</button>`;
+  }else{
+    fb.innerHTML=`<div class="gl-feedback error">Versuche, mehr Fachbegriffe einzubauen (${found.length}/${q.minKeywords} benötigt).${kwHTML}</div>`;
+  }
+}
+
+/* ── Tooltip ── */
+let glossaryTooltipEl=null;
+function glossaryInitTooltip(){
+  glossaryTooltipEl=document.createElement('div');
+  glossaryTooltipEl.className='glossary-tooltip';
+  glossaryTooltipEl.innerHTML='<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">▸ Klicken zum Lernen</div>';
+  document.body.appendChild(glossaryTooltipEl);
+}
+function glossaryShowTooltip(e,termId){
+  const term=glossaryTerms.find(t=>t.id===termId);if(!term)return;
+  glossaryTooltipEl.querySelector('.gt-name').textContent=term.term;
+  glossaryTooltipEl.querySelector('.gt-short').textContent=term.short;
+  glossaryTooltipEl.style.display='block';
+  const rect=e.target.getBoundingClientRect();
+  let left=rect.left;let top=rect.bottom+8;
+  if(left+270>window.innerWidth)left=window.innerWidth-280;
+  if(top+100>window.innerHeight)top=rect.top-110;
+  glossaryTooltipEl.style.left=left+'px';glossaryTooltipEl.style.top=top+'px';
+}
+function glossaryHideTooltip(){if(glossaryTooltipEl)glossaryTooltipEl.style.display='none';}
+
+/* ── Highlighting ── */
+function glossaryHighlightTerms(){
+  const selectors='.card p, .card h3, .summary-card p, .summary-card h4, .info-panel, td';
+  const elements=document.querySelectorAll(selectors);
+  elements.forEach(el=>{
+    if(el.querySelector('.glossary-term'))return;
+    if(el.closest('.glossary-section'))return;
+    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
+    const textNodes=[];
+    while(walker.nextNode())textNodes.push(walker.currentNode);
+    textNodes.forEach(node=>{
+      const text=node.textContent;
+      const sortedKeys=Object.keys(glossaryTermMap).sort((a,b)=>b.length-a.length);
+      const regex=new RegExp('\\b('+sortedKeys.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','gi');
+      if(!regex.test(text))return;
+      const frag=document.createDocumentFragment();
+      let last=0;
+      text.replace(regex,(match,_,offset)=>{
+        if(offset>last)frag.appendChild(document.createTextNode(text.slice(last,offset)));
+        const termId=glossaryTermMap[match.toLowerCase()];
+        if(termId){
+          const span=document.createElement('span');
+          span.className='glossary-term';span.textContent=match;
+          span.dataset.termId=termId;
+          span.addEventListener('mouseenter',e=>glossaryShowTooltip(e,termId));
+          span.addEventListener('mouseleave',glossaryHideTooltip);
+          span.addEventListener('click',()=>{glossaryHideTooltip();glossaryOpen(termId);});
+          frag.appendChild(span);
+        }else{
+          frag.appendChild(document.createTextNode(match));
+        }
+        last=offset+match.length;
+      });
+      if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
+      if(frag.childNodes.length>0)node.parentNode.replaceChild(frag,node);
+    });
+  });
+}
+
+/* ── Init ── */
+function glossaryInit(){
+  glossaryLoadState();
+  glossaryInitTooltip();
+  glossaryRenderGrid();
+  glossaryUpdateProgress();
+  setTimeout(glossaryHighlightTerms,200);
+}
+glossaryInit();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

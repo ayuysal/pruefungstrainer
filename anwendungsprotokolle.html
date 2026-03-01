@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anwendungsprotokolle Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}.card.c5::before{background:var(--orange)}.card.c6::before{background:var(--yellow)}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input,.input-row select{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.input-row select{cursor:pointer}
+.input-row select option{background:var(--surface);color:var(--text)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none}
+.solution-box.show{display:block}
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+/* Protocol Explorer */
+.proto-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:12px}
+.proto-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:center;cursor:pointer;transition:all .25s}
+.proto-btn:hover{border-color:var(--accent);transform:translateY(-2px)}
+.proto-btn.active{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.proto-btn .proto-icon{font-size:22px;margin-bottom:6px}
+.proto-btn .proto-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:var(--text)}
+.proto-btn .proto-port{font-size:11px;color:var(--muted);margin-top:2px}
+.seq-diagram{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none}
+.seq-diagram.show{display:block}
+.seq-title{font-size:15px;font-weight:700;margin-bottom:16px;color:var(--accent)}
+.seq-actors{display:flex;justify-content:space-between;margin-bottom:12px;position:relative}
+.seq-actor{text-align:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.3);border-radius:8px;padding:8px 16px;color:var(--cyan);min-width:80px}
+.seq-steps{display:flex;flex-direction:column;gap:6px;margin:12px 0}
+.seq-step{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);font-size:12px;transition:all .2s}
+.seq-step:hover{border-color:rgba(255,255,255,.1)}
+.seq-num{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent);min-width:24px}
+.seq-arrow{color:var(--cyan);font-family:'JetBrains Mono',monospace;min-width:30px;text-align:center}
+.seq-label{color:var(--text);font-weight:500;flex:1}
+.seq-desc{color:var(--muted);font-size:11px;font-weight:300}
+/* DORA drag */
+.dora-slots{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.dora-slot{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;border:2px dashed var(--border);background:rgba(255,255,255,.02);min-height:50px;transition:all .2s}
+.dora-slot.filled{border-style:solid;border-color:var(--accent)}
+.dora-slot .slot-num{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--accent);font-size:16px}
+.dora-slot .slot-content{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:600}
+.dora-options{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.dora-chip{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all .2s;user-select:none}
+.dora-chip:hover{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.dora-chip.used{opacity:.3;pointer-events:none}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.proto-grid{grid-template-columns:repeat(auto-fit,minmax(100px,1fr))}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zur&uuml;ck zur &Uuml;bersicht</a>
+<header>
+<div class="tag">ITI26 &middot; Netzwerke</div>
+<h1>Anwendungsprotokolle</h1>
+<p>HTTP, DNS, E-Mail, DHCP, FTP, SSH &ndash; Protokolle verstehen und Portnummern sicher beherrschen</p>
+</header>
+
+<!-- REFERENCE -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#127760; HTTP / HTTPS</h3>
+<ul><li><strong>Ports:</strong> 80 (HTTP), 443 (HTTPS/TLS)</li>
+<li><strong>Methoden:</strong> GET (lesen), POST (senden), PUT (ersetzen), DELETE (l&ouml;schen)</li>
+<li><strong>Statuscodes:</strong> 1xx Info, 2xx Erfolg, 3xx Umleitung, 4xx Client-Fehler, 5xx Server-Fehler</li>
+<li><strong>Aufbau:</strong> Request-Line, Header, Body &ndash; Response: Statuszeile, Header, Body</li>
+<li><strong>HTTP/2:</strong> Multiplexing, Header-Kompression, bin&auml;r statt Text</li></ul></div>
+<div class="card c2"><h3>&#128269; DNS</h3>
+<ul><li><strong>Port:</strong> 53 (UDP + TCP)</li>
+<li><strong>Hierarchie:</strong> Root (.) &rarr; TLD (.de, .com) &rarr; Authoritative NS</li>
+<li><strong>Aufl&ouml;sung:</strong> Rekursiv (Resolver erledigt alles) vs. Iterativ (schrittweise Verweise)</li>
+<li><strong>Records:</strong> A (IPv4), AAAA (IPv6), MX (Mail), CNAME (Alias), NS (Nameserver)</li></ul></div>
+<div class="card c3"><h3>&#128231; E-Mail-Protokolle</h3>
+<ul><li><strong>SMTP:</strong> Port 25/587 &ndash; Versand von E-Mails</li>
+<li><strong>POP3:</strong> Port 110 &ndash; Abholen, l&ouml;scht vom Server</li>
+<li><strong>IMAP:</strong> Port 143 &ndash; Synchronisation, bleibt auf Server</li>
+<li><strong>POP3 vs IMAP:</strong> POP3 = ein Ger&auml;t, offline; IMAP = mehrere Ger&auml;te, synchron</li></ul></div>
+<div class="card c4"><h3>&#128204; DHCP</h3>
+<ul><li><strong>Ports:</strong> 67 (Server), 68 (Client)</li>
+<li><strong>DORA-Prozess:</strong> Discover &rarr; Offer &rarr; Request &rarr; Acknowledge</li>
+<li><strong>Lease:</strong> IP-Adresse wird zeitlich begrenzt vergeben</li>
+<li>Client sendet Broadcast, Server antwortet mit IP-Angebot</li></ul></div>
+<div class="card c5"><h3>&#128193; FTP</h3>
+<ul><li><strong>Port 21:</strong> Steuerungskanal (Befehle)</li>
+<li><strong>Port 20:</strong> Datenkanal (Datei&uuml;bertragung)</li>
+<li><strong>Aktiv:</strong> Server baut Datenverbindung zum Client auf</li>
+<li><strong>Passiv:</strong> Client baut beide Verbindungen auf (Firewall-freundlich)</li></ul></div>
+<div class="card c6"><h3>&#128274; Telnet vs SSH</h3>
+<ul><li><strong>Telnet:</strong> Port 23 &ndash; Klartext, unsicher, veraltet</li>
+<li><strong>SSH:</strong> Port 22 &ndash; Verschl&uuml;sselt, sicher, Standard f&uuml;r Remote-Zugriff</li>
+<li>SSH unterst&uuml;tzt Authentifizierung per Passwort oder Public Key</li></ul></div>
+</div>
+
+<!-- PROTOCOL EXPLORER -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#128300;</div><h2>Protokoll-Explorer</h2></div>
+<div class="proto-grid" id="proto-grid"></div>
+<div class="seq-diagram" id="seq-diagram"></div>
+
+<!-- EXERCISE MODE -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#127947;</div><h2>&Uuml;bungsmodus</h2></div>
+<div class="tabs" id="ex-tabs">
+<div class="tab active" data-mode="port" onclick="setMode('port')">Port-Nummern</div>
+<div class="tab" data-mode="zuordnen" onclick="setMode('zuordnen')">Protokoll zuordnen</div>
+<div class="tab" data-mode="http" onclick="setMode('http')">HTTP Status</div>
+<div class="tab" data-mode="dora" onclick="setMode('dora')">DHCP-Ablauf</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- PORT TABLE -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#128203;</div><h2>Port-Nummern &Uuml;bersicht</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Protokoll</th><th>Port(s)</th><th>Transport</th><th>Funktion</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--cyan)">HTTP</td><td>80</td><td>TCP</td><td>Webseiten (unverschl&uuml;sselt)</td></tr>
+<tr><td style="color:var(--cyan)">HTTPS</td><td>443</td><td>TCP</td><td>Webseiten (TLS-verschl&uuml;sselt)</td></tr>
+<tr><td style="color:var(--green)">DNS</td><td>53</td><td>UDP/TCP</td><td>Namensaufl&ouml;sung</td></tr>
+<tr><td style="color:var(--pink)">SMTP</td><td>25 / 587</td><td>TCP</td><td>E-Mail-Versand</td></tr>
+<tr><td style="color:var(--pink)">POP3</td><td>110</td><td>TCP</td><td>E-Mail-Abholung</td></tr>
+<tr><td style="color:var(--pink)">IMAP</td><td>143</td><td>TCP</td><td>E-Mail-Synchronisation</td></tr>
+<tr><td style="color:var(--purple)">DHCP</td><td>67 / 68</td><td>UDP</td><td>IP-Adressvergabe</td></tr>
+<tr><td style="color:var(--orange)">FTP (Steuerung)</td><td>21</td><td>TCP</td><td>Datei&uuml;bertragung (Befehle)</td></tr>
+<tr><td style="color:var(--orange)">FTP (Daten)</td><td>20</td><td>TCP</td><td>Datei&uuml;bertragung (Daten)</td></tr>
+<tr><td style="color:var(--yellow)">SSH</td><td>22</td><td>TCP</td><td>Sichere Remote-Shell</td></tr>
+<tr><td style="color:var(--muted)">Telnet</td><td>23</td><td>TCP</td><td>Remote-Shell (Klartext)</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary">
+<div class="summary-card"><h4>&#128161; Merke</h4><p>Well-Known Ports liegen im Bereich 0&ndash;1023. Pr&uuml;fungsfragen betreffen fast immer diese Ports. HTTPS = HTTP + TLS auf Port 443.</p></div>
+<div class="summary-card"><h4>&#127919; Pr&uuml;fungstipp</h4><p>DHCP DORA-Reihenfolge wird h&auml;ufig abgefragt! Merkhilfe: &laquo;Darf Olaf Rosinen Anbieten?&raquo; &ndash; Discover, Offer, Request, Acknowledge.</p></div>
+<div class="summary-card"><h4>&#129513; POP3 vs IMAP</h4><p>POP3 l&auml;dt herunter und l&ouml;scht vom Server &ndash; ideal f&uuml;r ein Ger&auml;t. IMAP synchronisiert &ndash; ideal f&uuml;r mehrere Ger&auml;te. Beide nur zum Empfang, Versand immer per SMTP.</p></div>
+</div>
+</div>
+
+<script>
+// Progress
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('anwendungsprotokolle',{status:'in-progress'});
+
+// Protocol Explorer Data
+const protocols=[
+{id:'dns',name:'DNS',icon:'\u{1F50D}',port:'53',steps:[
+{actors:['Client','DNS-Resolver','Root-NS','TLD-NS','Auth-NS'],title:'DNS Rekursive Aufl\u00f6sung',steps:[
+{n:'1',arrow:'\u2192',from:'Client',to:'DNS-Resolver',label:'Anfrage: www.example.de',desc:'Client fragt seinen DNS-Resolver'},
+{n:'2',arrow:'\u2192',from:'DNS-Resolver',to:'Root-NS',label:'Wo ist .de?',desc:'Resolver fragt Root-Nameserver'},
+{n:'3',arrow:'\u2190',from:'Root-NS',to:'DNS-Resolver',label:'Verweis auf .de TLD-NS',desc:'Root verweist auf TLD-Nameserver'},
+{n:'4',arrow:'\u2192',from:'DNS-Resolver',to:'TLD-NS',label:'Wo ist example.de?',desc:'Resolver fragt TLD-Nameserver'},
+{n:'5',arrow:'\u2190',from:'TLD-NS',to:'DNS-Resolver',label:'Verweis auf Auth-NS',desc:'TLD verweist auf autoritativen NS'},
+{n:'6',arrow:'\u2192',from:'DNS-Resolver',to:'Auth-NS',label:'IP von www.example.de?',desc:'Resolver fragt autoritativen NS'},
+{n:'7',arrow:'\u2190',from:'Auth-NS',to:'DNS-Resolver',label:'A-Record: 93.184.216.34',desc:'Antwort mit IP-Adresse'},
+{n:'8',arrow:'\u2190',from:'DNS-Resolver',to:'Client',label:'93.184.216.34',desc:'Resolver gibt Antwort an Client zur\u00fcck'}
+]}]},
+{id:'dhcp',name:'DHCP',icon:'\u{1F4CC}',port:'67/68',steps:[
+{actors:['Client','DHCP-Server'],title:'DHCP DORA-Prozess',steps:[
+{n:'1',arrow:'\u2192',label:'DHCP Discover (Broadcast)',desc:'Client sucht per Broadcast nach einem DHCP-Server'},
+{n:'2',arrow:'\u2190',label:'DHCP Offer',desc:'Server bietet eine IP-Adresse an'},
+{n:'3',arrow:'\u2192',label:'DHCP Request',desc:'Client akzeptiert das Angebot'},
+{n:'4',arrow:'\u2190',label:'DHCP Acknowledge',desc:'Server best\u00e4tigt die Zuweisung (Lease)'}
+]}]},
+{id:'http',name:'HTTP',icon:'\u{1F310}',port:'80/443',steps:[
+{actors:['Client (Browser)','Webserver'],title:'HTTP Request/Response mit TCP',steps:[
+{n:'1',arrow:'\u2192',label:'SYN',desc:'TCP 3-Way-Handshake: Client sendet SYN'},
+{n:'2',arrow:'\u2190',label:'SYN-ACK',desc:'Server antwortet mit SYN-ACK'},
+{n:'3',arrow:'\u2192',label:'ACK',desc:'Client best\u00e4tigt \u2013 Verbindung steht'},
+{n:'4',arrow:'\u2192',label:'GET /index.html HTTP/1.1',desc:'Client sendet HTTP-Request'},
+{n:'5',arrow:'\u2190',label:'HTTP/1.1 200 OK + HTML',desc:'Server sendet Response mit Inhalt'},
+{n:'6',arrow:'\u2192',label:'FIN',desc:'Verbindungsabbau eingeleitet'}
+]}]},
+{id:'smtp',name:'SMTP',icon:'\u{1F4E8}',port:'25/587',steps:[
+{actors:['E-Mail-Client','SMTP-Server'],title:'SMTP E-Mail-Versand',steps:[
+{n:'1',arrow:'\u2192',label:'HELO / EHLO',desc:'Client meldet sich beim Server an'},
+{n:'2',arrow:'\u2192',label:'MAIL FROM: <alice@x.de>',desc:'Absender angeben'},
+{n:'3',arrow:'\u2192',label:'RCPT TO: <bob@y.de>',desc:'Empf\u00e4nger angeben'},
+{n:'4',arrow:'\u2192',label:'DATA + Nachrichtentext',desc:'E-Mail-Inhalt \u00fcbertragen'},
+{n:'5',arrow:'\u2190',label:'250 OK',desc:'Server best\u00e4tigt erfolgreichen Versand'},
+{n:'6',arrow:'\u2192',label:'QUIT',desc:'Verbindung beenden'}
+]}]},
+{id:'ftp',name:'FTP',icon:'\u{1F4C1}',port:'20/21',steps:[
+{actors:['FTP-Client','FTP-Server'],title:'FTP Aktiver Modus',steps:[
+{n:'1',arrow:'\u2192',label:'Verbindung zu Port 21',desc:'Steuerungskanal wird aufgebaut'},
+{n:'2',arrow:'\u2192',label:'USER + PASS',desc:'Authentifizierung'},
+{n:'3',arrow:'\u2192',label:'PORT-Befehl (Client-Port)',desc:'Client teilt seinen Daten-Port mit'},
+{n:'4',arrow:'\u2190',label:'Verbindung von Port 20',desc:'Server baut Datenkanal zum Client auf'},
+{n:'5',arrow:'\u2194',label:'Daten\u00fcbertragung',desc:'Datei wird \u00fcber Port 20 \u00fcbertragen'},
+{n:'6',arrow:'\u2192',label:'QUIT',desc:'Verbindung beenden'}
+]}]},
+{id:'ssh',name:'SSH',icon:'\u{1F512}',port:'22',steps:[
+{actors:['Client','SSH-Server'],title:'SSH Verbindungsaufbau',steps:[
+{n:'1',arrow:'\u2194',label:'TCP-Verbindung (Port 22)',desc:'TCP 3-Way-Handshake'},
+{n:'2',arrow:'\u2194',label:'Protokollversion austauschen',desc:'Beide Seiten nennen ihre SSH-Version'},
+{n:'3',arrow:'\u2194',label:'Schl\u00fcsselaustausch (z.B. DH)',desc:'Sitzungsschl\u00fcssel wird ausgehandelt'},
+{n:'4',arrow:'\u2192',label:'Authentifizierung',desc:'Passwort oder Public-Key-Verfahren'},
+{n:'5',arrow:'\u2190',label:'Zugriff gew\u00e4hrt',desc:'Verschl\u00fcsselte Sitzung steht'},
+{n:'6',arrow:'\u2194',label:'Verschl\u00fcsselter Datenverkehr',desc:'Alle Daten sind verschl\u00fcsselt'}
+]}]}
+];
+
+// Render protocol buttons
+const pgrid=document.getElementById('proto-grid');
+protocols.forEach(p=>{
+  const d=document.createElement('div');d.className='proto-btn';d.dataset.id=p.id;
+  d.innerHTML=`<div class="proto-icon">${p.icon}</div><div class="proto-name">${p.name}</div><div class="proto-port">Port ${p.port}</div>`;
+  d.onclick=()=>showProtocol(p.id);
+  pgrid.appendChild(d);
+});
+
+function showProtocol(id){
+  document.querySelectorAll('.proto-btn').forEach(b=>b.classList.toggle('active',b.dataset.id===id));
+  const p=protocols.find(x=>x.id===id);
+  const diag=document.getElementById('seq-diagram');
+  if(!p){diag.classList.remove('show');return;}
+  const s=p.steps[0];
+  let html=`<div class="seq-title">${s.title}</div>`;
+  html+=`<div class="seq-actors">${s.actors.map(a=>`<div class="seq-actor">${a}</div>`).join('')}</div>`;
+  html+=`<div class="seq-steps">`;
+  s.steps.forEach(st=>{
+    html+=`<div class="seq-step"><span class="seq-num">${st.n}</span><span class="seq-arrow">${st.arrow}</span><span class="seq-label">${st.label}</span><span class="seq-desc">${st.desc}</span></div>`;
+  });
+  html+=`</div>`;
+  diag.innerHTML=html;diag.classList.add('show');
+}
+
+// Exercise Mode
+let mode='port';
+let score={correct:0,wrong:0,streak:0};
+let currentTask={};
+
+const portData=[
+  {proto:'HTTP',port:'80'},{proto:'HTTPS',port:'443'},{proto:'DNS',port:'53'},
+  {proto:'SMTP',port:'25'},{proto:'SMTP (Submission)',port:'587'},
+  {proto:'POP3',port:'110'},{proto:'IMAP',port:'143'},
+  {proto:'DHCP (Server)',port:'67'},{proto:'DHCP (Client)',port:'68'},
+  {proto:'FTP (Steuerung)',port:'21'},{proto:'FTP (Daten)',port:'20'},
+  {proto:'SSH',port:'22'},{proto:'Telnet',port:'23'}
+];
+const scenarios=[
+  {desc:'Ein Benutzer ruft eine Webseite im Browser auf (verschl\u00fcsselt).',ans:'HTTPS'},
+  {desc:'Ein Rechner erh\u00e4lt beim Start automatisch eine IP-Adresse.',ans:'DHCP'},
+  {desc:'Der Browser l\u00f6st "www.google.de" in eine IP-Adresse auf.',ans:'DNS'},
+  {desc:'Alice sendet eine E-Mail an Bob.',ans:'SMTP'},
+  {desc:'Bob ruft seine E-Mails ab. Die Nachrichten bleiben auf dem Server.',ans:'IMAP'},
+  {desc:'Bob ruft seine E-Mails ab. Die Nachrichten werden vom Server gel\u00f6scht.',ans:'POP3'},
+  {desc:'Ein Admin verbindet sich verschl\u00fcsselt mit einem entfernten Server.',ans:'SSH'},
+  {desc:'Eine Datei wird \u00fcber einen separaten Daten- und Steuerungskanal \u00fcbertragen.',ans:'FTP'},
+  {desc:'Eine Webseite wird unverschl\u00fcsselt im Browser geladen.',ans:'HTTP'},
+  {desc:'Ein Admin verbindet sich per Klartext-Fernzugriff mit einem Server.',ans:'Telnet'},
+  {desc:'Der E-Mail-Client synchronisiert Ordner auf mehreren Ger\u00e4ten.',ans:'IMAP'},
+  {desc:'Ein Server teilt einem Client per Broadcast eine IP-Adresse zu.',ans:'DHCP'},
+  {desc:'Ein MX-Record wird abgefragt, um den Mailserver zu finden.',ans:'DNS'},
+  {desc:'Daten werden \u00fcber Port 20 aktiv vom Server zum Client gesendet.',ans:'FTP'}
+];
+const httpCodes=[
+  {code:'200',meaning:'OK \u2013 Anfrage erfolgreich'},
+  {code:'201',meaning:'Created \u2013 Ressource erstellt'},
+  {code:'301',meaning:'Moved Permanently \u2013 Dauerhaft umgezogen'},
+  {code:'302',meaning:'Found \u2013 Tempor\u00e4re Umleitung'},
+  {code:'304',meaning:'Not Modified \u2013 Nicht ver\u00e4ndert (Cache)'},
+  {code:'400',meaning:'Bad Request \u2013 Fehlerhafte Anfrage'},
+  {code:'401',meaning:'Unauthorized \u2013 Authentifizierung n\u00f6tig'},
+  {code:'403',meaning:'Forbidden \u2013 Zugriff verboten'},
+  {code:'404',meaning:'Not Found \u2013 Nicht gefunden'},
+  {code:'500',meaning:'Internal Server Error \u2013 Serverfehler'},
+  {code:'502',meaning:'Bad Gateway \u2013 Ung\u00fcltige Antwort vom Upstream'},
+  {code:'503',meaning:'Service Unavailable \u2013 Dienst nicht verf\u00fcgbar'}
+];
+const allProtos=['HTTP','HTTPS','DNS','SMTP','POP3','IMAP','DHCP','FTP','SSH','Telnet'];
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function setMode(m){
+  mode=m;
+  document.querySelectorAll('#ex-tabs .tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));
+  newTask();
+}
+
+function genPortTask(){
+  const item=portData[rand(0,portData.length-1)];
+  const askPort=Math.random()>0.5;
+  if(askPort) return{q:item.proto,hint:'Welche Portnummer?',answer:item.port,solution:`${item.proto} verwendet Port ${item.port}`,inputType:'text',placeholder:'Portnummer...'};
+  return{q:`Port ${item.port}`,hint:'Welches Protokoll?',answer:item.proto,solution:`Port ${item.port} geh\u00f6rt zu ${item.proto}`,inputType:'text',placeholder:'Protokollname...'};
+}
+
+function genZuordnenTask(){
+  const s=scenarios[rand(0,scenarios.length-1)];
+  const options=shuffle([...new Set([s.ans,...shuffle([...allProtos]).slice(0,3)])]).slice(0,4);
+  if(!options.includes(s.ans)){options[rand(0,options.length-1)]=s.ans;}
+  return{q:s.desc,hint:'W\u00e4hle das richtige Protokoll',answer:s.ans,options:shuffle(options),solution:`Richtig: ${s.ans}`,inputType:'select'};
+}
+
+function genHttpTask(){
+  const item=httpCodes[rand(0,httpCodes.length-1)];
+  const askMeaning=Math.random()>0.5;
+  if(askMeaning) return{q:`HTTP ${item.code}`,hint:'Was bedeutet dieser Statuscode?',answer:item.meaning,solution:`${item.code} = ${item.meaning}`,inputType:'show'};
+  return{q:item.meaning,hint:'Welcher HTTP-Statuscode?',answer:item.code,solution:`${item.meaning} = ${item.code}`,inputType:'text',placeholder:'z.B. 404'};
+}
+
+function newTask(){
+  const area=document.getElementById('exercise-area');
+  if(mode==='dora'){renderDora(area);return;}
+  if(mode==='port') currentTask=genPortTask();
+  else if(mode==='zuordnen') currentTask=genZuordnenTask();
+  else if(mode==='http') currentTask=genHttpTask();
+
+  let inputHtml='';
+  if(currentTask.inputType==='text'){
+    inputHtml=`<div class="input-row"><input type="text" id="user-answer" placeholder="${currentTask.placeholder||'Antwort...'}" autocomplete="off"></div>`;
+  } else if(currentTask.inputType==='select'){
+    inputHtml=`<div class="input-row"><select id="user-answer"><option value="">-- W\u00e4hlen --</option>${currentTask.options.map(o=>`<option value="${o}">${o}</option>`).join('')}</select></div>`;
+  } else if(currentTask.inputType==='show'){
+    inputHtml=`<div class="input-row"><input type="text" id="user-answer" placeholder="Beschreibung eingeben..." autocomplete="off"></div>`;
+  }
+
+  area.innerHTML=`
+    <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${currentTask.hint}</div>
+    <div class="task-display">${currentTask.q}</div>
+    <div class="task-sub">${currentTask.inputType==='select'?'W\u00e4hle aus den Optionen':'Gib deine Antwort ein'}</div>
+    ${inputHtml}
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkAnswer()">Pr\u00fcfen \u21B5</button>
+      <button class="btn btn-secondary" onclick="showSolution()">L\u00f6sung zeigen</button>
+      <button class="btn btn-secondary" onclick="newTask()">\u00dcberspringen \u2192</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="solution-box" id="sol"></div>`;
+  const inp=document.getElementById('user-answer');
+  if(inp){
+    inp.focus();
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+  }
+}
+
+function normalize(s){return s.toString().trim().toLowerCase().replace(/[^a-z0-9äöüß]/g,'');}
+
+function checkAnswer(){
+  if(mode==='dora'){checkDora();return;}
+  const inp=document.getElementById('user-answer');
+  const fb=document.getElementById('fb');
+  const v=inp.value.trim();
+  if(!v)return;
+
+  let correct=false;
+  if(currentTask.inputType==='show'){
+    correct=normalize(v)===normalize(currentTask.answer)||v.includes(currentTask.answer.split(' \u2013 ')[0]);
+  } else {
+    correct=normalize(v)===normalize(currentTask.answer);
+  }
+  // Also accept just the port number or protocol name loosely
+  if(!correct && mode==='port'){
+    correct=normalize(v)===normalize(currentTask.answer.replace(/[()]/g,''));
+  }
+
+  if(correct){
+    inp.classList.add('correct');fb.textContent='\u2713 Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('anwendungsprotokolle',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  }else{
+    inp.classList.add('wrong');fb.textContent='\u2717 Falsch \u2013 richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function showSolution(){
+  if(mode==='dora'){showDoraSolution();return;}
+  const s=document.getElementById('sol');
+  if(s){s.textContent=currentTask.solution;s.classList.add('show');}
+}
+
+function updateScore(){
+  document.getElementById('s-correct').textContent=score.correct;
+  document.getElementById('s-wrong').textContent=score.wrong;
+  document.getElementById('s-streak').textContent=score.streak;
+}
+
+// DORA exercise
+let doraOrder=[];
+const doraFull=[
+  {id:'D',label:'Discover',desc:'Client sendet Broadcast-Suche'},
+  {id:'O',label:'Offer',desc:'Server bietet IP-Adresse an'},
+  {id:'R',label:'Request',desc:'Client akzeptiert Angebot'},
+  {id:'A',label:'Acknowledge',desc:'Server best\u00e4tigt Zuweisung'}
+];
+
+function renderDora(area){
+  doraOrder=[];
+  const shuffled=shuffle([...doraFull]);
+  area.innerHTML=`
+    <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">DHCP DORA-Ablauf ordnen</div>
+    <div class="task-display">Bringe die DHCP-Schritte in die richtige Reihenfolge</div>
+    <div class="task-sub">Klicke die Schritte in der richtigen Reihenfolge an</div>
+    <div class="dora-slots" id="dora-slots">
+      ${[1,2,3,4].map(i=>`<div class="dora-slot" id="slot-${i}"><span class="slot-num">${i}.</span><span class="slot-content" id="slot-content-${i}">---</span></div>`).join('')}
+    </div>
+    <div class="dora-options" id="dora-options">
+      ${shuffled.map(s=>`<div class="dora-chip" data-id="${s.id}" onclick="pickDora('${s.id}')">${s.label}</div>`).join('')}
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkDora()">Pr\u00fcfen \u21B5</button>
+      <button class="btn btn-secondary" onclick="showDoraSolution()">L\u00f6sung zeigen</button>
+      <button class="btn btn-secondary" onclick="renderDora(document.getElementById('exercise-area'))">Neu mischen</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="solution-box" id="sol"></div>`;
+}
+
+function pickDora(id){
+  if(doraOrder.length>=4)return;
+  if(doraOrder.includes(id))return;
+  doraOrder.push(id);
+  const idx=doraOrder.length;
+  const item=doraFull.find(x=>x.id===id);
+  document.getElementById('slot-content-'+idx).textContent=item.label;
+  document.getElementById('slot-'+idx).classList.add('filled');
+  document.querySelector(`.dora-chip[data-id="${id}"]`).classList.add('used');
+}
+
+function checkDora(){
+  const fb=document.getElementById('fb');
+  if(doraOrder.length<4){fb.textContent='Bitte alle 4 Schritte zuordnen!';fb.className='feedback wrong';return;}
+  const correct=doraOrder.join('')==='DORA';
+  if(correct){
+    fb.textContent='\u2713 Richtig! D-O-R-A ist korrekt!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('anwendungsprotokolle',{status:'completed',score:score.correct});
+    setTimeout(()=>renderDora(document.getElementById('exercise-area')),1500);
+  }else{
+    fb.textContent='\u2717 Falsch! Die richtige Reihenfolge ist: Discover \u2192 Offer \u2192 Request \u2192 Acknowledge';fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showDoraSolution();
+  }
+}
+
+function showDoraSolution(){
+  const s=document.getElementById('sol');
+  if(s){s.textContent='Richtige Reihenfolge:\n1. Discover \u2013 Client sucht per Broadcast\n2. Offer \u2013 Server bietet IP an\n3. Request \u2013 Client akzeptiert\n4. Acknowledge \u2013 Server best\u00e4tigt (Lease)';s.classList.add('show');}
+}
+
+// Init
+newTask();
+</script>
+</body>
+</html>

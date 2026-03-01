@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Logische Schaltungen · Halb-/Volladdierer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;
+    --accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;
+    --pink:#f472b6;--purple:#a78bfa;--orange:#fb923c;
+    --on:#51cf66;--off:#ff6b6b;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+  .noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  .glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+  .glow-orb.one{background:var(--green);top:-120px;right:-80px}
+  .glow-orb.two{background:var(--purple);bottom:-160px;left:-100px}
+  .container{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+
+  header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease}
+  header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+  header p{font-weight:300;color:var(--muted);font-size:15px;max-width:580px;margin:0 auto}
+
+  .section-title{display:flex;align-items:center;gap:12px;margin-bottom:18px;margin-top:52px;flex-wrap:wrap}
+  .section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .section-title h2{font-size:20px;font-weight:700}
+  .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
+
+  /* ── Gate Cards Grid ── */
+  .gates-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:12px;animation:fadeUp .6s ease .1s both}
+  .gate-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:22px;position:relative;overflow:hidden;transition:all .3s}
+  .gate-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+  .gate-card:hover{border-color:rgba(255,255,255,.1)}
+
+  .gate-header{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .gate-header .gate-sym{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;width:44px;height:44px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
+  .gate-header h3{font-size:16px;font-weight:700}
+  .gate-header .gate-en{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);display:block}
+  .gate-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6;margin-bottom:14px}
+  .gate-desc strong{color:var(--text);font-weight:600}
+
+  /* Interactive toggle area */
+  .gate-sim{display:flex;align-items:center;gap:10px;justify-content:center;padding:12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px}
+  .sim-input{display:flex;flex-direction:column;gap:6px;align-items:center}
+  .sim-btn{width:40px;height:40px;border-radius:8px;border:2px solid var(--border);background:rgba(255,255,255,.03);font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--muted);display:grid;place-items:center;user-select:none}
+  .sim-btn.on{border-color:var(--on);color:var(--on);background:rgba(81,207,102,.08);box-shadow:0 0 12px rgba(81,207,102,.15)}
+  .sim-btn.off{border-color:var(--off);color:var(--off);background:rgba(255,107,107,.05)}
+  .sim-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted)}
+  .sim-arrow{color:var(--border);font-size:18px}
+  .sim-gate-icon{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--muted);padding:6px 10px;border:1px dashed var(--border);border-radius:6px}
+  .sim-output{width:44px;height:44px;border-radius:10px;border:2px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;display:grid;place-items:center;transition:all .3s}
+  .sim-output.on{border-color:var(--on);color:var(--on);background:rgba(81,207,102,.1);box-shadow:0 0 16px rgba(81,207,102,.2)}
+  .sim-output.off{border-color:var(--off);color:var(--off);background:rgba(255,107,107,.05)}
+
+  /* Truth table */
+  .truth-table{margin-top:12px;width:100%;border-collapse:separate;border-spacing:0;font-family:'JetBrains Mono',monospace;font-size:11px;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+  .truth-table th{padding:6px 10px;background:rgba(255,255,255,.03);color:var(--muted);font-weight:600;text-align:center;border-bottom:1px solid var(--border)}
+  .truth-table td{padding:5px 10px;text-align:center;border-bottom:1px solid rgba(255,255,255,.03)}
+  .truth-table tr:last-child td{border-bottom:none}
+  .truth-table .v1{color:var(--on);font-weight:700}
+  .truth-table .v0{color:var(--off)}
+
+  /* Gate colors */
+  .g-and::before{background:var(--cyan)} .g-or::before{background:var(--green)} .g-not::before{background:var(--pink)}
+  .g-nand::before{background:var(--orange)} .g-nor::before{background:var(--yellow)} .g-xor::before{background:var(--purple)}
+
+  /* ── Adder Section ── */
+  .adder-tabs{display:flex;gap:6px;margin-bottom:16px;animation:fadeUp .6s ease .2s both}
+  .adder-tab{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:12px 18px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .25s;flex:1;text-align:center}
+  .adder-tab:hover{background:rgba(255,255,255,.04)}
+  .adder-tab.active{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.08)}
+
+  .adder-content{display:none;animation:fadeUp .35s ease both}
+  .adder-content.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:750px){.adder-content.active{grid-template-columns:1fr}}
+
+  .adder-visual{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .adder-visual svg{max-width:100%;height:auto}
+  .adder-info{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;flex-direction:column;justify-content:center}
+  .adder-info h3{font-size:18px;font-weight:700;margin-bottom:4px}
+  .adder-info .a-en{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:14px}
+  .adder-info .a-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:16px}
+  .adder-info .a-desc strong{color:var(--text);font-weight:600}
+
+  /* Adder simulator */
+  .adder-sim{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:10px}
+  .adder-sim-row{display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap}
+  .adder-sim-result{display:flex;gap:14px;justify-content:center;margin-top:6px}
+  .adder-res-box{text-align:center}
+  .adder-res-box .res-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+  .adder-res-box .res-val{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;width:48px;height:48px;border-radius:10px;display:grid;place-items:center;border:2px solid var(--border);transition:all .3s}
+  .adder-res-box .res-val.on{border-color:var(--on);color:var(--on);background:rgba(81,207,102,.08);box-shadow:0 0 14px rgba(81,207,102,.15)}
+  .adder-res-box .res-val.off{border-color:var(--off);color:var(--off);background:rgba(255,107,107,.04)}
+
+  .formulas-row{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+  .formula-chip{font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 14px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid var(--border);line-height:1.5}
+  .formula-chip strong{font-weight:700}
+
+  /* ── Comparison Table ── */
+  .compare-table-wrap{margin-top:20px;overflow-x:auto;animation:fadeUp .6s ease .3s both}
+  .compare-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+  .compare-table th{padding:14px 16px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+  .compare-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted);vertical-align:top}
+  .compare-table tr:last-child td{border-bottom:none}
+  .compare-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap}
+
+  /* ── Summary ── */
+  .summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;animation:fadeUp .6s ease .35s both}
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+  .summary-card:hover{border-color:rgba(108,99,255,.3)}
+  .summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+  .summary-card p strong{color:var(--text);font-weight:600}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="tag">Digitaltechnik</div>
+    <h1>Logische Schaltungen & Addierer</h1>
+    <p>Interaktiv klicken, Wahrheitstabellen verstehen und Halb-/Volladdierer simulieren.</p>
+  </header>
+
+  <!-- ═══════════════════════════════════
+       1. LOGISCHE GATTER
+       ═══════════════════════════════════ -->
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green));">⚡</div>
+    <h2>Logische Gatter</h2>
+    <span class="sub">Klicke auf die Eingänge!</span>
+  </div>
+
+  <div class="gates-grid" id="gates-grid"></div>
+
+  <!-- ═══════════════════════════════════
+       2. HALB- / VOLLADDIERER
+       ═══════════════════════════════════ -->
+  <div class="section-title" style="margin-top:56px;">
+    <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--pink));">➕</div>
+    <h2>Halb- & Volladdierer</h2>
+    <span class="sub">Binäre Addition in Hardware</span>
+  </div>
+
+  <div class="adder-tabs">
+    <div class="adder-tab active" data-tab="ha">Halbaddierer (HA)</div>
+    <div class="adder-tab" data-tab="va">Volladdierer (VA)</div>
+  </div>
+
+  <!-- Halbaddierer -->
+  <div class="adder-content active" id="tab-ha">
+    <div class="adder-visual">
+      <svg width="340" height="250" viewBox="0 0 340 250">
+        <defs>
+          <filter id="gha"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <marker id="ah" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#2a2e3e"/></marker>
+        </defs>
+        <!-- Inputs -->
+        <text x="14" y="82" fill="var(--cyan)" font-family="JetBrains Mono" font-size="14" font-weight="700">A</text>
+        <text x="14" y="172" fill="var(--cyan)" font-family="JetBrains Mono" font-size="14" font-weight="700">B</text>
+        <line x1="30" y1="78" x2="90" y2="78" stroke="var(--cyan)" stroke-width="2"/>
+        <line x1="30" y1="168" x2="90" y2="168" stroke="var(--cyan)" stroke-width="2"/>
+        <!-- Fork A -->
+        <line x1="60" y1="78" x2="60" y2="138" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3 2" opacity=".4"/>
+        <!-- Fork B -->
+        <line x1="75" y1="168" x2="75" y2="108" stroke="var(--cyan)" stroke-width="1.5" stroke-dasharray="3 2" opacity=".4"/>
+        <!-- XOR Gate -->
+        <rect x="92" y="56" width="80" height="44" rx="8" fill="none" stroke="var(--purple)" stroke-width="1.5" filter="url(#gha)"/>
+        <text x="132" y="83" text-anchor="middle" fill="var(--purple)" font-family="JetBrains Mono" font-size="12" font-weight="700">XOR</text>
+        <!-- AND Gate -->
+        <rect x="92" y="146" width="80" height="44" rx="8" fill="none" stroke="var(--cyan)" stroke-width="1.5" filter="url(#gha)"/>
+        <text x="132" y="173" text-anchor="middle" fill="var(--cyan)" font-family="JetBrains Mono" font-size="12" font-weight="700">AND</text>
+        <!-- Output lines -->
+        <line x1="172" y1="78" x2="260" y2="78" stroke="var(--green)" stroke-width="2" marker-end="url(#ah)"/>
+        <line x1="172" y1="168" x2="260" y2="168" stroke="var(--yellow)" stroke-width="2" marker-end="url(#ah)"/>
+        <!-- Output labels -->
+        <rect x="264" y="62" width="64" height="32" rx="8" fill="rgba(81,207,102,.08)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="296" y="83" text-anchor="middle" fill="var(--green)" font-family="JetBrains Mono" font-size="12" font-weight="700">S</text>
+        <text x="296" y="50" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">Summe</text>
+        <rect x="264" y="152" width="64" height="32" rx="8" fill="rgba(251,191,36,.08)" stroke="var(--yellow)" stroke-width="1.5"/>
+        <text x="296" y="173" text-anchor="middle" fill="var(--yellow)" font-family="JetBrains Mono" font-size="12" font-weight="700">C</text>
+        <text x="296" y="200" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">Carry (Übertrag)</text>
+        <!-- Title -->
+        <text x="170" y="236" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="10">S = A ⊕ B &nbsp;&nbsp;│&nbsp;&nbsp; C = A ∧ B</text>
+      </svg>
+    </div>
+    <div class="adder-info">
+      <h3 style="color:var(--yellow);">Halbaddierer</h3>
+      <div class="a-en">HALF ADDER · HA</div>
+      <div class="a-desc">Addiert <strong>zwei einzelne Bits</strong> (A und B). Erzeugt eine <strong>Summe S</strong> und einen <strong>Übertrag C</strong> (Carry). Kann <strong>keinen eingehenden Übertrag</strong> verarbeiten – daher „halb".</div>
+      <div class="adder-sim" id="ha-sim">
+        <div class="adder-sim-row">
+          <div class="sim-input">
+            <div class="sim-label">A</div>
+            <div class="sim-btn off" data-id="ha-a" onclick="toggleAdder(this,'ha')">0</div>
+          </div>
+          <div class="sim-input">
+            <div class="sim-label">B</div>
+            <div class="sim-btn off" data-id="ha-b" onclick="toggleAdder(this,'ha')">0</div>
+          </div>
+          <span class="sim-arrow">→</span>
+          <div class="adder-sim-result">
+            <div class="adder-res-box"><div class="res-label">Summe S</div><div class="res-val off" id="ha-s">0</div></div>
+            <div class="adder-res-box"><div class="res-label">Carry C</div><div class="res-val off" id="ha-c">0</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="formulas-row">
+        <div class="formula-chip"><strong style="color:var(--green)">S</strong> = A <strong style="color:var(--purple)">XOR</strong> B</div>
+        <div class="formula-chip"><strong style="color:var(--yellow)">C</strong> = A <strong style="color:var(--cyan)">AND</strong> B</div>
+      </div>
+      <table class="truth-table" style="margin-top:14px">
+        <tr><th>A</th><th>B</th><th style="color:var(--green)">S</th><th style="color:var(--yellow)">C</th></tr>
+        <tr><td class="v0">0</td><td class="v0">0</td><td class="v0">0</td><td class="v0">0</td></tr>
+        <tr><td class="v0">0</td><td class="v1">1</td><td class="v1">1</td><td class="v0">0</td></tr>
+        <tr><td class="v1">1</td><td class="v0">0</td><td class="v1">1</td><td class="v0">0</td></tr>
+        <tr><td class="v1">1</td><td class="v1">1</td><td class="v0">0</td><td class="v1">1</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Volladdierer -->
+  <div class="adder-content" id="tab-va">
+    <div class="adder-visual">
+      <svg width="340" height="280" viewBox="0 0 340 280">
+        <defs>
+          <filter id="gva"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <marker id="av" markerWidth="7" markerHeight="5" refX="7" refY="2.5" orient="auto"><path d="M0,0 L7,2.5 L0,5" fill="#2a2e3e"/></marker>
+        </defs>
+        <!-- Inputs -->
+        <text x="8" y="62" fill="var(--cyan)" font-family="JetBrains Mono" font-size="13" font-weight="700">A</text>
+        <text x="8" y="122" fill="var(--cyan)" font-family="JetBrains Mono" font-size="13" font-weight="700">B</text>
+        <text x="8" y="202" fill="var(--orange)" font-family="JetBrains Mono" font-size="13" font-weight="700">Cᵢₙ</text>
+        <!-- HA1 -->
+        <rect x="60" y="40" width="80" height="70" rx="10" fill="none" stroke="var(--purple)" stroke-width="1.5" filter="url(#gva)"/>
+        <text x="100" y="70" text-anchor="middle" fill="var(--purple)" font-family="JetBrains Mono" font-size="11" font-weight="700">HA 1</text>
+        <text x="100" y="86" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">XOR + AND</text>
+        <line x1="26" y1="58" x2="58" y2="58" stroke="var(--cyan)" stroke-width="1.5"/>
+        <line x1="26" y1="118" x2="40" y2="118" stroke="var(--cyan)" stroke-width="1.5"/>
+        <line x1="40" y1="118" x2="40" y2="88" stroke="var(--cyan)" stroke-width="1.5"/>
+        <line x1="40" y1="88" x2="58" y2="88" stroke="var(--cyan)" stroke-width="1.5"/>
+        <!-- HA2 -->
+        <rect x="170" y="60" width="80" height="70" rx="10" fill="none" stroke="var(--pink)" stroke-width="1.5" filter="url(#gva)"/>
+        <text x="210" y="90" text-anchor="middle" fill="var(--pink)" font-family="JetBrains Mono" font-size="11" font-weight="700">HA 2</text>
+        <text x="210" y="106" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">XOR + AND</text>
+        <!-- HA1 sum → HA2 -->
+        <line x1="140" y1="58" x2="155" y2="58" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="155" y1="58" x2="155" y2="78" stroke="var(--green)" stroke-width="1.5"/>
+        <line x1="155" y1="78" x2="168" y2="78" stroke="var(--green)" stroke-width="1.5"/>
+        <!-- Cin → HA2 -->
+        <line x1="30" y1="198" x2="155" y2="198" stroke="var(--orange)" stroke-width="1.5"/>
+        <line x1="155" y1="198" x2="155" y2="108" stroke="var(--orange)" stroke-width="1.5"/>
+        <line x1="155" y1="108" x2="168" y2="108" stroke="var(--orange)" stroke-width="1.5"/>
+        <!-- OR Gate -->
+        <rect x="200" y="180" width="60" height="40" rx="8" fill="none" stroke="var(--green)" stroke-width="1.5" filter="url(#gva)"/>
+        <text x="230" y="205" text-anchor="middle" fill="var(--green)" font-family="JetBrains Mono" font-size="11" font-weight="700">OR</text>
+        <!-- HA1 carry → OR -->
+        <line x1="140" y1="88" x2="150" y2="88" stroke="var(--yellow)" stroke-width="1.5"/>
+        <line x1="150" y1="88" x2="150" y2="190" stroke="var(--yellow)" stroke-width="1.5" stroke-dasharray="4 2"/>
+        <line x1="150" y1="190" x2="198" y2="190" stroke="var(--yellow)" stroke-width="1.5"/>
+        <!-- HA2 carry → OR -->
+        <line x1="250" y1="108" x2="262" y2="108" stroke="var(--yellow)" stroke-width="1.5"/>
+        <line x1="262" y1="108" x2="262" y2="168" stroke="var(--yellow)" stroke-width="1.5" stroke-dasharray="4 2"/>
+        <line x1="262" y1="168" x2="262" y2="210" stroke="var(--yellow)" stroke-width="1.5"/>
+        <!-- Outputs -->
+        <line x1="250" y1="78" x2="290" y2="78" stroke="var(--green)" stroke-width="2" marker-end="url(#av)"/>
+        <rect x="294" y="62" width="40" height="32" rx="8" fill="rgba(81,207,102,.08)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="314" y="83" text-anchor="middle" fill="var(--green)" font-family="JetBrains Mono" font-size="14" font-weight="700">S</text>
+        <line x1="260" y1="200" x2="290" y2="200" stroke="var(--yellow)" stroke-width="2" marker-end="url(#av)"/>
+        <rect x="294" y="184" width="40" height="32" rx="8" fill="rgba(251,191,36,.08)" stroke="var(--yellow)" stroke-width="1.5"/>
+        <text x="314" y="205" text-anchor="middle" fill="var(--yellow)" font-family="JetBrains Mono" font-size="14" font-weight="700">Cₒᵤₜ</text>
+        <!-- Labels -->
+        <text x="170" y="260" text-anchor="middle" fill="var(--muted)" font-family="JetBrains Mono" font-size="9">VA = 2× Halbaddierer + 1× OR-Gatter</text>
+      </svg>
+    </div>
+    <div class="adder-info">
+      <h3 style="color:var(--pink);">Volladdierer</h3>
+      <div class="a-en">FULL ADDER · VA</div>
+      <div class="a-desc">Addiert <strong>drei Bits</strong>: A, B und einen <strong>eingehenden Übertrag Cᵢₙ</strong>. Besteht intern aus <strong>zwei Halbaddierern</strong> und einem <strong>OR-Gatter</strong>. Ermöglicht die <strong>Kaskadierung</strong> für mehrstellige Binäraddition.</div>
+      <div class="adder-sim" id="va-sim">
+        <div class="adder-sim-row">
+          <div class="sim-input">
+            <div class="sim-label">A</div>
+            <div class="sim-btn off" data-id="va-a" onclick="toggleAdder(this,'va')">0</div>
+          </div>
+          <div class="sim-input">
+            <div class="sim-label">B</div>
+            <div class="sim-btn off" data-id="va-b" onclick="toggleAdder(this,'va')">0</div>
+          </div>
+          <div class="sim-input">
+            <div class="sim-label">Cᵢₙ</div>
+            <div class="sim-btn off" data-id="va-cin" onclick="toggleAdder(this,'va')" style="border-color:var(--orange)">0</div>
+          </div>
+          <span class="sim-arrow">→</span>
+          <div class="adder-sim-result">
+            <div class="adder-res-box"><div class="res-label">Summe S</div><div class="res-val off" id="va-s">0</div></div>
+            <div class="adder-res-box"><div class="res-label">Cₒᵤₜ</div><div class="res-val off" id="va-cout">0</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="formulas-row">
+        <div class="formula-chip"><strong style="color:var(--green)">S</strong> = A ⊕ B ⊕ Cᵢₙ</div>
+        <div class="formula-chip"><strong style="color:var(--yellow)">Cₒᵤₜ</strong> = (A∧B) ∨ (Cᵢₙ∧(A⊕B))</div>
+      </div>
+      <table class="truth-table" style="margin-top:14px">
+        <tr><th>A</th><th>B</th><th style="color:var(--orange)">Cᵢₙ</th><th style="color:var(--green)">S</th><th style="color:var(--yellow)">Cₒᵤₜ</th></tr>
+        <tr><td class="v0">0</td><td class="v0">0</td><td class="v0">0</td><td class="v0">0</td><td class="v0">0</td></tr>
+        <tr><td class="v0">0</td><td class="v0">0</td><td class="v1">1</td><td class="v1">1</td><td class="v0">0</td></tr>
+        <tr><td class="v0">0</td><td class="v1">1</td><td class="v0">0</td><td class="v1">1</td><td class="v0">0</td></tr>
+        <tr><td class="v0">0</td><td class="v1">1</td><td class="v1">1</td><td class="v0">0</td><td class="v1">1</td></tr>
+        <tr><td class="v1">1</td><td class="v0">0</td><td class="v0">0</td><td class="v1">1</td><td class="v0">0</td></tr>
+        <tr><td class="v1">1</td><td class="v0">0</td><td class="v1">1</td><td class="v0">0</td><td class="v1">1</td></tr>
+        <tr><td class="v1">1</td><td class="v1">1</td><td class="v0">0</td><td class="v0">0</td><td class="v1">1</td></tr>
+        <tr><td class="v1">1</td><td class="v1">1</td><td class="v1">1</td><td class="v1">1</td><td class="v1">1</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Comparison -->
+  <div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead><tr><th>Eigenschaft</th><th style="color:var(--yellow)">Halbaddierer</th><th style="color:var(--pink)">Volladdierer</th></tr></thead>
+      <tbody>
+        <tr><td>Eingänge</td><td><strong>2</strong> (A, B)</td><td><strong>3</strong> (A, B, Cᵢₙ)</td></tr>
+        <tr><td>Ausgänge</td><td><strong>2</strong> (S, C)</td><td><strong>2</strong> (S, Cₒᵤₜ)</td></tr>
+        <tr><td>Übertrag-Eingang</td><td>Nein ✗</td><td>Ja ✓ (Cᵢₙ)</td></tr>
+        <tr><td>Interne Gatter</td><td>1× XOR + 1× AND</td><td>2× HA + 1× OR</td></tr>
+        <tr><td>Einsatz</td><td>Niederwertigstes Bit (LSB)</td><td>Alle weiteren Bits</td></tr>
+        <tr><td>Kaskadierbar</td><td>Nur als erstes Glied</td><td>Ja – beliebig verkettbar</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════
+       BEGRIFFE LERNEN
+       ═══════════════════════════════ -->
+  <div class="glossary-section">
+    <div class="section-title">
+      <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">🧠</div>
+      <h2>Begriffe lernen</h2>
+      <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
+    </div>
+    <div class="glossary-progress-bar">
+      <span class="gp-text">Fortschritt</span>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <span class="gp-count" id="glossary-count">0%</span>
+    </div>
+    <div class="glossary-grid" id="glossary-grid"></div>
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-card">
+      <h4>🧩 Zusammenhang</h4>
+      <p>Jede digitale Berechnung basiert auf <strong>logischen Gattern</strong>. Der <strong>Halbaddierer</strong> kombiniert XOR + AND. Der <strong>Volladdierer</strong> baut darauf auf und ermöglicht mehrstellige Addition.</p>
+    </div>
+    <div class="summary-card">
+      <h4>🎯 Prüfungstipp</h4>
+      <p>Merke: <strong>XOR = Summe ohne Übertrag</strong>, <strong>AND = Übertrag</strong>. Ein n-Bit-Addierer braucht <strong>1 HA + (n−1) VA</strong> oder alternativ <strong>n VA</strong> (mit Cᵢₙ = 0 beim LSB).</p>
+    </div>
+    <div class="summary-card">
+      <h4>💡 Universalität</h4>
+      <p><strong>NAND</strong> und <strong>NOR</strong> sind je für sich <strong>funktional vollständig</strong> – jede beliebige logische Schaltung lässt sich allein aus NAND- (oder NOR-)Gattern aufbauen.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Gate Definitions ──
+const gates = [
+  { id:'and', name:'AND', en:'Konjunktion · UND', color:'var(--cyan)', sym:'∧',
+    desc:'Ausgang ist <strong>1</strong>, wenn <strong>alle</strong> Eingänge 1 sind. Sonst 0.',
+    fn:(a,b)=>a&b, inputs:2,
+    tt:[[0,0,0],[0,1,0],[1,0,0],[1,1,1]] },
+  { id:'or', name:'OR', en:'Disjunktion · ODER', color:'var(--green)', sym:'∨',
+    desc:'Ausgang ist <strong>1</strong>, wenn <strong>mindestens ein</strong> Eingang 1 ist.',
+    fn:(a,b)=>a|b, inputs:2,
+    tt:[[0,0,0],[0,1,1],[1,0,1],[1,1,1]] },
+  { id:'not', name:'NOT', en:'Negation · NICHT', color:'var(--pink)', sym:'¬',
+    desc:'<strong>Invertiert</strong> den Eingang: Aus 0 wird 1, aus 1 wird 0. Nur <strong>ein</strong> Eingang.',
+    fn:(a)=>a?0:1, inputs:1,
+    tt:[[0,1],[1,0]] },
+  { id:'nand', name:'NAND', en:'NOT-AND', color:'var(--orange)', sym:'⊼',
+    desc:'<strong>Negiertes AND</strong> – Ausgang ist 0, nur wenn <strong>beide</strong> Eingänge 1 sind. Sonst 1.',
+    fn:(a,b)=>(a&b)?0:1, inputs:2,
+    tt:[[0,0,1],[0,1,1],[1,0,1],[1,1,0]] },
+  { id:'nor', name:'NOR', en:'NOT-OR', color:'var(--yellow)', sym:'⊽',
+    desc:'<strong>Negiertes OR</strong> – Ausgang ist 1, nur wenn <strong>beide</strong> Eingänge 0 sind.',
+    fn:(a,b)=>(a|b)?0:1, inputs:2,
+    tt:[[0,0,1],[0,1,0],[1,0,0],[1,1,0]] },
+  { id:'xor', name:'XOR', en:'Exklusiv-ODER · Antivalenz', color:'var(--purple)', sym:'⊕',
+    desc:'Ausgang ist <strong>1</strong>, wenn die Eingänge <strong>unterschiedlich</strong> sind. Gleiche Eingänge → 0.',
+    fn:(a,b)=>a^b, inputs:2,
+    tt:[[0,0,0],[0,1,1],[1,0,1],[1,1,0]] },
+];
+
+const grid = document.getElementById('gates-grid');
+gates.forEach(g => {
+  const card = document.createElement('div');
+  card.className = `gate-card g-${g.id}`;
+
+  const isUnary = g.inputs === 1;
+
+  // Truth table HTML
+  let ttHTML = '<table class="truth-table">';
+  if (isUnary) {
+    ttHTML += '<tr><th>A</th><th>Y</th></tr>';
+    g.tt.forEach(r => ttHTML += `<tr><td class="v${r[0]}">${r[0]}</td><td class="v${r[1]}">${r[1]}</td></tr>`);
+  } else {
+    ttHTML += '<tr><th>A</th><th>B</th><th>Y</th></tr>';
+    g.tt.forEach(r => ttHTML += `<tr><td class="v${r[0]}">${r[0]}</td><td class="v${r[1]}">${r[1]}</td><td class="v${r[2]}">${r[2]}</td></tr>`);
+  }
+  ttHTML += '</table>';
+
+  card.innerHTML = `
+    <div class="gate-header">
+      <div class="gate-sym" style="background:${g.color}18;color:${g.color}">${g.sym}</div>
+      <div><h3 style="color:${g.color}">${g.name}</h3><span class="gate-en">${g.en}</span></div>
+    </div>
+    <div class="gate-desc">${g.desc}</div>
+    <div class="gate-sim" id="sim-${g.id}">
+      <div class="sim-input">
+        <div class="sim-label">A</div>
+        <div class="sim-btn off" data-gate="${g.id}" data-input="a" onclick="toggleGate(this)">0</div>
+      </div>
+      ${!isUnary ? `<div class="sim-input"><div class="sim-label">B</div><div class="sim-btn off" data-gate="${g.id}" data-input="b" onclick="toggleGate(this)">0</div></div>` : ''}
+      <span class="sim-arrow">→</span>
+      <div class="sim-gate-icon" style="color:${g.color};border-color:${g.color}44">${g.name}</div>
+      <span class="sim-arrow">→</span>
+      <div class="sim-output off" id="out-${g.id}">0</div>
+    </div>
+    ${ttHTML}`;
+  grid.appendChild(card);
+});
+
+// Gate state
+const gateState = {};
+gates.forEach(g => gateState[g.id] = { a: 0, b: 0 });
+
+function toggleGate(el) {
+  const gateId = el.dataset.gate;
+  const input = el.dataset.input;
+  gateState[gateId][input] = gateState[gateId][input] ? 0 : 1;
+  const val = gateState[gateId][input];
+  el.textContent = val;
+  el.classList.toggle('on', val === 1);
+  el.classList.toggle('off', val === 0);
+  updateGate(gateId);
+}
+
+function updateGate(gateId) {
+  const g = gates.find(x => x.id === gateId);
+  const s = gateState[gateId];
+  const result = g.inputs === 1 ? g.fn(s.a) : g.fn(s.a, s.b);
+  const outEl = document.getElementById('out-' + gateId);
+  outEl.textContent = result;
+  outEl.classList.toggle('on', result === 1);
+  outEl.classList.toggle('off', result === 0);
+}
+
+// ── Adder Simulator ──
+const adderState = { ha: { a:0, b:0 }, va: { a:0, b:0, cin:0 } };
+
+function toggleAdder(el, type) {
+  const id = el.dataset.id;
+  const key = id.replace(type+'-','');
+  adderState[type][key] = adderState[type][key] ? 0 : 1;
+  const val = adderState[type][key];
+  el.textContent = val;
+  el.classList.toggle('on', val === 1);
+  el.classList.toggle('off', val === 0);
+  updateAdder(type);
+}
+
+function updateAdder(type) {
+  if (type === 'ha') {
+    const {a, b} = adderState.ha;
+    const s = a ^ b;
+    const c = a & b;
+    setAdderOut('ha-s', s);
+    setAdderOut('ha-c', c);
+  } else {
+    const {a, b, cin} = adderState.va;
+    const s = a ^ b ^ cin;
+    const cout = (a & b) | (cin & (a ^ b));
+    setAdderOut('va-s', s);
+    setAdderOut('va-cout', cout);
+  }
+}
+
+function setAdderOut(id, val) {
+  const el = document.getElementById(id);
+  el.textContent = val;
+  el.classList.toggle('on', val === 1);
+  el.classList.toggle('off', val === 0);
+}
+
+// ── Adder Tabs ──
+document.querySelectorAll('.adder-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.adder-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.adder-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ═══════════════════════════════════════════════
+//  GLOSSARY LEARNING SYSTEM
+// ═══════════════════════════════════════════════
+
+const GLOSSARY_KEY = 'glossary-logik-addierer';
+
+const glossaryTerms = [
+  {
+    id: 'and-gatter',
+    term: 'AND-Gatter',
+    icon: '∧',
+    short: 'Ausgang 1 nur wenn alle Eingaenge 1',
+    definition: 'Das AND-Gatter (Konjunktion) ist ein logisches Gatter mit zwei oder mehr Eingaengen und einem Ausgang. Der Ausgang liefert genau dann eine logische 1, wenn saemtliche Eingaenge gleichzeitig auf 1 liegen. Liegt auch nur ein Eingang auf 0, ist der Ausgang 0. Das Schaltsymbol ist das kaufmaennische Und-Zeichen bzw. der Punkt in der Booleschen Algebra: Y = A \u2227 B.',
+    analogy: 'Wie eine Reihenschaltung zweier Lichtschalter: Nur wenn beide Schalter AN sind, leuchtet die Lampe. Sobald einer AUS ist, bleibt es dunkel.',
+    hints: [
+      'Denke an das Wort "UND" \u2013 A UND B muessen beide wahr sein.',
+      'Die Wahrheitstabelle hat nur in der letzten Zeile (1,1) eine 1 am Ausgang.',
+      'In der Booleschen Algebra schreibt man Y = A \u00b7 B oder Y = A \u2227 B.'
+    ],
+    questions: {
+      fill: {
+        q: 'Wie lautet die Boolesche Formel fuer das AND-Gatter? Y = A ___ B',
+        a: ['\u2227', 'AND', 'und', '\u00b7', '*', 'and']
+      },
+      choice: {
+        q: 'Wann liefert ein AND-Gatter den Ausgang 1?',
+        options: [
+          'Wenn mindestens ein Eingang 1 ist',
+          'Wenn alle Eingaenge 1 sind',
+          'Wenn die Eingaenge unterschiedlich sind',
+          'Wenn alle Eingaenge 0 sind'
+        ],
+        correct: 1
+      },
+      explain: {
+        q: 'Erklaere in eigenen Worten, was ein AND-Gatter macht und wofuer es im Halbaddierer verwendet wird.',
+        keywords: ['alle', 'eingang', '1', 'uebertrag', 'carry', 'konjunktion', 'halbaddierer', 'beide']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'or-gatter',
+    term: 'OR-Gatter',
+    icon: '∨',
+    short: 'Ausgang 1 wenn mindestens ein Eingang 1',
+    definition: 'Das OR-Gatter (Disjunktion) liefert am Ausgang eine 1, sobald mindestens einer seiner Eingaenge auf 1 liegt. Nur wenn alle Eingaenge 0 sind, ist auch der Ausgang 0. In der Booleschen Algebra: Y = A \u2228 B. Das OR-Gatter ist ein Grundbaustein digitaler Schaltungen.',
+    analogy: 'Wie eine Parallelschaltung zweier Lichtschalter: Sobald mindestens ein Schalter AN ist, leuchtet die Lampe. Nur wenn beide AUS sind, bleibt es dunkel.',
+    hints: [
+      'Denke an "ODER" \u2013 A ODER B (oder beide) muessen wahr sein.',
+      'Die Wahrheitstabelle hat nur in der ersten Zeile (0,0) eine 0 am Ausgang.',
+      'Im Volladdierer verbindet ein OR-Gatter die Uebertraege der beiden Halbaddierer.'
+    ],
+    questions: {
+      fill: {
+        q: 'Wann ist der Ausgang eines OR-Gatters 0? Nur wenn ___ Eingaenge 0 sind.',
+        a: ['alle', 'beide', 'saemtliche']
+      },
+      choice: {
+        q: 'Welche Rolle spielt das OR-Gatter im Volladdierer?',
+        options: [
+          'Es berechnet die Summe S',
+          'Es invertiert den Eingang',
+          'Es verknuepft die Uebertraege der zwei Halbaddierer zu Cout',
+          'Es hat im Volladdierer keine Funktion'
+        ],
+        correct: 2
+      },
+      explain: {
+        q: 'Beschreibe die Funktion eines OR-Gatters und nenne den Unterschied zum AND-Gatter.',
+        keywords: ['mindestens', 'eingang', '1', 'disjunktion', 'oder', 'parallel', 'unterschied']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'not-gatter',
+    term: 'NOT-Gatter (Inverter)',
+    icon: '¬',
+    short: 'Invertiert den Eingang: 0 wird 1, 1 wird 0',
+    definition: 'Das NOT-Gatter (Negation, Inverter) besitzt genau einen Eingang und einen Ausgang. Es kehrt den logischen Zustand um: Liegt am Eingang eine 1 an, liefert der Ausgang 0 \u2013 und umgekehrt. In der Booleschen Algebra schreibt man Y = \u00acA oder Y = A\u0305. Der Inverter ist elementar fuer den Aufbau von NAND- und NOR-Gattern.',
+    analogy: 'Wie ein Umkehr-Spiegel: Was reinkommt, wird ins Gegenteil verwandelt. Licht rein \u2192 Dunkel raus, Dunkel rein \u2192 Licht raus.',
+    hints: [
+      'NOT hat nur EINEN Eingang \u2013 das unterscheidet es von allen anderen Grundgattern.',
+      'NAND = NOT + AND, NOR = NOT + OR \u2013 der Inverter steckt also in vielen Gattern.',
+      'Die Wahrheitstabelle hat nur zwei Zeilen: 0\u21921 und 1\u21920.'
+    ],
+    questions: {
+      fill: {
+        q: 'Ein NOT-Gatter wird auch ___ genannt.',
+        a: ['inverter', 'negation', 'nicht-gatter', 'nicht']
+      },
+      choice: {
+        q: 'Wie viele Eingaenge hat ein NOT-Gatter?',
+        options: [
+          'Keinen Eingang',
+          'Genau einen Eingang',
+          'Genau zwei Eingaenge',
+          'Beliebig viele Eingaenge'
+        ],
+        correct: 1
+      },
+      explain: {
+        q: 'Erklaere, was ein NOT-Gatter macht und warum es fuer NAND- und NOR-Gatter wichtig ist.',
+        keywords: ['invertiert', 'negation', 'eingang', 'ausgang', 'umkehrt', 'nand', 'nor', 'gegenteil']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'xor-gatter',
+    term: 'XOR-Gatter',
+    icon: '⊕',
+    short: 'Ausgang 1 wenn Eingaenge unterschiedlich',
+    definition: 'Das XOR-Gatter (Exklusiv-ODER, Antivalenz) liefert genau dann eine 1 am Ausgang, wenn die beiden Eingaenge unterschiedliche Werte haben (einer 0 und einer 1). Bei gleichen Eingaengen (beide 0 oder beide 1) ist der Ausgang 0. Formel: Y = A \u2295 B. Das XOR-Gatter bildet die Summenberechnung im Halb- und Volladdierer.',
+    analogy: 'Wie ein Wechselschalter im Flur: Das Licht aendert seinen Zustand nur, wenn genau EINER der beiden Schalter betaetigt wird. Beide gleichzeitig \u2192 keine Aenderung.',
+    hints: [
+      'XOR = "entweder A oder B, aber nicht beide" \u2013 Exklusiv-ODER.',
+      'Im Halbaddierer berechnet XOR die Summe S = A \u2295 B.',
+      'XOR ist wie Addition ohne Uebertrag: 1+1=0 (der Uebertrag geht ans AND-Gatter).'
+    ],
+    questions: {
+      fill: {
+        q: 'Im Halbaddierer berechnet das XOR-Gatter die ___.',
+        a: ['summe', 'summe s', 's']
+      },
+      choice: {
+        q: 'Was ist der Ausgang eines XOR-Gatters bei Eingaengen A=1 und B=1?',
+        options: [
+          '1, weil beide Eingaenge aktiv sind',
+          '0, weil die Eingaenge gleich sind',
+          '1, weil mindestens ein Eingang aktiv ist',
+          'Undefiniert'
+        ],
+        correct: 1
+      },
+      explain: {
+        q: 'Erklaere den Unterschied zwischen XOR und OR und die Rolle von XOR im Addierer.',
+        keywords: ['unterschiedlich', 'exklusiv', 'summe', 'halbaddierer', 'gleich', 'entweder']
+      }
+    },
+    difficulty: 2
+  },
+  {
+    id: 'halbaddierer',
+    term: 'Halbaddierer',
+    icon: '&#xbd;',
+    short: 'Addiert 2 Bits, erzeugt Summe und Carry',
+    definition: 'Der Halbaddierer (Half Adder, HA) ist eine Schaltung, die zwei einstellige Binaerzahlen A und B addiert. Er besitzt zwei Ausgaenge: die Summe S = A \u2295 B (XOR) und den Uebertrag C = A \u2227 B (AND). Er kann keinen eingehenden Uebertrag verarbeiten und wird daher nur fuer das niederwertigste Bit (LSB) eingesetzt.',
+    analogy: 'Wie ein einfacher Taschenrechner, der nur zwei einzelne Ziffern addieren kann, aber nicht weiss, ob von einer vorherigen Rechnung noch etwas "uebrig" ist.',
+    hints: [
+      'Der HA besteht aus genau zwei Gattern: XOR (fuer S) und AND (fuer C).',
+      '"Halb", weil er keinen Carry-Eingang hat \u2013 er kann keinen eingehenden Uebertrag verarbeiten.',
+      'Fuer ein n-Bit-Addierwerk braucht man 1 HA (LSB) + (n\u22121) Volladdierer.'
+    ],
+    questions: {
+      fill: {
+        q: 'Ein Halbaddierer besteht intern aus einem ___-Gatter und einem ___-Gatter.',
+        a: ['xor', 'and']
+      },
+      choice: {
+        q: 'Warum heisst der Halbaddierer "halb"?',
+        options: [
+          'Weil er nur einen Ausgang hat',
+          'Weil er nur halbe Bits verarbeiten kann',
+          'Weil er keinen eingehenden Uebertrag (Carry-In) verarbeiten kann',
+          'Weil er doppelt so langsam ist wie ein Volladdierer'
+        ],
+        correct: 2
+      },
+      explain: {
+        q: 'Beschreibe den Aufbau und die Funktion eines Halbaddierers. Welche Gatter werden verwendet und welche Ausgaenge entstehen?',
+        keywords: ['xor', 'and', 'summe', 'uebertrag', 'carry', 'zwei', 'bit', 'gatter']
+      }
+    },
+    difficulty: 2
+  },
+  {
+    id: 'volladdierer',
+    term: 'Volladdierer',
+    icon: '&#x2b;',
+    short: 'Addiert 3 Bits (A, B, Carry-In)',
+    definition: 'Der Volladdierer (Full Adder, VA) addiert drei Bits: zwei Summanden A und B sowie einen eingehenden Uebertrag Cin. Er liefert eine Summe S = A \u2295 B \u2295 Cin und einen ausgehenden Uebertrag Cout = (A \u2227 B) \u2228 (Cin \u2227 (A \u2295 B)). Intern besteht er aus zwei Halbaddierern und einem OR-Gatter. Durch Kaskadierung mehrerer VA entsteht ein Ripple-Carry-Addierer fuer beliebig lange Binaerzahlen.',
+    analogy: 'Wie ein Kassierer, der zwei neue Betraege plus einen Rest von der letzten Runde zusammenzaehlt. Er kann den "Uebertrag" von vorherigen Berechnungen mitverarbeiten.',
+    hints: [
+      'VA = 2 Halbaddierer + 1 OR-Gatter.',
+      'Der erste HA addiert A und B, der zweite addiert das Ergebnis mit Cin.',
+      'Das OR-Gatter verknuepft die Uebertraege beider HAs zum Gesamt-Carry Cout.'
+    ],
+    questions: {
+      fill: {
+        q: 'Ein Volladdierer besteht intern aus ___ Halbaddierern und einem ___-Gatter.',
+        a: ['2', 'or', 'zwei']
+      },
+      choice: {
+        q: 'Wie viele Eingaenge hat ein Volladdierer?',
+        options: [
+          '2 Eingaenge (A, B)',
+          '3 Eingaenge (A, B, Cin)',
+          '4 Eingaenge (A, B, Cin, Cout)',
+          '1 Eingang (A)'
+        ],
+        correct: 1
+      },
+      explain: {
+        q: 'Erklaere den inneren Aufbau eines Volladdierers und warum er fuer mehrstellige Binaeraddition unverzichtbar ist.',
+        keywords: ['halbaddierer', 'or', 'uebertrag', 'cin', 'cout', 'kaskad', 'drei', 'bit']
+      }
+    },
+    difficulty: 3
+  },
+  {
+    id: 'wahrheitstabelle',
+    term: 'Wahrheitstabelle',
+    icon: '📊',
+    short: 'Tabelle aller Ein-/Ausgabekombinationen',
+    definition: 'Eine Wahrheitstabelle (Truth Table) listet systematisch alle moeglichen Kombinationen der Eingangsvariablen und die jeweils resultierenden Ausgangswerte einer logischen Schaltung auf. Bei n Eingaengen gibt es 2^n Zeilen. Sie ist das zentrale Werkzeug zur vollstaendigen Beschreibung und Analyse digitaler Schaltungen und Boolescher Funktionen.',
+    analogy: 'Wie ein vollstaendiger Fahrplan: Fuer jede denkbare Abfahrtszeit (Eingabe) steht die Ankunftszeit (Ausgabe) schwarz auf weiss. Nichts bleibt unklar, weil jede Moeglichkeit abgedeckt ist.',
+    hints: [
+      'Bei 2 Eingaengen: 2\u00b2 = 4 Zeilen, bei 3 Eingaengen: 2\u00b3 = 8 Zeilen.',
+      'Die Eingangskombinationen werden oft in aufsteigender Binaer-Reihenfolge aufgelistet (00, 01, 10, 11).',
+      'Mit einer Wahrheitstabelle kann man jede beliebige Boolesche Funktion eindeutig beschreiben.'
+    ],
+    questions: {
+      fill: {
+        q: 'Bei n Eingaengen hat eine Wahrheitstabelle ___ Zeilen.',
+        a: ['2^n', '2 hoch n', '2n', '2**n']
+      },
+      choice: {
+        q: 'Wie viele Zeilen hat die Wahrheitstabelle eines Volladdierers (3 Eingaenge)?',
+        options: [
+          '3 Zeilen',
+          '6 Zeilen',
+          '8 Zeilen',
+          '16 Zeilen'
+        ],
+        correct: 2
+      },
+      explain: {
+        q: 'Erklaere, was eine Wahrheitstabelle ist und warum sie fuer logische Schaltungen so wichtig ist.',
+        keywords: ['kombination', 'eingang', 'ausgang', 'zeile', 'vollstaendig', 'logisch', 'boolesch']
+      }
+    },
+    difficulty: 1
+  },
+  {
+    id: 'boolesche-algebra',
+    term: 'Boolesche Algebra',
+    icon: '🔣',
+    short: 'Mathematisches System mit 0 und 1',
+    definition: 'Die Boolesche Algebra (nach George Boole) ist ein algebraisches System, das nur mit den Werten 0 (falsch) und 1 (wahr) arbeitet. Die Grundoperationen sind Konjunktion (AND, \u2227), Disjunktion (OR, \u2228) und Negation (NOT, \u00ac). Wichtige Gesetze sind u.a. Kommutativ-, Assoziativ-, Distributiv- und De-Morgansche Gesetze. Sie bildet die mathematische Grundlage aller digitalen Schaltungen.',
+    analogy: 'Wie eine vereinfachte Mathematik, in der es nur "Ja" und "Nein" gibt. Statt komplexer Zahlen rechnet man nur mit Wahrheitswerten \u2013 und trotzdem lassen sich damit ganze Computer bauen.',
+    hints: [
+      'Die drei Grundoperationen: AND (\u2227), OR (\u2228), NOT (\u00ac).',
+      'De-Morgansche Gesetze: \u00ac(A\u2227B) = \u00acA\u2228\u00acB und \u00ac(A\u2228B) = \u00acA\u2227\u00acB.',
+      'Alle logischen Gatter und Addierer basieren auf Boolescher Algebra.'
+    ],
+    questions: {
+      fill: {
+        q: 'Die drei Grundoperationen der Booleschen Algebra sind AND, OR und ___.',
+        a: ['not', 'negation', 'nicht', '\u00ac']
+      },
+      choice: {
+        q: 'Welches Gesetz besagt: \u00ac(A \u2227 B) = \u00acA \u2228 \u00acB?',
+        options: [
+          'Kommutativgesetz',
+          'Assoziativgesetz',
+          'De-Morgansches Gesetz',
+          'Distributivgesetz'
+        ],
+        correct: 2
+      },
+      explain: {
+        q: 'Beschreibe, was die Boolesche Algebra ist und nenne mindestens zwei ihrer wichtigen Gesetze.',
+        keywords: ['0', '1', 'and', 'or', 'not', 'gesetz', 'de morgan', 'digital', 'grundlage', 'logisch']
+      }
+    },
+    difficulty: 2
+  }
+];
+
+// Term map for highlighting text in the page
+const glossaryTermMap = {
+  'and-gatter': ['AND-Gatter', 'AND', 'Konjunktion', 'UND'],
+  'or-gatter': ['OR-Gatter', 'OR', 'Disjunktion', 'ODER'],
+  'not-gatter': ['NOT-Gatter', 'NOT', 'Negation', 'Inverter', 'NICHT', 'invertiert', 'Invertiert', 'negiert'],
+  'xor-gatter': ['XOR-Gatter', 'XOR', 'Exklusiv-ODER', 'Antivalenz'],
+  'halbaddierer': ['Halbaddierer', 'Half Adder', 'HA'],
+  'volladdierer': ['Volladdierer', 'Full Adder', 'VA'],
+  'wahrheitstabelle': ['Wahrheitstabelle', 'Wahrheitstabellen', 'Truth Table'],
+  'boolesche-algebra': ['Boolesche Algebra', 'Booleschen Algebra', 'Boolescher Algebra', 'Boolesch', 'booleschen', 'Boolean']
+};
+
+let glossaryData = {};
+let glossaryActiveId = null;
+let glossaryHintIndex = 0;
+
+function glossaryLoad() {
+  try {
+    const raw = localStorage.getItem(GLOSSARY_KEY);
+    if (raw) { glossaryData = JSON.parse(raw); }
+  } catch(e) { glossaryData = {}; }
+  glossaryTerms.forEach(t => {
+    if (!glossaryData[t.id]) {
+      glossaryData[t.id] = { level: 0, phase: 0 };
+    }
+  });
+}
+
+function glossarySave() {
+  localStorage.setItem(GLOSSARY_KEY, JSON.stringify(glossaryData));
+}
+
+function glossaryRenderGrid() {
+  const grid = document.getElementById('glossary-grid');
+  grid.innerHTML = '';
+  glossaryTerms.forEach(t => {
+    const d = glossaryData[t.id];
+    const card = document.createElement('div');
+    card.className = 'glossary-card' + (glossaryActiveId === t.id ? ' active' : '');
+    card.dataset.level = d.level;
+    card.onclick = () => glossaryOpen(t.id);
+    card.innerHTML = `
+      <div class="gc-level"></div>
+      <div class="gc-icon">${t.icon}</div>
+      <div class="gc-term">${t.term}</div>
+      <div class="gc-short">${t.short}</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function glossaryUpdateProgress() {
+  const mastered = glossaryTerms.filter(t => glossaryData[t.id].level >= 3).length;
+  const total = glossaryTerms.length;
+  const pct = Math.round((mastered / total) * 100);
+  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
+  document.getElementById('glossary-fill').style.width = pct + '%';
+  document.getElementById('glossary-count').textContent = pct + '%';
+}
+
+function glossaryOpen(id) {
+  glossaryActiveId = id;
+  glossaryHintIndex = 0;
+  const panel = document.getElementById('glossary-learn');
+  const term = glossaryTerms.find(t => t.id === id);
+  const d = glossaryData[id];
+  document.getElementById('gl-title').textContent = term.icon + ' ' + term.term;
+  panel.classList.add('visible');
+  glossaryRenderGrid();
+  glossaryRenderPhases(d.level >= 3 ? 3 : d.phase);
+  if (d.level >= 3) {
+    glossaryMastered(term);
+  } else if (d.phase === 0) {
+    glossaryPhase1(term);
+  } else if (d.phase === 1) {
+    glossaryPhase2(term);
+  } else {
+    glossaryPhase3(term);
+  }
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function glossaryRenderPhases(currentPhase) {
+  const names = ['Verstehen', 'Anwenden', 'Erklaeren'];
+  const container = document.getElementById('gl-phases');
+  container.innerHTML = '';
+  const d = glossaryActiveId ? glossaryData[glossaryActiveId] : null;
+  const maxReached = d ? (d.level >= 3 ? 2 : d.level) : 0;
+  names.forEach((n, i) => {
+    const el = document.createElement('span');
+    el.className = 'gl-phase';
+    if (i < currentPhase) el.classList.add('done');
+    if (i === currentPhase && currentPhase < 3) el.classList.add('current');
+    el.textContent = (i + 1) + '. ' + n;
+    if ((el.classList.contains('done') || el.classList.contains('current')) && i <= maxReached) {
+      el.onclick = function() { glossaryGoToPhase(i); };
+    }
+    container.appendChild(el);
+  });
+}
+
+function glossaryGoToPhase(phaseIdx) {
+  if (!glossaryActiveId) return;
+  const term = glossaryTerms.find(t => t.id === glossaryActiveId);
+  if (!term) return;
+  glossaryHintIndex = 0;
+  glossaryRenderPhases(phaseIdx);
+  if (phaseIdx === 0) {
+    glossaryPhase1(term);
+  } else if (phaseIdx === 1) {
+    glossaryPhase2(term);
+  } else {
+    glossaryPhase3(term);
+  }
+}
+
+function glossaryPhase1(term) {
+  glossaryHintIndex = 0;
+  const content = document.getElementById('gl-content');
+  content.innerHTML = `
+    <div class="gl-analogy">\u{1f4a1} <strong>Analogie:</strong> ${term.analogy}</div>
+    <div class="gl-definition">${term.definition}</div>
+    <div class="gl-hints" id="gl-hints">
+      ${term.hints.map((h, i) => '<div class="gl-hint" id="gl-hint-' + i + '">\u{1f50d} ' + h + '</div>').join('')}
+    </div>
+    <button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">Hinweis anzeigen (${term.hints.length} verfuegbar)</button>
+    <div style="margin-top:8px">
+      <button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden \u2192 weiter</button>
+    </div>
+  `;
+}
+
+function glossaryNextHint() {
+  const term = glossaryTerms.find(t => t.id === glossaryActiveId);
+  if (glossaryHintIndex < term.hints.length) {
+    const el = document.getElementById('gl-hint-' + glossaryHintIndex);
+    if (el) el.classList.add('visible');
+    glossaryHintIndex++;
+    const remaining = term.hints.length - glossaryHintIndex;
+    const btn = document.getElementById('gl-hint-btn');
+    if (remaining > 0) {
+      btn.textContent = 'Naechster Hinweis (' + remaining + ' uebrig)';
+    } else {
+      btn.textContent = 'Alle Hinweise angezeigt';
+      btn.disabled = true;
+      btn.style.opacity = '0.5';
+    }
+  }
+}
+
+function glossaryPhase2(term) {
+  const content = document.getElementById('gl-content');
+  const q = term.questions;
+  // Randomly pick fill or choice
+  const type = Math.random() < 0.5 ? 'fill' : 'choice';
+  if (type === 'fill') {
+    content.innerHTML = `
+      <div class="gl-question">${q.fill.q}</div>
+      <input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben..." onkeydown="if(event.key==='Enter')glossaryCheckFill()">
+      <button class="gl-btn primary" onclick="glossaryCheckFill()">Pruefen</button>
+      <div id="gl-feedback"></div>
+    `;
+  } else {
+    const shuffled = q.choice.options.map((o, i) => ({ text: o, idx: i }));
+    // Shuffle
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    content.innerHTML = `
+      <div class="gl-question">${q.choice.q}</div>
+      <div class="gl-choices" id="gl-choices">
+        ${shuffled.map(o => '<button class="gl-choice" data-idx="' + o.idx + '" onclick="glossaryCheckChoice(this,' + q.choice.correct + ')">' + o.text + '</button>').join('')}
+      </div>
+      <div id="gl-feedback"></div>
+    `;
+  }
+}
+
+function glossaryCheckFill() {
+  const term = glossaryTerms.find(t => t.id === glossaryActiveId);
+  const input = document.getElementById('gl-fill-input');
+  const val = input.value.trim().toLowerCase();
+  const fb = document.getElementById('gl-feedback');
+  if (!val) return;
+  const answers = term.questions.fill.a.map(a => a.toLowerCase());
+  if (answers.some(a => val.includes(a) || a.includes(val))) {
+    fb.innerHTML = '<div class="gl-feedback success">\u2713 Richtig! ' + term.questions.fill.a[0] + ' ist korrekt.</div><div style="margin-top:12px"><button class="gl-btn primary" onclick="glossaryLevelUp()">Weiter \u2192</button></div>';
+    input.disabled = true;
+  } else {
+    fb.innerHTML = '<div class="gl-feedback error">\u2717 Nicht ganz. Die richtige Antwort enthaelt: <strong>' + term.questions.fill.a[0] + '</strong></div><div style="margin-top:12px"><button class="gl-btn primary" onclick="glossaryPhase2(glossaryTerms.find(t=>t.id===glossaryActiveId))">Nochmal versuchen</button></div>';
+  }
+}
+
+function glossaryCheckChoice(el, correctIdx) {
+  const chosen = parseInt(el.dataset.idx);
+  const buttons = document.querySelectorAll('#gl-choices .gl-choice');
+  const fb = document.getElementById('gl-feedback');
+  buttons.forEach(b => {
+    b.disabled = true;
+    b.style.pointerEvents = 'none';
+    if (parseInt(b.dataset.idx) === correctIdx) b.classList.add('correct');
+  });
+  if (chosen === correctIdx) {
+    el.classList.add('correct');
+    fb.innerHTML = '<div class="gl-feedback success">\u2713 Richtig!</div><div style="margin-top:12px"><button class="gl-btn primary" onclick="glossaryLevelUp()">Weiter \u2192</button></div>';
+  } else {
+    el.classList.add('wrong');
+    fb.innerHTML = '<div class="gl-feedback error">\u2717 Leider falsch. Die richtige Antwort ist gruen markiert.</div><div style="margin-top:12px"><button class="gl-btn primary" onclick="glossaryPhase2(glossaryTerms.find(t=>t.id===glossaryActiveId))">Nochmal versuchen</button></div>';
+  }
+}
+
+function glossaryPhase3(term) {
+  const content = document.getElementById('gl-content');
+  const q = term.questions.explain;
+  content.innerHTML = `
+    <div class="gl-question">${q.q}</div>
+    <textarea class="gl-input" id="gl-explain-input" placeholder="Erklaere in eigenen Worten..."></textarea>
+    <button class="gl-btn primary" onclick="glossaryCheckExplain()">Erklaerung pruefen</button>
+    <div id="gl-feedback"></div>
+  `;
+}
+
+function glossaryCheckExplain() {
+  const term = glossaryTerms.find(t => t.id === glossaryActiveId);
+  const input = document.getElementById('gl-explain-input');
+  const val = input.value.trim().toLowerCase();
+  const fb = document.getElementById('gl-feedback');
+  if (val.length < 10) {
+    fb.innerHTML = '<div class="gl-feedback info">Bitte schreibe mindestens 2\u20133 Saetze.</div>';
+    return;
+  }
+  const keywords = term.questions.explain.keywords;
+  const found = [];
+  const missing = [];
+  keywords.forEach(kw => {
+    if (val.includes(kw.toLowerCase())) {
+      found.push(kw);
+    } else {
+      missing.push(kw);
+    }
+  });
+  const score = found.length / keywords.length;
+  let html = '<div class="gl-feedback ' + (score >= 0.4 ? 'success' : 'error') + '">';
+  if (score >= 0.4) {
+    html += '\u2713 Gute Erklaerung! ';
+    if (missing.length > 0) {
+      html += 'Du koenntest noch erwaehnen: ';
+    }
+  } else {
+    html += '\u2717 Versuche folgende Begriffe einzubauen: ';
+  }
+  html += '</div><div style="margin-top:8px">';
+  found.forEach(k => html += '<span class="gl-keyword found">\u2713 ' + k + '</span>');
+  missing.forEach(k => html += '<span class="gl-keyword missing">\u2717 ' + k + '</span>');
+  html += '</div>';
+  if (score >= 0.4) {
+    html += '<div style="margin-top:12px"><button class="gl-btn primary" onclick="glossaryLevelUp()">Gemeistert! \u2192</button></div>';
+  } else {
+    html += '<div style="margin-top:12px"><button class="gl-btn primary" onclick="glossaryPhase3(glossaryTerms.find(t=>t.id===glossaryActiveId))">Nochmal versuchen</button></div>';
+  }
+  fb.innerHTML = html;
+}
+
+function glossaryMastered(term) {
+  const content = document.getElementById('gl-content');
+  content.innerHTML = `
+    <div class="gl-feedback success" style="text-align:center;padding:24px">
+      <div style="font-size:28px;margin-bottom:8px">\u2705</div>
+      <div style="font-size:15px;font-weight:600;color:var(--green);margin-bottom:6px">${term.term} gemeistert!</div>
+      <div style="font-size:12px;color:var(--muted);font-weight:300">Du hast alle drei Phasen abgeschlossen.</div>
+      <div style="margin-top:16px">
+        <button class="gl-btn primary" onclick="glossaryReset('${term.id}')" style="background:rgba(255,255,255,.06);font-size:11px;padding:8px 16px">Zuruecksetzen</button>
+      </div>
+    </div>
+  `;
+}
+
+function glossaryLevelUp() {
+  if (!glossaryActiveId) return;
+  const d = glossaryData[glossaryActiveId];
+  const term = glossaryTerms.find(t => t.id === glossaryActiveId);
+  if (d.phase < 2) {
+    d.phase++;
+    if (d.phase > d.level) d.level = d.phase;
+  } else {
+    d.level = 3;
+    d.phase = 3;
+  }
+  glossarySave();
+  glossaryRenderGrid();
+  glossaryUpdateProgress();
+  glossaryOpen(glossaryActiveId);
+}
+
+function glossaryReset(id) {
+  glossaryData[id] = { level: 0, phase: 0 };
+  glossarySave();
+  glossaryRenderGrid();
+  glossaryUpdateProgress();
+  glossaryOpen(id);
+}
+
+function glossaryClose() {
+  glossaryActiveId = null;
+  document.getElementById('glossary-learn').classList.remove('visible');
+  glossaryRenderGrid();
+}
+
+// ── Highlight glossary terms in page content ──
+function glossaryHighlightTerms() {
+  const selectors = ['.gate-desc', '.a-desc', '.summary-card p'];
+  const containers = [];
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => containers.push(el));
+  });
+
+  containers.forEach(container => {
+    let html = container.innerHTML;
+    // Track which positions have already been replaced to avoid double-wrapping
+    const replacements = [];
+
+    glossaryTerms.forEach(term => {
+      const variants = glossaryTermMap[term.id] || [term.term];
+      variants.forEach(variant => {
+        // Only match whole words that aren't already inside a tag
+        const regex = new RegExp('(?<![<\\w/])\\b(' + variant.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')\\b(?![^<]*>)', 'g');
+        let match;
+        while ((match = regex.exec(html)) !== null) {
+          // Check if this position overlaps with any existing replacement
+          const start = match.index;
+          const end = start + match[0].length;
+          const overlaps = replacements.some(r => !(end <= r.start || start >= r.end));
+          if (!overlaps) {
+            replacements.push({ start, end, id: term.id, original: match[0] });
+          }
+        }
+      });
+    });
+
+    // Sort by position descending to replace from end to start
+    replacements.sort((a, b) => b.start - a.start);
+    replacements.forEach(r => {
+      html = html.substring(0, r.start) +
+        '<span class="glossary-term" data-glossary="' + r.id + '">' + r.original + '</span>' +
+        html.substring(r.end);
+    });
+    container.innerHTML = html;
+  });
+}
+
+// ── Floating Tooltip ──
+const glossaryTooltipEl = document.createElement('div');
+glossaryTooltipEl.className = 'glossary-tooltip';
+glossaryTooltipEl.innerHTML = '<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">\u2192 Klicken zum Lernen</div>';
+document.body.appendChild(glossaryTooltipEl);
+
+document.addEventListener('mouseover', function(e) {
+  const target = e.target.closest('.glossary-term');
+  if (!target) { glossaryTooltipEl.style.display = 'none'; return; }
+  const id = target.dataset.glossary;
+  const term = glossaryTerms.find(t => t.id === id);
+  if (!term) return;
+  glossaryTooltipEl.querySelector('.gt-name').textContent = term.term;
+  glossaryTooltipEl.querySelector('.gt-short').textContent = term.short;
+  glossaryTooltipEl.style.display = 'block';
+  const rect = target.getBoundingClientRect();
+  let top = rect.bottom + 8;
+  let left = rect.left;
+  if (left + 260 > window.innerWidth) left = window.innerWidth - 270;
+  if (left < 10) left = 10;
+  if (top + 100 > window.innerHeight) top = rect.top - 100;
+  glossaryTooltipEl.style.top = top + 'px';
+  glossaryTooltipEl.style.left = left + 'px';
+});
+
+document.addEventListener('mouseout', function(e) {
+  if (e.target.closest('.glossary-term')) {
+    glossaryTooltipEl.style.display = 'none';
+  }
+});
+
+document.addEventListener('click', function(e) {
+  const target = e.target.closest('.glossary-term');
+  if (!target) return;
+  const id = target.dataset.glossary;
+  glossaryOpen(id);
+  document.getElementById('glossary-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+});
+
+// ── Initialize Glossary ──
+glossaryLoad();
+glossaryRenderGrid();
+glossaryUpdateProgress();
+glossaryHighlightTerms();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

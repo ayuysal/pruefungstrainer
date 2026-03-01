@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kryptographie & RSA Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul,.card ol{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul,.card ol{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}.card.c5::before{background:var(--yellow)}.card.c6::before{background:var(--orange)}
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.calc-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:end}
+.calc-row label{font-size:12px;font-weight:600;display:block;margin-bottom:4px}
+.calc-row input,.calc-row select{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;width:120px}
+.calc-row input:focus{border-color:var(--accent)}
+.calc-btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:#fff;transition:all .25s}
+.calc-btn:hover{background:#5a52e0;transform:translateY(-1px)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.result-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px}
+.result-item .rl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.result-item .rv{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cyan);font-weight:600;word-break:break-all}
+.step-list{margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:2.2;color:var(--muted)}
+.step-list .step-num{color:var(--accent);font-weight:700}
+.step-list .step-val{color:var(--cyan);font-weight:600}
+.enc-section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.enc-section h4{font-size:13px;font-weight:700;margin-bottom:12px;color:var(--text)}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:16px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace;line-height:1.6}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.multi-input{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-bottom:12px}
+.multi-input label{font-size:11px;font-weight:600;color:var(--muted);display:block;margin-bottom:4px}
+.multi-input input{font-family:'JetBrains Mono',monospace;font-size:15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;width:100%}
+.multi-input input:focus{border-color:var(--accent)}
+.multi-input input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.multi-input input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none;white-space:pre-wrap}
+.solution-box.show{display:block}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p,.summary-card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.summary-card ul{padding-left:16px;margin-top:4px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.calc-row input{width:90px}.multi-input{grid-template-columns:1fr}}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zur&uuml;ck zur &Uuml;bersicht</a>
+<header>
+<div class="tag">ITI26 &middot; Netzwerke / Sicherheit</div>
+<h1>Kryptographie &amp; RSA</h1>
+<p>Symmetrische &amp; asymmetrische Verschl&uuml;sselung, RSA Schritt f&uuml;r Schritt, digitale Signaturen &ndash; interaktiv &uuml;ben</p>
+</header>
+
+<!-- ========== REFERENZ ========== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#128274; Symmetrische Verschl&uuml;sselung</h3>
+<p>Ein <strong>gemeinsamer Schl&uuml;ssel</strong> f&uuml;r Ver- und Entschl&uuml;sselung.</p>
+<ul><li>Beispiele: AES, DES, 3DES, Blowfish</li><li>Sehr schnell &amp; effizient</li><li>Problem: Schl&uuml;sselverteilung &ndash; wie kommt der Schl&uuml;ssel sicher zum Empf&auml;nger?</li><li>n Teilnehmer brauchen n(n-1)/2 Schl&uuml;ssel</li></ul></div>
+<div class="card c2"><h3>&#128272; Asymmetrische Verschl&uuml;sselung</h3>
+<p><strong>&Ouml;ffentlicher Schl&uuml;ssel</strong> (Public Key) + <strong>Privater Schl&uuml;ssel</strong> (Private Key).</p>
+<ul><li>Beispiele: RSA, ECC, Diffie-Hellman</li><li>Kein Schl&uuml;sselverteilungsproblem</li><li>Deutlich langsamer als symmetrisch</li><li>Public Key verschl&uuml;sselt &rarr; nur Private Key entschl&uuml;sselt</li></ul></div>
+<div class="card c3"><h3>&#128256; Hybridverfahren</h3>
+<p>Kombination beider Verfahren f&uuml;r das Beste aus beiden Welten.</p>
+<ul><li>Asymmetrisch f&uuml;r Schl&uuml;sselaustausch</li><li>Symmetrisch f&uuml;r Nutzdaten</li><li>Beispiel: TLS/SSL (HTTPS)</li><li>Session Key wird per RSA ausgetauscht, Daten per AES verschl&uuml;sselt</li></ul></div>
+<div class="card c4"><h3>&#128290; RSA-Verfahren</h3>
+<ol>
+<li>W&auml;hle zwei Primzahlen <strong>p</strong> und <strong>q</strong></li>
+<li>Berechne <strong>n = p &times; q</strong></li>
+<li>Berechne <strong>&phi;(n) = (p&minus;1)(q&minus;1)</strong></li>
+<li>W&auml;hle <strong>e</strong> mit ggT(e, &phi;(n)) = 1</li>
+<li>Berechne <strong>d</strong> mit e &times; d &equiv; 1 mod &phi;(n)</li>
+<li>Verschl.: <strong>c = m<sup>e</sup> mod n</strong></li>
+<li>Entschl.: <strong>m = c<sup>d</sup> mod n</strong></li>
+</ol>
+<p style="margin-top:6px">&Ouml;ffentlicher Schl&uuml;ssel: (n, e) &bull; Privater Schl&uuml;ssel: (n, d)</p></div>
+<div class="card c5"><h3>&#9997;&#65039; Digitale Signatur</h3>
+<p>Sichert <strong>Authentizit&auml;t</strong> und <strong>Integrit&auml;t</strong> eines Dokuments.</p>
+<ol><li>Hash des Dokuments berechnen (z.B. SHA-256)</li><li>Hash mit <strong>privatem Schl&uuml;ssel</strong> signieren</li><li>Empf&auml;nger pr&uuml;ft Signatur mit <strong>&ouml;ffentlichem Schl&uuml;ssel</strong></li><li>Stimmt der entschl&uuml;sselte Hash &uuml;berein? &rarr; Signatur g&uuml;ltig</li></ol></div>
+<div class="card c6"><h3>&#128220; Zertifikate &amp; PKI</h3>
+<p><strong>Public Key Infrastructure</strong> verwaltet digitale Zertifikate.</p>
+<ul><li>Zertifikat bindet &ouml;ffentlichen Schl&uuml;ssel an Identit&auml;t</li><li>Ausgestellt von einer <strong>CA</strong> (Certificate Authority)</li><li>X.509-Standard, enth&auml;lt: Name, Public Key, G&uuml;ltigkeit, Signatur der CA</li><li>Vertrauenskette: Root CA &rarr; Intermediate CA &rarr; Endnutzer</li></ul></div>
+</div>
+
+<!-- ========== RSA RECHNER ========== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#128425;</div><h2>RSA-Rechner (Schritt f&uuml;r Schritt)</h2></div>
+<div class="calc-wrap">
+<div class="calc-row">
+<div><label>Primzahl p</label><input type="number" id="calc-p" value="5" min="2" max="97"></div>
+<div><label>Primzahl q</label><input type="number" id="calc-q" value="11" min="2" max="97"></div>
+<button class="calc-btn" onclick="rsaCalc()">Berechnen</button>
+</div>
+<div id="rsa-error" style="color:var(--red);font-size:13px;margin-bottom:8px;display:none"></div>
+<div class="result-grid" id="rsa-results"></div>
+<div class="step-list" id="rsa-steps"></div>
+<div class="enc-section" id="enc-section" style="display:none">
+<h4>Nachricht verschl&uuml;sseln / entschl&uuml;sseln</h4>
+<div class="calc-row">
+<div><label>Nachricht m (0 &lt; m &lt; n)</label><input type="number" id="calc-m" value="7" min="0"></div>
+<button class="calc-btn" onclick="rsaEncDec()">Ver-/Entschl&uuml;sseln</button>
+</div>
+<div class="result-grid" id="enc-results"></div>
+</div>
+</div>
+
+<!-- ========== UEBUNGSMODUS ========== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#127947;&#65039;</div><h2>&Uuml;bungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="rsacalc" onclick="setMode('rsacalc')">RSA berechnen</div>
+<div class="tab" data-mode="encrypt" onclick="setMode('encrypt')">Verschl&uuml;sseln</div>
+<div class="tab" data-mode="decrypt" onclick="setMode('decrypt')">Entschl&uuml;sseln</div>
+<div class="tab" data-mode="theory" onclick="setMode('theory')">Theorie</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- ========== GLOSSAR ========== -->
+<div class="glossary-section" id="glossary-section">
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--accent))">&#128214;</div><h2>Glossar &amp; Begriffe lernen</h2></div>
+<div class="glossary-progress-bar"><span class="gp-text">Fortschritt</span><div class="gp-bar"><div class="gp-fill" id="gp-fill" style="width:0%"></div></div><span class="gp-count" id="gp-count">0 / 8 gemeistert</span></div>
+<div class="glossary-grid" id="glossary-grid"></div>
+<div class="glossary-learn" id="glossary-learn">
+<div class="gl-header"><h3 id="gl-title"></h3><button class="gl-close" onclick="closeGlossaryLearn()">&times;</button></div>
+<div class="gl-phase-indicator" id="gl-phases"></div>
+<div class="gl-content" id="gl-content"></div>
+</div>
+</div>
+
+<!-- ========== ZUSAMMENFASSUNG ========== -->
+<div class="summary">
+<div class="summary-card"><h4>&#128161; Merke</h4><p>RSA-Sicherheit basiert auf der Schwierigkeit, grosse Zahlen in ihre Primfaktoren zu zerlegen. In der Praxis werden Schl&uuml;ssell&auml;ngen von mindestens 2048 Bit verwendet.</p></div>
+<div class="summary-card"><h4>&#127919; Pr&uuml;fungstipp</h4><p>RSA-Berechnungen mit kleinen Primzahlen kommen fast immer in der Pr&uuml;fung! &Uuml;be besonders:</p>
+<ul><li>&phi;(n) berechnen</li><li>d &uuml;ber den erweiterten Euklid finden</li><li>Modulare Potenz m<sup>e</sup> mod n</li></ul></div>
+<div class="summary-card"><h4>&#128274; Symmetrisch vs. Asymmetrisch</h4><p>Symmetrisch = schnell, ein Schl&uuml;ssel. Asymmetrisch = langsam, zwei Schl&uuml;ssel. In der Praxis kombiniert man beide (Hybrid) &ndash; z.B. bei TLS/HTTPS.</p></div>
+<div class="summary-card"><h4>&#9997;&#65039; Digitale Signatur</h4><p>Signieren = Hash mit Private Key verschl&uuml;sseln. Verifizieren = mit Public Key entschl&uuml;sseln und Hash vergleichen. Wichtig: Signatur sichert Integrit&auml;t UND Authentizit&auml;t.</p></div>
+</div>
+</div>
+
+<script>
+// ========== PROGRESS ==========
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('kryptographie-rsa',{status:'in-progress'});
+
+// ========== MATH HELPERS ==========
+function isPrime(n){if(n<2)return false;if(n<4)return true;if(n%2===0||n%3===0)return false;for(let i=5;i*i<=n;i+=6)if(n%i===0||n%(i+2)===0)return false;return true;}
+
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;}
+
+// Extended Euclidean Algorithm: returns [g, x, y] such that a*x + b*y = g
+function extGcd(a,b){if(a===0)return[b,0,1];const[g,x1,y1]=extGcd(b%a,a);return[g,y1-Math.floor(b/a)*x1,x1];}
+
+function modInverse(e,phi){let[g,x]=extGcd(e%phi,phi);if(g!==1)return-1;return((x%phi)+phi)%phi;}
+
+// Modular exponentiation: base^exp mod mod (handles large intermediate values)
+function modPow(base,exp,mod){if(mod===1)return 0;let result=1;base=((base%mod)+mod)%mod;while(exp>0){if(exp%2===1)result=(result*base)%mod;exp=Math.floor(exp/2);base=(base*base)%mod;}return result;}
+
+// Find valid e values for given phi
+function findEs(phi){const es=[];for(let e=2;e<phi&&es.length<8;e++){if(gcd(e,phi)===1)es.push(e);}return es;}
+
+// Small primes for exercises
+const SMALL_PRIMES=[2,3,5,7,11,13,17,19];
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function pickRandom(arr){return arr[rand(0,arr.length-1)];}
+
+// Generate a valid RSA parameter set with small primes
+function genRSAParams(){
+  let p,q,n,phi,e,d,attempts=0;
+  do{
+    p=pickRandom(SMALL_PRIMES);
+    q=pickRandom(SMALL_PRIMES);
+    if(p===q)continue;
+    n=p*q;
+    phi=(p-1)*(q-1);
+    if(phi<3)continue;
+    const es=findEs(phi);
+    if(es.length===0)continue;
+    e=pickRandom(es.filter(v=>v>1&&v<phi));
+    if(!e)continue;
+    d=modInverse(e,phi);
+    if(d<=0||d===e)continue;
+    attempts++;
+    if(attempts>200)break;
+  }while(!p||!q||p===q||!e||d<=0||d===e||n<4);
+  return{p,q,n,phi,e,d};
+}
+
+// ========== RSA CALCULATOR ==========
+let calcState={n:0,e:0,d:0};
+
+function rsaCalc(){
+  const pVal=parseInt(document.getElementById('calc-p').value);
+  const qVal=parseInt(document.getElementById('calc-q').value);
+  const errEl=document.getElementById('rsa-error');
+  const resEl=document.getElementById('rsa-results');
+  const stepsEl=document.getElementById('rsa-steps');
+  const encSec=document.getElementById('enc-section');
+  errEl.style.display='none';resEl.innerHTML='';stepsEl.innerHTML='';encSec.style.display='none';
+  document.getElementById('enc-results').innerHTML='';
+
+  if(!isPrime(pVal)){errEl.textContent='p = '+pVal+' ist keine Primzahl!';errEl.style.display='block';return;}
+  if(!isPrime(qVal)){errEl.textContent='q = '+qVal+' ist keine Primzahl!';errEl.style.display='block';return;}
+  if(pVal===qVal){errEl.textContent='p und q müssen verschieden sein!';errEl.style.display='block';return;}
+
+  const n=pVal*qVal;
+  const phi=(pVal-1)*(qVal-1);
+  const es=findEs(phi);
+  if(es.length===0){errEl.textContent='Kein gültiges e gefunden für phi(n)='+phi;errEl.style.display='block';return;}
+  const e=es.find(v=>v>1)||es[0];
+  const d=modInverse(e,phi);
+
+  calcState={n,e,d};
+
+  resEl.innerHTML=`
+    <div class="result-item"><div class="rl">n = p &times; q</div><div class="rv">${n}</div></div>
+    <div class="result-item"><div class="rl">&phi;(n) = (p-1)(q-1)</div><div class="rv">${phi}</div></div>
+    <div class="result-item"><div class="rl">e (ggT(e,&phi;)=1)</div><div class="rv">${e}</div></div>
+    <div class="result-item"><div class="rl">d (e&middot;d &equiv; 1 mod &phi;)</div><div class="rv">${d}</div></div>
+    <div class="result-item"><div class="rl">Public Key (n, e)</div><div class="rv">(${n}, ${e})</div></div>
+    <div class="result-item"><div class="rl">Private Key (n, d)</div><div class="rv">(${n}, ${d})</div></div>`;
+
+  const allEs=es.slice(0,6).join(', ');
+  stepsEl.innerHTML=`
+<div><span class="step-num">1.</span> Primzahlen: p = <span class="step-val">${pVal}</span>, q = <span class="step-val">${qVal}</span></div>
+<div><span class="step-num">2.</span> n = ${pVal} &times; ${qVal} = <span class="step-val">${n}</span></div>
+<div><span class="step-num">3.</span> &phi;(n) = (${pVal}&minus;1) &times; (${qVal}&minus;1) = ${pVal-1} &times; ${qVal-1} = <span class="step-val">${phi}</span></div>
+<div><span class="step-num">4.</span> W&auml;hle e mit ggT(e, ${phi}) = 1 &rarr; m&ouml;gliche e: ${allEs} &rarr; e = <span class="step-val">${e}</span></div>
+<div><span class="step-num">5.</span> ${e} &times; d &equiv; 1 mod ${phi} &rarr; d = <span class="step-val">${d}</span> (Probe: ${e} &times; ${d} = ${e*d} = ${Math.floor(e*d/phi)} &times; ${phi} + ${e*d%phi})</div>
+<div><span class="step-num">6.</span> &Ouml;ffentlicher Schl&uuml;ssel: (<span class="step-val">${n}</span>, <span class="step-val">${e}</span>)</div>
+<div><span class="step-num">7.</span> Privater Schl&uuml;ssel: (<span class="step-val">${n}</span>, <span class="step-val">${d}</span>)</div>`;
+
+  encSec.style.display='block';
+}
+
+function rsaEncDec(){
+  const m=parseInt(document.getElementById('calc-m').value);
+  const{n,e,d}=calcState;
+  const encRes=document.getElementById('enc-results');
+  if(isNaN(m)||m<0||m>=n){encRes.innerHTML='<div class="result-item"><div class="rl">Fehler</div><div class="rv" style="color:var(--red)">m muss zwischen 0 und '+(n-1)+' liegen</div></div>';return;}
+  const c=modPow(m,e,n);
+  const mBack=modPow(c,d,n);
+  encRes.innerHTML=`
+    <div class="result-item"><div class="rl">Verschl&uuml;sselung: m<sup>e</sup> mod n</div><div class="rv">${m}<sup>${e}</sup> mod ${n} = ${c}</div></div>
+    <div class="result-item"><div class="rl">Entschl&uuml;sselung: c<sup>d</sup> mod n</div><div class="rv">${c}<sup>${d}</sup> mod ${n} = ${mBack}</div></div>
+    <div class="result-item"><div class="rl">Probe</div><div class="rv" style="color:${mBack===m?'var(--green)':'var(--red)'}">${mBack===m?'Korrekt! m = '+mBack:'Fehler!'}</div></div>`;
+}
+
+rsaCalc();
+
+// ========== EXERCISE MODE ==========
+let mode='rsacalc';
+let score={correct:0,wrong:0,streak:0};
+let currentTask={};
+
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+
+// Theory questions pool
+const theoryQuestions=[
+  {q:'Welches Verfahren nutzt den GLEICHEN Schlüssel für Ver- und Entschlüsselung?',a:'symmetrisch',opts:['Symmetrische Verschlüsselung','Asymmetrische Verschlüsselung'],answer:'Symmetrische Verschlüsselung',
+   sol:'Symmetrische Verschlüsselung nutzt einen gemeinsamen Schlüssel für beide Richtungen. Beispiele: AES, DES, 3DES.'},
+  {q:'Was ist das Hauptproblem der symmetrischen Verschlüsselung?',a:'schlüsselverteilung',opts:['Schlüsselverteilung','Geschwindigkeit','Schlüssellänge','Kompatibilität'],answer:'Schlüsselverteilung',
+   sol:'Der gemeinsame Schlüssel muss sicher übertragen werden. Bei n Teilnehmern braucht man n(n-1)/2 Schlüssel.'},
+  {q:'Was wird bei einer digitalen Signatur mit dem privaten Schlüssel signiert?',a:'hash',opts:['Das gesamte Dokument','Der Hash des Dokuments','Der öffentliche Schlüssel','Die Nachricht im Klartext'],answer:'Der Hash des Dokuments',
+   sol:'Ein Hash (z.B. SHA-256) des Dokuments wird berechnet und mit dem privaten Schlüssel signiert. Der Empfänger verifiziert mit dem öffentlichen Schlüssel.'},
+  {q:'Welches Verfahren kombiniert asymmetrische und symmetrische Verschlüsselung?',a:'hybrid',opts:['Hybridverfahren','Doppelverschlüsselung','Kaskadenverschlüsselung','Blockverschlüsselung'],answer:'Hybridverfahren',
+   sol:'Hybridverfahren (z.B. TLS/SSL): Asymmetrisch für den Schlüsselaustausch, symmetrisch für die Nutzdaten.'},
+  {q:'Was enthält ein digitales X.509-Zertifikat?',a:'publickey',opts:['Privaten Schlüssel des Inhabers','Öffentlichen Schlüssel + Identität + CA-Signatur','Nur den Domainnamen','Symmetrischen Sitzungsschlüssel'],answer:'Öffentlichen Schlüssel + Identität + CA-Signatur',
+   sol:'Ein X.509-Zertifikat bindet einen öffentlichen Schlüssel an eine Identität und ist von einer CA signiert.'},
+  {q:'Worauf basiert die Sicherheit von RSA?',a:'faktorisierung',opts:['Diskreter Logarithmus','Faktorisierung grosser Zahlen','Elliptische Kurven','Hash-Kollisionen'],answer:'Faktorisierung grosser Zahlen',
+   sol:'RSA basiert darauf, dass es extrem schwierig ist, das Produkt n = p * q in seine Primfaktoren zu zerlegen, wenn p und q gross genug sind.'},
+  {q:'Womit wird bei RSA verschlüsselt?',a:'public',opts:['Mit dem privaten Schlüssel (n, d)','Mit dem öffentlichen Schlüssel (n, e)','Mit dem Session Key','Mit phi(n)'],answer:'Mit dem öffentlichen Schlüssel (n, e)',
+   sol:'Verschlüsselung: c = m^e mod n (mit Public Key). Entschlüsselung: m = c^d mod n (mit Private Key).'},
+  {q:'Was stellt eine Certificate Authority (CA) aus?',a:'zertifikate',opts:['Private Schlüssel','Digitale Zertifikate','Symmetrische Schlüssel','Hash-Werte'],answer:'Digitale Zertifikate',
+   sol:'Eine CA stellt digitale Zertifikate aus, die die Zuordnung von öffentlichen Schlüsseln zu Identitäten bestätigen.'},
+  {q:'Welcher Algorithmus ist ein Beispiel für asymmetrische Verschlüsselung?',a:'rsa',opts:['AES','DES','RSA','Blowfish'],answer:'RSA',
+   sol:'RSA und ECC sind asymmetrisch. AES, DES und Blowfish sind symmetrische Verfahren.'},
+  {q:'Was sichert eine digitale Signatur?',a:'auth_int',opts:['Nur Vertraulichkeit','Nur Integrität','Authentizität und Integrität','Verfügbarkeit'],answer:'Authentizität und Integrität',
+   sol:'Digitale Signaturen sichern Authentizität (Absender ist echt) und Integrität (Nachricht unveraendert). Vertraulichkeit wird durch Verschlüsselung erreicht.'},
+];
+
+function genTask(){
+  if(mode==='rsacalc'){
+    const params=genRSAParams();
+    return{
+      type:'multi',
+      q:`p = ${params.p}, q = ${params.q}, e = ${params.e}`,
+      sub:'Berechne n, phi(n) und d.',
+      fields:[
+        {id:'ans-n',label:'n = p * q',answer:String(params.n)},
+        {id:'ans-phi',label:'phi(n) = (p-1)(q-1)',answer:String(params.phi)},
+        {id:'ans-d',label:'d (e*d = 1 mod phi)',answer:String(params.d)}
+      ],
+      solution:`p = ${params.p}, q = ${params.q}\nn = ${params.p} x ${params.q} = ${params.n}\nphi(n) = (${params.p}-1)(${params.q}-1) = ${params.p-1} x ${params.q-1} = ${params.phi}\ne = ${params.e}, ggT(${params.e}, ${params.phi}) = 1\ne * d = 1 mod ${params.phi}\n${params.e} x ${params.d} = ${params.e*params.d} = ${Math.floor(params.e*params.d/params.phi)} x ${params.phi} + ${params.e*params.d%params.phi}\nd = ${params.d}`
+    };
+  }
+  if(mode==='encrypt'){
+    const params=genRSAParams();
+    const m=rand(2,params.n-2);
+    const c=modPow(m,params.e,params.n);
+    return{
+      type:'single',
+      q:`Public Key: (n=${params.n}, e=${params.e})\nNachricht: m = ${m}`,
+      sub:'Berechne c = m^e mod n',
+      answer:String(c),
+      solution:`c = ${m}^${params.e} mod ${params.n}\n= ${c}\n\n(Tipp: Zerlege den Exponenten in Zweierpotenzen)`
+    };
+  }
+  if(mode==='decrypt'){
+    const params=genRSAParams();
+    const m=rand(2,params.n-2);
+    const c=modPow(m,params.e,params.n);
+    return{
+      type:'single',
+      q:`Private Key: (n=${params.n}, d=${params.d})\nChiffretext: c = ${c}`,
+      sub:'Berechne m = c^d mod n',
+      answer:String(m),
+      solution:`m = ${c}^${params.d} mod ${params.n}\n= ${m}`
+    };
+  }
+  if(mode==='theory'){
+    const tq=theoryQuestions[rand(0,theoryQuestions.length-1)];
+    const shuffled=[...tq.opts].sort(()=>Math.random()-0.5);
+    return{
+      type:'choice',
+      q:tq.q,
+      sub:'Wähle die richtige Antwort.',
+      opts:shuffled,
+      answer:tq.answer,
+      solution:tq.sol
+    };
+  }
+}
+
+function newTask(){
+  currentTask=genTask();
+  const area=document.getElementById('exercise-area');
+  const labels={rsacalc:'RSA-Parameter berechnen',encrypt:'RSA-Verschlüsselung',decrypt:'RSA-Entschlüsselung',theory:'Theorie-Frage'};
+
+  let html=`<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${labels[mode]}</div>`;
+  html+=`<div class="task-display" style="white-space:pre-line">${currentTask.q}</div>`;
+  html+=`<div class="task-sub">${currentTask.sub}</div>`;
+
+  if(currentTask.type==='multi'){
+    html+='<div class="multi-input">';
+    currentTask.fields.forEach(f=>{
+      html+=`<div><label>${f.label}</label><input type="text" id="${f.id}" autocomplete="off"></div>`;
+    });
+    html+='</div>';
+  }else if(currentTask.type==='single'){
+    html+=`<div class="input-row"><input type="text" id="user-answer" placeholder="Deine Antwort..." autocomplete="off"></div>`;
+  }else if(currentTask.type==='choice'){
+    html+='<div style="display:grid;gap:8px;margin-bottom:12px">';
+    currentTask.opts.forEach((opt,i)=>{
+      html+=`<button class="btn btn-secondary choice-btn" data-val="${opt}" onclick="selectChoice(this)" style="text-align:left;padding:12px 18px;font-size:13px">${opt}</button>`;
+    });
+    html+='</div>';
+  }
+
+  html+=`<div class="btn-row">
+    <button class="btn btn-primary" onclick="checkAnswer()">Prüfen &#8629;</button>
+    <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+    <button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>
+  </div>
+  <div class="feedback" id="fb"></div>
+  <div class="solution-box" id="sol"></div>`;
+
+  area.innerHTML=html;
+
+  // Focus first input
+  if(currentTask.type==='multi'){
+    const firstInput=document.getElementById(currentTask.fields[0].id);
+    if(firstInput)firstInput.focus();
+  }else if(currentTask.type==='single'){
+    const inp=document.getElementById('user-answer');
+    if(inp)inp.focus();
+  }
+
+  // Enter key handler for inputs
+  area.querySelectorAll('input').forEach(inp=>{
+    inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')checkAnswer();});
+  });
+}
+
+let selectedChoice=null;
+function selectChoice(btn){
+  document.querySelectorAll('.choice-btn').forEach(b=>b.style.borderColor='var(--border)');
+  btn.style.borderColor='var(--accent)';
+  selectedChoice=btn.dataset.val;
+}
+
+function checkAnswer(){
+  const fb=document.getElementById('fb');
+
+  if(currentTask.type==='multi'){
+    let allCorrect=true;
+    currentTask.fields.forEach(f=>{
+      const inp=document.getElementById(f.id);
+      const val=inp.value.trim();
+      if(val===f.answer){
+        inp.classList.add('correct');inp.classList.remove('wrong');
+      }else{
+        inp.classList.add('wrong');inp.classList.remove('correct');
+        allCorrect=false;
+      }
+    });
+    if(!currentTask.fields.some(f=>document.getElementById(f.id).value.trim()))return;
+    if(allCorrect){
+      fb.textContent='Richtig! Alle Werte stimmen.';fb.className='feedback correct';
+      score.correct++;score.streak++;updateScore();
+      if(score.correct>=10)saveProgress('kryptographie-rsa',{status:'completed',score:score.correct});
+      setTimeout(newTask,1400);
+    }else{
+      fb.textContent='Falsch! Korrekte Werte: '+currentTask.fields.map(f=>f.label+' = '+f.answer).join(', ');
+      fb.className='feedback wrong';
+      score.wrong++;score.streak=0;updateScore();showSolution();
+    }
+  }else if(currentTask.type==='single'){
+    const inp=document.getElementById('user-answer');
+    const v=inp.value.trim();
+    if(!v)return;
+    if(v===currentTask.answer){
+      inp.classList.add('correct');fb.textContent='Richtig!';fb.className='feedback correct';
+      score.correct++;score.streak++;updateScore();
+      if(score.correct>=10)saveProgress('kryptographie-rsa',{status:'completed',score:score.correct});
+      setTimeout(newTask,1200);
+    }else{
+      inp.classList.add('wrong');fb.textContent='Falsch! Richtig: '+currentTask.answer;fb.className='feedback wrong';
+      score.wrong++;score.streak=0;updateScore();showSolution();
+    }
+  }else if(currentTask.type==='choice'){
+    if(!selectedChoice)return;
+    if(selectedChoice===currentTask.answer){
+      fb.textContent='Richtig!';fb.className='feedback correct';
+      document.querySelectorAll('.choice-btn').forEach(b=>{
+        if(b.dataset.val===currentTask.answer)b.style.borderColor='var(--green)';
+      });
+      score.correct++;score.streak++;updateScore();
+      if(score.correct>=10)saveProgress('kryptographie-rsa',{status:'completed',score:score.correct});
+      setTimeout(newTask,1400);
+    }else{
+      fb.textContent='Falsch! Richtig: '+currentTask.answer;fb.className='feedback wrong';
+      document.querySelectorAll('.choice-btn').forEach(b=>{
+        if(b.dataset.val===currentTask.answer)b.style.borderColor='var(--green)';
+        if(b.dataset.val===selectedChoice)b.style.borderColor='var(--red)';
+      });
+      score.wrong++;score.streak=0;updateScore();showSolution();
+    }
+    selectedChoice=null;
+  }
+}
+
+function showSolution(){const s=document.getElementById('sol');if(s){s.textContent=currentTask.solution;s.classList.add('show');}}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+newTask();
+
+// ========== GLOSSAR SYSTEM ==========
+const glossaryTerms=[
+  {
+    term:'Symmetrische Verschl\u00fcsselung',
+    short:'Ein gemeinsamer Schl\u00fcssel f\u00fcr Ver- und Entschl\u00fcsselung.',
+    definition:'Bei der symmetrischen Verschl\u00fcsselung verwenden Sender und Empf\u00e4nger denselben geheimen Schl\u00fcssel sowohl zum Verschl\u00fcsseln als auch zum Entschl\u00fcsseln der Nachricht. Bekannte Verfahren sind AES, DES, 3DES und Blowfish. Das Hauptproblem ist die sichere Schl\u00fcsselverteilung: Wie bekommt der Empf\u00e4nger den Schl\u00fcssel, ohne dass ein Angreifer ihn abf\u00e4ngt? Bei n Teilnehmern werden n(n\u22121)/2 Schl\u00fcssel ben\u00f6tigt.',
+    analogy:'Stell dir einen Tresor vor, zu dem Sender und Empf\u00e4nger den gleichen physischen Schl\u00fcssel besitzen. Die Nachricht wird hineingelegt, abgeschlossen und verschickt. Nur wer den identischen Schl\u00fcssel hat, kann den Tresor \u00f6ffnen. Das Problem: Wie gibt man den Schl\u00fcssel weiter, ohne dass jemand eine Kopie macht?',
+    icon:'\ud83d\udd12',
+    hints:['Gleicher Schl\u00fcssel f\u00fcr beide Richtungen','Beispiele: AES, DES, 3DES, Blowfish','Problem: Schl\u00fcsselverteilung \u2013 n Teilnehmer brauchen n(n\u22121)/2 Schl\u00fcssel'],
+    questions:{
+      fill:{q:'Wie viele Schl\u00fcssel brauchen 10 Teilnehmer bei symmetrischer Verschl\u00fcsselung? (Formel: n(n\u22121)/2)',answer:'45',keywords:['45']},
+      choice:{q:'Welches ist KEIN symmetrisches Verschl\u00fcsselungsverfahren?',correct:'RSA',wrong:['AES','DES','Blowfish']},
+      explain:{q:'Erkl\u00e4re das Schl\u00fcsselverteilungsproblem der symmetrischen Verschl\u00fcsselung.',keywords:['gleicher Schl\u00fcssel','sicher \u00fcbertragen','abfangen','Anzahl Schl\u00fcssel']}
+    },
+    difficulty:1
+  },
+  {
+    term:'Asymmetrische Verschl\u00fcsselung',
+    short:'Zwei verschiedene Schl\u00fcssel: \u00f6ffentlich zum Verschl\u00fcsseln, privat zum Entschl\u00fcsseln.',
+    definition:'Die asymmetrische Verschl\u00fcsselung verwendet ein Schl\u00fcsselpaar: einen \u00f6ffentlichen Schl\u00fcssel (Public Key), der frei verteilt wird und zum Verschl\u00fcsseln dient, und einen privaten Schl\u00fcssel (Private Key), der geheim bleibt und zum Entschl\u00fcsseln verwendet wird. Bekannte Verfahren sind RSA, ECC und Diffie-Hellman. Der Vorteil: Kein Schl\u00fcsselverteilungsproblem. Der Nachteil: Deutlich langsamer als symmetrische Verfahren.',
+    analogy:'Stell dir einen Briefkasten vor: Jeder kann einen Brief einwerfen (\u00f6ffentlicher Schl\u00fcssel = Briefkastenschlitz), aber nur der Besitzer kann ihn mit seinem privaten Schl\u00fcssel \u00f6ffnen und die Briefe lesen. Man muss den privaten Schl\u00fcssel nie weitergeben.',
+    icon:'\ud83d\udd10',
+    hints:['Public Key = verschl\u00fcsseln, Private Key = entschl\u00fcsseln','Kein Schl\u00fcsselverteilungsproblem','Langsamer als symmetrisch \u2013 daher Hybridverfahren'],
+    questions:{
+      fill:{q:'Mit welchem Schl\u00fcssel wird bei asymmetrischer Verschl\u00fcsselung verschl\u00fcsselt?',answer:'\u00f6ffentlicher schl\u00fcssel',keywords:['\u00f6ffentlich','public']},
+      choice:{q:'Was ist ein Vorteil der asymmetrischen gegen\u00fcber der symmetrischen Verschl\u00fcsselung?',correct:'Kein Schl\u00fcsselverteilungsproblem',wrong:['H\u00f6here Geschwindigkeit','Weniger Rechenleistung','K\u00fcrzere Schl\u00fcssel']},
+      explain:{q:'Warum l\u00f6st asymmetrische Verschl\u00fcsselung das Schl\u00fcsselverteilungsproblem?',keywords:['\u00f6ffentlicher Schl\u00fcssel','frei verteilen','privat','geheim']}
+    },
+    difficulty:1
+  },
+  {
+    term:'RSA-Verfahren',
+    short:'Asymmetrisches Kryptosystem basierend auf der Schwierigkeit der Primfaktorzerlegung.',
+    definition:'RSA (Rivest\u2013Shamir\u2013Adleman) ist ein asymmetrisches Verschl\u00fcsselungsverfahren. Die Schl\u00fcsselgenerierung erfolgt in Schritten: (1) W\u00e4hle zwei Primzahlen p und q, (2) berechne n = p \u00d7 q, (3) berechne \u03c6(n) = (p\u22121)(q\u22121), (4) w\u00e4hle e mit ggT(e, \u03c6(n)) = 1, (5) berechne d mit e \u00d7 d \u2261 1 mod \u03c6(n). Verschl\u00fcsselung: c = m^e mod n. Entschl\u00fcsselung: m = c^d mod n. Die Sicherheit basiert darauf, dass die Faktorisierung von n bei gro\u00dfen Primzahlen praktisch unm\u00f6glich ist.',
+    analogy:'Stelle dir vor, du mischst zwei Farben (die Primzahlen p und q) zu einer neuen Farbe (n). Jeder kann die Mischfarbe sehen, aber es ist nahezu unm\u00f6glich herauszufinden, welche zwei Ausgangsfarben verwendet wurden \u2013 genau das macht RSA sicher.',
+    icon:'\ud83d\udd22',
+    hints:['5 Schritte: p,q w\u00e4hlen \u2192 n \u2192 \u03c6(n) \u2192 e \u2192 d','Public Key = (n, e), Private Key = (n, d)','Sicherheit basiert auf Faktorisierungsproblem'],
+    questions:{
+      fill:{q:'Wie lautet die Formel zur Verschl\u00fcsselung bei RSA? (c = ...)',answer:'m^e mod n',keywords:['m','e','mod','n']},
+      choice:{q:'Welcher Schritt kommt bei der RSA-Schl\u00fcsselgenerierung ZUERST?',correct:'Zwei Primzahlen p und q w\u00e4hlen',wrong:['e w\u00e4hlen mit ggT(e,\u03c6)=1','d berechnen','n = p \u00d7 q berechnen']},
+      explain:{q:'Beschreibe die 5 Schritte der RSA-Schl\u00fcsselgenerierung.',keywords:['Primzahlen','n = p','phi','ggT','modular']}
+    },
+    difficulty:2
+  },
+  {
+    term:'\u00d6ffentlicher Schl\u00fcssel (Public Key)',
+    short:'Frei verteilbarer Schl\u00fcssel zum Verschl\u00fcsseln von Nachrichten.',
+    definition:'Der \u00f6ffentliche Schl\u00fcssel (Public Key) ist der Teil des Schl\u00fcsselpaars bei asymmetrischer Verschl\u00fcsselung, der frei verteilt werden kann. Bei RSA besteht er aus dem Paar (n, e). Jeder kann damit Nachrichten verschl\u00fcsseln, aber nur der Besitzer des zugeh\u00f6rigen privaten Schl\u00fcssels kann sie entschl\u00fcsseln. Der Public Key wird auch zur Verifikation digitaler Signaturen verwendet.',
+    analogy:'Der \u00f6ffentliche Schl\u00fcssel ist wie eine E-Mail-Adresse: Du gibst sie jedem, damit Leute dir Nachrichten schicken k\u00f6nnen. Aber nur du kannst dein Postfach \u00f6ffnen und die Nachrichten lesen.',
+    icon:'\ud83d\udce8',
+    hints:['Bei RSA: Public Key = (n, e)','Kann frei verteilt werden','Verschl\u00fcsselt Nachrichten und verifiziert Signaturen'],
+    questions:{
+      fill:{q:'Aus welchen zwei Komponenten besteht der \u00f6ffentliche Schl\u00fcssel bei RSA?',answer:'n und e',keywords:['n','e']},
+      choice:{q:'Wof\u00fcr wird der \u00f6ffentliche Schl\u00fcssel NICHT verwendet?',correct:'Entschl\u00fcsseln von Nachrichten',wrong:['Verschl\u00fcsseln von Nachrichten','Verifikation von Signaturen','Schl\u00fcsselverteilung']},
+      explain:{q:'Warum kann der \u00f6ffentliche Schl\u00fcssel frei verteilt werden, ohne die Sicherheit zu gef\u00e4hrden?',keywords:['entschl\u00fcsseln','privat','nur','nicht']}
+    },
+    difficulty:1
+  },
+  {
+    term:'Privater Schl\u00fcssel (Private Key)',
+    short:'Geheimer Schl\u00fcssel zum Entschl\u00fcsseln und Signieren.',
+    definition:'Der private Schl\u00fcssel (Private Key) ist der geheime Teil des Schl\u00fcsselpaars und darf niemals weitergegeben werden. Bei RSA besteht er aus dem Paar (n, d). Er wird zum Entschl\u00fcsseln von Nachrichten verwendet, die mit dem zugeh\u00f6rigen \u00f6ffentlichen Schl\u00fcssel verschl\u00fcsselt wurden: m = c^d mod n. Zus\u00e4tzlich dient er zum Erstellen digitaler Signaturen.',
+    analogy:'Der private Schl\u00fcssel ist wie der Schl\u00fcssel zu deinem Haus. Du gibst ihn niemals weiter. Selbst wenn jemand wei\u00df, wo du wohnst (Public Key), kann er ohne deinen Hausschl\u00fcssel nicht hinein.',
+    icon:'\ud83d\udd11',
+    hints:['Bei RSA: Private Key = (n, d)','Darf NIEMALS weitergegeben werden','Entschl\u00fcsselt und signiert'],
+    questions:{
+      fill:{q:'Aus welchen zwei Komponenten besteht der private Schl\u00fcssel bei RSA?',answer:'n und d',keywords:['n','d']},
+      choice:{q:'Was passiert, wenn der private Schl\u00fcssel kompromittiert wird?',correct:'Alle verschl\u00fcsselten Nachrichten k\u00f6nnen gelesen werden',wrong:['Nur zuk\u00fcnftige Nachrichten sind betroffen','Nichts, der Public Key sch\u00fctzt weiterhin','Nur Signaturen sind betroffen']},
+      explain:{q:'Warum muss der private Schl\u00fcssel unbedingt geheim bleiben?',keywords:['entschl\u00fcsseln','Signatur','f\u00e4lschen','kompromittiert']}
+    },
+    difficulty:1
+  },
+  {
+    term:'Primfaktorzerlegung',
+    short:'Zerlegung einer Zahl in ihre Primfaktoren \u2013 Grundlage der RSA-Sicherheit.',
+    definition:'Die Primfaktorzerlegung ist die Darstellung einer nat\u00fcrlichen Zahl als Produkt von Primzahlen. Bei RSA wird n = p \u00d7 q berechnet, wobei p und q gro\u00dfe Primzahlen sind. Die Sicherheit von RSA basiert darauf, dass es bei ausreichend gro\u00dfen Zahlen (z.B. 2048 Bit) praktisch unm\u00f6glich ist, n in seine Primfaktoren p und q zu zerlegen. Dieses Problem ist als Faktorisierungsproblem bekannt und geh\u00f6rt zu den schwierigsten Problemen der Mathematik.',
+    analogy:'Multiplizieren ist einfach: 127 \u00d7 311 = 39497 kann jeder Taschenrechner. Aber wenn du nur 39497 hast, musst du alle m\u00f6glichen Teiler durchprobieren \u2013 bei Zahlen mit hunderten Stellen dauert das Milliarden von Jahren.',
+    icon:'\ud83e\udde9',
+    hints:['n = p \u00d7 q ist leicht zu berechnen','p und q aus n zu bestimmen ist extrem schwer','In der Praxis: mindestens 2048 Bit f\u00fcr n'],
+    questions:{
+      fill:{q:'Wie gro\u00df sollte der RSA-Schl\u00fcssel (n) in der Praxis mindestens sein?',answer:'2048 bit',keywords:['2048']},
+      choice:{q:'Warum ist die Primfaktorzerlegung f\u00fcr RSA so wichtig?',correct:'Sie macht RSA sicher, weil das Zerlegen von n in p und q extrem schwer ist',wrong:['Sie beschleunigt die Verschl\u00fcsselung','Sie vereinfacht die Schl\u00fcsselgenerierung','Sie erm\u00f6glicht k\u00fcrzere Schl\u00fcssel']},
+      explain:{q:'Warum ist das Faktorisierungsproblem die Grundlage der RSA-Sicherheit?',keywords:['gro\u00dfe Zahlen','Primfaktoren','schwer','unm\u00f6glich','berechnen']}
+    },
+    difficulty:2
+  },
+  {
+    term:'Eulersche Phi-Funktion',
+    short:'\u03c6(n) z\u00e4hlt die zu n teilerfremden Zahlen \u2013 zentral f\u00fcr RSA.',
+    definition:'Die Eulersche Phi-Funktion \u03c6(n) gibt die Anzahl der nat\u00fcrlichen Zahlen an, die kleiner als n und teilerfremd zu n sind. F\u00fcr das Produkt zweier verschiedener Primzahlen p und q gilt: \u03c6(n) = (p\u22121)(q\u22121). Bei RSA wird \u03c6(n) ben\u00f6tigt, um den Verschl\u00fcsselungsexponenten e zu w\u00e4hlen (ggT(e, \u03c6(n)) = 1) und den Entschl\u00fcsselungsexponenten d zu berechnen (e \u00d7 d \u2261 1 mod \u03c6(n)).',
+    analogy:'Stell dir eine Uhr mit \u03c6(n) Stunden vor. Der Verschl\u00fcsselungsexponent e dreht den Zeiger vorw\u00e4rts, und d dreht ihn genau zur\u00fcck auf die Ausgangsposition. Damit das funktioniert, m\u00fcssen e und \u03c6(n) teilerfremd sein.',
+    icon:'\u03c6',
+    hints:['\u03c6(n) = (p\u22121)(q\u22121) f\u00fcr n = p \u00d7 q','e muss teilerfremd zu \u03c6(n) sein: ggT(e, \u03c6(n)) = 1','d wird \u00fcber e \u00d7 d \u2261 1 mod \u03c6(n) berechnet'],
+    questions:{
+      fill:{q:'Berechne \u03c6(n) f\u00fcr p=5 und q=11: \u03c6(55) = ?',answer:'40',keywords:['40']},
+      choice:{q:'Was berechnet die Eulersche Phi-Funktion \u03c6(n)?',correct:'Die Anzahl der zu n teilerfremden Zahlen kleiner als n',wrong:['Die Summe aller Teiler von n','Die gr\u00f6\u00dfte Primzahl kleiner als n','Die Anzahl der Primfaktoren von n']},
+      explain:{q:'Welche Rolle spielt \u03c6(n) bei der RSA-Schl\u00fcsselgenerierung?',keywords:['e','d','teilerfremd','mod','berechnen']}
+    },
+    difficulty:3
+  },
+  {
+    term:'Digitale Signatur',
+    short:'Elektronische Unterschrift, die Authentizit\u00e4t und Integrit\u00e4t sichert.',
+    definition:'Eine digitale Signatur ist ein kryptographisches Verfahren zur Sicherung der Authentizit\u00e4t (Wer hat gesendet?) und Integrit\u00e4t (Wurde die Nachricht ver\u00e4ndert?) einer Nachricht. Der Ablauf: (1) Ein Hash-Wert des Dokuments wird berechnet (z.B. SHA-256), (2) dieser Hash wird mit dem privaten Schl\u00fcssel des Absenders verschl\u00fcsselt (= Signatur), (3) der Empf\u00e4nger entschl\u00fcsselt die Signatur mit dem \u00f6ffentlichen Schl\u00fcssel und vergleicht den Hash. Stimmen die Hashes \u00fcberein, ist die Signatur g\u00fcltig.',
+    analogy:'Eine digitale Signatur funktioniert wie ein Siegel auf einem Brief: Nur der Absender hat das Siegel (privater Schl\u00fcssel), und jeder kann pr\u00fcfen, ob es echt ist (\u00f6ffentlicher Schl\u00fcssel). Wenn das Siegel gebrochen ist, wurde der Brief manipuliert.',
+    icon:'\u270d\ufe0f',
+    hints:['Signieren = Hash mit Private Key verschl\u00fcsseln','Verifizieren = mit Public Key entschl\u00fcsseln und Hash vergleichen','Sichert Authentizit\u00e4t UND Integrit\u00e4t, aber NICHT Vertraulichkeit'],
+    questions:{
+      fill:{q:'Mit welchem Schl\u00fcssel wird eine digitale Signatur erstellt?',answer:'privater schl\u00fcssel',keywords:['privat','private key']},
+      choice:{q:'Was sichert eine digitale Signatur NICHT?',correct:'Vertraulichkeit',wrong:['Authentizit\u00e4t','Integrit\u00e4t','Nichtabstreitbarkeit']},
+      explain:{q:'Beschreibe den Ablauf einer digitalen Signatur und Verifikation.',keywords:['Hash','privat','signieren','\u00f6ffentlich','vergleichen']}
+    },
+    difficulty:2
+  }
+];
+
+const glossaryTermMap={};
+glossaryTerms.forEach(t=>{
+  const base=t.term.toLowerCase();
+  glossaryTermMap[base]=t;
+  // Varianten
+  if(t.term==='Symmetrische Verschl\u00fcsselung'){
+    glossaryTermMap['symmetrische verschl\u00fcsselung']=t;
+    glossaryTermMap['symmetrisch']=t;
+    glossaryTermMap['aes']=t;
+    glossaryTermMap['des']=t;
+    glossaryTermMap['3des']=t;
+    glossaryTermMap['blowfish']=t;
+  }
+  if(t.term==='Asymmetrische Verschl\u00fcsselung'){
+    glossaryTermMap['asymmetrische verschl\u00fcsselung']=t;
+    glossaryTermMap['asymmetrisch']=t;
+    glossaryTermMap['public key kryptographie']=t;
+  }
+  if(t.term==='RSA-Verfahren'){
+    glossaryTermMap['rsa-verfahren']=t;
+    glossaryTermMap['rsa']=t;
+    glossaryTermMap['rivest shamir adleman']=t;
+  }
+  if(t.term==='\u00d6ffentlicher Schl\u00fcssel (Public Key)'){
+    glossaryTermMap['\u00f6ffentlicher schl\u00fcssel (public key)']=t;
+    glossaryTermMap['\u00f6ffentlicher schl\u00fcssel']=t;
+    glossaryTermMap['public key']=t;
+  }
+  if(t.term==='Privater Schl\u00fcssel (Private Key)'){
+    glossaryTermMap['privater schl\u00fcssel (private key)']=t;
+    glossaryTermMap['privater schl\u00fcssel']=t;
+    glossaryTermMap['private key']=t;
+  }
+  if(t.term==='Primfaktorzerlegung'){
+    glossaryTermMap['primfaktorzerlegung']=t;
+    glossaryTermMap['faktorisierung']=t;
+    glossaryTermMap['faktorisierungsproblem']=t;
+  }
+  if(t.term==='Eulersche Phi-Funktion'){
+    glossaryTermMap['eulersche phi-funktion']=t;
+    glossaryTermMap['phi-funktion']=t;
+    glossaryTermMap['phi(n)']=t;
+    glossaryTermMap['\u03c6(n)']=t;
+    glossaryTermMap['euler']=t;
+  }
+  if(t.term==='Digitale Signatur'){
+    glossaryTermMap['digitale signatur']=t;
+    glossaryTermMap['signatur']=t;
+    glossaryTermMap['digital signature']=t;
+  }
+});
+
+const GLOSSARY_STORAGE_KEY='glossary-kryptographie';
+let glossaryState={};
+
+function loadGlossaryState(){
+  try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_STORAGE_KEY)||'{}');}catch(e){glossaryState={};}
+}
+function saveGlossaryState(){localStorage.setItem(GLOSSARY_STORAGE_KEY,JSON.stringify(glossaryState));}
+function getTermLevel(term){return(glossaryState[term]&&glossaryState[term].level)||0;}
+function setTermLevel(term,level){
+  if(!glossaryState[term])glossaryState[term]={level:0,seen:0};
+  glossaryState[term].level=Math.min(3,Math.max(0,level));
+  glossaryState[term].seen=(glossaryState[term].seen||0)+1;
+  saveGlossaryState();
+  renderGlossaryGrid();
+  updateGlossaryProgress();
+}
+
+function updateGlossaryProgress(){
+  const total=glossaryTerms.length;
+  const mastered=glossaryTerms.filter(t=>getTermLevel(t.term)>=3).length;
+  const pct=Math.round((mastered/total)*100);
+  document.getElementById('gp-fill').style.width=pct+'%';
+  document.getElementById('gp-count').textContent=mastered+' / '+total+' gemeistert';
+}
+
+function renderGlossaryGrid(){
+  const grid=document.getElementById('glossary-grid');
+  grid.innerHTML='';
+  glossaryTerms.forEach((t,i)=>{
+    const lv=getTermLevel(t.term);
+    const card=document.createElement('div');
+    card.className='glossary-card';
+    card.dataset.level=lv;
+    card.dataset.index=i;
+    card.onclick=()=>openGlossaryLearn(i);
+    card.innerHTML=`<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
+    grid.appendChild(card);
+  });
+}
+
+let currentGlossaryTerm=null;
+let currentGlossaryPhase=0;
+let glossaryHintIndex=0;
+
+function openGlossaryLearn(index){
+  currentGlossaryTerm=index;
+  currentGlossaryPhase=0;
+  glossaryHintIndex=0;
+  const t=glossaryTerms[index];
+  document.getElementById('gl-title').textContent=t.icon+' '+t.term;
+  // Highlight active card
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',parseInt(c.dataset.index)===index));
+  renderGlossaryPhase();
+  const learnEl=document.getElementById('glossary-learn');
+  learnEl.classList.add('visible');
+  learnEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeGlossaryLearn(){
+  document.getElementById('glossary-learn').classList.remove('visible');
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
+  currentGlossaryTerm=null;
+}
+
+const PHASE_NAMES=['Verstehen','L\u00fcckentext','Multiple Choice','Erkl\u00e4ren'];
+
+function renderGlossaryPhase(){
+  if(currentGlossaryTerm===null)return;
+  const t=glossaryTerms[currentGlossaryTerm];
+  // Render phase indicator
+  const phasesEl=document.getElementById('gl-phases');
+  phasesEl.innerHTML=PHASE_NAMES.map((name,i)=>{
+    let cls='gl-phase';
+    if(i<currentGlossaryPhase)cls+=' done';
+    if(i===currentGlossaryPhase)cls+=' current';
+    const clickable=i<=currentGlossaryPhase;
+    return clickable
+      ?`<span class="${cls}" onclick="goToGlossaryPhase(${i})">${name}</span>`
+      :`<span class="${cls}">${name}</span>`;
+  }).join('');
+
+  const content=document.getElementById('gl-content');
+  if(currentGlossaryPhase===0)renderPhaseUnderstand(t,content);
+  else if(currentGlossaryPhase===1)renderPhaseFill(t,content);
+  else if(currentGlossaryPhase===2)renderPhaseChoice(t,content);
+  else if(currentGlossaryPhase===3)renderPhaseExplain(t,content);
+}
+
+function renderPhaseUnderstand(t,el){
+  glossaryHintIndex=0;
+  let html=`<div class="gl-analogy">\ud83d\udca1 ${t.analogy}</div>`;
+  html+=`<div class="gl-definition">${t.definition}</div>`;
+  html+=`<div class="gl-hints">`;
+  t.hints.forEach((h,i)=>{html+=`<div class="gl-hint" id="glh-${i}">\ud83d\udccc ${h}</div>`;});
+  html+=`</div>`;
+  html+=`<button class="gl-hint-btn" onclick="showGlossaryHint()">Hinweis anzeigen</button> `;
+  html+=`<button class="gl-btn primary" onclick="nextGlossaryPhase()">Verstanden \u2192</button>`;
+  el.innerHTML=html;
+}
+
+function showGlossaryHint(){
+  const t=glossaryTerms[currentGlossaryTerm];
+  if(glossaryHintIndex<t.hints.length){
+    document.getElementById('glh-'+glossaryHintIndex).classList.add('visible');
+    glossaryHintIndex++;
+  }
+}
+
+function renderPhaseFill(t,el){
+  const q=t.questions.fill;
+  let html=`<div class="gl-question">${q.q}</div>`;
+  html+=`<input class="gl-input" id="gl-fill-input" placeholder="Deine Antwort..." autocomplete="off">`;
+  html+=`<button class="gl-btn primary" onclick="checkGlossaryFill()">Pr\u00fcfen</button>`;
+  html+=`<div id="gl-fill-feedback"></div>`;
+  el.innerHTML=html;
+  const inp=document.getElementById('gl-fill-input');
+  inp.focus();
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')checkGlossaryFill();});
+}
+
+function checkGlossaryFill(){
+  const t=glossaryTerms[currentGlossaryTerm];
+  const q=t.questions.fill;
+  const inp=document.getElementById('gl-fill-input');
+  const val=inp.value.trim().toLowerCase();
+  if(!val)return;
+  const fb=document.getElementById('gl-fill-feedback');
+  const correct=q.keywords.some(k=>val.includes(k.toLowerCase()));
+  if(correct){
+    fb.innerHTML=`<div class="gl-feedback success">\u2705 Richtig! Die Antwort ist: ${q.answer}</div>`;
+    inp.style.borderColor='var(--green)';
+    setTimeout(()=>nextGlossaryPhase(),1200);
+  }else{
+    fb.innerHTML=`<div class="gl-feedback error">\u274c Nicht ganz. Richtige Antwort: <strong>${q.answer}</strong></div>`;
+    inp.style.borderColor='var(--red)';
+    setTimeout(()=>nextGlossaryPhase(),2200);
+  }
+}
+
+function renderPhaseChoice(t,el){
+  const q=t.questions.choice;
+  const opts=[q.correct,...q.wrong].sort(()=>Math.random()-0.5);
+  let html=`<div class="gl-question">${q.q}</div>`;
+  html+=`<div class="gl-choices">`;
+  opts.forEach(o=>{
+    html+=`<button class="gl-choice" onclick="checkGlossaryChoice(this,'${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}')">${o}</button>`;
+  });
+  html+=`</div><div id="gl-choice-feedback"></div>`;
+  el.innerHTML=html;
+}
+
+function checkGlossaryChoice(btn,selected,correct){
+  const fb=document.getElementById('gl-choice-feedback');
+  document.querySelectorAll('.gl-choice').forEach(b=>{b.style.pointerEvents='none';});
+  if(selected===correct){
+    btn.classList.add('correct');
+    fb.innerHTML=`<div class="gl-feedback success">\u2705 Richtig!</div>`;
+    setTimeout(()=>nextGlossaryPhase(),1000);
+  }else{
+    btn.classList.add('wrong');
+    document.querySelectorAll('.gl-choice').forEach(b=>{if(b.textContent===correct)b.classList.add('correct');});
+    fb.innerHTML=`<div class="gl-feedback error">\u274c Falsch. Richtig: ${correct}</div>`;
+    setTimeout(()=>nextGlossaryPhase(),2200);
+  }
+}
+
+function renderPhaseExplain(t,el){
+  const q=t.questions.explain;
+  let html=`<div class="gl-question">${q.q}</div>`;
+  html+=`<textarea class="gl-input" id="gl-explain-input" placeholder="Erkl\u00e4re in eigenen Worten..."></textarea>`;
+  html+=`<button class="gl-btn primary" onclick="checkGlossaryExplain()">Pr\u00fcfen</button>`;
+  html+=`<div id="gl-explain-feedback"></div>`;
+  el.innerHTML=html;
+  document.getElementById('gl-explain-input').focus();
+}
+
+function checkGlossaryExplain(){
+  const t=glossaryTerms[currentGlossaryTerm];
+  const q=t.questions.explain;
+  const val=document.getElementById('gl-explain-input').value.trim().toLowerCase();
+  if(!val)return;
+  const fb=document.getElementById('gl-explain-feedback');
+  const found=q.keywords.filter(k=>val.includes(k.toLowerCase()));
+  const missing=q.keywords.filter(k=>!val.includes(k.toLowerCase()));
+  const score=found.length/q.keywords.length;
+
+  let kwHtml='<div style="margin-top:8px">';
+  found.forEach(k=>{kwHtml+=`<span class="gl-keyword found">\u2713 ${k}</span>`;});
+  missing.forEach(k=>{kwHtml+=`<span class="gl-keyword missing">\u2717 ${k}</span>`;});
+  kwHtml+='</div>';
+
+  if(score>=0.6){
+    fb.innerHTML=`<div class="gl-feedback success">\u2705 Gut erkl\u00e4rt! ${found.length}/${q.keywords.length} Schl\u00fcsselw\u00f6rter gefunden.${kwHtml}</div>`;
+    const newLevel=Math.min(3,getTermLevel(t.term)+1);
+    setTermLevel(t.term,newLevel);
+    setTimeout(()=>{closeGlossaryLearn();},2000);
+  }else{
+    fb.innerHTML=`<div class="gl-feedback error">\u274c Noch nicht vollst\u00e4ndig. ${found.length}/${q.keywords.length} Schl\u00fcsselw\u00f6rter.${kwHtml}</div>`;
+    const newLevel=Math.max(0,getTermLevel(t.term));
+    setTermLevel(t.term,newLevel);
+    setTimeout(()=>{closeGlossaryLearn();},2500);
+  }
+}
+
+function nextGlossaryPhase(){
+  currentGlossaryPhase++;
+  if(currentGlossaryPhase>=PHASE_NAMES.length){
+    currentGlossaryPhase=PHASE_NAMES.length-1;
+  }
+  renderGlossaryPhase();
+}
+
+function goToGlossaryPhase(idx){
+  if(idx>currentGlossaryPhase)return;
+  currentGlossaryPhase=idx;
+  glossaryHintIndex=0;
+  renderGlossaryPhase();
+}
+
+// ========== GLOSSAR TOOLTIP ==========
+function initGlossaryTooltips(){
+  // Create tooltip element
+  const tip=document.createElement('div');
+  tip.className='glossary-tooltip';
+  tip.id='glossary-tooltip';
+  tip.innerHTML='<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">\u27a5 Klicken zum Lernen</div>';
+  document.body.appendChild(tip);
+
+  // Highlight glossary terms in reference cards
+  const highlightSelectors='.card p, .card li, .summary-card p, .summary-card li, header p';
+  document.querySelectorAll(highlightSelectors).forEach(el=>{
+    glossaryTerms.forEach((t,idx)=>{
+      const variants=[t.term];
+      // Add shorter match variants
+      if(t.term==='Symmetrische Verschl\u00fcsselung')variants.push('symmetrische Verschl\u00fcsselung','Symmetrisch');
+      if(t.term==='Asymmetrische Verschl\u00fcsselung')variants.push('asymmetrische Verschl\u00fcsselung','Asymmetrisch');
+      if(t.term==='RSA-Verfahren')variants.push('RSA');
+      if(t.term==='\u00d6ffentlicher Schl\u00fcssel (Public Key)')variants.push('\u00d6ffentlicher Schl\u00fcssel','Public Key','\u00f6ffentlichen Schl\u00fcssel','\u00f6ffentlichem Schl\u00fcssel');
+      if(t.term==='Privater Schl\u00fcssel (Private Key)')variants.push('Privater Schl\u00fcssel','Private Key','privaten Schl\u00fcssel','privatem Schl\u00fcssel','privater Schl\u00fcssel');
+      if(t.term==='Primfaktorzerlegung')variants.push('Primfaktoren','Primfaktorzerlegung');
+      if(t.term==='Eulersche Phi-Funktion')variants.push('\u03c6(n)','phi(n)');
+      if(t.term==='Digitale Signatur')variants.push('digitale Signatur','Signatur','Signaturen');
+
+      variants.forEach(v=>{
+        if(el.innerHTML.includes(v)&&!el.innerHTML.includes('glossary-term')){
+          const escaped=v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+          const regex=new RegExp('(?<!<[^>]*)\\b('+escaped+')\\b(?![^<]*>)','');
+          if(regex.test(el.innerHTML)){
+            el.innerHTML=el.innerHTML.replace(regex,`<span class="glossary-term" data-g="${idx}">$1</span>`);
+          }
+        }
+      });
+    });
+  });
+
+  // Attach tooltip events
+  document.addEventListener('mouseover',ev=>{
+    const gt=ev.target.closest('.glossary-term');
+    if(!gt)return;
+    const idx=parseInt(gt.dataset.g);
+    const t=glossaryTerms[idx];
+    tip.querySelector('.gt-name').textContent=t.icon+' '+t.term;
+    tip.querySelector('.gt-short').textContent=t.short;
+    tip.style.display='block';
+    const rect=gt.getBoundingClientRect();
+    let left=rect.left;
+    let top=rect.bottom+8;
+    if(left+270>window.innerWidth)left=window.innerWidth-280;
+    if(top+120>window.innerHeight)top=rect.top-130;
+    tip.style.left=left+'px';
+    tip.style.top=top+'px';
+  });
+  document.addEventListener('mouseout',ev=>{
+    if(ev.target.closest('.glossary-term'))tip.style.display='none';
+  });
+  document.addEventListener('click',ev=>{
+    const gt=ev.target.closest('.glossary-term');
+    if(!gt)return;
+    const idx=parseInt(gt.dataset.g);
+    tip.style.display='none';
+    openGlossaryLearn(idx);
+    document.getElementById('glossary-section').scrollIntoView({behavior:'smooth'});
+  });
+}
+
+// ========== GLOSSAR INIT ==========
+loadGlossaryState();
+renderGlossaryGrid();
+updateGlossaryProgress();
+initGlossaryTooltips();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

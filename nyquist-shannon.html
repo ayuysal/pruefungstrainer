@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nyquist · Shannon-Hartley · Abtasttheorem</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+  .noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  .glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+  .glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+  .glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+  .container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+  header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease}
+  header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+  header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+  .section-title{display:flex;align-items:center;gap:12px;margin-bottom:18px;margin-top:52px;flex-wrap:wrap}
+  .section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .section-title h2{font-size:20px;font-weight:700}
+  .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
+
+  /* Formula Cards */
+  .formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;animation:fadeUp .6s ease .1s both}
+  .formula-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;position:relative;overflow:hidden;transition:all .3s}
+  .formula-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+  .formula-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.1)}
+  .formula-card h3{font-size:16px;font-weight:700;margin-bottom:4px}
+  .formula-card .f-en{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.5px;margin-bottom:14px}
+  .formula-card .formula{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;text-align:center;padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;line-height:1.6}
+  .formula-card .f-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.65}
+  .formula-card .f-desc strong{color:var(--text);font-weight:600}
+  .formula-card .f-unit{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);display:inline-block;margin-top:8px}
+  .fc-nyq::before{background:var(--cyan)}
+  .fc-sh::before{background:var(--purple)}
+  .fc-abt::before{background:var(--orange)}
+
+  /* Calculators */
+  .calc-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:12px;animation:fadeUp .6s ease .15s both}
+  .calc-card h3{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .calc-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;align-items:flex-end}
+  .calc-field{flex:1;min-width:120px}
+  .calc-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+  .calc-field input{width:100%;font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);outline:none;transition:border .2s}
+  .calc-field input:focus{border-color:var(--accent)}
+  .calc-output{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--muted);white-space:pre-wrap}
+  .calc-output strong{color:var(--text);font-weight:700}
+  .calc-output .val{color:var(--green);font-weight:700;font-size:15px}
+  .calc-output .step{color:var(--cyan)}
+  .calc-output .hl{color:var(--yellow)}
+  .btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 22px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:#5a52e0;transform:translateY(-1px)}
+  .btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+  .btn-secondary:hover{background:rgba(255,255,255,.1)}
+
+  /* Sampling Visualizer */
+  .viz-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-top:12px;animation:fadeUp .6s ease .2s both}
+  .viz-card h3{font-size:15px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .viz-sub{font-size:12px;color:var(--muted);font-weight:300;margin-bottom:16px}
+  .slider-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .slider-row label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:110px}
+  .slider-row input[type=range]{flex:1;accent-color:var(--accent);height:6px}
+  .slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700;min-width:80px;text-align:right}
+  canvas{width:100%;border-radius:10px;background:#0a0c10;border:1px solid var(--border);margin-top:10px}
+  .viz-status{margin-top:10px;padding:10px 16px;border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;text-align:center;transition:all .3s}
+  .viz-status.ok{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .viz-status.warn{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);color:var(--yellow)}
+  .viz-status.bad{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+
+  /* Exercises */
+  .mode-tabs{display:flex;gap:6px;margin-bottom:18px;animation:fadeUp .6s ease .25s both}
+  .mode-tab{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:11px 14px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .25s;flex:1;text-align:center}
+  .mode-tab:hover{background:rgba(255,255,255,.04)}
+  .mode-tab.active{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.08)}
+  .score-bar{display:flex;gap:16px;justify-content:center;margin-bottom:18px;flex-wrap:wrap}
+  .score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:13px}
+  .score-dot{width:10px;height:10px;border-radius:50%}
+  .exercise-area{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px 24px;min-height:260px;animation:fadeUp .6s ease .3s both;display:flex;flex-direction:column;align-items:center}
+  .exercise-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+  .task-display{font-family:'JetBrains Mono',monospace;font-size:clamp(14px,3.5vw,20px);font-weight:600;text-align:center;margin-bottom:6px;line-height:1.5}
+  .task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:20px;text-align:center;max-width:540px;line-height:1.5}
+  .input-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;justify-content:center}
+  .input-row input{font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:600;background:rgba(255,255,255,.04);border:2px solid var(--border);border-radius:10px;padding:11px 16px;color:var(--text);outline:none;width:180px;text-align:center;transition:all .25s}
+  .input-row input:focus{border-color:var(--accent)}
+  .input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+  .input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+  .input-row .suffix{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .feedback{margin-top:12px;font-size:14px;font-weight:500;text-align:center;min-height:22px}
+  .feedback.correct{color:var(--green)}.feedback.wrong{color:var(--red)}
+  .solution-box{margin-top:12px;padding:14px 18px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:1.8;text-align:left;max-width:100%;overflow-x:auto;display:none;width:100%}
+  .solution-box.show{display:block;animation:fadeUp .3s ease}
+  .solution-box strong{color:var(--text)}.solution-box .step{color:var(--cyan)}.solution-box .val{color:var(--green);font-weight:700}.solution-box .hl{color:var(--yellow)}
+
+  .summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;animation:fadeUp .6s ease .35s both}
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+  .summary-card:hover{border-color:rgba(108,99,255,.3)}
+  .summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+  .summary-card p strong{color:var(--text);font-weight:600}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="tag">Nachrichtentechnik</div>
+    <h1>Nyquist · Shannon-Hartley · Abtasttheorem</h1>
+    <p>Kanalkapazität, Abtastrate und maximale Datenrate – interaktiv erklärt und berechnet.</p>
+  </header>
+
+  <!-- ═══════════════════════════════
+       FORMELN
+       ═══════════════════════════════ -->
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple));">📐</div>
+    <h2>Die drei Kernformeln</h2>
+  </div>
+
+  <div class="formula-grid">
+    <div class="formula-card fc-nyq">
+      <h3 style="color:var(--cyan)">Nyquist-Datenrate</h3>
+      <div class="f-en">NYQUIST RATE · rauschfreier Kanal</div>
+      <div class="formula" style="color:var(--cyan)">C = 2 · B · log₂(M)</div>
+      <div class="f-desc">
+        <strong>C</strong> = max. Datenrate (Bit/s)<br>
+        <strong>B</strong> = Bandbreite des Kanals (Hz)<br>
+        <strong>M</strong> = Anzahl Signalstufen<br><br>
+        Gibt die <strong>maximale Datenrate</strong> auf einem <strong>rauschfreien</strong> Kanal an. Mehr Signalstufen → mehr Bit pro Symbol.
+      </div>
+      <span class="f-unit" style="color:var(--cyan)">Einheit: Bit/s</span>
+    </div>
+
+    <div class="formula-card fc-sh">
+      <h3 style="color:var(--purple)">Shannon-Hartley</h3>
+      <div class="f-en">CHANNEL CAPACITY · verrauschter Kanal</div>
+      <div class="formula" style="color:var(--purple)">C = B · log₂(1 + S/N)</div>
+      <div class="f-desc">
+        <strong>C</strong> = Kanalkapazität (Bit/s)<br>
+        <strong>B</strong> = Bandbreite (Hz)<br>
+        <strong>S/N</strong> = Signal-Rausch-Verhältnis (linear)<br><br>
+        Die <strong>theoretische Obergrenze</strong> der fehlerfreien Übertragung auf einem <strong>verrauschten</strong> Kanal. Gilt als das fundamentalste Theorem der Informationstheorie.
+      </div>
+      <span class="f-unit" style="color:var(--purple)">Einheit: Bit/s</span>
+    </div>
+
+    <div class="formula-card fc-abt">
+      <h3 style="color:var(--orange)">Abtasttheorem</h3>
+      <div class="f-en">SAMPLING THEOREM · Nyquist-Shannon</div>
+      <div class="formula" style="color:var(--orange)">fₛ ≥ 2 · f_max</div>
+      <div class="f-desc">
+        <strong>fₛ</strong> = Abtastfrequenz (Hz)<br>
+        <strong>f_max</strong> = höchste Signalfrequenz (Hz)<br><br>
+        Ein Signal muss mit <strong>mindestens der doppelten</strong> seiner höchsten Frequenz abgetastet werden, um es <strong>verlustfrei rekonstruieren</strong> zu können. Sonst: <strong>Aliasing</strong>.
+      </div>
+      <span class="f-unit" style="color:var(--orange)">fₛ(min) = 2 · f_max</span>
+    </div>
+  </div>
+
+  <!-- Relationship box -->
+  <div class="calc-card" style="margin-top:12px">
+    <h3>🔗 Zusammenspiel der Formeln</h3>
+    <div class="calc-output">
+<strong>Nyquist</strong> sagt: <span class="step">So viele Bit/s passen maximal auf den Kanal</span> (ohne Rauschen).
+<strong>Shannon-Hartley</strong> sagt: <span class="step">So viele Bit/s gehen maximal TROTZ Rauschen</span>.
+<strong>Abtasttheorem</strong> sagt: <span class="step">So oft muss ich mindestens abtasten</span>, um nichts zu verlieren.
+
+→ Die tatsächliche Datenrate ist immer ≤ <span class="hl">min(Nyquist, Shannon)</span>.
+→ <strong>Nyquist</strong> begrenzt durch Bandbreite + Signalstufen.
+→ <strong>Shannon</strong> begrenzt durch Bandbreite + Rauschen.
+→ Das <strong>Abtasttheorem</strong> ist die Voraussetzung für korrekte Digitalisierung.</div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       RECHNER
+       ═══════════════════════════════ -->
+  <div class="section-title" style="margin-top:52px">
+    <div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan));">🧮</div>
+    <h2>Interaktive Rechner</h2>
+  </div>
+
+  <!-- Nyquist -->
+  <div class="calc-card">
+    <h3><span style="color:var(--cyan)">⚡</span> Nyquist-Rechner</h3>
+    <div class="calc-row">
+      <div class="calc-field"><label>Bandbreite B (Hz)</label><input type="number" id="nyq-b" value="3000" min="1"></div>
+      <div class="calc-field"><label>Signalstufen M</label><input type="number" id="nyq-m" value="2" min="2"></div>
+      <div class="calc-field" style="flex:.5"><label>&nbsp;</label><button class="btn btn-primary" onclick="calcNyquist()" style="width:100%;padding:11px">Berechnen</button></div>
+    </div>
+    <div class="calc-output" id="nyq-out">Gib Bandbreite und Signalstufen ein.</div>
+  </div>
+
+  <!-- Shannon-Hartley -->
+  <div class="calc-card">
+    <h3><span style="color:var(--purple)">📡</span> Shannon-Hartley-Rechner</h3>
+    <div class="calc-row">
+      <div class="calc-field"><label>Bandbreite B (Hz)</label><input type="number" id="sh-b" value="3000" min="1"></div>
+      <div class="calc-field"><label>SNR (dB)</label><input type="number" id="sh-snr" value="30" step="0.1"></div>
+      <div class="calc-field" style="flex:.5"><label>&nbsp;</label><button class="btn btn-primary" onclick="calcShannon()" style="width:100%;padding:11px">Berechnen</button></div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin:-8px 0 10px;font-family:'JetBrains Mono',monospace">
+      Tipp: SNR(linear) = 10^(SNR_dB/10). Du kannst auch direkt den linearen Wert eingeben:
+      <span style="cursor:pointer;color:var(--cyan);text-decoration:underline" onclick="document.getElementById('sh-snr').value='1000';document.querySelector('[for=sh-snr]||label').textContent='SNR (linear)'">Auf linear umschalten</span>
+    </div>
+    <div class="calc-output" id="sh-out">Gib Bandbreite und Signal-Rausch-Verhältnis ein.</div>
+  </div>
+
+  <!-- Abtasttheorem -->
+  <div class="calc-card">
+    <h3><span style="color:var(--orange)">🎵</span> Abtast-Rechner</h3>
+    <div class="calc-row">
+      <div class="calc-field"><label>Höchste Frequenz f_max (Hz)</label><input type="number" id="abt-f" value="20000" min="1"></div>
+      <div class="calc-field"><label>Bit-Tiefe (Bit/Sample)</label><input type="number" id="abt-bits" value="16" min="1" max="64"></div>
+      <div class="calc-field" style="flex:.5"><label>&nbsp;</label><button class="btn btn-primary" onclick="calcAbtast()" style="width:100%;padding:11px">Berechnen</button></div>
+    </div>
+    <div class="calc-output" id="abt-out">Gib die höchste Signalfrequenz ein.</div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       ABTAST-VISUALIZER
+       ═══════════════════════════════ -->
+  <div class="section-title" style="margin-top:52px">
+    <div class="ic" style="background:linear-gradient(135deg,var(--orange),var(--pink));">📈</div>
+    <h2>Abtast-Visualizer</h2>
+    <span class="sub">Aliasing live erleben</span>
+  </div>
+
+  <div class="viz-card">
+    <h3>🔬 Abtastung einer Sinuswelle</h3>
+    <div class="viz-sub">Verändere die Abtastfrequenz und beobachte, wann Aliasing entsteht.</div>
+    <div class="slider-row">
+      <label>Signal f_max:</label>
+      <input type="range" id="viz-freq" min="1" max="20" step="0.5" value="5">
+      <div class="slider-val"><span id="viz-freq-val">5</span> Hz</div>
+    </div>
+    <div class="slider-row">
+      <label>Abtastrate fₛ:</label>
+      <input type="range" id="viz-fs" min="2" max="60" step="1" value="20">
+      <div class="slider-val"><span id="viz-fs-val">20</span> Hz</div>
+    </div>
+    <canvas id="viz-canvas" height="220"></canvas>
+    <div class="viz-status ok" id="viz-status">✓ fₛ = 20 Hz ≥ 2 × 5 Hz = 10 Hz — Abtasttheorem erfüllt!</div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       ÜBUNGEN
+       ═══════════════════════════════ -->
+  <div class="section-title" style="margin-top:56px">
+    <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--pink));">🏋️</div>
+    <h2>Übungen</h2>
+  </div>
+
+  <div class="mode-tabs">
+    <div class="mode-tab active" data-mode="nyq">Nyquist</div>
+    <div class="mode-tab" data-mode="shannon">Shannon-Hartley</div>
+    <div class="mode-tab" data-mode="abtast">Abtasttheorem</div>
+    <div class="mode-tab" data-mode="snr">SNR umrechnen</div>
+  </div>
+
+  <div class="score-bar">
+    <div class="score-item"><div class="score-dot" style="background:var(--green)"></div> Richtig: <span id="score-correct">0</span></div>
+    <div class="score-item"><div class="score-dot" style="background:var(--red)"></div> Falsch: <span id="score-wrong">0</span></div>
+    <div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div> Serie: <span id="score-streak">0</span> 🔥</div>
+  </div>
+
+  <div class="exercise-area" id="exercise-area"></div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-card">
+      <h4>🎯 Prüfungstipp</h4>
+      <p>Aufpassen: <strong>SNR in dB</strong> muss zuerst in <strong>linear</strong> umgerechnet werden! SNR_lin = 10^(SNR_dB / 10). Häufiger Fehler in Klausuren.</p>
+    </div>
+    <div class="summary-card">
+      <h4>💡 Merkhilfe</h4>
+      <p><strong>Nyquist = rauschfrei</strong> (idealer Kanal). <strong>Shannon = realistisch</strong> (mit Rauschen). Shannon ist immer die <strong>absolute Obergrenze</strong>.</p>
+    </div>
+    <div class="summary-card">
+      <h4>🎵 Praxisbeispiel</h4>
+      <p>Audio-CD: f_max = <strong>22'050 Hz</strong> Abtastrate (> 2 × 20'000 Hz Hörgrenze), <strong>16 Bit</strong> Tiefe, 2 Kanäle → Datenrate = 44'100 × 16 × 2 = <strong>1'411'200 Bit/s</strong>.</p>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       GLOSSAR-LERNSYSTEM
+       ═══════════════════════════════ -->
+  <div class="glossary-section" id="glossary-section">
+    <div class="section-title">
+      <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green));">📖</div>
+      <h2>Fachbegriffe lernen</h2>
+      <span class="sub">Glossar-Trainer</span>
+    </div>
+
+    <div class="glossary-progress-bar">
+      <div class="gp-text">Fortschritt</div>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <div class="gp-count" id="glossary-count">0 / 8 gemeistert</div>
+    </div>
+
+    <div class="glossary-grid" id="glossary-grid"></div>
+
+    <div class="glossary-learn" id="glossary-learn"></div>
+  </div>
+</div>
+
+<script>
+const log2 = x => Math.log2(x);
+const round = (x,d=2) => Math.round(x*10**d)/10**d;
+const fmt = n => n.toLocaleString('de-CH');
+
+// ── Nyquist Calculator ──
+function calcNyquist() {
+  const B = parseFloat(document.getElementById('nyq-b').value);
+  const M = parseFloat(document.getElementById('nyq-m').value);
+  if (isNaN(B)||isNaN(M)||M<2) return;
+  const bitsPerSym = log2(M);
+  const C = 2 * B * bitsPerSym;
+  document.getElementById('nyq-out').innerHTML =
+    `<span class="step">Bits pro Symbol = log₂(${M}) = ${round(bitsPerSym,4)}</span>\n` +
+    `<span class="step">C = 2 × ${fmt(B)} Hz × ${round(bitsPerSym,4)}</span>\n` +
+    `<span class="step">C = </span><span class="val">${fmt(round(C,0))} Bit/s</span>` +
+    (C>=1e6?`  <span class="hl">(${round(C/1e6,2)} Mbit/s)</span>`:'') +
+    (C>=1e3&&C<1e6?`  <span class="hl">(${round(C/1e3,2)} kbit/s)</span>`:'') +
+    `\n\n<span style="color:var(--muted)">→ Max. Datenrate auf rauschfreiem Kanal mit ${M} Signalstufen.</span>`;
+}
+
+// ── Shannon Calculator ──
+function calcShannon() {
+  const B = parseFloat(document.getElementById('sh-b').value);
+  let snrInput = parseFloat(document.getElementById('sh-snr').value);
+  if (isNaN(B)||isNaN(snrInput)) return;
+  let snrLin, snrDB;
+  if (snrInput > 100) { // likely linear
+    snrLin = snrInput; snrDB = 10*Math.log10(snrLin);
+  } else { // assume dB
+    snrDB = snrInput; snrLin = Math.pow(10, snrDB/10);
+  }
+  const C = B * log2(1 + snrLin);
+  document.getElementById('sh-out').innerHTML =
+    `<span class="step">SNR = ${round(snrDB,1)} dB → linear = 10^(${round(snrDB,1)}/10) = ${round(snrLin,2)}</span>\n` +
+    `<span class="step">C = ${fmt(B)} Hz × log₂(1 + ${round(snrLin,2)})</span>\n` +
+    `<span class="step">C = ${fmt(B)} × ${round(log2(1+snrLin),4)}</span>\n` +
+    `<span class="step">C = </span><span class="val">${fmt(round(C,0))} Bit/s</span>` +
+    (C>=1e6?`  <span class="hl">(${round(C/1e6,2)} Mbit/s)</span>`:'') +
+    (C>=1e3&&C<1e6?`  <span class="hl">(${round(C/1e3,2)} kbit/s)</span>`:'') +
+    `\n\n<span style="color:var(--muted)">→ Theoretische Kanalkapazität bei ${round(snrDB,1)} dB Rauschen.</span>`;
+}
+
+// ── Abtast Calculator ──
+function calcAbtast() {
+  const fmax = parseFloat(document.getElementById('abt-f').value);
+  const bits = parseFloat(document.getElementById('abt-bits').value);
+  if (isNaN(fmax)) return;
+  const fs = 2 * fmax;
+  const datarate = fs * bits;
+  document.getElementById('abt-out').innerHTML =
+    `<span class="step">fₛ(min) = 2 × ${fmt(fmax)} Hz = </span><span class="val">${fmt(fs)} Hz</span>\n` +
+    `<span class="step">Nyquist-Frequenz = ${fmt(fmax)} Hz</span>\n` +
+    (bits?`<span class="step">Datenrate = ${fmt(fs)} × ${bits} Bit = </span><span class="val">${fmt(datarate)} Bit/s</span>` +
+    (datarate>=1e6?`  <span class="hl">(${round(datarate/1e6,2)} Mbit/s)</span>`:'') +
+    (datarate>=1e3&&datarate<1e6?`  <span class="hl">(${round(datarate/1e3,2)} kbit/s)</span>`:''):'') +
+    `\n\n<span style="color:var(--muted)">→ Mindestens ${fmt(fs)} Abtastungen pro Sekunde nötig.</span>`;
+}
+
+// ── Sampling Visualizer ──
+const canvas = document.getElementById('viz-canvas');
+const ctx = canvas.getContext('2d');
+const freqSlider = document.getElementById('viz-freq');
+const fsSlider = document.getElementById('viz-fs');
+
+function drawViz() {
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = rect.width * dpr;
+  canvas.height = 220 * dpr;
+  ctx.scale(dpr, dpr);
+  const W = rect.width, H = 220;
+
+  const freq = parseFloat(freqSlider.value);
+  const fs = parseFloat(fsSlider.value);
+  document.getElementById('viz-freq-val').textContent = freq;
+  document.getElementById('viz-fs-val').textContent = fs;
+
+  ctx.clearRect(0,0,W,H);
+  const pad = 20, plotW = W-2*pad, plotH = H-2*pad;
+  const midY = H/2;
+
+  // Grid
+  ctx.strokeStyle = '#1e2230';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad,midY); ctx.lineTo(W-pad,midY);
+  ctx.stroke();
+
+  // Original signal
+  ctx.strokeStyle = '#38bdf844';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let x=0; x<=plotW; x++) {
+    const t = x/plotW;
+    const y = midY - Math.sin(2*Math.PI*freq*t) * (plotH/2-10);
+    x===0?ctx.moveTo(pad+x,y):ctx.lineTo(pad+x,y);
+  }
+  ctx.stroke();
+
+  // Sample points
+  const numSamples = Math.floor(fs);
+  const samples = [];
+  for (let i=0; i<numSamples; i++) {
+    const t = i/fs;
+    if (t>1) break;
+    const x = pad + t*plotW;
+    const y = midY - Math.sin(2*Math.PI*freq*t)*(plotH/2-10);
+    samples.push({x,y,t});
+  }
+
+  // Reconstructed signal (from samples)
+  ctx.strokeStyle = fs >= 2*freq ? '#51cf66' : '#ff6b6b';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  for (let px=0; px<=plotW; px++) {
+    const t = px/plotW;
+    let val = 0;
+    samples.forEach(s => {
+      const sinc = t===s.t ? 1 : Math.sin(Math.PI*fs*(t-s.t))/(Math.PI*fs*(t-s.t));
+      val += (Math.sin(2*Math.PI*freq*s.t)) * sinc;
+    });
+    val = Math.max(-1,Math.min(1,val));
+    const y = midY - val*(plotH/2-10);
+    px===0?ctx.moveTo(pad+px,y):ctx.lineTo(pad+px,y);
+  }
+  ctx.stroke();
+
+  // Draw sample stems
+  samples.forEach(s => {
+    ctx.strokeStyle = '#fbbf2488';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(s.x,midY); ctx.lineTo(s.x,s.y); ctx.stroke();
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath(); ctx.arc(s.x,s.y,4,0,Math.PI*2); ctx.fill();
+  });
+
+  // Legend
+  ctx.font = '11px JetBrains Mono';
+  ctx.fillStyle = '#38bdf866'; ctx.fillText('― Original',pad+8,pad+6);
+  ctx.fillStyle = fs>=2*freq?'#51cf66':'#ff6b6b'; ctx.fillText('― Rekonstruiert',pad+8,pad+20);
+  ctx.fillStyle = '#fbbf24'; ctx.fillText('● Abtastpunkte',pad+8,pad+34);
+
+  // Status
+  const statusEl = document.getElementById('viz-status');
+  const nyqMin = 2*freq;
+  if (fs >= nyqMin*1.5) {
+    statusEl.className = 'viz-status ok';
+    statusEl.textContent = `✓ fₛ = ${fs} Hz ≥ 2 × ${freq} Hz = ${nyqMin} Hz — Abtasttheorem gut erfüllt!`;
+  } else if (fs >= nyqMin) {
+    statusEl.className = 'viz-status warn';
+    statusEl.textContent = `⚠ fₛ = ${fs} Hz ≥ ${nyqMin} Hz — Gerade noch erfüllt, aber knapp!`;
+  } else {
+    statusEl.className = 'viz-status bad';
+    statusEl.textContent = `✗ fₛ = ${fs} Hz < ${nyqMin} Hz — ALIASING! Signal wird verfälscht!`;
+  }
+}
+
+freqSlider.addEventListener('input', drawViz);
+fsSlider.addEventListener('input', drawViz);
+window.addEventListener('resize', drawViz);
+drawViz();
+
+// ── Exercise Engine ──
+let mode = 'nyq';
+let score = {correct:0,wrong:0,streak:0};
+
+document.querySelectorAll('.mode-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    mode = tab.dataset.mode;
+    newTask();
+  });
+});
+
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min}
+function pick(arr){return arr[rand(0,arr.length-1)]}
+
+function genNyqTask(){
+  const B = pick([1000,2000,3000,4000,5000,8000,10000,20000,100000,1000000]);
+  const M = pick([2,4,8,16,32,64,128,256]);
+  const bps = log2(M);
+  const C = 2*B*bps;
+  return {
+    display:`<span style="color:var(--cyan)">B = ${fmt(B)} Hz, M = ${M} Stufen</span>`,
+    sub:`Berechne die maximale Datenrate (Nyquist): C = 2 · B · log₂(M)`,
+    answer: round(C,0),
+    suffix:'Bit/s',
+    tolerance: C*0.01,
+    solution:`<span class="step">log₂(${M}) = ${round(bps,4)} Bit/Symbol</span>\n<span class="step">C = 2 × ${fmt(B)} × ${round(bps,4)}</span>\n<span class="val">C = ${fmt(round(C,0))} Bit/s</span>`
+  };
+}
+
+function genShannonTask(){
+  const B = pick([3000,4000,5000,10000,20000,1000000]);
+  const snrDB = pick([10,15,20,24,30,36,40]);
+  const snrLin = Math.pow(10,snrDB/10);
+  const C = B*log2(1+snrLin);
+  return {
+    display:`<span style="color:var(--purple)">B = ${fmt(B)} Hz, SNR = ${snrDB} dB</span>`,
+    sub:`Berechne die Kanalkapazität (Shannon-Hartley): C = B · log₂(1 + S/N). Runde auf ganze Zahl.`,
+    answer: Math.round(C),
+    suffix:'Bit/s',
+    tolerance: C*0.02,
+    solution:`<span class="step">SNR linear = 10^(${snrDB}/10) = ${round(snrLin,2)}</span>\n<span class="step">C = ${fmt(B)} × log₂(1 + ${round(snrLin,2)})</span>\n<span class="step">C = ${fmt(B)} × ${round(log2(1+snrLin),4)}</span>\n<span class="val">C = ${fmt(Math.round(C))} Bit/s</span>`
+  };
+}
+
+function genAbtastTask(){
+  const fmax = pick([4000,8000,11025,20000,22050,44100,48000,96000]);
+  const fs = 2*fmax;
+  return {
+    display:`<span style="color:var(--orange)">f_max = ${fmt(fmax)} Hz</span>`,
+    sub:`Wie hoch muss die minimale Abtastfrequenz fₛ sein? (Abtasttheorem)`,
+    answer: fs,
+    suffix:'Hz',
+    tolerance: 0,
+    solution:`<span class="step">fₛ(min) = 2 × ${fmt(fmax)} Hz</span>\n<span class="val">fₛ = ${fmt(fs)} Hz</span>`
+  };
+}
+
+function genSNRTask(){
+  const snrDB = pick([3,6,10,13,15,20,23,26,30,33,36,40]);
+  const snrLin = Math.pow(10,snrDB/10);
+  const direction = rand(0,1);
+  if (direction===0){
+    return {
+      display:`<span style="color:var(--yellow)">SNR = ${snrDB} dB</span>`,
+      sub:`Rechne in den linearen Wert um: SNR_lin = 10^(dB/10). Runde auf ganze Zahl.`,
+      answer: Math.round(snrLin),
+      suffix:'(linear)',
+      tolerance: snrLin*0.02,
+      solution:`<span class="step">SNR_lin = 10^(${snrDB}/10)</span>\n<span class="step">SNR_lin = 10^(${round(snrDB/10,2)})</span>\n<span class="val">SNR_lin ≈ ${round(snrLin,2)} ≈ ${Math.round(snrLin)}</span>`
+    };
+  } else {
+    return {
+      display:`<span style="color:var(--yellow)">SNR = ${Math.round(snrLin)} (linear)</span>`,
+      sub:`Rechne in dB um: SNR_dB = 10 · log₁₀(SNR_lin). Runde auf ganze Zahl.`,
+      answer: Math.round(10*Math.log10(Math.round(snrLin))),
+      suffix:'dB',
+      tolerance: 1,
+      solution:`<span class="step">SNR_dB = 10 × log₁₀(${Math.round(snrLin)})</span>\n<span class="step">SNR_dB = 10 × ${round(Math.log10(Math.round(snrLin)),4)}</span>\n<span class="val">SNR_dB ≈ ${Math.round(10*Math.log10(Math.round(snrLin)))} dB</span>`
+    };
+  }
+}
+
+function newTask(){
+  const gens = {nyq:genNyqTask,shannon:genShannonTask,abtast:genAbtastTask,snr:genSNRTask};
+  const labels = {nyq:'NYQUIST-DATENRATE',shannon:'SHANNON-HARTLEY',abtast:'ABTASTTHEOREM',snr:'SNR UMRECHNEN'};
+  const task = gens[mode]();
+  window._task = task;
+  const area = document.getElementById('exercise-area');
+  area.innerHTML=`
+    <div class="exercise-label">${labels[mode]}</div>
+    <div class="task-display">${task.display}</div>
+    <div class="task-sub">${task.sub}</div>
+    <div class="input-row">
+      <input type="text" id="user-answer" placeholder="Ergebnis" autocomplete="off" spellcheck="false">
+      <span class="suffix">${task.suffix}</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-check">Prüfen ↵</button>
+      <button class="btn btn-secondary" id="btn-show">Lösung zeigen</button>
+      <button class="btn btn-secondary" id="btn-skip">Überspringen →</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="solution-box" id="solution-box"></div>`;
+  const input=document.getElementById('user-answer');
+  input.focus();
+  input.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer()});
+  document.getElementById('btn-check').addEventListener('click',checkAnswer);
+  document.getElementById('btn-show').addEventListener('click',showSolution);
+  document.getElementById('btn-skip').addEventListener('click',newTask);
+}
+
+function checkAnswer(){
+  const input=document.getElementById('user-answer');
+  const fb=document.getElementById('feedback');
+  let raw=input.value.trim().replace(/['′']/g,'').replace(/,/g,'.');
+  if(!raw)return;
+  const userVal=parseFloat(raw);
+  const t=window._task;
+  const tol=t.tolerance||Math.abs(t.answer)*0.02;
+  if(Math.abs(userVal-t.answer)<=Math.max(tol,1)){
+    input.classList.add('correct');input.classList.remove('wrong');
+    fb.textContent='✓ Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    setTimeout(newTask,1200);
+  }else{
+    input.classList.add('wrong');input.classList.remove('correct');
+    fb.textContent=`✗ Falsch – richtig: ${fmt(t.answer)} ${t.suffix}`;
+    fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+function showSolution(){const b=document.getElementById('solution-box');b.innerHTML=window._task.solution;b.classList.add('show')}
+function updateScore(){
+  document.getElementById('score-correct').textContent=score.correct;
+  document.getElementById('score-wrong').textContent=score.wrong;
+  document.getElementById('score-streak').textContent=score.streak;
+}
+newTask();
+
+// ══════════════════════════════════════════
+//  GLOSSAR-LERNSYSTEM
+// ══════════════════════════════════════════
+(function(){
+  const STORAGE_KEY = 'glossary-nyquist-shannon';
+
+  const glossaryTerms = [
+    {
+      id:'abtasttheorem',
+      term:'Abtasttheorem',
+      icon:'📐',
+      short:'Minimale Abtastfrequenz zur verlustfreien Rekonstruktion eines Signals.',
+      definition:'Das Abtasttheorem (Nyquist-Shannon-Theorem) besagt, dass ein bandbegrenztes, zeitkontinuierliches Signal mit einer Abtastfrequenz von mindestens dem Doppelten seiner höchsten enthaltenen Frequenz abgetastet werden muss, um es aus den Abtastwerten exakt rekonstruieren zu können. Wird diese Bedingung verletzt, tritt Aliasing auf – das rekonstruierte Signal weicht vom Original ab.',
+      analogy:'Stell dir vor, du filmst ein sich drehendes Rad. Wenn die Kamera zu wenige Bilder pro Sekunde aufnimmt, scheint das Rad stillzustehen oder sich rückwärts zu drehen – das ist Aliasing. Erst mit genügend Bildern pro Sekunde (mindestens doppelt so viele wie die Umdrehungsfrequenz) siehst du die echte Bewegung.',
+      hints:[
+        'Die Formel lautet: fₛ ≥ 2 · f_max.',
+        'Wird die Bedingung verletzt, entsteht Aliasing – Frequenzen spiegeln sich in den Abtastwerten.',
+        'Beispiel Audio-CD: f_max = 20 kHz (Hörgrenze), daher fₛ = 44,1 kHz (etwas mehr als 2 × 20 kHz).'
+      ],
+      questions:{
+        fill:{
+          q:'Wie lautet die Bedingung des Abtasttheorems? fₛ ≥ ___ · f_max',
+          answer:'2',
+          explanation:'Die Abtastfrequenz muss mindestens das Doppelte der höchsten Signalfrequenz betragen: fₛ ≥ 2 · f_max.'
+        },
+        choice:{
+          q:'Was passiert, wenn die Abtastfrequenz kleiner als 2 · f_max ist?',
+          options:['Das Signal wird lauter wiedergegeben','Es tritt Aliasing auf – das Signal wird verfälscht','Die Bandbreite verdoppelt sich','Das Rauschen nimmt ab'],
+          correct:1,
+          explanation:'Bei Unterabtastung (fₛ < 2·f_max) entsteht Aliasing: Hohe Frequenzen werden als niedrigere Frequenzen fehlinterpretiert.'
+        },
+        explain:{
+          q:'Erkläre in eigenen Worten, warum man mindestens mit der doppelten Frequenz abtasten muss.',
+          keywords:['doppelt','frequenz','rekonstruktion','aliasing','verlustfrei'],
+          explanation:'Eine Schwingungsperiode hat zwei Extrempunkte (Maximum und Minimum). Um die Form der Welle eindeutig erfassen zu können, benötigt man pro Periode mindestens zwei Abtastpunkte. Andernfalls können verschiedene Frequenzen dieselben Abtastwerte erzeugen (Aliasing).'
+        }
+      },
+      difficulty:1
+    },
+    {
+      id:'abtastfrequenz',
+      term:'Abtastfrequenz',
+      icon:'🔄',
+      short:'Anzahl der Messungen eines analogen Signals pro Sekunde.',
+      definition:'Die Abtastfrequenz (englisch: Sampling Rate) gibt an, wie oft pro Sekunde ein analoges Signal gemessen (abgetastet) wird, um es in ein digitales Signal umzuwandeln. Die Einheit ist Hertz (Hz). Eine höhere Abtastfrequenz liefert eine genauere digitale Repräsentation, erfordert aber auch mehr Speicherplatz und Übertragungsbandbreite.',
+      analogy:'Die Abtastfrequenz ist wie die Bildrate einer Kamera: Je öfter du ein Foto von einer Szene machst, desto flüssiger und genauer kannst du die Bewegung später wiedergeben. Bei zu wenigen Fotos (= zu niedrige Abtastfrequenz) gehen schnelle Bewegungen verloren.',
+      hints:[
+        'Einheit: Hz (= Abtastungen pro Sekunde). Audio-CDs verwenden 44.100 Hz.',
+        'Auch als Sampling Rate oder Abtastrate bezeichnet.',
+        'Die Abtastfrequenz muss laut Abtasttheorem mindestens 2 · f_max betragen.'
+      ],
+      questions:{
+        fill:{
+          q:'Audio-CDs verwenden eine Abtastfrequenz von ___ Hz.',
+          answer:'44100',
+          explanation:'Die standardisierte Abtastfrequenz für Audio-CDs beträgt 44.100 Hz (44,1 kHz), etwas mehr als das Doppelte der menschlichen Hörgrenze von ca. 20 kHz.'
+        },
+        choice:{
+          q:'Was ist die Einheit der Abtastfrequenz?',
+          options:['Bit/s','dB','Hz','Baud'],
+          correct:2,
+          explanation:'Die Abtastfrequenz wird in Hertz (Hz) gemessen – sie gibt die Anzahl der Abtastungen pro Sekunde an.'
+        },
+        explain:{
+          q:'Erkläre den Zusammenhang zwischen Abtastfrequenz und Signalqualität.',
+          keywords:['höher','genauer','frequenz','digital','rekonstruktion'],
+          explanation:'Je höher die Abtastfrequenz, desto mehr Messpunkte stehen zur Verfügung und desto genauer kann das analoge Originalsignal aus den digitalen Werten rekonstruiert werden.'
+        }
+      },
+      difficulty:1
+    },
+    {
+      id:'nyquist-rate',
+      term:'Nyquist-Rate',
+      icon:'⚡',
+      short:'Maximale Datenrate auf einem rauschfreien Kanal.',
+      definition:'Die Nyquist-Rate (auch Nyquist-Datenrate) gibt die maximale symbolratenbezogene Datenrate an, die auf einem rauschfreien Kanal mit gegebener Bandbreite und Anzahl von Signalstufen erreicht werden kann. Die Formel lautet C = 2 · B · log₂(M), wobei B die Bandbreite in Hz und M die Anzahl der Signalstufen ist. Sie stellt eine obere Schranke für die theoretisch mögliche Übertragungsrate dar.',
+      analogy:'Denke an eine Autobahn: Die Bandbreite ist die Anzahl der Spuren, die Signalstufen sind wie viele Autos nebeneinander pro Spur passen. Mehr Spuren und mehr Autos pro Reihe = mehr Durchsatz. Aber ohne Rauschen (keine Unfälle, kein Stau) – ein Idealfall.',
+      hints:[
+        'Formel: C = 2 · B · log₂(M). C in Bit/s, B in Hz, M = Signalstufen.',
+        'Gilt nur für den idealisierten rauschfreien Kanal.',
+        'Mehr Signalstufen ermöglichen mehr Bit pro Symbol, aber in der Praxis begrenzt Rauschen die unterscheidbaren Stufen.'
+      ],
+      questions:{
+        fill:{
+          q:'Die Nyquist-Formel lautet: C = ___ · B · log₂(M)',
+          answer:'2',
+          explanation:'C = 2 · B · log₂(M). Der Faktor 2 kommt daher, dass pro Hertz Bandbreite maximal 2 Symbole pro Sekunde übertragen werden können.'
+        },
+        choice:{
+          q:'Welche Annahme trifft die Nyquist-Formel über den Kanal?',
+          options:['Der Kanal hat starkes Rauschen','Der Kanal ist rauschfrei','Der Kanal hat unendliche Bandbreite','Das Signal hat nur eine Frequenz'],
+          correct:1,
+          explanation:'Die Nyquist-Formel gilt für den idealisierten rauschfreien Kanal. Für reale (verrauschte) Kanäle verwendet man Shannon-Hartley.'
+        },
+        explain:{
+          q:'Warum kann man in der Praxis die Nyquist-Rate nicht immer erreichen?',
+          keywords:['rauschen','signalstufen','unterscheidbar','fehler','praxis'],
+          explanation:'In der Praxis ist jeder Kanal verrauscht. Rauschen macht es schwierig, viele Signalstufen zuverlässig zu unterscheiden. Daher ist die tatsächlich erreichbare Datenrate geringer als die Nyquist-Rate.'
+        }
+      },
+      difficulty:2
+    },
+    {
+      id:'shannon-hartley',
+      term:'Shannon-Hartley-Theorem',
+      icon:'📡',
+      short:'Theoretische Obergrenze der fehlerfreien Datenrate auf einem verrauschten Kanal.',
+      definition:'Das Shannon-Hartley-Theorem definiert die Kanalkapazität C als die maximal erreichbare Datenrate, bei der eine fehlerfreie Übertragung über einen verrauschten Kanal theoretisch noch möglich ist. Die Formel lautet C = B · log₂(1 + S/N), wobei B die Bandbreite in Hz und S/N das Signal-Rausch-Verhältnis (linear, nicht in dB) ist. Es handelt sich um eine absolute Obergrenze – kein Codierungsverfahren kann diese übertreffen.',
+      analogy:'Stell dir vor, du versuchst dich in einem lauten Raum zu unterhalten. Die Bandbreite ist wie die Lautstärke-Bandbreite deiner Stimme, und S/N ist wie laut du im Vergleich zum Lärm bist. Je lauter der Lärm (kleines S/N), desto weniger Informationen pro Zeiteinheit kannst du verständlich vermitteln.',
+      hints:[
+        'Formel: C = B · log₂(1 + S/N). Achtung: S/N muss linear sein, nicht in dB!',
+        'Shannon-Hartley liefert die absolute Obergrenze. Die tatsächliche Datenrate ist immer ≤ min(Nyquist, Shannon).',
+        'SNR_dB → linear: S/N = 10^(SNR_dB / 10). Häufiger Klausurfehler!'
+      ],
+      questions:{
+        fill:{
+          q:'Die Shannon-Formel lautet: C = B · log₂(1 + ___)',
+          answer:'S/N',
+          explanation:'C = B · log₂(1 + S/N). Das Signal-Rausch-Verhältnis S/N bestimmt, wie viel Information pro Hz Bandbreite übertragen werden kann.'
+        },
+        choice:{
+          q:'Was passiert mit der Kanalkapazität, wenn das Rauschen gegen Null geht (S/N → ∞)?',
+          options:['C wird Null','C geht gegen unendlich','C bleibt konstant','C halbiert sich'],
+          correct:1,
+          explanation:'Wenn S/N → ∞, dann log₂(1 + S/N) → ∞ und somit C → ∞. In der Praxis wird dies durch die Nyquist-Rate begrenzt (endliche Signalstufen).'
+        },
+        explain:{
+          q:'Erkläre, warum SNR in dB vor Einsetzen in die Shannon-Formel umgerechnet werden muss.',
+          keywords:['logarithmisch','linear','dB','umrechnung','10'],
+          explanation:'dB ist ein logarithmisches Maß (SNR_dB = 10·log₁₀(S/N)). Die Shannon-Formel erwartet das lineare Verhältnis S/N. Setzt man fälschlich dB-Werte ein, erhält man ein völlig falsches Ergebnis.'
+        }
+      },
+      difficulty:2
+    },
+    {
+      id:'kanalkapazitaet',
+      term:'Kanalkapazität',
+      icon:'📊',
+      short:'Maximale fehlerfreie Datenrate eines Übertragungskanals.',
+      definition:'Die Kanalkapazität C (in Bit/s) ist die theoretisch maximale Rate, mit der Information fehlerfrei über einen Übertragungskanal gesendet werden kann. Sie wird durch die physikalischen Eigenschaften des Kanals bestimmt – insbesondere Bandbreite und Rauschen. Die Kanalkapazität ist eine theoretische Obergrenze; reale Systeme erreichen sie nur annähernd durch fortschrittliche Codierungsverfahren.',
+      analogy:'Die Kanalkapazität ist wie der maximale Durchfluss eines Rohres: Egal wie clever du das Wasser hindurchpresst, mehr als die physikalische Kapazität des Rohres ist nicht möglich. Breite des Rohres = Bandbreite, Verstopfungen = Rauschen.',
+      hints:[
+        'Einheit: Bit/s. Die tatsächlich genutzte Datenrate ist immer kleiner oder gleich C.',
+        'Die Kanalkapazität wird durch Shannon-Hartley berechnet: C = B · log₂(1 + S/N).',
+        'Verdopplung der Bandbreite verdoppelt C. Verdopplung des SNR erhöht C nur um ca. 1 Bit/Hz.'
+      ],
+      questions:{
+        fill:{
+          q:'Die Einheit der Kanalkapazität ist ___ .',
+          answer:'Bit/s',
+          explanation:'Die Kanalkapazität wird in Bit pro Sekunde (Bit/s) gemessen. Sie gibt die maximale Informationsübertragungsrate an.'
+        },
+        choice:{
+          q:'Was begrenzt die Kanalkapazität eines realen Kanals?',
+          options:['Nur die Sendeleistung','Bandbreite und Rauschen','Nur die Kabellänge','Die Anzahl der Empfänger'],
+          correct:1,
+          explanation:'Die Kanalkapazität wird durch die verfügbare Bandbreite und das Signal-Rausch-Verhältnis bestimmt – beides physikalische Kanaleigenschaften.'
+        },
+        explain:{
+          q:'Erkläre, warum die tatsächliche Datenrate eines Systems immer unter der Kanalkapazität liegt.',
+          keywords:['overhead','codierung','fehlerkorrektur','protokoll','theoretisch'],
+          explanation:'Reale Systeme benötigen Overhead für Fehlerkorrektur, Synchronisation, Protokoll-Header und haben nicht-ideale Codierungsverfahren. Die Kanalkapazität ist ein theoretisches Maximum, das nur mit unendlich langen Codewörtern und perfekter Codierung erreichbar wäre.'
+        }
+      },
+      difficulty:2
+    },
+    {
+      id:'snr',
+      term:'Signal-Rausch-Verhältnis (SNR)',
+      icon:'📏',
+      short:'Verhältnis von Signalleistung zu Rauschleistung.',
+      definition:'Das Signal-Rausch-Verhältnis (Signal-to-Noise Ratio, SNR) ist das Verhältnis der Nutzleistung des Signals zur Störleistung des Rauschens. Als linearer Wert ist es dimensionslos (S/N = P_signal / P_rausch). In der Praxis wird es häufig in Dezibel (dB) angegeben: SNR_dB = 10 · log₁₀(S/N). Ein höherer SNR-Wert bedeutet ein „saubereres" Signal mit weniger Störungen.',
+      analogy:'Stell dir vor, du sprichst in einem Raum: Deine Stimme ist das Signal, der Hintergrundlärm ist das Rauschen. Je leiser der Lärm im Vergleich zu deiner Stimme (hohes SNR), desto besser wirst du verstanden.',
+      hints:[
+        'Umrechnung: SNR_dB = 10 · log₁₀(S/N). Rückwärts: S/N = 10^(SNR_dB / 10).',
+        'Für die Shannon-Formel muss SNR immer als linearer Wert eingesetzt werden!',
+        '30 dB entspricht einem linearen Verhältnis von 1000:1.'
+      ],
+      questions:{
+        fill:{
+          q:'30 dB SNR entspricht einem linearen Verhältnis von ___ .',
+          answer:'1000',
+          explanation:'S/N = 10^(30/10) = 10^3 = 1000. Jede 10 dB bedeuten eine Verzehnfachung des linearen Verhältnisses.'
+        },
+        choice:{
+          q:'Wie rechnet man SNR von dB in linear um?',
+          options:['S/N = SNR_dB / 10','S/N = 10^(SNR_dB / 10)','S/N = 2^(SNR_dB)','S/N = SNR_dB²'],
+          correct:1,
+          explanation:'Die Umrechnung lautet S/N = 10^(SNR_dB / 10). Dies ist die Umkehrung von SNR_dB = 10 · log₁₀(S/N).'
+        },
+        explain:{
+          q:'Warum wird das SNR häufig in dB statt als linearer Wert angegeben?',
+          keywords:['logarithmisch','große','werte','vergleich','übersichtlich'],
+          explanation:'Da das SNR in der Praxis Werte von 1 bis zu mehreren Millionen annehmen kann, ist die logarithmische dB-Skala übersichtlicher. Große Verhältnisse werden auf handliche Zahlen komprimiert (z.B. 1.000.000 = 60 dB).'
+        }
+      },
+      difficulty:1
+    },
+    {
+      id:'bandbreite',
+      term:'Bandbreite',
+      icon:'📶',
+      short:'Frequenzbereich, der für die Signalübertragung zur Verfügung steht.',
+      definition:'Die Bandbreite B (in Hz) ist die Differenz zwischen der höchsten und der niedrigsten Frequenz, die ein Übertragungskanal nutzen kann. Sie bestimmt maßgeblich, wie viel Information pro Zeiteinheit übertragen werden kann. In der Nachrichtentechnik ist die Bandbreite eine der zentralen Kanalparameter und geht sowohl in die Nyquist- als auch in die Shannon-Hartley-Formel ein.',
+      analogy:'Die Bandbreite ist wie die Breite einer Straße: Je breiter die Straße (mehr Fahrspuren), desto mehr Fahrzeuge (Daten) können gleichzeitig hindurchfahren. Eine schmale Straße (geringe Bandbreite) erzeugt einen Engpass.',
+      hints:[
+        'Einheit: Hertz (Hz). B = f_max - f_min des Kanals.',
+        'Bandbreite geht sowohl in Nyquist (C = 2·B·log₂M) als auch in Shannon (C = B·log₂(1+S/N)) ein.',
+        'Telefonleitung: B ≈ 3.100 Hz (300–3.400 Hz). WLAN 802.11n: B = 20 oder 40 MHz.'
+      ],
+      questions:{
+        fill:{
+          q:'Eine Telefonleitung hat eine Bandbreite von ca. ___ Hz.',
+          answer:'3100',
+          explanation:'Die klassische analoge Telefonleitung nutzt den Frequenzbereich von 300 bis 3.400 Hz, also eine Bandbreite von etwa 3.100 Hz.'
+        },
+        choice:{
+          q:'Was passiert mit der Kanalkapazität, wenn die Bandbreite verdoppelt wird (bei gleichem SNR)?',
+          options:['Sie vervierfacht sich','Sie verdoppelt sich','Sie bleibt gleich','Sie halbiert sich'],
+          correct:1,
+          explanation:'Da C = B · log₂(1 + S/N), führt eine Verdopplung von B direkt zur Verdopplung von C, solange das SNR konstant bleibt.'
+        },
+        explain:{
+          q:'Erkläre, warum die Bandbreite eines Kanals physikalisch begrenzt ist.',
+          keywords:['medium','frequenz','dämpfung','physikalisch','übertragung'],
+          explanation:'Jedes Übertragungsmedium (Kupferkabel, Glasfaser, Funk) kann nur einen begrenzten Frequenzbereich nutzen. Außerhalb dieses Bereichs werden Signale zu stark gedämpft, verzerrt oder es treten Interferenzen mit anderen Kanälen auf.'
+        }
+      },
+      difficulty:1
+    },
+    {
+      id:'quantisierung',
+      term:'Quantisierung',
+      icon:'🔢',
+      short:'Zuordnung kontinuierlicher Abtastwerte zu diskreten Stufen.',
+      definition:'Die Quantisierung ist der Schritt bei der Analog-Digital-Wandlung, bei dem die zeitdiskreten (abgetasteten) Signalwerte auf eine endliche Menge von Amplitudenstufen abgebildet werden. Die Anzahl der Stufen wird durch die Bit-Tiefe bestimmt: Bei n Bit stehen 2^n Stufen zur Verfügung. Dabei entsteht unvermeidlich ein Quantisierungsfehler (Quantisierungsrauschen), da die ursprünglichen Werte gerundet werden.',
+      analogy:'Stell dir eine Treppe vor: Ein kontinuierlicher Hang (analoges Signal) wird in diskrete Stufen umgewandelt. Je mehr Stufen (höhere Bit-Tiefe), desto feiner aufgelöst und desto näher an der echten Schräge. Aber es bleiben immer kleine Sprünge.',
+      hints:[
+        'Bei n Bit Auflösung gibt es 2^n Quantisierungsstufen. 8 Bit = 256, 16 Bit = 65.536 Stufen.',
+        'Der Quantisierungsfehler ist maximal eine halbe Stufenhöhe.',
+        'Quantisierung kommt NACH der Abtastung: Erst wird zeitlich diskretisiert (Abtastung), dann wertmäßig (Quantisierung).'
+      ],
+      questions:{
+        fill:{
+          q:'Bei einer Bit-Tiefe von 16 Bit stehen ___ Quantisierungsstufen zur Verfügung.',
+          answer:'65536',
+          explanation:'2^16 = 65.536 Stufen. Jedes zusätzliche Bit verdoppelt die Anzahl der verfügbaren Stufen.'
+        },
+        choice:{
+          q:'Was entsteht zwangsläufig bei der Quantisierung?',
+          options:['Aliasing','Quantisierungsrauschen','Bandbreitenverlust','Frequenzverschiebung'],
+          correct:1,
+          explanation:'Da die kontinuierlichen Amplitudenwerte auf diskrete Stufen gerundet werden, entsteht ein Quantisierungsfehler, der sich als Quantisierungsrauschen bemerkbar macht.'
+        },
+        explain:{
+          q:'Erkläre den Unterschied zwischen Abtastung und Quantisierung.',
+          keywords:['zeit','amplitude','diskret','stufen','abtastung'],
+          explanation:'Die Abtastung diskretisiert das Signal in der Zeit (kontinuierlich → zeitdiskret). Die Quantisierung diskretisiert die Amplitude (kontinuierliche Werte → endlich viele Stufen). Zusammen ergeben sie die vollständige Digitalisierung.'
+        }
+      },
+      difficulty:2
+    }
+  ];
+
+  // ── State Management ──
+  function loadState(){
+    try{
+      const s = localStorage.getItem(STORAGE_KEY);
+      return s ? JSON.parse(s) : {};
+    }catch(e){return {}}
+  }
+  function saveState(state){
+    try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state))}catch(e){}
+  }
+  function getLevel(termId){
+    const st = loadState();
+    return (st[termId] && st[termId].level) || 0;
+  }
+  function setLevel(termId, level){
+    const st = loadState();
+    if(!st[termId]) st[termId] = {};
+    st[termId].level = Math.min(3, Math.max(0, level));
+    saveState(st);
+  }
+
+  // ── Progress Bar ──
+  function updateProgress(){
+    const mastered = glossaryTerms.filter(t => getLevel(t.id) >= 3).length;
+    const total = glossaryTerms.length;
+    const pct = Math.round((mastered / total) * 100);
+    const fill = document.getElementById('glossary-fill');
+    const count = document.getElementById('glossary-count');
+    if(fill) fill.style.width = pct + '%';
+    if(count) count.textContent = mastered + ' / ' + total + ' gemeistert';
+  }
+
+  // ── Render Grid ──
+  function renderGrid(){
+    const grid = document.getElementById('glossary-grid');
+    if(!grid) return;
+    grid.innerHTML = '';
+    glossaryTerms.forEach(t => {
+      const lv = getLevel(t.id);
+      const card = document.createElement('div');
+      card.className = 'glossary-card';
+      card.setAttribute('data-level', lv);
+      card.setAttribute('data-id', t.id);
+      card.innerHTML = `<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
+      card.addEventListener('click', () => openLearn(t.id));
+      grid.appendChild(card);
+    });
+    updateProgress();
+  }
+
+  // ── Learn Panel ──
+  let currentTerm = null;
+  let currentPhase = 0; // 0=analogy, 1=definition, 2=fill, 3=choice, 4=explain
+  let hintIndex = 0;
+  const phaseNames = ['Analogie','Definition','Lückentext','Multiple Choice','Erklären'];
+
+  function openLearn(termId){
+    currentTerm = glossaryTerms.find(t => t.id === termId);
+    if(!currentTerm) return;
+    currentPhase = 0;
+    hintIndex = 0;
+    // Mark card active
+    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
+    const activeCard = document.querySelector(`.glossary-card[data-id="${termId}"]`);
+    if(activeCard) activeCard.classList.add('active');
+    const panel = document.getElementById('glossary-learn');
+    panel.classList.add('visible');
+    renderPhase();
+    panel.scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
+
+  function closeLearn(){
+    const panel = document.getElementById('glossary-learn');
+    panel.classList.remove('visible');
+    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
+    currentTerm = null;
+  }
+
+  function renderPhase(){
+    if(!currentTerm) return;
+    const panel = document.getElementById('glossary-learn');
+    const t = currentTerm;
+    let phaseHTML = '';
+    // Phase indicator
+    let piHTML = '<div class="gl-phase-indicator">';
+    phaseNames.forEach((name, i) => {
+      const cls = i < currentPhase ? 'gl-phase done' : (i === currentPhase ? 'gl-phase current' : 'gl-phase');
+      const clickable = i <= currentPhase;
+      const onclick = clickable ? ` onclick="window._glossaryGoPhase(${i})"` : '';
+      piHTML += `<div class="${cls}"${onclick}>${i < currentPhase ? '✓ ' : ''}${name}</div>`;
+    });
+    piHTML += '</div>';
+
+    if(currentPhase === 0){
+      // Analogie
+      phaseHTML = `<div class="gl-analogy">💡 <strong>Analogie:</strong> ${t.analogy}</div>
+        <button class="gl-btn primary" onclick="window._glossaryNext()">Weiter zur Definition →</button>`;
+    } else if(currentPhase === 1){
+      // Definition
+      phaseHTML = `<div class="gl-definition">${t.definition}</div>
+        <div class="gl-hints" id="gl-hints">${t.hints.map((h,i) => `<div class="gl-hint" id="gl-hint-${i}">💡 ${h}</div>`).join('')}</div>
+        <button class="gl-hint-btn" id="gl-hint-btn" onclick="window._glossaryHint()">Hinweis anzeigen (${t.hints.length} verfügbar)</button>
+        <button class="gl-btn primary" onclick="window._glossaryNext()">Weiter zum Quiz →</button>`;
+    } else if(currentPhase === 2){
+      // Lückentext (fill)
+      const q = t.questions.fill;
+      phaseHTML = `<div class="gl-question">${q.q}</div>
+        <input class="gl-input" id="gl-fill-input" type="text" placeholder="Antwort eingeben..." autocomplete="off">
+        <button class="gl-btn primary" id="gl-fill-check" onclick="window._glossaryCheckFill()">Prüfen</button>
+        <div id="gl-fill-feedback"></div>`;
+    } else if(currentPhase === 3){
+      // Multiple Choice
+      const q = t.questions.choice;
+      const shuffled = q.options.map((o,i) => ({text:o, idx:i}));
+      // Shuffle
+      for(let i = shuffled.length-1; i > 0; i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+      }
+      phaseHTML = `<div class="gl-question">${q.q}</div>
+        <div class="gl-choices" id="gl-choices">${shuffled.map(o => `<button class="gl-choice" data-idx="${o.idx}">${o.text}</button>`).join('')}</div>
+        <div id="gl-choice-feedback"></div>`;
+    } else if(currentPhase === 4){
+      // Erklären
+      const q = t.questions.explain;
+      phaseHTML = `<div class="gl-question">${q.q}</div>
+        <textarea class="gl-input" id="gl-explain-input" placeholder="Deine Erklärung in eigenen Worten..."></textarea>
+        <button class="gl-btn primary" id="gl-explain-check" onclick="window._glossaryCheckExplain()">Auswerten</button>
+        <div id="gl-explain-feedback"></div>`;
+    }
+
+    panel.innerHTML = `<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="window._glossaryClose()">✕</button></div>
+      ${piHTML}<div class="gl-content">${phaseHTML}</div>`;
+
+    // Attach choice listeners
+    if(currentPhase === 3){
+      document.querySelectorAll('.gl-choice').forEach(btn => {
+        btn.addEventListener('click', function(){
+          window._glossaryCheckChoice(parseInt(this.getAttribute('data-idx')));
+        });
+      });
+    }
+
+    // Auto-focus inputs
+    if(currentPhase === 2){
+      const inp = document.getElementById('gl-fill-input');
+      if(inp){
+        inp.focus();
+        inp.addEventListener('keydown', e => { if(e.key === 'Enter') window._glossaryCheckFill(); });
+      }
+    }
+    if(currentPhase === 4){
+      const ta = document.getElementById('gl-explain-input');
+      if(ta) ta.focus();
+    }
+  }
+
+  // ── Phase Navigation ──
+  window._glossaryNext = function(){
+    currentPhase++;
+    hintIndex = 0;
+    if(currentPhase > 4){
+      // Completed all phases, level up
+      const lv = getLevel(currentTerm.id);
+      setLevel(currentTerm.id, lv + 1);
+      renderGrid();
+      closeLearn();
+      return;
+    }
+    renderPhase();
+  };
+
+  window._glossaryGoPhase = function(idx){
+    if(idx > currentPhase) return; // only allow navigating to current or earlier phases
+    currentPhase = idx;
+    hintIndex = 0;
+    renderPhase();
+  };
+
+  window._glossaryClose = function(){ closeLearn(); };
+
+  window._glossaryHint = function(){
+    if(!currentTerm) return;
+    const hint = document.getElementById('gl-hint-' + hintIndex);
+    if(hint){
+      hint.classList.add('visible');
+      hintIndex++;
+    }
+    const btn = document.getElementById('gl-hint-btn');
+    const remaining = currentTerm.hints.length - hintIndex;
+    if(remaining <= 0){
+      if(btn) btn.style.display = 'none';
+    } else {
+      if(btn) btn.textContent = 'Nächster Hinweis (' + remaining + ' übrig)';
+    }
+  };
+
+  // ── Fill Check ──
+  window._glossaryCheckFill = function(){
+    if(!currentTerm) return;
+    const input = document.getElementById('gl-fill-input');
+    const fb = document.getElementById('gl-fill-feedback');
+    const q = currentTerm.questions.fill;
+    const val = input.value.trim().replace(/\s+/g,' ');
+    if(!val) return;
+    const correct = val.toLowerCase() === q.answer.toLowerCase() ||
+                    val.replace(/[.\s]/g,'') === q.answer.replace(/[.\s]/g,'');
+    if(correct){
+      input.style.borderColor = 'var(--green)';
+      fb.innerHTML = `<div class="gl-feedback success">✓ Richtig! ${q.explanation}</div>`;
+      setTimeout(() => window._glossaryNext(), 1800);
+    } else {
+      input.style.borderColor = 'var(--red)';
+      fb.innerHTML = `<div class="gl-feedback error">✗ Leider falsch. Richtige Antwort: <strong>${q.answer}</strong>. ${q.explanation}</div>`;
+      // Reduce level on wrong
+      const lv = getLevel(currentTerm.id);
+      if(lv > 0) setLevel(currentTerm.id, lv - 1);
+      renderGrid();
+      setTimeout(() => window._glossaryNext(), 3000);
+    }
+  };
+
+  // ── Choice Check ──
+  window._glossaryCheckChoice = function(idx){
+    if(!currentTerm) return;
+    const q = currentTerm.questions.choice;
+    const fb = document.getElementById('gl-choice-feedback');
+    const btns = document.querySelectorAll('.gl-choice');
+    btns.forEach(b => {
+      b.style.pointerEvents = 'none';
+      const bIdx = parseInt(b.getAttribute('data-idx'));
+      if(bIdx === q.correct) b.classList.add('correct');
+      if(bIdx === idx && idx !== q.correct) b.classList.add('wrong');
+    });
+    if(idx === q.correct){
+      fb.innerHTML = `<div class="gl-feedback success">✓ Richtig! ${q.explanation}</div>`;
+      setTimeout(() => window._glossaryNext(), 1800);
+    } else {
+      fb.innerHTML = `<div class="gl-feedback error">✗ Falsch. ${q.explanation}</div>`;
+      const lv = getLevel(currentTerm.id);
+      if(lv > 0) setLevel(currentTerm.id, lv - 1);
+      renderGrid();
+      setTimeout(() => window._glossaryNext(), 3000);
+    }
+  };
+
+  // ── Explain Check ──
+  window._glossaryCheckExplain = function(){
+    if(!currentTerm) return;
+    const ta = document.getElementById('gl-explain-input');
+    const fb = document.getElementById('gl-explain-feedback');
+    const q = currentTerm.questions.explain;
+    const val = ta.value.trim().toLowerCase();
+    if(val.length < 10){
+      fb.innerHTML = `<div class="gl-feedback info">Bitte schreibe mindestens einen kurzen Satz.</div>`;
+      return;
+    }
+    const found = [];
+    const missing = [];
+    q.keywords.forEach(kw => {
+      if(val.includes(kw.toLowerCase())) found.push(kw);
+      else missing.push(kw);
+    });
+    const ratio = found.length / q.keywords.length;
+    let kwHTML = '<div style="margin-top:8px">';
+    found.forEach(k => kwHTML += `<span class="gl-keyword found">✓ ${k}</span>`);
+    missing.forEach(k => kwHTML += `<span class="gl-keyword missing">✗ ${k}</span>`);
+    kwHTML += '</div>';
+
+    if(ratio >= 0.6){
+      fb.innerHTML = `<div class="gl-feedback success">✓ Gut erklärt! ${found.length}/${q.keywords.length} Schlüsselbegriffe erkannt.${kwHTML}<br><br><em>Musterlösung: ${q.explanation}</em></div>`;
+      setTimeout(() => window._glossaryNext(), 3000);
+    } else {
+      fb.innerHTML = `<div class="gl-feedback error">✗ Noch nicht vollständig. Nur ${found.length}/${q.keywords.length} Schlüsselbegriffe erkannt.${kwHTML}<br><br><em>Musterlösung: ${q.explanation}</em></div>`;
+      const lv = getLevel(currentTerm.id);
+      if(lv > 0) setLevel(currentTerm.id, lv - 1);
+      renderGrid();
+      setTimeout(() => window._glossaryNext(), 4000);
+    }
+  };
+
+  // ── Tooltip System ──
+  const tooltip = document.createElement('div');
+  tooltip.className = 'glossary-tooltip';
+  tooltip.innerHTML = '<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">Klicken zum Lernen ↓</div>';
+  document.body.appendChild(tooltip);
+
+  function highlightTermsInPage(){
+    // Selectors for content areas where terms should be highlighted
+    const contentSelectors = [
+      '.formula-card .f-desc',
+      '.calc-output',
+      '.viz-sub',
+      '.summary-card p',
+      '.task-sub',
+      '.calc-card h3'
+    ];
+    // Terms to highlight (map display forms to term ids)
+    const termMap = [
+      {patterns:['Abtasttheorem'], id:'abtasttheorem'},
+      {patterns:['Abtastfrequenz','Abtastrate','Sampling Rate'], id:'abtastfrequenz'},
+      {patterns:['Nyquist-Rate','Nyquist-Datenrate'], id:'nyquist-rate'},
+      {patterns:['Shannon-Hartley','Shannon-Hartley-Theorem'], id:'shannon-hartley'},
+      {patterns:['Kanalkapazität'], id:'kanalkapazitaet'},
+      {patterns:['Signal-Rausch-Verhältnis','SNR','S/N'], id:'snr'},
+      {patterns:['Bandbreite'], id:'bandbreite'},
+      {patterns:['Quantisierung','Quantisierungsfehler'], id:'quantisierung'}
+    ];
+
+    contentSelectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        // Skip if already processed
+        if(el.getAttribute('data-glossary-done')) return;
+        el.setAttribute('data-glossary-done','1');
+        let html = el.innerHTML;
+        termMap.forEach(tm => {
+          tm.patterns.forEach(pat => {
+            // Only match if not already inside a tag
+            const regex = new RegExp('(?<![<\\w/])(' + pat.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?![\\w>])', 'g');
+            html = html.replace(regex, `<span class="glossary-term" data-glossary-id="${tm.id}">$1</span>`);
+          });
+        });
+        el.innerHTML = html;
+      });
+    });
+
+    // Attach tooltip events
+    document.querySelectorAll('.glossary-term').forEach(span => {
+      span.addEventListener('mouseenter', function(e){
+        const id = this.getAttribute('data-glossary-id');
+        const t = glossaryTerms.find(x => x.id === id);
+        if(!t) return;
+        tooltip.querySelector('.gt-name').textContent = t.icon + ' ' + t.term;
+        tooltip.querySelector('.gt-short').textContent = t.short;
+        tooltip.style.display = 'block';
+        positionTooltip(e);
+      });
+      span.addEventListener('mousemove', positionTooltip);
+      span.addEventListener('mouseleave', function(){
+        tooltip.style.display = 'none';
+      });
+      span.addEventListener('click', function(){
+        const id = this.getAttribute('data-glossary-id');
+        tooltip.style.display = 'none';
+        openLearn(id);
+        document.getElementById('glossary-section').scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+  }
+
+  function positionTooltip(e){
+    let x = e.clientX + 16;
+    let y = e.clientY + 16;
+    const tw = 260;
+    if(x + tw > window.innerWidth) x = e.clientX - tw - 10;
+    if(y + 120 > window.innerHeight) y = e.clientY - 120;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  // ── Init ──
+  renderGrid();
+  // Delay highlight to ensure page is fully rendered
+  setTimeout(highlightTermsInPage, 500);
+})();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

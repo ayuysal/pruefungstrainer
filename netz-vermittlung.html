@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Netzklassifikation & Vermittlungsarten</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0c0e13;
+    --surface: #14171e;
+    --border: #1e2230;
+    --text: #e2e4ea;
+    --muted: #6b7084;
+    --accent: #6c63ff;
+    --pan: #f472b6;
+    --lan: #38bdf8;
+    --man: #fbbf24;
+    --wan: #34d399;
+    --gn: #a78bfa;
+    --lv: #ff6b6b;
+    --pv: #51cf66;
+    --sv: #38bdf8;
+    --cyan: #38bdf8;
+    --green: #51cf66;
+    --yellow: #fbbf24;
+    --red: #ff6b6b;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Outfit',sans-serif; min-height:100vh; overflow-x:hidden; }
+  .noise { position:fixed; inset:0; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E"); pointer-events:none; z-index:0; }
+  .glow-orb { position:fixed; width:500px; height:500px; border-radius:50%; filter:blur(120px); opacity:0.07; pointer-events:none; z-index:0; }
+  .glow-orb.one { background:var(--pan); top:-120px; right:-80px; }
+  .glow-orb.two { background:var(--wan); bottom:-160px; left:-100px; }
+  .container { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:40px 24px 80px; }
+
+  header { text-align:center; margin-bottom:52px; animation:fadeDown .8s ease; }
+  header .tag { font-family:'JetBrains Mono',monospace; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--accent); margin-bottom:12px; }
+  header h1 { font-weight:900; font-size:clamp(26px,5vw,46px); line-height:1.1; background:linear-gradient(135deg,#fff 0%,#9ba0b5 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:12px; }
+  header p { font-weight:300; color:var(--muted); font-size:16px; max-width:620px; margin:0 auto; }
+
+  .section-title { display:flex; align-items:center; gap:12px; margin-bottom:20px; margin-top:56px; flex-wrap:wrap; }
+  .section-title .icon-circle { width:40px; height:40px; border-radius:12px; display:grid; place-items:center; font-size:18px; flex-shrink:0; }
+  .section-title h2 { font-size:22px; font-weight:700; }
+  .section-title .sub { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); margin-left:auto; letter-spacing:1px; }
+
+  /* ═══════════════════════════════════
+     1. NETZKLASSIFIKATION – Scale Visual
+     ═══════════════════════════════════ */
+  .scale-wrap {
+    position: relative;
+    animation: fadeUp .6s ease .1s both;
+  }
+
+  /* Distance ruler */
+  .ruler {
+    display: flex; align-items: stretch;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    min-height: 120px;
+  }
+  .ruler-segment {
+    flex: 1;
+    padding: 20px 16px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    position: relative;
+    transition: all .3s;
+    cursor: pointer;
+    border-right: 1px solid var(--border);
+  }
+  .ruler-segment:last-child { border-right: none; }
+  .ruler-segment::before {
+    content: '';
+    position: absolute; top:0; left:0; right:0; height:3px;
+  }
+  .ruler-segment:hover { background: rgba(255,255,255,.03); }
+  .ruler-segment .r-icon { font-size: 28px; margin-bottom: 8px; filter: grayscale(0.1); }
+  .ruler-segment .r-name {
+    font-family:'JetBrains Mono',monospace;
+    font-size: 18px; font-weight:700; letter-spacing:1px;
+  }
+  .ruler-segment .r-full { font-size:11px; color:var(--muted); margin-top:2px; font-weight:300; }
+  .ruler-segment .r-range {
+    font-family:'JetBrains Mono',monospace;
+    font-size:10px; margin-top:8px; padding:3px 10px;
+    border-radius:6px; background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.06);
+  }
+
+  @media (max-width:600px) {
+    .ruler { flex-direction: column; }
+    .ruler-segment { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
+    .ruler-segment:last-child { border-bottom: none; }
+  }
+
+  /* Detail cards grid */
+  .net-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+    animation: fadeUp .6s ease .15s both;
+  }
+  .net-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 18px;
+    transition: all .3s;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+  }
+  .net-card::before {
+    content:''; position:absolute; top:0; left:0; right:0; height:3px;
+    border-radius: 14px 14px 0 0;
+  }
+  .net-card:hover { transform: translateY(-3px); border-color: rgba(255,255,255,.1); }
+  .net-card h4 { font-size:15px; font-weight:700; margin-bottom:4px; }
+  .net-card .net-en { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:.5px; margin-bottom:10px; }
+  .net-card p { font-size:12px; font-weight:300; color:var(--muted); line-height:1.6; }
+  .net-card p strong { color:var(--text); font-weight:600; }
+  .net-card .tech-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+  .net-card .tech-tags span {
+    font-family:'JetBrains Mono',monospace; font-size:10px;
+    padding:3px 9px; border-radius:5px;
+    background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.06);
+  }
+
+  .net-card.pan::before { background:var(--pan); }
+  .net-card.lan::before { background:var(--lan); }
+  .net-card.man::before { background:var(--man); }
+  .net-card.wan::before { background:var(--wan); }
+  .net-card.gn::before  { background:var(--gn); }
+
+  /* Scale bar beneath ruler */
+  .scale-bar {
+    display: flex;
+    margin-top: 8px;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 6px;
+    animation: fadeUp .6s ease .12s both;
+  }
+  .scale-bar span {
+    flex: 1;
+    transition: all .3s;
+  }
+
+  /* ═══════════════════════════════════
+     2. VERMITTLUNGSARTEN
+     ═══════════════════════════════════ */
+  .verm-tabs {
+    display: flex; gap:6px; margin-bottom:16px;
+    animation: fadeUp .6s ease .2s both;
+  }
+  .verm-tab {
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px; font-weight:600;
+    padding:10px 18px; border-radius:10px;
+    background:var(--surface); border:1px solid var(--border);
+    color:var(--muted); cursor:pointer;
+    transition:all .25s; flex:1; text-align:center;
+  }
+  .verm-tab:hover { background:rgba(255,255,255,.04); }
+  .verm-tab.active { border-color:var(--accent); color:var(--text); background:rgba(108,99,255,.08); }
+
+  .verm-content { display:none; animation:fadeUp .35s ease both; }
+  .verm-content.active { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  @media (max-width:700px) { .verm-content.active { grid-template-columns:1fr; } }
+
+  .verm-visual {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:28px 20px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    min-height:300px;
+  }
+  .verm-visual svg { max-width:100%; height:auto; }
+
+  .verm-info {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:14px; padding:24px;
+    display:flex; flex-direction:column; justify-content:center;
+  }
+  .verm-info h3 { font-size:18px; font-weight:700; margin-bottom:4px; }
+  .verm-info .v-en { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--muted); letter-spacing:1px; margin-bottom:14px; }
+  .verm-info .v-desc { font-size:13px; font-weight:300; color:var(--muted); line-height:1.7; margin-bottom:16px; }
+  .verm-info .v-desc strong { color:var(--text); font-weight:600; }
+
+  .prop-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .prop-item {
+    background:rgba(255,255,255,.02);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 12px;
+  }
+  .prop-item .prop-label {
+    font-family:'JetBrains Mono',monospace;
+    font-size:9px; color:var(--muted); letter-spacing:.5px;
+    text-transform:uppercase; margin-bottom:3px;
+  }
+  .prop-item .prop-val { font-size:13px; font-weight:600; }
+
+  /* Comparison Table */
+  .compare-table-wrap {
+    margin-top: 24px;
+    animation: fadeUp .6s ease .35s both;
+    overflow-x: auto;
+  }
+  .compare-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    font-size: 13px;
+  }
+  .compare-table th {
+    padding: 14px 16px;
+    text-align: left;
+    font-family:'JetBrains Mono',monospace;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    background: rgba(255,255,255,.02);
+    border-bottom: 1px solid var(--border);
+  }
+  .compare-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 300;
+    color: var(--muted);
+    vertical-align: top;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table td:first-child { font-weight: 600; color: var(--text); white-space: nowrap; }
+  .compare-table td strong { color: var(--text); font-weight: 600; }
+
+  .good { color: var(--pv) !important; }
+  .bad { color: var(--lv) !important; }
+  .mid { color: var(--man) !important; }
+
+  /* ── Summary ── */
+  .summary {
+    margin-top:48px;
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px;
+    animation:fadeUp .6s ease .4s both;
+  }
+  .summary-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; padding:20px; transition:all .25s;
+  }
+  .summary-card:hover { border-color:rgba(108,99,255,.3); }
+  .summary-card h4 { font-size:13px; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+  .summary-card p { font-size:13px; font-weight:300; color:var(--muted); line-height:1.6; }
+  .summary-card p strong { color:var(--text); font-weight:600; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Animated packet dots */
+  @keyframes moveDot {
+    0% { offset-distance: 0%; opacity:0; }
+    10% { opacity:1; }
+    90% { opacity:1; }
+    100% { offset-distance: 100%; opacity:0; }
+  }
+  .packet-dot {
+    width:8px; height:8px; border-radius:50%;
+    position:absolute;
+    offset-rotate: 0deg;
+    animation: moveDot 2.5s linear infinite;
+  }
+
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="tag">Netzwerktechnik</div>
+    <h1>Netzklassifikation & Vermittlung</h1>
+    <p>Von der Körpernah-Vernetzung bis zum globalen Internet – und wie Daten ihren Weg finden.</p>
+  </header>
+
+  <!-- ═══════════════════════════════════
+       1. NETZKLASSIFIKATION
+       ═══════════════════════════════════ -->
+  <div class="section-title">
+    <div class="icon-circle" style="background:linear-gradient(135deg,var(--pan),var(--wan));">🌐</div>
+    <h2>Netzklassifikation nach Reichweite</h2>
+    <span class="sub">PAN → LAN → MAN → WAN → GAN</span>
+  </div>
+
+  <!-- Scale ruler -->
+  <div class="scale-wrap">
+    <div class="ruler">
+      <div class="ruler-segment" style="--c:var(--pan);">
+        <div class="r-icon">📱</div>
+        <div class="r-name" style="color:var(--pan);">PAN</div>
+        <div class="r-full">Personal Area Network</div>
+        <div class="r-range" style="color:var(--pan);">~1–10 m</div>
+      </div>
+      <div class="ruler-segment" style="--c:var(--lan);">
+        <div class="r-icon">🏢</div>
+        <div class="r-name" style="color:var(--lan);">LAN</div>
+        <div class="r-full">Local Area Network</div>
+        <div class="r-range" style="color:var(--lan);">~10 m – 1 km</div>
+      </div>
+      <div class="ruler-segment" style="--c:var(--man);">
+        <div class="r-icon">🏙️</div>
+        <div class="r-name" style="color:var(--man);">MAN</div>
+        <div class="r-full">Metropolitan Area Network</div>
+        <div class="r-range" style="color:var(--man);">~1 – 100 km</div>
+      </div>
+      <div class="ruler-segment" style="--c:var(--wan);">
+        <div class="r-icon">🌍</div>
+        <div class="r-name" style="color:var(--wan);">WAN</div>
+        <div class="r-full">Wide Area Network</div>
+        <div class="r-range" style="color:var(--wan);">100+ km</div>
+      </div>
+      <div class="ruler-segment" style="--c:var(--gn);">
+        <div class="r-icon">🛰️</div>
+        <div class="r-name" style="color:var(--gn);">GAN</div>
+        <div class="r-full">Global Area Network</div>
+        <div class="r-range" style="color:var(--gn);">weltweit</div>
+      </div>
+    </div>
+    <div class="scale-bar">
+      <span style="background:var(--pan);"></span>
+      <span style="background:var(--lan);"></span>
+      <span style="background:var(--man);"></span>
+      <span style="background:var(--wan);"></span>
+      <span style="background:var(--gn);"></span>
+    </div>
+  </div>
+
+  <!-- Detail cards -->
+  <div class="net-details">
+    <div class="net-card pan">
+      <h4 style="color:var(--pan);">PAN</h4>
+      <div class="net-en">Personal Area Network</div>
+      <p>Vernetzung im <strong>unmittelbaren persönlichen Umfeld</strong>. Verbindet Geräte einer einzelnen Person miteinander – meist kabellos.</p>
+      <div class="tech-tags">
+        <span style="color:var(--pan);">Bluetooth</span>
+        <span style="color:var(--pan);">USB</span>
+        <span style="color:var(--pan);">NFC</span>
+        <span style="color:var(--pan);">Zigbee</span>
+      </div>
+    </div>
+    <div class="net-card lan">
+      <h4 style="color:var(--lan);">LAN</h4>
+      <div class="net-en">Local Area Network</div>
+      <p>Netzwerk in einem <strong>Gebäude oder Campus</strong>. Hohe Datenraten, privat betrieben. Typisch in Büros, Schulen, Zuhause.</p>
+      <div class="tech-tags">
+        <span style="color:var(--lan);">Ethernet</span>
+        <span style="color:var(--lan);">Wi-Fi</span>
+        <span style="color:var(--lan);">Switch</span>
+        <span style="color:var(--lan);">VLAN</span>
+      </div>
+    </div>
+    <div class="net-card man">
+      <h4 style="color:var(--man);">MAN</h4>
+      <div class="net-en">Metropolitan Area Network</div>
+      <p>Verbindet mehrere LANs innerhalb einer <strong>Stadt oder Region</strong>. Oft von Telekommunikationsanbietern betrieben.</p>
+      <div class="tech-tags">
+        <span style="color:var(--man);">Glasfaser</span>
+        <span style="color:var(--man);">Metro-Ethernet</span>
+        <span style="color:var(--man);">WiMAX</span>
+      </div>
+    </div>
+    <div class="net-card wan">
+      <h4 style="color:var(--wan);">WAN</h4>
+      <div class="net-en">Wide Area Network</div>
+      <p>Erstreckt sich über <strong>Länder und Kontinente</strong>. Verbindet geografisch entfernte LANs. Das Internet ist das grösste WAN.</p>
+      <div class="tech-tags">
+        <span style="color:var(--wan);">MPLS</span>
+        <span style="color:var(--wan);">VPN</span>
+        <span style="color:var(--wan);">Leased Line</span>
+        <span style="color:var(--wan);">DSL</span>
+      </div>
+    </div>
+    <div class="net-card gn">
+      <h4 style="color:var(--gn);">GAN</h4>
+      <div class="net-en">Global Area Network</div>
+      <p><strong>Weltumspannendes</strong> Netz – das Internet selbst oder Satellitennetze. Verbindet WANs über Unterseekabel und Satelliten.</p>
+      <div class="tech-tags">
+        <span style="color:var(--gn);">Internet</span>
+        <span style="color:var(--gn);">Satellit</span>
+        <span style="color:var(--gn);">Unterseekabel</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       2. VERMITTLUNGSARTEN
+       ═══════════════════════════════════ -->
+  <div class="section-title" style="margin-top:64px;">
+    <div class="icon-circle" style="background:linear-gradient(135deg,var(--lv),var(--sv));">🔀</div>
+    <h2>Vermittlungsarten</h2>
+    <span class="sub">Leitungs- · Paket- · Speicher­vermittlung</span>
+  </div>
+
+  <div class="verm-tabs" id="verm-tabs">
+    <div class="verm-tab active" data-tab="lv">📞 Leitungsvermittlung</div>
+    <div class="verm-tab" data-tab="pv">📦 Paketvermittlung</div>
+    <div class="verm-tab" data-tab="sv">💾 Speichervermittlung</div>
+  </div>
+
+  <!-- Leitungsvermittlung -->
+  <div class="verm-content active" id="tab-lv">
+    <div class="verm-visual">
+      <svg width="320" height="260" viewBox="0 0 320 260">
+        <defs>
+          <filter id="g-lv"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- Sender -->
+        <rect x="10" y="100" width="60" height="44" rx="8" fill="none" stroke="#ff6b6b" stroke-width="1.5" filter="url(#g-lv)"/>
+        <text x="40" y="118" text-anchor="middle" fill="#ff6b6b" font-family="Outfit" font-size="10" font-weight="700">Sender</text>
+        <text x="40" y="133" text-anchor="middle" fill="#ff6b6b" font-family="JetBrains Mono" font-size="8">A</text>
+        <!-- Empfänger -->
+        <rect x="250" y="100" width="60" height="44" rx="8" fill="none" stroke="#ff6b6b" stroke-width="1.5" filter="url(#g-lv)"/>
+        <text x="280" y="118" text-anchor="middle" fill="#ff6b6b" font-family="Outfit" font-size="10" font-weight="700">Empfänger</text>
+        <text x="280" y="133" text-anchor="middle" fill="#ff6b6b" font-family="JetBrains Mono" font-size="8">B</text>
+        <!-- Switches -->
+        <circle cx="120" cy="70" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="120" y="74" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">V1</text>
+        <circle cx="200" cy="70" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="200" y="74" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">V2</text>
+        <circle cx="120" cy="170" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="120" y="174" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">V3</text>
+        <circle cx="200" cy="170" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="200" y="174" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">V4</text>
+        <!-- All connections (grey) -->
+        <line x1="136" y1="70" x2="184" y2="70" stroke="#1e2230" stroke-width="1"/>
+        <line x1="136" y1="170" x2="184" y2="170" stroke="#1e2230" stroke-width="1"/>
+        <line x1="120" y1="86" x2="120" y2="154" stroke="#1e2230" stroke-width="1"/>
+        <line x1="200" y1="86" x2="200" y2="154" stroke="#1e2230" stroke-width="1"/>
+        <line x1="130" y1="82" x2="190" y2="158" stroke="#1e2230" stroke-width="1"/>
+        <line x1="190" y1="82" x2="130" y2="158" stroke="#1e2230" stroke-width="1"/>
+        <!-- Dedicated path (highlighted) -->
+        <line x1="70" y1="122" x2="104" y2="80" stroke="#ff6b6b" stroke-width="2.5" filter="url(#g-lv)"/>
+        <line x1="136" y1="70" x2="184" y2="70" stroke="#ff6b6b" stroke-width="2.5" filter="url(#g-lv)"/>
+        <line x1="216" y1="76" x2="250" y2="116" stroke="#ff6b6b" stroke-width="2.5" filter="url(#g-lv)"/>
+        <!-- Label -->
+        <text x="160" y="42" text-anchor="middle" fill="#ff6b6b" font-family="JetBrains Mono" font-size="10" font-weight="600">Feste Leitung A → B</text>
+        <!-- Phase labels -->
+        <text x="160" y="220" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">① Aufbau → ② Datenübertragung → ③ Abbau</text>
+        <rect x="52" y="208" width="216" height="20" rx="6" fill="none" stroke="var(--border)" stroke-width="1" stroke-dasharray="3 2"/>
+      </svg>
+    </div>
+    <div class="verm-info">
+      <h3 style="color:var(--lv);">Leitungsvermittlung</h3>
+      <div class="v-en">CIRCUIT SWITCHING</div>
+      <div class="v-desc">Es wird ein <strong>dedizierter, durchgehender Kanal</strong> zwischen Sender und Empfänger aufgebaut – bevor Daten fliessen. Die Leitung bleibt für die gesamte Kommunikation <strong>exklusiv reserviert</strong>, auch wenn gerade keine Daten übertragen werden.</div>
+      <div class="prop-grid">
+        <div class="prop-item">
+          <div class="prop-label">Beispiel</div>
+          <div class="prop-val">📞 Klassisches Telefon (ISDN)</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Phasen</div>
+          <div class="prop-val">Aufbau → Transfer → Abbau</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Vorteil</div>
+          <div class="prop-val good">Konstante Bandbreite, keine Verzögerung</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Nachteil</div>
+          <div class="prop-val bad">Leitung blockiert, ineffizient</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paketvermittlung -->
+  <div class="verm-content" id="tab-pv">
+    <div class="verm-visual">
+      <svg width="320" height="260" viewBox="0 0 320 260">
+        <defs>
+          <filter id="g-pv"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <!-- Sender -->
+        <rect x="10" y="100" width="60" height="44" rx="8" fill="none" stroke="#51cf66" stroke-width="1.5" filter="url(#g-pv)"/>
+        <text x="40" y="118" text-anchor="middle" fill="#51cf66" font-family="Outfit" font-size="10" font-weight="700">Sender</text>
+        <text x="40" y="133" text-anchor="middle" fill="#51cf66" font-family="JetBrains Mono" font-size="8">A</text>
+        <!-- Empfänger -->
+        <rect x="250" y="100" width="60" height="44" rx="8" fill="none" stroke="#51cf66" stroke-width="1.5" filter="url(#g-pv)"/>
+        <text x="280" y="118" text-anchor="middle" fill="#51cf66" font-family="Outfit" font-size="10" font-weight="700">Empfänger</text>
+        <text x="280" y="133" text-anchor="middle" fill="#51cf66" font-family="JetBrains Mono" font-size="8">B</text>
+        <!-- Router nodes -->
+        <circle cx="120" cy="70" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="120" y="74" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">R1</text>
+        <circle cx="200" cy="70" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="200" y="74" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">R2</text>
+        <circle cx="120" cy="170" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="120" y="174" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">R3</text>
+        <circle cx="200" cy="170" r="16" fill="none" stroke="#2a2e3e" stroke-width="1.5"/>
+        <text x="200" y="174" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">R4</text>
+        <!-- All connections -->
+        <line x1="136" y1="70" x2="184" y2="70" stroke="#1e2230" stroke-width="1"/>
+        <line x1="136" y1="170" x2="184" y2="170" stroke="#1e2230" stroke-width="1"/>
+        <line x1="120" y1="86" x2="120" y2="154" stroke="#1e2230" stroke-width="1"/>
+        <line x1="200" y1="86" x2="200" y2="154" stroke="#1e2230" stroke-width="1"/>
+        <line x1="130" y1="82" x2="190" y2="158" stroke="#1e2230" stroke-width="1"/>
+        <line x1="190" y1="82" x2="130" y2="158" stroke="#1e2230" stroke-width="1"/>
+        <!-- Path 1 (Paket 1,3) – via top -->
+        <line x1="70" y1="115" x2="104" y2="76" stroke="#51cf66" stroke-width="2" filter="url(#g-pv)" stroke-dasharray="6 3"/>
+        <line x1="136" y1="70" x2="184" y2="70" stroke="#51cf66" stroke-width="2" filter="url(#g-pv)" stroke-dasharray="6 3"/>
+        <line x1="216" y1="76" x2="250" y2="116" stroke="#51cf66" stroke-width="2" filter="url(#g-pv)" stroke-dasharray="6 3"/>
+        <!-- Path 2 (Paket 2) – via bottom -->
+        <line x1="70" y1="130" x2="104" y2="164" stroke="#38bdf8" stroke-width="2" filter="url(#g-pv)" stroke-dasharray="6 3"/>
+        <line x1="136" y1="170" x2="184" y2="170" stroke="#38bdf8" stroke-width="2" filter="url(#g-pv)" stroke-dasharray="6 3"/>
+        <line x1="216" y1="164" x2="250" y2="130" stroke="#38bdf8" stroke-width="2" filter="url(#g-pv)" stroke-dasharray="6 3"/>
+        <!-- Packet labels -->
+        <rect x="99" y="44" width="42" height="16" rx="4" fill="#51cf6622" stroke="#51cf66" stroke-width="1"/>
+        <text x="120" y="55" text-anchor="middle" fill="#51cf66" font-family="JetBrains Mono" font-size="8">Pkt 1,3</text>
+        <rect x="99" y="180" width="42" height="16" rx="4" fill="#38bdf822" stroke="#38bdf8" stroke-width="1"/>
+        <text x="120" y="191" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="8">Pkt 2</text>
+        <!-- Info -->
+        <text x="160" y="230" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">Pakete nehmen unterschiedliche Wege</text>
+        <text x="160" y="248" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">und werden beim Empfänger sortiert</text>
+      </svg>
+    </div>
+    <div class="verm-info">
+      <h3 style="color:var(--pv);">Paketvermittlung</h3>
+      <div class="v-en">PACKET SWITCHING</div>
+      <div class="v-desc">Daten werden in <strong>einzelne Pakete</strong> zerteilt, die <strong>unabhängig</strong> durch das Netz geroutet werden. Jedes Paket kann einen <strong>anderen Weg</strong> nehmen. Am Ziel werden sie wieder in der richtigen Reihenfolge zusammengesetzt.</div>
+      <div class="prop-grid">
+        <div class="prop-item">
+          <div class="prop-label">Beispiel</div>
+          <div class="prop-val">🌐 Internet (TCP/IP)</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Einheit</div>
+          <div class="prop-val">Pakete mit Header + Payload</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Vorteil</div>
+          <div class="prop-val good">Effizient, fehlertolerant, shared</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Nachteil</div>
+          <div class="prop-val bad">Variable Latenz (Jitter)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Speichervermittlung -->
+  <div class="verm-content" id="tab-sv">
+    <div class="verm-visual">
+      <svg width="320" height="260" viewBox="0 0 320 260">
+        <defs>
+          <filter id="g-sv"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <marker id="arr-sv" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6" fill="#38bdf8"/></marker>
+        </defs>
+        <!-- Sender -->
+        <rect x="10" y="100" width="60" height="44" rx="8" fill="none" stroke="#38bdf8" stroke-width="1.5" filter="url(#g-sv)"/>
+        <text x="40" y="118" text-anchor="middle" fill="#38bdf8" font-family="Outfit" font-size="10" font-weight="700">Sender</text>
+        <text x="40" y="133" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="8">A</text>
+        <!-- Node 1 – Store -->
+        <rect x="110" y="86" width="50" height="50" rx="8" fill="none" stroke="#38bdf8" stroke-width="1.5" filter="url(#g-sv)"/>
+        <text x="135" y="106" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="600">💾</text>
+        <text x="135" y="124" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="8">Knoten 1</text>
+        <!-- Node 2 – Store -->
+        <rect x="190" y="86" width="50" height="50" rx="8" fill="none" stroke="#38bdf8" stroke-width="1.5" filter="url(#g-sv)"/>
+        <text x="215" y="106" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="9" font-weight="600">💾</text>
+        <text x="215" y="124" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="8">Knoten 2</text>
+        <!-- Empfänger -->
+        <rect x="268" y="100" width="48" height="44" rx="8" fill="none" stroke="#38bdf8" stroke-width="1.5" filter="url(#g-sv)"/>
+        <text x="292" y="118" text-anchor="middle" fill="#38bdf8" font-family="Outfit" font-size="9" font-weight="700">Empf.</text>
+        <text x="292" y="133" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="8">B</text>
+        <!-- Arrows with store-and-forward -->
+        <line x1="70" y1="122" x2="108" y2="111" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-sv)"/>
+        <line x1="160" y1="111" x2="188" y2="111" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-sv)"/>
+        <line x1="240" y1="111" x2="266" y2="118" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr-sv)"/>
+        <!-- Labels -->
+        <text x="90" y="100" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="8">senden</text>
+        <text x="175" y="100" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="8">speichern</text>
+        <text x="175" y="150" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="8">& weiterleiten</text>
+        <!-- Store & Forward process -->
+        <rect x="72" y="178" width="176" height="60" rx="10" fill="rgba(255,255,255,.02)" stroke="var(--border)" stroke-width="1" stroke-dasharray="4 2"/>
+        <text x="160" y="198" text-anchor="middle" fill="#38bdf8" font-family="JetBrains Mono" font-size="10" font-weight="600">Store-and-Forward</text>
+        <text x="160" y="216" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">Nachricht wird zwischengespeichert,</text>
+        <text x="160" y="230" text-anchor="middle" fill="#6b7084" font-family="JetBrains Mono" font-size="9">geprüft und dann weitergeleitet</text>
+      </svg>
+    </div>
+    <div class="verm-info">
+      <h3 style="color:var(--sv);">Speichervermittlung</h3>
+      <div class="v-en">MESSAGE SWITCHING · STORE-AND-FORWARD</div>
+      <div class="v-desc">Die <strong>gesamte Nachricht</strong> wird an den nächsten Knoten gesendet, dort <strong>komplett gespeichert</strong>, geprüft und erst dann <strong>weitergeleitet</strong>. Kein Aufteilen in Pakete – die Nachricht bleibt als Ganzes erhalten.</div>
+      <div class="prop-grid">
+        <div class="prop-item">
+          <div class="prop-label">Beispiel</div>
+          <div class="prop-val">📧 E-Mail (SMTP), Fax</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Prinzip</div>
+          <div class="prop-val">Store → Check → Forward</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Vorteil</div>
+          <div class="prop-val good">Keine Leitung nötig, fehlertolerant</div>
+        </div>
+        <div class="prop-item">
+          <div class="prop-label">Nachteil</div>
+          <div class="prop-val bad">Hohe Latenz, Speicherbedarf</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Eigenschaft</th>
+          <th style="color:var(--lv)">📞 Leitungsvermittlung</th>
+          <th style="color:var(--pv)">📦 Paketvermittlung</th>
+          <th style="color:var(--sv)">💾 Speichervermittlung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Verbindung</td>
+          <td><strong>Dediziert</strong> (exklusiv)</td>
+          <td><strong>Shared</strong> (geteilt)</td>
+          <td><strong>Keine</strong> feste Verbindung</td>
+        </tr>
+        <tr>
+          <td>Dateneinheit</td>
+          <td>Kontinuierlicher Strom</td>
+          <td>Pakete / Datagramme</td>
+          <td>Gesamte Nachricht</td>
+        </tr>
+        <tr>
+          <td>Weg durchs Netz</td>
+          <td>Immer <strong>gleicher</strong> Weg</td>
+          <td>Pakete können <strong>verschiedene</strong> Wege nehmen</td>
+          <td>Hop-by-Hop gespeichert</td>
+        </tr>
+        <tr>
+          <td>Latenz</td>
+          <td class="good">Konstant & niedrig</td>
+          <td class="mid">Variabel (Jitter)</td>
+          <td class="bad">Hoch</td>
+        </tr>
+        <tr>
+          <td>Effizienz</td>
+          <td class="bad">Niedrig (blockiert)</td>
+          <td class="good">Hoch (shared)</td>
+          <td class="mid">Mittel</td>
+        </tr>
+        <tr>
+          <td>Echtzeitfähig</td>
+          <td class="good">Ja ✓</td>
+          <td class="mid">Bedingt (QoS nötig)</td>
+          <td class="bad">Nein ✗</td>
+        </tr>
+        <tr>
+          <td>Beispiel</td>
+          <td>ISDN, altes Telefonnetz</td>
+          <td>Internet (TCP/IP)</td>
+          <td>E-Mail (SMTP), Fax</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════
+       GLOSSAR-LERNSYSTEM
+       ═══════════════════════════════ -->
+  <div class="glossary-section" id="glossary-section">
+    <div class="section-title">
+      <div class="icon-circle" style="background:linear-gradient(135deg,var(--cyan),var(--accent));">📖</div>
+      <h2>Glossar-Trainer</h2>
+      <span class="sub">Begriffe meistern</span>
+    </div>
+
+    <div class="glossary-progress-bar">
+      <span class="gp-text">Fortschritt</span>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <span class="gp-count" id="glossary-count">0 / 8 gemeistert</span>
+    </div>
+
+    <div class="glossary-grid" id="glossary-grid"></div>
+
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" id="gl-close">&times;</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
+  </div>
+
+  <div id="glossary-tooltip" class="glossary-tooltip">
+    <div class="gt-name" id="gt-name"></div>
+    <div class="gt-short" id="gt-short"></div>
+    <div class="gt-link">Klicke im Glossar zum Lernen →</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-card">
+      <h4>🧩 Zusammenhang</h4>
+      <p>Die <strong>Netzklassifikation</strong> beschreibt die geographische Ausdehnung. Die <strong>Vermittlungsart</strong> beschreibt, wie innerhalb dieser Netze die Daten transportiert werden.</p>
+    </div>
+    <div class="summary-card">
+      <h4>🎯 Prüfungstipp</h4>
+      <p>Häufig wird nach dem Unterschied zwischen <strong>Leitungs- und Paketvermittlung</strong> gefragt. Merke: Telefon = Leitung (exklusiv), Internet = Pakete (geteilt, flexibel).</p>
+    </div>
+    <div class="summary-card">
+      <h4>💡 Eselsbrücke</h4>
+      <p><strong>P</strong>AN – <strong>P</strong>ersönlich (Arm­reichweite). <strong>L</strong>AN – <strong>L</strong>okal (Gebäude). <strong>M</strong>AN – <strong>M</strong>etropole (Stadt). <strong>W</strong>AN – <strong>W</strong>eit (Land/Kontinent). <strong>G</strong>AN – <strong>G</strong>lobal.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Tab switching
+document.querySelectorAll('.verm-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.verm-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.verm-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ══════════════════════════════════════════
+//  GLOSSAR-LERNSYSTEM
+// ══════════════════════════════════════════
+(function(){
+  const STORAGE_KEY = 'glossary-netz-vermittlung';
+  const PHASES = ['Analogie','Definition','Lückentext','Multiple Choice','Erklärung'];
+
+  const glossaryTerms = [
+    {
+      id:'paketvermittlung',
+      term:'Paketvermittlung',
+      icon:'📦',
+      short:'Daten werden in einzelne Pakete zerteilt und unabhängig geroutet',
+      definition:'Bei der Paketvermittlung (Packet Switching) werden Daten in kleine, eigenständige Einheiten – sogenannte Pakete – aufgeteilt. Jedes Paket enthält einen Header mit Absender- und Zieladresse sowie eine Sequenznummer und wird unabhängig durch das Netz geroutet. Verschiedene Pakete derselben Nachricht können unterschiedliche Wege nehmen. Am Ziel werden sie anhand der Sequenznummern in der richtigen Reihenfolge zusammengesetzt. Das Internet (TCP/IP) basiert auf Paketvermittlung. Der grosse Vorteil: Das Netz wird effizient von vielen Teilnehmern gleichzeitig genutzt (Shared Medium).',
+      analogy:'Stell dir vor, du schickst ein Buch per Post, aber jedes Kapitel in einem eigenen Paket. Jedes Paket hat die Adresse und die Kapitelnummer drauf. Die Pakete können über verschiedene Postwege reisen – manche über München, andere über Hamburg. Der Empfänger sortiert die Kapitel nach Nummer und hat am Ende das vollständige Buch.',
+      hints:['Pakete enthalten Header (Adresse, Sequenznummer) und Payload (Nutzdaten).','TCP/IP und das Internet nutzen Paketvermittlung.','Pakete können unterschiedliche Wege nehmen und werden am Ziel sortiert.'],
+      questions:{
+        fill:{q:'Bei der Paketvermittlung werden Daten in einzelne ______ zerteilt, die ____________ durch das Netz geroutet werden.', answer:'Pakete', keywords:['pakete','unabhängig']},
+        choice:{q:'Welches Netz basiert auf dem Prinzip der Paketvermittlung?', options:['Klassisches Telefonnetz (ISDN)','Das Internet (TCP/IP)','Faxnetz','Kabelfernsehnetz'], correct:1},
+        explain:{q:'Erkläre, warum Paketvermittlung effizienter ist als Leitungsvermittlung.', keywords:['paket','shared','geteilt','gleichzeitig','effizient','unabhängig','weg','ressource','leitung','blockiert']}
+      },
+      difficulty:1
+    },
+    {
+      id:'leitungsvermittlung',
+      term:'Leitungsvermittlung',
+      icon:'📞',
+      short:'Dedizierter Kanal wird exklusiv für die gesamte Kommunikation reserviert',
+      definition:'Bei der Leitungsvermittlung (Circuit Switching) wird vor der eigentlichen Datenübertragung ein durchgehender, physischer oder logischer Kanal zwischen Sender und Empfänger aufgebaut. Dieser Kanal bleibt für die gesamte Dauer der Kommunikation exklusiv reserviert – auch wenn gerade keine Daten fliessen. Die Kommunikation erfolgt in drei Phasen: Verbindungsaufbau, Datenübertragung und Verbindungsabbau. Das klassische Telefonnetz (PSTN/ISDN) nutzt Leitungsvermittlung. Der Vorteil ist eine konstante, garantierte Bandbreite ohne Verzögerungsschwankungen.',
+      analogy:'Leitungsvermittlung ist wie ein Telefongespräch über das alte Festnetz: Wenn du jemanden anrufst, wird eine direkte Leitung von deinem Telefon zum anderen durchgeschaltet. Diese Leitung gehört nur euch beiden – auch wenn ihr gerade schweigt. Erst wenn ihr auflegt, wird die Leitung wieder freigegeben.',
+      hints:['Drei Phasen: Aufbau → Transfer → Abbau.','Die Leitung ist exklusiv reserviert, auch ohne aktive Datenübertragung.','Klassisches Beispiel: ISDN-Telefonnetz.'],
+      questions:{
+        fill:{q:'Bei der Leitungsvermittlung wird ein ____________ Kanal zwischen Sender und Empfänger aufgebaut, der für die gesamte Kommunikation ________ reserviert bleibt.', answer:'dedizierter', keywords:['dediziert','exklusiv']},
+        choice:{q:'Was ist ein Nachteil der Leitungsvermittlung?', options:['Variable Latenz (Jitter)','Leitung bleibt blockiert, auch ohne Datenfluss','Keine garantierte Bandbreite','Pakete können verloren gehen'], correct:1},
+        explain:{q:'Beschreibe die drei Phasen der Leitungsvermittlung und nenne ein klassisches Beispiel.', keywords:['aufbau','übertragung','transfer','abbau','phase','telefon','ISDN','exklusiv','dediziert','kanal']}
+      },
+      difficulty:1
+    },
+    {
+      id:'nachrichtenvermittlung',
+      term:'Nachrichtenvermittlung',
+      icon:'💾',
+      short:'Gesamte Nachricht wird gespeichert, geprüft und weitergeleitet',
+      definition:'Bei der Nachrichtenvermittlung (Message Switching, auch Speichervermittlung oder Store-and-Forward) wird die gesamte Nachricht als Ganzes an den nächsten Vermittlungsknoten gesendet. Dort wird sie komplett zwischengespeichert, auf Fehler geprüft und erst danach an den nächsten Knoten weitergeleitet. Die Nachricht wird nicht in Pakete zerteilt, sondern bleibt als geschlossene Einheit erhalten. Dies erfordert ausreichend Speicherplatz an jedem Knoten und führt zu hoher Latenz. Beispiele sind E-Mail (SMTP) und das historische Telex-Netz.',
+      analogy:'Nachrichtenvermittlung funktioniert wie die klassische Briefpost: Du gibst deinen Brief beim Postamt ab (Knoten 1). Das Postamt speichert ihn, prüft die Adresse und leitet ihn zum nächsten Verteilzentrum weiter (Knoten 2). Dort wird er erneut geprüft und weitertransportiert, bis er beim Empfänger ankommt. Der Brief bleibt immer als Ganzes erhalten.',
+      hints:['Store-and-Forward: speichern, prüfen, weiterleiten.','Die Nachricht wird nicht in Pakete zerteilt.','E-Mail (SMTP) ist ein modernes Beispiel für Nachrichtenvermittlung.'],
+      questions:{
+        fill:{q:'Bei der Nachrichtenvermittlung wird die gesamte Nachricht an jedem Knoten ________________, geprüft und dann ________________.', answer:'gespeichert', keywords:['gespeichert','zwischengespeichert','weitergeleitet']},
+        choice:{q:'Welches Prinzip beschreibt die Nachrichtenvermittlung?', options:['End-to-End','Peer-to-Peer','Store-and-Forward','Best Effort'], correct:2},
+        explain:{q:'Erkläre den Unterschied zwischen Nachrichtenvermittlung und Paketvermittlung.', keywords:['nachricht','ganz','paket','zerteilt','speicher','store','forward','latenz','knoten']}
+      },
+      difficulty:2
+    },
+    {
+      id:'protokoll',
+      term:'Protokoll',
+      icon:'📋',
+      short:'Regelwerk für die Kommunikation zwischen Netzwerkgeräten',
+      definition:'Ein Netzwerkprotokoll ist ein standardisiertes Regelwerk, das festlegt, wie Daten zwischen Kommunikationspartnern ausgetauscht werden. Es definiert das Format der Daten (Syntax), die Bedeutung der Felder (Semantik), die zeitliche Reihenfolge (Timing) und die Fehlerbehandlung. Protokolle arbeiten schichtweise gemäss dem OSI- oder TCP/IP-Modell. Beispiele: IP (Schicht 3, Adressierung und Routing), TCP (Schicht 4, zuverlässige Übertragung), HTTP (Schicht 7, Webkommunikation). Ohne Protokolle wäre keine standardisierte Netzwerkkommunikation möglich.',
+      analogy:'Ein Protokoll ist wie die Regeln einer Sprache: Es legt fest, welche Wörter (Syntax) es gibt, was sie bedeuten (Semantik) und in welcher Reihenfolge man sie verwendet (Timing). Wenn zwei Computer verschiedene "Sprachen" sprechen, können sie sich nicht verstehen – genau wie Menschen, die keine gemeinsame Sprache haben.',
+      hints:['Ein Protokoll definiert Syntax, Semantik und Timing.','Protokolle arbeiten in Schichten (OSI, TCP/IP).','Beispiele: IP, TCP, HTTP, SMTP, DNS.'],
+      questions:{
+        fill:{q:'Ein Netzwerkprotokoll definiert die ______ (Format), ________ (Bedeutung) und das Timing der Kommunikation.', answer:'Syntax', keywords:['syntax','semantik']},
+        choice:{q:'Auf welcher OSI-Schicht arbeitet das IP-Protokoll?', options:['Schicht 1 (Bitübertragung)','Schicht 2 (Sicherung)','Schicht 3 (Vermittlung)','Schicht 4 (Transport)'], correct:2},
+        explain:{q:'Erkläre, warum Netzwerkprotokolle in Schichten organisiert sind und nenne drei Beispielprotokolle.', keywords:['schicht','OSI','TCP','IP','HTTP','standard','kommunikation','regel','format']}
+      },
+      difficulty:1
+    },
+    {
+      id:'multiplexing',
+      term:'Multiplexing',
+      icon:'🔀',
+      short:'Mehrere Signale teilen sich ein gemeinsames Übertragungsmedium',
+      definition:'Multiplexing ist ein Verfahren, bei dem mehrere Datenströme oder Signale gleichzeitig über ein gemeinsames Übertragungsmedium übertragen werden. Dazu wird das Medium in logische Kanäle aufgeteilt. Es gibt verschiedene Verfahren: Zeitmultiplex (TDM – Time Division Multiplexing) teilt die Zeit in Zeitschlitze auf, Frequenzmultiplex (FDM – Frequency Division Multiplexing) nutzt verschiedene Frequenzbänder, und Wellenlängenmultiplex (WDM – Wavelength Division Multiplexing) verwendet unterschiedliche Lichtwellenlängen in Glasfaser. Multiplexing erhöht die Effizienz der Netzwerkinfrastruktur erheblich.',
+      analogy:'Multiplexing ist wie eine mehrspurige Autobahn: Statt einer einzigen Fahrspur für alle gibt es mehrere Spuren, auf denen verschiedene Fahrzeuge gleichzeitig fahren können. TDM ist wie eine Ampelschaltung (jeder darf abwechselnd), FDM wie verschiedene Spuren nebeneinander, und WDM wie ein Tunnel mit verschiedenfarbigen Lichtstrahlen.',
+      hints:['TDM = Zeitmultiplex (Zeitschlitze), FDM = Frequenzmultiplex (Frequenzbänder).','WDM nutzt verschiedene Lichtwellenlängen in Glasfaser.','Multiplexing ermöglicht die gleichzeitige Nutzung eines Mediums durch viele Teilnehmer.'],
+      questions:{
+        fill:{q:'Beim __________________ (TDM) werden Zeitschlitze zugewiesen, beim Frequenzmultiplex (FDM) verschiedene ________________.', answer:'Zeitmultiplex', keywords:['zeitmultiplex','frequenz','frequenzbänder']},
+        choice:{q:'Welches Multiplexverfahren nutzt verschiedene Lichtwellenlängen?', options:['TDM (Time Division)','FDM (Frequency Division)','WDM (Wavelength Division)','CDM (Code Division)'], correct:2},
+        explain:{q:'Erkläre die drei Hauptarten des Multiplexing (TDM, FDM, WDM) und ihre Einsatzgebiete.', keywords:['TDM','FDM','WDM','zeit','frequenz','wellenlänge','kanal','gleichzeitig','medium','glasfaser']}
+      },
+      difficulty:2
+    },
+    {
+      id:'latenz',
+      term:'Latenz',
+      icon:'⏱️',
+      short:'Zeitverzögerung bei der Datenübertragung von Sender zu Empfänger',
+      definition:'Die Latenz (Verzögerung, Delay) bezeichnet die Zeitspanne, die ein Datenpaket benötigt, um vom Sender zum Empfänger zu gelangen. Sie setzt sich aus mehreren Komponenten zusammen: Ausbreitungsverzögerung (Propagation Delay – abhängig von Distanz und Lichtgeschwindigkeit), Übertragungsverzögerung (Transmission Delay – abhängig von Paketgrösse und Bandbreite), Verarbeitungsverzögerung (Processing Delay – Routing-Entscheidungen in Knoten) und Warteschlangenverzögerung (Queuing Delay – Wartezeit im Puffer). Bei Leitungsvermittlung ist die Latenz konstant, bei Paketvermittlung variabel (Jitter).',
+      analogy:'Latenz ist wie die Reisezeit eines Briefes: Sie hängt ab von der Entfernung (Ausbreitungsverzögerung), davon wie schnell der Brief eingepackt wird (Übertragungsverzögerung), wie lange das Sortierzentrum braucht (Verarbeitungsverzögerung), und ob er in einer Warteschlange landet (Warteschlangenverzögerung).',
+      hints:['Latenz = Summe aus Ausbreitungs-, Übertragungs-, Verarbeitungs- und Warteschlangenverzögerung.','Jitter = Schwankung der Latenz bei Paketvermittlung.','Niedrige Latenz ist entscheidend für Echtzeitanwendungen (VoIP, Gaming).'],
+      questions:{
+        fill:{q:'Die Latenz setzt sich zusammen aus Ausbreitungs-, Übertragungs-, Verarbeitungs- und ________________________.', answer:'Warteschlangenverzögerung', keywords:['warteschlange','warteschlangenverzögerung','queuing']},
+        choice:{q:'Wie nennt man die Schwankung der Latenz bei Paketvermittlung?', options:['Throughput','Jitter','Overhead','Buffering'], correct:1},
+        explain:{q:'Erkläre die vier Komponenten der Latenz und warum Jitter bei Paketvermittlung auftritt.', keywords:['ausbreitung','übertragung','verarbeitung','warteschlange','jitter','paket','variabel','verzögerung','delay']}
+      },
+      difficulty:2
+    },
+    {
+      id:'datagramm',
+      term:'Datagramm',
+      icon:'📨',
+      short:'Eigenständiges, verbindungsloses Datenpaket mit vollständiger Adressierung',
+      definition:'Ein Datagramm ist eine eigenständige, verbindungslose Dateneinheit, die alle für die Zustellung notwendigen Informationen im Header enthält (Quell- und Zieladresse). Jedes Datagramm wird unabhängig von anderen geroutet – es gibt keine vorher aufgebaute Verbindung. Das Internet Protocol (IP) arbeitet datagrammbasiert: Jedes IP-Paket ist ein Datagramm, das eigenständig seinen Weg durch das Netz findet. Datagramme können in unterschiedlicher Reihenfolge ankommen, dupliziert werden oder verloren gehen. Höhere Protokolle wie TCP sorgen dann für Zuverlässigkeit.',
+      analogy:'Ein Datagramm ist wie eine Postkarte: Sie hat Absender und Empfänger draufstehen und wird eigenständig durch das Postnetz befördert. Es wird keine Leitung reserviert, und es ist nicht garantiert, dass sie ankommt oder in welcher Reihenfolge mehrere Postkarten eintreffen.',
+      hints:['Datagramme sind verbindungslos – jedes wird unabhängig geroutet.','IP-Pakete sind Datagramme.','Reihenfolge, Zustellung und Duplikaterkennung werden nicht garantiert (Best Effort).'],
+      questions:{
+        fill:{q:'Ein Datagramm ist eine ________________ Dateneinheit, die alle Adressinformationen im ______ enthält.', answer:'verbindungslose', keywords:['verbindungslos','header']},
+        choice:{q:'Welches Protokoll arbeitet datagrammbasiert?', options:['TCP','HTTP','IP','FTP'], correct:2},
+        explain:{q:'Erkläre den Unterschied zwischen verbindungsloser (Datagramm) und verbindungsorientierter Kommunikation.', keywords:['verbindungslos','unabhängig','header','adresse','IP','reihenfolge','best effort','verbindung','aufbau']}
+      },
+      difficulty:2
+    },
+    {
+      id:'virtuelle-verbindung',
+      term:'Virtuelle Verbindung',
+      icon:'🔗',
+      short:'Logischer Pfad durch das Netz, ohne physische Leitungsreservierung',
+      definition:'Eine virtuelle Verbindung (Virtual Circuit) ist ein logisch festgelegter Pfad durch ein paketvermittelndes Netz, der vor der Datenübertragung aufgebaut wird. Im Gegensatz zur Leitungsvermittlung wird keine physische Leitung exklusiv reserviert – die Bandbreite wird weiterhin geteilt. Alle Pakete folgen dem gleichen vordefinierten Weg in der richtigen Reihenfolge. Es gibt permanente virtuelle Verbindungen (PVC, dauerhaft konfiguriert) und geschaltete virtuelle Verbindungen (SVC, dynamisch aufgebaut). Beispiele sind ATM (Asynchronous Transfer Mode), MPLS und Frame Relay. Virtuelle Verbindungen kombinieren Vorteile beider Vermittlungsarten: Vorhersagbare Pfade wie bei Leitungsvermittlung und effiziente Ressourcennutzung wie bei Paketvermittlung.',
+      analogy:'Eine virtuelle Verbindung ist wie eine GPS-Route, die du vor Fahrtbeginn festlegst: Du weisst genau, welche Strassen du nehmen wirst (fester Pfad), aber die Strassen gehören nicht nur dir – andere Autos nutzen sie auch (geteilte Bandbreite). Im Unterschied zur Leitungsvermittlung wird keine Strasse gesperrt, und im Unterschied zum Datagramm wird die Route nicht spontan geändert.',
+      hints:['Virtual Circuit = logischer Pfad, keine physische Leitungsreservierung.','PVC = permanent, SVC = dynamisch geschaltet.','Beispiele: ATM, MPLS, Frame Relay.'],
+      questions:{
+        fill:{q:'Eine virtuelle Verbindung ist ein ________ festgelegter Pfad, bei dem alle Pakete den ________ Weg nehmen.', answer:'logisch', keywords:['logisch','gleichen','selben']},
+        choice:{q:'Welche Technologie nutzt virtuelle Verbindungen?', options:['Ethernet','WLAN','MPLS','HTTP'], correct:2},
+        explain:{q:'Erkläre, wie virtuelle Verbindungen Vorteile von Leitungs- und Paketvermittlung kombinieren.', keywords:['logisch','pfad','paket','leitung','geteilt','bandbreite','reihenfolge','PVC','SVC','ATM','MPLS']}
+      },
+      difficulty:3
+    }
+  ];
+
+  // ── State ──
+  let state = loadState();
+  let currentTerm = null;
+  let currentPhase = 0;
+  let hintIndex = 0;
+
+  function loadState(){
+    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; }
+  }
+  function saveState(){
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+  function getLevel(id){
+    return (state[id] && state[id].level) || 0;
+  }
+  function setLevel(id, level){
+    if(!state[id]) state[id] = {};
+    state[id].level = Math.min(3, Math.max(0, level));
+    saveState();
+    renderGrid();
+    updateProgress();
+  }
+
+  // ── Progress ──
+  function updateProgress(){
+    const mastered = glossaryTerms.filter(t => getLevel(t.id) >= 3).length;
+    const total = glossaryTerms.length;
+    const pct = Math.round((mastered / total) * 100);
+    document.getElementById('glossary-fill').style.width = pct + '%';
+    document.getElementById('glossary-count').textContent = mastered + ' / ' + total + ' gemeistert';
+  }
+
+  // ── Grid ──
+  function renderGrid(){
+    const grid = document.getElementById('glossary-grid');
+    grid.innerHTML = '';
+    glossaryTerms.forEach(t => {
+      const level = getLevel(t.id);
+      const card = document.createElement('div');
+      card.className = 'glossary-card' + (currentTerm && currentTerm.id === t.id ? ' active' : '');
+      card.dataset.level = level;
+      card.innerHTML = '<div class="gc-icon">' + t.icon + '</div>' +
+        '<div class="gc-term">' + t.term + '</div>' +
+        '<div class="gc-short">' + t.short + '</div>' +
+        '<div class="gc-level"></div>';
+      card.addEventListener('click', () => openTerm(t));
+      grid.appendChild(card);
+    });
+  }
+
+  // ── Open Term ──
+  function openTerm(t){
+    currentTerm = t;
+    currentPhase = 0;
+    hintIndex = 0;
+    const panel = document.getElementById('glossary-learn');
+    panel.classList.add('visible');
+    document.getElementById('gl-title').textContent = t.icon + ' ' + t.term;
+    renderPhases();
+    renderPhaseContent();
+    renderGrid();
+    panel.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+
+  function closeTerm(){
+    currentTerm = null;
+    document.getElementById('glossary-learn').classList.remove('visible');
+    renderGrid();
+  }
+
+  document.getElementById('gl-close').addEventListener('click', closeTerm);
+
+  // ── Phase Indicator ──
+  function renderPhases(){
+    const container = document.getElementById('gl-phases');
+    container.innerHTML = '';
+    PHASES.forEach((p, i) => {
+      const el = document.createElement('span');
+      el.className = 'gl-phase' + (i === currentPhase ? ' current' : '') + (i < currentPhase ? ' done' : '');
+      el.textContent = (i < currentPhase ? '✓ ' : '') + p;
+      if (i <= currentPhase) {
+        el.style.cursor = 'pointer';
+        el.addEventListener('click', () => { currentPhase = i; renderPhases(); renderPhaseContent(); });
+      }
+      container.appendChild(el);
+    });
+  }
+
+  // ── Phase Content ──
+  function renderPhaseContent(){
+    const content = document.getElementById('gl-content');
+    const t = currentTerm;
+    if(!t) return;
+    hintIndex = 0;
+
+    switch(currentPhase){
+      case 0: // Analogie
+        content.innerHTML = '<div class="gl-analogy">💡 ' + t.analogy + '</div>' +
+          '<button class="gl-btn primary" id="gl-next">Verstanden → Definition</button>';
+        document.getElementById('gl-next').addEventListener('click', nextPhase);
+        break;
+
+      case 1: // Definition
+        content.innerHTML = '<div class="gl-definition">' + t.definition + '</div>' +
+          '<button class="gl-btn primary" id="gl-next">Weiter → Lückentext</button>';
+        document.getElementById('gl-next').addEventListener('click', nextPhase);
+        break;
+
+      case 2: // Lückentext
+        content.innerHTML = '<div class="gl-question">' + t.questions.fill.q + '</div>' +
+          '<input type="text" class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben...">' +
+          '<div class="gl-hints" id="gl-hints">' +
+            t.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💡 '+h+'</div>').join('') +
+          '</div>' +
+          '<button class="gl-hint-btn" id="gl-hint-btn">💡 Hinweis anzeigen</button>' +
+          '<button class="gl-btn primary" id="gl-check-fill">Prüfen</button>' +
+          '<div id="gl-fill-feedback"></div>';
+        document.getElementById('gl-hint-btn').addEventListener('click', showHint);
+        document.getElementById('gl-check-fill').addEventListener('click', checkFill);
+        document.getElementById('gl-fill-input').addEventListener('keydown', function(e){ if(e.key==='Enter') checkFill(); });
+        break;
+
+      case 3: // Multiple Choice
+        const q = t.questions.choice;
+        content.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+          '<div class="gl-choices" id="gl-choices">' +
+            q.options.map((o,i) => '<button class="gl-choice" data-idx="'+i+'">'+o+'</button>').join('') +
+          '</div>' +
+          '<div id="gl-choice-feedback"></div>';
+        document.querySelectorAll('.gl-choice').forEach(btn => {
+          btn.addEventListener('click', function(){ checkChoice(parseInt(this.dataset.idx)); });
+        });
+        break;
+
+      case 4: // Erklärung
+        content.innerHTML = '<div class="gl-question">' + t.questions.explain.q + '</div>' +
+          '<textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten..."></textarea>' +
+          '<div class="gl-hints" id="gl-hints">' +
+            t.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💡 '+h+'</div>').join('') +
+          '</div>' +
+          '<button class="gl-hint-btn" id="gl-hint-btn">💡 Hinweis anzeigen</button>' +
+          '<button class="gl-btn primary" id="gl-check-explain">Antwort prüfen</button>' +
+          '<div id="gl-explain-feedback"></div>';
+        document.getElementById('gl-hint-btn').addEventListener('click', showHint);
+        document.getElementById('gl-check-explain').addEventListener('click', checkExplain);
+        break;
+    }
+  }
+
+  function nextPhase(){
+    if(currentPhase < PHASES.length - 1){
+      currentPhase++;
+      renderPhases();
+      renderPhaseContent();
+    }
+  }
+
+  function showHint(){
+    if(hintIndex < 3){
+      const el = document.getElementById('gl-hint-' + hintIndex);
+      if(el) el.classList.add('visible');
+      hintIndex++;
+      if(hintIndex >= 3){
+        const btn = document.getElementById('gl-hint-btn');
+        if(btn) btn.style.display = 'none';
+      }
+    }
+  }
+
+  // ── Check Fill ──
+  function checkFill(){
+    const input = document.getElementById('gl-fill-input').value.trim().toLowerCase();
+    const t = currentTerm;
+    const fb = document.getElementById('gl-fill-feedback');
+    if(!input){ fb.innerHTML = '<div class="gl-feedback info">Bitte gib eine Antwort ein.</div>'; return; }
+
+    const keywords = t.questions.fill.keywords;
+    const found = keywords.filter(k => input.includes(k.toLowerCase()));
+    const missing = keywords.filter(k => !input.includes(k.toLowerCase()));
+    const score = found.length / keywords.length;
+
+    let html = '<div class="gl-feedback ' + (score >= 0.5 ? 'success' : 'error') + '">';
+    if(score >= 0.5){
+      html += '✓ ' + (score === 1 ? 'Perfekt! Alle Schlüsselbegriffe erkannt.' : 'Gut! Die meisten Begriffe erkannt.') + '<br>';
+    } else {
+      html += '✗ Leider nicht ganz richtig.<br>';
+    }
+    html += '<div style="margin-top:8px">';
+    found.forEach(k => { html += '<span class="gl-keyword found">✓ '+k+'</span>'; });
+    missing.forEach(k => { html += '<span class="gl-keyword missing">✗ '+k+'</span>'; });
+    html += '</div></div>';
+
+    if(score >= 0.5){
+      html += '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Weiter → Multiple Choice</button>';
+    } else {
+      html += '<button class="gl-btn primary" id="gl-retry" style="margin-top:12px">Nochmal versuchen</button>';
+    }
+    fb.innerHTML = html;
+
+    if(score >= 0.5){
+      document.getElementById('gl-next').addEventListener('click', nextPhase);
+    } else {
+      document.getElementById('gl-retry').addEventListener('click', function(){
+        document.getElementById('gl-fill-input').value = '';
+        fb.innerHTML = '';
+        document.getElementById('gl-fill-input').focus();
+      });
+    }
+  }
+
+  // ── Check Choice ──
+  function checkChoice(idx){
+    const t = currentTerm;
+    const correct = t.questions.choice.correct;
+    const fb = document.getElementById('gl-choice-feedback');
+    const btns = document.querySelectorAll('.gl-choice');
+
+    btns.forEach((b, i) => {
+      b.style.pointerEvents = 'none';
+      if(i === correct) b.classList.add('correct');
+      if(i === idx && idx !== correct) b.classList.add('wrong');
+    });
+
+    if(idx === correct){
+      fb.innerHTML = '<div class="gl-feedback success">✓ Richtig!</div>' +
+        '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Weiter → Erklärung</button>';
+      document.getElementById('gl-next').addEventListener('click', nextPhase);
+    } else {
+      fb.innerHTML = '<div class="gl-feedback error">✗ Falsch. Die richtige Antwort ist markiert.</div>' +
+        '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Trotzdem weiter</button>';
+      document.getElementById('gl-next').addEventListener('click', nextPhase);
+    }
+  }
+
+  // ── Check Explain ──
+  function checkExplain(){
+    const input = document.getElementById('gl-explain-input').value.trim().toLowerCase();
+    const t = currentTerm;
+    const fb = document.getElementById('gl-explain-feedback');
+    if(input.length < 15){ fb.innerHTML = '<div class="gl-feedback info">Bitte schreibe eine ausführlichere Erklärung (mind. 15 Zeichen).</div>'; return; }
+
+    const keywords = t.questions.explain.keywords;
+    const found = keywords.filter(k => input.includes(k.toLowerCase()));
+    const missing = keywords.filter(k => !input.includes(k.toLowerCase()));
+    const score = found.length / keywords.length;
+
+    let newLevel;
+    if(score >= 0.6) newLevel = 3;
+    else if(score >= 0.35) newLevel = 2;
+    else newLevel = Math.max(getLevel(t.id), 1);
+
+    setLevel(t.id, newLevel);
+
+    const labels = ['Nicht gelernt','Gesehen','Verstanden','Gemeistert'];
+    const colors = ['var(--muted)','var(--yellow)','var(--cyan)','var(--green)'];
+
+    let html = '<div class="gl-feedback ' + (score >= 0.35 ? 'success' : 'error') + '">';
+    if(score >= 0.6){
+      html += '🎉 Ausgezeichnet! Begriff gemeistert!';
+    } else if(score >= 0.35){
+      html += '👍 Gut! Die wichtigsten Punkte erkannt.';
+    } else {
+      html += '📝 Noch nicht ganz. Wiederhole den Begriff später.';
+    }
+    html += '<br><span style="color:'+colors[newLevel]+';font-weight:600">Level: '+labels[newLevel]+'</span>';
+    html += '<div style="margin-top:8px">';
+    found.forEach(k => { html += '<span class="gl-keyword found">✓ '+k+'</span>'; });
+    missing.forEach(k => { html += '<span class="gl-keyword missing">✗ '+k+'</span>'; });
+    html += '</div></div>';
+    html += '<button class="gl-btn primary" id="gl-finish" style="margin-top:12px">Abschliessen</button>';
+    fb.innerHTML = html;
+
+    document.getElementById('gl-finish').addEventListener('click', closeTerm);
+  }
+
+  // ── Tooltip ──
+  const tooltip = document.getElementById('glossary-tooltip');
+  const ttName = document.getElementById('gt-name');
+  const ttShort = document.getElementById('gt-short');
+
+  function initTooltips(){
+    const selectors = [
+      '.v-desc', '.verm-info h3', '.verm-info .v-en',
+      '.summary-card p', '.summary-card h4',
+      '.compare-table td',
+      '.prop-item .prop-val', '.section-title h2',
+      '.net-card p', '.net-card h4',
+      'header p'
+    ];
+
+    const termMap = {};
+    glossaryTerms.forEach(t => {
+      const searchTerms = [t.term];
+      if(t.id === 'paketvermittlung') searchTerms.push('Paketvermittlung','Pakete','Paket','Packet Switching','Datagramme');
+      if(t.id === 'leitungsvermittlung') searchTerms.push('Leitungsvermittlung','Circuit Switching','dedizierter Kanal','ISDN');
+      if(t.id === 'nachrichtenvermittlung') searchTerms.push('Nachrichtenvermittlung','Speichervermittlung','Store-and-Forward','Message Switching');
+      if(t.id === 'protokoll') searchTerms.push('Protokoll','Protokolle','TCP/IP','TCP','IP');
+      if(t.id === 'multiplexing') searchTerms.push('Multiplexing','Multiplex','TDM','FDM','WDM');
+      if(t.id === 'latenz') searchTerms.push('Latenz','Verzögerung','Jitter','Delay');
+      if(t.id === 'datagramm') searchTerms.push('Datagramm','Datagramme','verbindungslos');
+      if(t.id === 'virtuelle-verbindung') searchTerms.push('Virtuelle Verbindung','Virtual Circuit','MPLS','ATM','Frame Relay');
+      searchTerms.forEach(s => { termMap[s.toLowerCase()] = t; });
+    });
+
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => {
+        if(el.querySelector('.glossary-term')) return;
+        let html = el.innerHTML;
+        const sortedKeys = Object.keys(termMap).sort((a,b) => b.length - a.length);
+        sortedKeys.forEach(key => {
+          const t = termMap[key];
+          const regex = new RegExp('(?<![\\w-])(' + key.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')(?![\\w-])', 'gi');
+          let replaced = false;
+          html = html.replace(regex, function(match){
+            if(replaced) return match;
+            replaced = true;
+            return '<span class="glossary-term" data-glossary-id="'+t.id+'">'+match+'</span>';
+          });
+        });
+        el.innerHTML = html;
+      });
+    });
+
+    document.querySelectorAll('.glossary-term').forEach(el => {
+      el.addEventListener('mouseenter', function(e){
+        const t = glossaryTerms.find(x => x.id === this.dataset.glossaryId);
+        if(!t) return;
+        ttName.textContent = t.icon + ' ' + t.term;
+        ttShort.textContent = t.short;
+        tooltip.style.display = 'block';
+        positionTooltip(e);
+      });
+      el.addEventListener('mousemove', positionTooltip);
+      el.addEventListener('mouseleave', function(){
+        tooltip.style.display = 'none';
+      });
+    });
+  }
+
+  function positionTooltip(e){
+    let x = e.clientX + 16;
+    let y = e.clientY + 16;
+    const w = 260;
+    const h = 100;
+    if(x + w > window.innerWidth) x = e.clientX - w - 10;
+    if(y + h > window.innerHeight) y = e.clientY - h - 10;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  // ── Init ──
+  renderGrid();
+  updateProgress();
+  initTooltips();
+})();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

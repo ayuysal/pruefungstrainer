@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Datenstrukturen · Stack · Queue · Liste · ADTs</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c;--stack:#38bdf8;--queue:#51cf66;--list:#f472b6;--adt:#a78bfa}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+  .noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  .glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+  .glow-orb.one{background:var(--stack);top:-120px;right:-80px}
+  .glow-orb.two{background:var(--list);bottom:-160px;left:-100px}
+  .container{position:relative;z-index:1;max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+  header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease}
+  header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+  header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+  .section-title{display:flex;align-items:center;gap:12px;margin-bottom:18px;margin-top:52px;flex-wrap:wrap}
+  .section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .section-title h2{font-size:20px;font-weight:700}
+  .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
+
+  /* ── ADT Intro Card ── */
+  .adt-intro{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;animation:fadeUp .6s ease .05s both;position:relative;overflow:hidden}
+  .adt-intro::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--adt)}
+  .adt-intro h3{font-size:17px;font-weight:700;color:var(--adt);margin-bottom:10px}
+  .adt-intro p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7}
+  .adt-intro p strong{color:var(--text);font-weight:600}
+  .adt-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+  @media(max-width:600px){.adt-cols{grid-template-columns:1fr}}
+  .adt-col{padding:14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px}
+  .adt-col h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .adt-col p{font-size:12px;color:var(--muted);line-height:1.6;font-weight:300}
+  .adt-col code{font-family:'JetBrains Mono',monospace;font-size:11px;background:rgba(255,255,255,.05);padding:1px 6px;border-radius:3px;color:var(--cyan)}
+
+  /* ── DS Tabs ── */
+  .ds-tabs{display:flex;gap:6px;margin-bottom:16px;animation:fadeUp .6s ease .1s both}
+  .ds-tab{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:12px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .25s;flex:1;text-align:center}
+  .ds-tab:hover{background:rgba(255,255,255,.04)}
+  .ds-tab.active{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.08)}
+
+  .ds-content{display:none;animation:fadeUp .3s ease both}
+  .ds-content.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:750px){.ds-content.active{grid-template-columns:1fr}}
+
+  /* Simulator Panel */
+  .ds-sim{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;flex-direction:column}
+  .ds-sim h3{font-size:17px;font-weight:700;margin-bottom:4px}
+  .ds-sim .ds-en{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:1px;margin-bottom:14px}
+  .ds-sim .ds-desc{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:16px}
+  .ds-sim .ds-desc strong{color:var(--text);font-weight:600}
+
+  /* Controls */
+  .sim-controls{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+  .sim-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);outline:none;width:80px;text-align:center;transition:border .2s}
+  .sim-input:focus{border-color:var(--accent)}
+  .sim-btn{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);cursor:pointer;transition:all .2s;white-space:nowrap}
+  .sim-btn:hover{background:rgba(255,255,255,.08);transform:translateY(-1px)}
+  .sim-btn.danger{border-color:rgba(255,107,107,.3);color:var(--red)}
+  .sim-btn.danger:hover{background:rgba(255,107,107,.08)}
+
+  /* Visual Container */
+  .sim-visual{min-height:180px;background:rgba(255,255,255,.01);border:1px solid var(--border);border-radius:10px;padding:16px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden}
+  .sim-visual.horiz{flex-direction:row;justify-content:flex-start;align-items:center;gap:0;flex-wrap:nowrap;overflow-x:auto;padding:16px 12px}
+
+  /* Stack items */
+  .s-item{width:100%;max-width:160px;height:36px;border-radius:6px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;margin-bottom:3px;transition:all .3s;animation:popIn .3s ease}
+  .s-item:last-child{box-shadow:0 0 12px rgba(56,189,248,.15)}
+
+  /* Queue items */
+  .q-item{min-width:48px;height:48px;border-radius:8px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;flex-shrink:0;transition:all .3s;animation:slideIn .3s ease}
+
+  /* List items */
+  .l-item-wrap{display:flex;align-items:center;gap:0;flex-shrink:0;animation:slideIn .3s ease}
+  .l-item{min-width:48px;height:48px;border-radius:8px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;position:relative;flex-shrink:0}
+  .l-arrow{color:var(--muted);font-size:16px;margin:0 2px;flex-shrink:0;font-family:'JetBrains Mono',monospace}
+  .l-null{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);padding:4px 8px;border:1px dashed var(--border);border-radius:4px}
+
+  /* Pointer labels */
+  .ptr-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.5px;text-transform:uppercase;text-align:center;margin-top:4px}
+
+  /* Log */
+  .sim-log{margin-top:12px;padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);max-height:100px;overflow-y:auto;line-height:1.6}
+  .sim-log .log-op{color:var(--cyan)}.sim-log .log-val{color:var(--green)}.sim-log .log-err{color:var(--red)}
+
+  /* Info Panel */
+  .ds-info{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;flex-direction:column;justify-content:flex-start}
+  .op-grid{display:grid;gap:6px;margin-top:8px}
+  .op-card{padding:10px 14px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;gap:10px}
+  .op-card .op-name{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;min-width:80px}
+  .op-card .op-desc{font-size:11px;color:var(--muted);font-weight:300}
+  .op-card .op-complexity{font-family:'JetBrains Mono',monospace;font-size:10px;margin-left:auto;padding:3px 8px;border-radius:4px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);white-space:nowrap}
+
+  /* Comparison Table */
+  .compare-table-wrap{margin-top:20px;overflow-x:auto;animation:fadeUp .6s ease .25s both}
+  .compare-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+  .compare-table th{padding:14px 14px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+  .compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted);vertical-align:top}
+  .compare-table tr:last-child td{border-bottom:none}
+  .compare-table td:first-child{font-weight:600;color:var(--text);white-space:nowrap}
+  .compare-table td strong{color:var(--text);font-weight:600}
+
+  .summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;animation:fadeUp .6s ease .3s both}
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+  .summary-card:hover{border-color:rgba(108,99,255,.3)}
+  .summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+  .summary-card p strong{color:var(--text);font-weight:600}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes popIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+  @keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+  /* ── Glossary Learning System ── */
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="tag">Datenstrukturen & Algorithmen</div>
+    <h1>Stack · Queue · Liste · ADTs</h1>
+    <p>Abstrakte Datentypen verstehen und Datenstrukturen interaktiv simulieren.</p>
+  </header>
+
+  <!-- ═══════════════════════════════
+       ADT INTRO
+       ═══════════════════════════════ -->
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--adt),var(--cyan));">📦</div>
+    <h2>Abstrakter Datentyp (ADT)</h2>
+    <span class="sub">Was vs. Wie</span>
+  </div>
+
+  <div class="adt-intro">
+    <h3>Was ist ein ADT?</h3>
+    <p>Ein <strong>Abstrakter Datentyp</strong> beschreibt eine Datenstruktur rein über ihre <strong>Operationen und deren Verhalten</strong> – ohne festzulegen, <strong>wie</strong> sie intern implementiert wird. Er definiert das <strong>Was</strong> (Schnittstelle), nicht das <strong>Wie</strong> (Implementierung).</p>
+    <div class="adt-cols">
+      <div class="adt-col">
+        <h4>🔷 Spezifikation (ADT)</h4>
+        <p>Definiert: <strong>Welche Operationen</strong> gibt es? Was sind Vor-/Nachbedingungen? Wie verhalten sie sich?<br><br>Beispiel: „Ein Stack hat <code>push</code>, <code>pop</code>, <code>top</code>, <code>isEmpty</code>"</p>
+      </div>
+      <div class="adt-col">
+        <h4>🔶 Implementierung</h4>
+        <p>Legt fest: <strong>Wie</strong> werden die Daten gespeichert? Array? Verkettete Liste? Baum?<br><br>Beispiel: „Stack mit <code>Array</code>" oder „Stack mit <code>Linked List</code>"</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════
+       INTERACTIVE SIMULATORS
+       ═══════════════════════════════ -->
+  <div class="section-title" style="margin-top:52px">
+    <div class="ic" style="background:linear-gradient(135deg,var(--stack),var(--list));">⚡</div>
+    <h2>Interaktive Simulatoren</h2>
+    <span class="sub">Klicke & experimentiere!</span>
+  </div>
+
+  <div class="ds-tabs">
+    <div class="ds-tab active" data-tab="stack">📚 Stack</div>
+    <div class="ds-tab" data-tab="queue">🚶 Queue</div>
+    <div class="ds-tab" data-tab="list">🔗 Liste</div>
+  </div>
+
+  <!-- ── STACK ── -->
+  <div class="ds-content active" id="tab-stack">
+    <div class="ds-sim">
+      <h3 style="color:var(--stack)">Stack</h3>
+      <div class="ds-en">LIFO · LAST IN, FIRST OUT</div>
+      <div class="ds-desc">Wie ein <strong>Bücherstapel</strong>: Das zuletzt abgelegte Element wird als erstes wieder entnommen. Zugriff nur <strong>oben</strong> (Top).</div>
+      <div class="sim-controls">
+        <input type="text" class="sim-input" id="stack-val" placeholder="Wert" maxlength="4">
+        <button class="sim-btn" onclick="stackPush()" style="border-color:rgba(56,189,248,.3);color:var(--stack)">push ↑</button>
+        <button class="sim-btn" onclick="stackPop()" style="border-color:rgba(255,107,107,.3);color:var(--red)">pop ↓</button>
+        <button class="sim-btn" onclick="stackPeek()">peek 👁</button>
+        <button class="sim-btn danger" onclick="stackClear()">clear</button>
+      </div>
+      <div class="sim-visual" id="stack-visual">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);position:absolute;top:8px;left:12px">↑ TOP</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--border);position:absolute;bottom:6px;width:160px;text-align:center;border-top:2px solid var(--border);padding-top:4px">BOTTOM</div>
+      </div>
+      <div class="sim-log" id="stack-log">Bereit. Gib einen Wert ein und drücke push.</div>
+    </div>
+    <div class="ds-info">
+      <h3 style="font-size:15px;margin-bottom:12px">Operationen</h3>
+      <div class="op-grid">
+        <div class="op-card"><span class="op-name" style="color:var(--stack)">push(x)</span><span class="op-desc">Element oben ablegen</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name" style="color:var(--red)">pop()</span><span class="op-desc">Oberstes Element entfernen & zurückgeben</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name">peek()/top()</span><span class="op-desc">Oberstes Element ansehen (ohne Entfernen)</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name">isEmpty()</span><span class="op-desc">Ist der Stack leer?</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name">size()</span><span class="op-desc">Anzahl Elemente</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+      </div>
+      <h3 style="font-size:15px;margin:18px 0 10px">Anwendungen</h3>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;font-weight:300">
+        <strong style="color:var(--text)">Undo/Redo</strong> in Editoren, <strong style="color:var(--text)">Klammerprüfung</strong> (Compiler), <strong style="color:var(--text)">Funktionsaufrufe</strong> (Call Stack), <strong style="color:var(--text)">Tiefensuche</strong> (DFS), <strong style="color:var(--text)">Postfix-Auswertung</strong> (Taschenrechner), Browser-<strong style="color:var(--text)">Verlauf</strong> (Zurück-Button)
+      </div>
+      <div style="margin-top:16px;padding:12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7">
+<span style="color:var(--purple)">stack</span> = []
+<span style="color:var(--purple)">stack</span>.<span style="color:var(--stack)">append</span>(<span style="color:var(--green)">"A"</span>)  <span style="color:#4a4e5e"># push</span>
+<span style="color:var(--purple)">stack</span>.<span style="color:var(--stack)">append</span>(<span style="color:var(--green)">"B"</span>)
+<span style="color:var(--purple)">stack</span>.<span style="color:var(--red)">pop</span>()       <span style="color:#4a4e5e"># → "B"</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── QUEUE ── -->
+  <div class="ds-content" id="tab-queue">
+    <div class="ds-sim">
+      <h3 style="color:var(--queue)">Queue</h3>
+      <div class="ds-en">FIFO · FIRST IN, FIRST OUT</div>
+      <div class="ds-desc">Wie eine <strong>Warteschlange</strong>: Wer zuerst kommt, wird zuerst bedient. Einfügen <strong>hinten</strong>, Entnahme <strong>vorne</strong>.</div>
+      <div class="sim-controls">
+        <input type="text" class="sim-input" id="queue-val" placeholder="Wert" maxlength="4">
+        <button class="sim-btn" onclick="queueEnqueue()" style="border-color:rgba(81,207,102,.3);color:var(--queue)">enqueue →</button>
+        <button class="sim-btn" onclick="queueDequeue()" style="border-color:rgba(255,107,107,.3);color:var(--red)">dequeue ←</button>
+        <button class="sim-btn" onclick="queuePeek()">front 👁</button>
+        <button class="sim-btn danger" onclick="queueClear()">clear</button>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:-4px;padding:0 4px">
+        <span>← FRONT (raus)</span><span>REAR (rein) →</span>
+      </div>
+      <div class="sim-visual horiz" id="queue-visual" style="min-height:80px"></div>
+      <div class="sim-log" id="queue-log">Bereit. Gib einen Wert ein und drücke enqueue.</div>
+    </div>
+    <div class="ds-info">
+      <h3 style="font-size:15px;margin-bottom:12px">Operationen</h3>
+      <div class="op-grid">
+        <div class="op-card"><span class="op-name" style="color:var(--queue)">enqueue(x)</span><span class="op-desc">Element hinten anfügen</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name" style="color:var(--red)">dequeue()</span><span class="op-desc">Vorderstes Element entfernen & zurückgeben</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name">front()/peek()</span><span class="op-desc">Vorderstes Element ansehen</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name">isEmpty()</span><span class="op-desc">Ist die Queue leer?</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name">size()</span><span class="op-desc">Anzahl Elemente</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+      </div>
+      <h3 style="font-size:15px;margin:18px 0 10px">Anwendungen</h3>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;font-weight:300">
+        <strong style="color:var(--text)">Druckerwarteschlange</strong>, <strong style="color:var(--text)">CPU-Scheduling</strong> (Round Robin), <strong style="color:var(--text)">Breitensuche</strong> (BFS), <strong style="color:var(--text)">Puffer</strong> in Netzwerken (Router), <strong style="color:var(--text)">Tastatureingabe</strong>-Puffer, <strong style="color:var(--text)">Ticketsysteme</strong>
+      </div>
+      <div style="margin-top:16px;padding:12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7">
+<span style="color:var(--purple)">from</span> collections <span style="color:var(--purple)">import</span> deque
+<span style="color:var(--purple)">q</span> = deque()
+<span style="color:var(--purple)">q</span>.<span style="color:var(--queue)">append</span>(<span style="color:var(--green)">"A"</span>)   <span style="color:#4a4e5e"># enqueue</span>
+<span style="color:var(--purple)">q</span>.<span style="color:var(--queue)">append</span>(<span style="color:var(--green)">"B"</span>)
+<span style="color:var(--purple)">q</span>.<span style="color:var(--red)">popleft</span>()    <span style="color:#4a4e5e"># → "A"</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── LINKED LIST ── -->
+  <div class="ds-content" id="tab-list">
+    <div class="ds-sim">
+      <h3 style="color:var(--list)">Verkettete Liste</h3>
+      <div class="ds-en">LINKED LIST · Einfach verkettet</div>
+      <div class="ds-desc">Elemente (<strong>Knoten</strong>) sind über <strong>Zeiger</strong> (Pointer) verbunden. Jeder Knoten kennt seinen <strong>Nachfolger</strong>. Einfügen/Löschen an beliebiger Stelle möglich.</div>
+      <div class="sim-controls">
+        <input type="text" class="sim-input" id="list-val" placeholder="Wert" maxlength="4">
+        <button class="sim-btn" onclick="listPrepend()" style="border-color:rgba(244,114,182,.3);color:var(--list)">prepend ←</button>
+        <button class="sim-btn" onclick="listAppend()" style="border-color:rgba(244,114,182,.3);color:var(--list)">append →</button>
+        <button class="sim-btn" onclick="listRemoveFirst()" style="border-color:rgba(255,107,107,.3);color:var(--red)">removeFirst</button>
+        <button class="sim-btn danger" onclick="listClear()">clear</button>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);margin-bottom:-4px;padding:0 4px">HEAD →</div>
+      <div class="sim-visual horiz" id="list-visual" style="min-height:80px"></div>
+      <div class="sim-log" id="list-log">Bereit. Füge Elemente per prepend oder append hinzu.</div>
+    </div>
+    <div class="ds-info">
+      <h3 style="font-size:15px;margin-bottom:12px">Operationen</h3>
+      <div class="op-grid">
+        <div class="op-card"><span class="op-name" style="color:var(--list)">prepend(x)</span><span class="op-desc">Am Anfang einfügen</span><span class="op-complexity" style="color:var(--green)">O(1)</span></div>
+        <div class="op-card"><span class="op-name" style="color:var(--list)">append(x)</span><span class="op-desc">Am Ende anfügen</span><span class="op-complexity" style="color:var(--yellow)">O(n)</span></div>
+        <div class="op-card"><span class="op-name" style="color:var(--red)">remove(x)</span><span class="op-desc">Element suchen & entfernen</span><span class="op-complexity" style="color:var(--yellow)">O(n)</span></div>
+        <div class="op-card"><span class="op-name">search(x)</span><span class="op-desc">Element suchen</span><span class="op-complexity" style="color:var(--yellow)">O(n)</span></div>
+        <div class="op-card"><span class="op-name">insertAt(i,x)</span><span class="op-desc">An Position i einfügen</span><span class="op-complexity" style="color:var(--yellow)">O(n)</span></div>
+        <div class="op-card"><span class="op-name">get(i)</span><span class="op-desc">Element an Index i lesen</span><span class="op-complexity" style="color:var(--yellow)">O(n)</span></div>
+      </div>
+      <h3 style="font-size:15px;margin:18px 0 10px">Varianten</h3>
+      <div style="font-size:12px;color:var(--muted);line-height:1.7;font-weight:300">
+        <strong style="color:var(--text)">Einfach verkettet</strong> – jeder Knoten → Nachfolger.<br>
+        <strong style="color:var(--text)">Doppelt verkettet</strong> – jeder Knoten → Vorgänger + Nachfolger.<br>
+        <strong style="color:var(--text)">Zirkulär</strong> – letzter Knoten zeigt zurück auf den ersten.
+      </div>
+      <div style="margin-top:14px;padding:12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);line-height:1.7">
+<span style="color:#4a4e5e"># Knoten-Struktur</span>
+<span style="color:var(--purple)">class</span> <span style="color:var(--list)">Node</span>:
+  <span style="color:var(--purple)">def</span> __init__(self, data):
+    self.<span style="color:var(--cyan)">data</span> = data
+    self.<span style="color:var(--cyan)">next</span> = <span style="color:var(--orange)">None</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Comparison Table -->
+  <div class="compare-table-wrap">
+    <table class="compare-table">
+      <thead><tr><th>Eigenschaft</th><th style="color:var(--stack)">Stack</th><th style="color:var(--queue)">Queue</th><th style="color:var(--list)">Linked List</th><th>Array</th></tr></thead>
+      <tbody>
+        <tr><td>Prinzip</td><td><strong>LIFO</strong></td><td><strong>FIFO</strong></td><td>Sequentiell verkettet</td><td>Index-basiert</td></tr>
+        <tr><td>Zugriff</td><td>Nur Top</td><td>Nur Front</td><td>Beliebig (über Traversierung)</td><td><strong>Direkt per Index</strong></td></tr>
+        <tr><td>Einfügen/Löschen</td><td style="color:var(--green)">O(1) am Top</td><td style="color:var(--green)">O(1) Front/Rear</td><td style="color:var(--green)">O(1) am Anfang</td><td style="color:var(--yellow)">O(n) Mitte</td></tr>
+        <tr><td>Suche</td><td style="color:var(--yellow)">O(n)</td><td style="color:var(--yellow)">O(n)</td><td style="color:var(--yellow)">O(n)</td><td style="color:var(--green)">O(1) per Index</td></tr>
+        <tr><td>Speicher</td><td>Kompakt</td><td>Kompakt</td><td>Pointer-Overhead</td><td>Feste Grösse</td></tr>
+        <tr><td>ADT-Typ</td><td>Abstrakter DT</td><td>Abstrakter DT</td><td>Konkrete Struktur</td><td>Konkrete Struktur</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ═══════════════════════════════
+       BEGRIFFE LERNEN
+       ═══════════════════════════════ -->
+  <div class="glossary-section">
+    <div class="section-title">
+      <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">🧠</div>
+      <h2>Begriffe lernen</h2>
+      <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
+    </div>
+
+    <div class="glossary-progress-bar">
+      <span class="gp-text">Fortschritt</span>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <span class="gp-count" id="glossary-count">0%</span>
+    </div>
+
+    <div class="glossary-grid" id="glossary-grid"></div>
+
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" onclick="glossaryClose()">✕</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="summary">
+    <div class="summary-card">
+      <h4>🧩 ADT vs. Implementierung</h4>
+      <p><strong>Stack</strong> und <strong>Queue</strong> sind <strong>ADTs</strong> – sie definieren Verhalten (LIFO/FIFO). Eine <strong>Linked List</strong> oder ein <strong>Array</strong> ist eine mögliche <strong>Implementierung</strong> dafür.</p>
+    </div>
+    <div class="summary-card">
+      <h4>🎯 Prüfungstipp</h4>
+      <p>Häufige Frage: „Zeige den Zustand nach <code>push(3), push(5), pop(), push(7)</code>". Nutze den Simulator oben, um solche Sequenzen durchzuspielen!</p>
+    </div>
+    <div class="summary-card">
+      <h4>💡 Merkhilfe</h4>
+      <p><strong>Stack = Stapel</strong> (Teller) → LIFO.<br><strong>Queue = Schlange</strong> (Kasse) → FIFO.<br><strong>Liste = Kette</strong> → flexibel, aber langsam beim Suchen.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Tab Switching ──
+document.querySelectorAll('.ds-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.ds-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.ds-content').forEach(c=>c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-'+tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ════════════════════════════════════
+//  STACK SIMULATOR
+// ════════════════════════════════════
+let stackData = [];
+const stackColors = ['#38bdf8','#818cf8','#a78bfa','#c084fc','#e879f9','#f472b6','#fb7185'];
+
+function stackRender() {
+  const v = document.getElementById('stack-visual');
+  const items = v.querySelectorAll('.s-item');
+  items.forEach(i => i.remove());
+  stackData.forEach((val, i) => {
+    const el = document.createElement('div');
+    el.className = 's-item';
+    const c = stackColors[i % stackColors.length];
+    el.style.background = c + '15';
+    el.style.border = `2px solid ${c}`;
+    el.style.color = c;
+    el.textContent = val;
+    v.insertBefore(el, v.firstChild.nextSibling);
+  });
+}
+
+function stackLog(msg) {
+  const log = document.getElementById('stack-log');
+  log.innerHTML = msg + '<br>' + log.innerHTML;
+  if (log.innerHTML.length > 2000) log.innerHTML = log.innerHTML.substring(0, 2000);
+}
+
+function stackPush() {
+  const input = document.getElementById('stack-val');
+  const val = input.value.trim() || String(Math.floor(Math.random()*100));
+  if (stackData.length >= 8) { stackLog('<span class="log-err">Stack voll (max 8 für Demo)!</span>'); return; }
+  stackData.push(val);
+  stackLog(`<span class="log-op">push</span>(<span class="log-val">${val}</span>) → Stack: [${stackData.join(', ')}] | size: ${stackData.length}`);
+  input.value = '';
+  stackRender();
+}
+
+function stackPop() {
+  if (!stackData.length) { stackLog('<span class="log-err">Stack ist leer! (Underflow)</span>'); return; }
+  const val = stackData.pop();
+  stackLog(`<span class="log-op">pop</span>() → <span class="log-val">${val}</span> | Stack: [${stackData.join(', ')}]`);
+  stackRender();
+}
+
+function stackPeek() {
+  if (!stackData.length) { stackLog('<span class="log-err">Stack ist leer!</span>'); return; }
+  stackLog(`<span class="log-op">peek</span>() → <span class="log-val">${stackData[stackData.length-1]}</span> (nicht entfernt)`);
+}
+
+function stackClear() { stackData = []; stackRender(); stackLog('<span class="log-op">clear</span>() → Stack geleert'); }
+
+// ════════════════════════════════════
+//  QUEUE SIMULATOR
+// ════════════════════════════════════
+let queueData = [];
+const queueColors = ['#51cf66','#40c057','#2f9e44','#37b24d','#69db7c','#8ce99a','#b2f2bb'];
+
+function queueRender() {
+  const v = document.getElementById('queue-visual');
+  v.innerHTML = '';
+  queueData.forEach((val, i) => {
+    const el = document.createElement('div');
+    el.className = 'q-item';
+    const c = queueColors[i % queueColors.length];
+    el.style.background = c + '15';
+    el.style.border = `2px solid ${c}`;
+    el.style.color = c;
+    el.textContent = val;
+    if (i > 0) {
+      const arr = document.createElement('span');
+      arr.style.cssText = 'color:var(--border);margin:0 3px;font-size:14px';
+      arr.textContent = '→';
+      v.appendChild(arr);
+    }
+    v.appendChild(el);
+  });
+}
+
+function queueLog(msg) {
+  const log = document.getElementById('queue-log');
+  log.innerHTML = msg + '<br>' + log.innerHTML;
+}
+
+function queueEnqueue() {
+  const input = document.getElementById('queue-val');
+  const val = input.value.trim() || String(Math.floor(Math.random()*100));
+  if (queueData.length >= 8) { queueLog('<span class="log-err">Queue voll!</span>'); return; }
+  queueData.push(val);
+  queueLog(`<span class="log-op">enqueue</span>(<span class="log-val">${val}</span>) → Queue: [${queueData.join(' → ')}]`);
+  input.value = '';
+  queueRender();
+}
+
+function queueDequeue() {
+  if (!queueData.length) { queueLog('<span class="log-err">Queue ist leer!</span>'); return; }
+  const val = queueData.shift();
+  queueLog(`<span class="log-op">dequeue</span>() → <span class="log-val">${val}</span> | Queue: [${queueData.join(' → ')}]`);
+  queueRender();
+}
+
+function queuePeek() {
+  if (!queueData.length) { queueLog('<span class="log-err">Queue ist leer!</span>'); return; }
+  queueLog(`<span class="log-op">front</span>() → <span class="log-val">${queueData[0]}</span>`);
+}
+
+function queueClear() { queueData = []; queueRender(); queueLog('<span class="log-op">clear</span>()'); }
+
+// ════════════════════════════════════
+//  LINKED LIST SIMULATOR
+// ════════════════════════════════════
+let listData = [];
+const listColors = ['#f472b6','#e879f9','#c084fc','#a78bfa','#818cf8','#6366f1','#fb7185'];
+
+function listRender() {
+  const v = document.getElementById('list-visual');
+  v.innerHTML = '';
+  listData.forEach((val, i) => {
+    if (i > 0) {
+      const arr = document.createElement('span');
+      arr.className = 'l-arrow';
+      arr.textContent = '→';
+      v.appendChild(arr);
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'l-item-wrap';
+    const el = document.createElement('div');
+    el.className = 'l-item';
+    const c = listColors[i % listColors.length];
+    el.style.background = c + '12';
+    el.style.border = `2px solid ${c}`;
+    el.style.color = c;
+    el.textContent = val;
+    wrap.appendChild(el);
+    v.appendChild(wrap);
+  });
+  // NULL terminator
+  if (listData.length) {
+    const arr = document.createElement('span');
+    arr.className = 'l-arrow';
+    arr.textContent = '→';
+    v.appendChild(arr);
+  }
+  const nil = document.createElement('span');
+  nil.className = 'l-null';
+  nil.textContent = 'NULL';
+  v.appendChild(nil);
+}
+
+function listLog(msg) {
+  const log = document.getElementById('list-log');
+  log.innerHTML = msg + '<br>' + log.innerHTML;
+}
+
+function listPrepend() {
+  const input = document.getElementById('list-val');
+  const val = input.value.trim() || String(Math.floor(Math.random()*100));
+  if (listData.length >= 8) { listLog('<span class="log-err">Max 8 Elemente für Demo!</span>'); return; }
+  listData.unshift(val);
+  listLog(`<span class="log-op">prepend</span>(<span class="log-val">${val}</span>) → [${listData.join(' → ')} → NULL]`);
+  input.value = '';
+  listRender();
+}
+
+function listAppend() {
+  const input = document.getElementById('list-val');
+  const val = input.value.trim() || String(Math.floor(Math.random()*100));
+  if (listData.length >= 8) { listLog('<span class="log-err">Max 8 Elemente!</span>'); return; }
+  listData.push(val);
+  listLog(`<span class="log-op">append</span>(<span class="log-val">${val}</span>) → [${listData.join(' → ')} → NULL]`);
+  input.value = '';
+  listRender();
+}
+
+function listRemoveFirst() {
+  if (!listData.length) { listLog('<span class="log-err">Liste ist leer!</span>'); return; }
+  const val = listData.shift();
+  listLog(`<span class="log-op">removeFirst</span>() → <span class="log-val">${val}</span>`);
+  listRender();
+}
+
+function listClear() { listData = []; listRender(); listLog('<span class="log-op">clear</span>()'); }
+
+// Init renders
+stackRender();
+queueRender();
+listRender();
+
+// ════════════════════════════════════
+//  GLOSSARY LEARNING SYSTEM
+// ════════════════════════════════════
+const GLOSSARY = [
+  {
+    term: 'Stack',
+    short: 'LIFO-Datenstruktur – nur oben zugreifen',
+    definition: 'Ein Stack ist ein abstrakter Datentyp, der nach dem LIFO-Prinzip (Last In, First Out) arbeitet. Elemente können nur oben (Top) hinzugefügt und entfernt werden.',
+    analogy: '💡 Wie ein Tellerstapel in der Kantine: Du legst Teller oben drauf und nimmst auch oben wieder einen runter. An die unteren kommst du nicht ran!',
+    hints: [
+      'Das Wort "Stack" bedeutet auf Deutsch "Stapel"',
+      'Es gibt nur EINE Seite, wo Dinge rein und raus gehen: oben (Top)',
+      'Die wichtigsten Operationen heißen push (drauflegen) und pop (runternehmen)'
+    ],
+    questions: [
+      { type: 'fill', q: 'Ein Stack arbeitet nach dem ___-Prinzip.', a: 'LIFO', hint: 'Last In, First Out' },
+      { type: 'choice', q: 'Was passiert bei pop() auf einem Stack?', options: ['Das unterste Element wird entfernt', 'Das oberste Element wird entfernt und zurückgegeben', 'Alle Elemente werden gelöscht', 'Ein neues Element wird hinzugefügt'], correct: 1 },
+      { type: 'explain', q: 'Erkläre in eigenen Worten, was ein Stack ist und nenne seine wichtigsten Operationen.', keywords: ['LIFO', 'push', 'pop', 'Top', 'Stapel'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Queue',
+    short: 'FIFO-Datenstruktur – hinten rein, vorne raus',
+    definition: 'Eine Queue ist ein abstrakter Datentyp, der nach dem FIFO-Prinzip (First In, First Out) arbeitet. Elemente werden hinten eingefügt und vorne entnommen.',
+    analogy: '💡 Wie die Schlange an der Supermarktkasse: Wer zuerst ansteht, wird auch zuerst bedient. Neuankömmlinge stellen sich hinten an!',
+    hints: [
+      '"Queue" ist englisch für "Warteschlange"',
+      'Es gibt ZWEI Seiten: hinten rein (Rear) und vorne raus (Front)',
+      'Einfügen heißt enqueue, Entfernen heißt dequeue'
+    ],
+    questions: [
+      { type: 'fill', q: 'Eine Queue arbeitet nach dem ___-Prinzip.', a: 'FIFO', hint: 'First In, First Out' },
+      { type: 'choice', q: 'An welcher Seite werden Elemente einer Queue entnommen?', options: ['Hinten (Rear)', 'Vorne (Front)', 'Oben (Top)', 'An beliebiger Stelle'], correct: 1 },
+      { type: 'explain', q: 'Erkläre den Unterschied zwischen Stack und Queue.', keywords: ['LIFO', 'FIFO', 'Reihenfolge', 'vorne', 'hinten', 'oben'], minKeywords: 3 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Linked List',
+    short: 'Verkettete Knoten mit Zeigern verbunden',
+    definition: 'Eine verkettete Liste besteht aus Knoten (Nodes), die jeweils einen Datenwert und einen Zeiger (Pointer) auf den nächsten Knoten enthalten. Anders als ein Array sind die Elemente nicht zusammenhängend im Speicher.',
+    analogy: '💡 Wie eine Schnitzeljagd: Jeder Hinweis (Knoten) enthält eine Info UND sagt dir, wo der nächste Hinweis ist. Du musst von Hinweis zu Hinweis laufen!',
+    hints: [
+      'Jeder Knoten hat zwei Teile: Daten + Zeiger zum nächsten Knoten',
+      'Der erste Knoten heißt "Head", der letzte zeigt auf NULL',
+      'Einfügen/Löschen ist schnell (O(1) am Anfang), aber Suchen langsam (O(n))'
+    ],
+    questions: [
+      { type: 'fill', q: 'Jeder Knoten einer Linked List enthält Daten und einen ___ auf den nächsten Knoten.', a: 'Zeiger', alt: ['Pointer', 'Verweis'], hint: 'Auch "Pointer" genannt' },
+      { type: 'choice', q: 'Worauf zeigt der letzte Knoten einer einfach verketteten Liste?', options: ['Auf den ersten Knoten', 'Auf NULL', 'Auf sich selbst', 'Auf den vorherigen Knoten'], correct: 1 },
+      { type: 'explain', q: 'Was ist der Vorteil einer Linked List gegenüber einem Array beim Einfügen?', keywords: ['Knoten', 'Zeiger', 'Pointer', 'O(1)', 'Anfang', 'verschieben', 'Speicher'], minKeywords: 2 }
+    ],
+    difficulty: 2
+  },
+  {
+    term: 'ADT',
+    short: 'Definiert WAS, nicht WIE',
+    definition: 'Ein Abstrakter Datentyp (ADT) beschreibt eine Datenstruktur über ihre Operationen und deren Verhalten, ohne die konkrete Implementierung festzulegen. Er trennt Schnittstelle (Was) von Implementierung (Wie).',
+    analogy: '💡 Wie ein Getränkeautomat: Du weißt, dass du Geld einwirfst und ein Getränk rauskommt (WAS). Wie die Maschine innen funktioniert (WIE), ist dir egal!',
+    hints: [
+      'ADT = Abstrakter Datentyp',
+      'Er definiert nur die Schnittstelle (Operationen), nicht die interne Umsetzung',
+      'Stack und Queue sind ADTs – sie können mit Array ODER Linked List implementiert werden'
+    ],
+    questions: [
+      { type: 'fill', q: 'Ein ADT definiert das ___, nicht das Wie.', a: 'Was', hint: 'Schnittstelle vs. Implementierung' },
+      { type: 'choice', q: 'Welche der folgenden sind ADTs?', options: ['Array und Linked List', 'Stack und Queue', 'Nur der Stack', 'Alle Datenstrukturen'], correct: 1 },
+      { type: 'explain', q: 'Erkläre, was ein ADT ist und warum die Trennung von Was und Wie nützlich ist.', keywords: ['Schnittstelle', 'Implementierung', 'Operationen', 'Was', 'Wie', 'austauschbar'], minKeywords: 3 }
+    ],
+    difficulty: 2
+  },
+  {
+    term: 'LIFO',
+    short: 'Last In, First Out',
+    definition: 'LIFO (Last In, First Out) bedeutet: Das zuletzt hinzugefügte Element wird als erstes wieder entnommen. Dieses Prinzip bestimmt die Zugriffsreihenfolge eines Stacks.',
+    analogy: '💡 Wie ein Rucksack packen: Was du zuletzt reinpackst, liegt oben und nimmst du als erstes wieder raus!',
+    hints: [
+      'LIFO steht für "Last In, First Out"',
+      'Das LETZTE Element, das reinkommt, geht als ERSTES wieder raus',
+      'Ein Stack arbeitet nach dem LIFO-Prinzip'
+    ],
+    questions: [
+      { type: 'fill', q: 'LIFO steht für Last In, First ___.', a: 'Out', hint: 'Das Gegenteil von In' },
+      { type: 'choice', q: 'Bei push(A), push(B), push(C) – was liefert pop()?', options: ['A', 'B', 'C', 'Einen Fehler'], correct: 2 },
+      { type: 'explain', q: 'Erkläre das LIFO-Prinzip und nenne ein Beispiel aus dem Alltag.', keywords: ['Last In', 'First Out', 'zuletzt', 'Stack', 'Stapel', 'oben'], minKeywords: 2 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'FIFO',
+    short: 'First In, First Out',
+    definition: 'FIFO (First In, First Out) bedeutet: Das zuerst hinzugefügte Element wird als erstes wieder entnommen. Dieses Prinzip bestimmt die Zugriffsreihenfolge einer Queue.',
+    analogy: '💡 Wie beim Bäcker: Wer zuerst da war, wird zuerst bedient. Fair und geordnet!',
+    hints: [
+      'FIFO steht für "First In, First Out"',
+      'Das ERSTE Element, das reinkommt, geht auch als ERSTES wieder raus',
+      'Eine Queue arbeitet nach dem FIFO-Prinzip'
+    ],
+    questions: [
+      { type: 'fill', q: 'FIFO steht für First In, First ___.', a: 'Out', hint: 'Das Gegenteil von In' },
+      { type: 'choice', q: 'Bei enqueue(A), enqueue(B), enqueue(C) – was liefert dequeue()?', options: ['C', 'B', 'A', 'Einen Fehler'], correct: 2 },
+      { type: 'explain', q: 'Erkläre das FIFO-Prinzip und nenne ein Beispiel aus dem Alltag.', keywords: ['First In', 'First Out', 'zuerst', 'Queue', 'Warteschlange', 'Reihenfolge'], minKeywords: 2 }
+    ],
+    difficulty: 1
+  },
+  {
+    term: 'Pointer',
+    short: 'Zeiger auf eine Speicheradresse',
+    definition: 'Ein Pointer (Zeiger) ist eine Variable, die die Speicheradresse eines anderen Datenobjekts enthält. In verketteten Listen verbinden Pointer die einzelnen Knoten miteinander.',
+    analogy: '💡 Wie eine Adresse auf einem Briefumschlag: Der Brief selbst ist nicht das Haus, aber er sagt dir genau, WO das Haus steht!',
+    hints: [
+      'Ein Pointer "zeigt" auf eine Stelle im Speicher',
+      'Er enthält nicht den Wert selbst, sondern die Adresse, wo der Wert liegt',
+      'In Linked Lists hat jeder Knoten einen Pointer zum nächsten Knoten'
+    ],
+    questions: [
+      { type: 'fill', q: 'Ein Pointer enthält die ___ eines anderen Datenobjekts.', a: 'Speicheradresse', alt: ['Adresse'], hint: 'Wo im Speicher etwas liegt' },
+      { type: 'choice', q: 'Was enthält der Pointer des letzten Knotens einer Linked List?', options: ['Die Adresse des Head-Knotens', 'NULL (kein Verweis)', 'Den Wert 0', 'Seine eigene Adresse'], correct: 1 },
+      { type: 'explain', q: 'Erkläre, was ein Pointer ist und welche Rolle er in Linked Lists spielt.', keywords: ['Speicheradresse', 'Adresse', 'Zeiger', 'Knoten', 'Verweis', 'nächsten'], minKeywords: 2 }
+    ],
+    difficulty: 2
+  },
+  {
+    term: 'Traversierung',
+    short: 'Alle Elemente der Reihe nach durchlaufen',
+    definition: 'Traversierung bedeutet, alle Elemente einer Datenstruktur systematisch zu besuchen bzw. zu durchlaufen. Bei einer Linked List folgt man dabei den Pointern von Knoten zu Knoten.',
+    analogy: '💡 Wie beim Zug fahren: Du hältst an jedem Bahnhof (Knoten) und fährst dann weiter zum nächsten, bis du am Ende der Strecke bist!',
+    hints: [
+      'Traversierung = systematisches Durchlaufen aller Elemente',
+      'Bei einer Linked List: Start beim Head, dann Pointer folgen bis NULL',
+      'Zeitaufwand ist O(n) – jedes Element muss besucht werden'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die Traversierung einer Linked List mit n Elementen hat die Zeitkomplexität O(___).', a: 'n', hint: 'Jedes Element muss einzeln besucht werden' },
+      { type: 'choice', q: 'Wie traversiert man eine einfach verkettete Liste?', options: ['Über den Index wie beim Array', 'Man folgt den Pointern von Head bis NULL', 'Man greift direkt auf jedes Element zu', 'Rückwärts vom letzten Knoten'], correct: 1 },
+      { type: 'explain', q: 'Erkläre, wie man eine Linked List traversiert und warum die Zeitkomplexität O(n) ist.', keywords: ['Head', 'Pointer', 'Knoten', 'NULL', 'durchlaufen', 'O(n)'], minKeywords: 2 }
+    ],
+    difficulty: 2
+  }
+];
+
+// ── State Management ──
+const glossaryState = { levels: {}, current: null, hintIdx: 0 };
+
+function glossaryLoad() {
+  try {
+    const s = localStorage.getItem('glossary-datenstrukturen');
+    if (s) glossaryState.levels = JSON.parse(s);
+  } catch(e) {}
+  GLOSSARY.forEach(g => { if (!(g.term in glossaryState.levels)) glossaryState.levels[g.term] = 0; });
+}
+
+function glossarySave() {
+  localStorage.setItem('glossary-datenstrukturen', JSON.stringify(glossaryState.levels));
+}
+
+// ── Grid Rendering ──
+function glossaryRenderGrid() {
+  const grid = document.getElementById('glossary-grid');
+  grid.innerHTML = '';
+  const icons = ['\u2753', '\uD83D\uDCA1', '\uD83D\uDD0D', '\u2B50'];
+  GLOSSARY.forEach(g => {
+    const lv = glossaryState.levels[g.term] || 0;
+    const c = document.createElement('div');
+    c.className = 'glossary-card' + (glossaryState.current === g.term ? ' active' : '');
+    c.dataset.level = lv;
+    c.onclick = () => glossaryOpen(g.term);
+    c.innerHTML = '<div class="gc-icon">' + icons[lv] + '</div><div class="gc-term">' + g.term + '</div><div class="gc-short">' + g.short + '</div><div class="gc-level"></div>';
+    grid.appendChild(c);
+  });
+  glossaryUpdateProgress();
+}
+
+function glossaryUpdateProgress() {
+  const mastered = GLOSSARY.filter(g => glossaryState.levels[g.term] >= 3).length;
+  const total = GLOSSARY.length;
+  const pct = Math.round(mastered / total * 100);
+  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
+  document.getElementById('glossary-fill').style.width = pct + '%';
+  document.getElementById('glossary-count').textContent = pct + '%';
+}
+
+// ── Open Term ──
+function glossaryOpen(term) {
+  const g = GLOSSARY.find(t => t.term === term);
+  if (!g) return;
+  glossaryState.current = term;
+  glossaryState.hintIdx = 0;
+  const lv = glossaryState.levels[term] || 0;
+
+  document.getElementById('gl-title').textContent = g.term;
+  glossaryRenderPhases(lv);
+
+  if (lv === 0) glossaryPhase1(g);
+  else if (lv === 1) glossaryPhase2(g);
+  else if (lv === 2) glossaryPhase3(g);
+  else glossaryMastered(g);
+
+  document.getElementById('glossary-learn').classList.add('visible');
+  glossaryRenderGrid();
+  document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function glossaryRenderPhases(lv, activePhase) {
+  if (activePhase === undefined) activePhase = lv;
+  const names = ['\uD83D\uDCA1 Kennenlernen', '\uD83D\uDD0D \u00dcberpr\u00fcfen', '\u2B50 Beweisen'];
+  document.getElementById('gl-phases').innerHTML = names.map((n, i) => {
+    let cls = 'gl-phase';
+    if (i < lv || lv === 3) cls += ' done';
+    else if (i === lv) cls += ' current';
+    if (i === activePhase && activePhase !== lv) cls = cls.replace(' done', '') + ' current';
+    const clickable = (i <= lv || lv === 3);
+    return '<div class="' + cls + '"' + (clickable ? ' onclick="glossaryGoToPhase(' + i + ')" style="cursor:pointer"' : '') + '>' + n + '</div>';
+  }).join('');
+}
+
+function glossaryGoToPhase(phaseIdx) {
+  const term = glossaryState.current;
+  const g = GLOSSARY.find(t => t.term === term);
+  if (!g) return;
+  const lv = glossaryState.levels[term] || 0;
+  glossaryState.hintIdx = 0;
+  glossaryRenderPhases(lv, phaseIdx);
+  if (phaseIdx === 0) glossaryPhase1(g);
+  else if (phaseIdx === 1) glossaryPhase2(g);
+  else if (phaseIdx === 2) glossaryPhase3(g);
+}
+
+// ── Phase 1: Kennenlernen ──
+function glossaryPhase1(g) {
+  const el = document.getElementById('gl-content');
+  let html = '<div class="gl-analogy">' + g.analogy + '</div>';
+  html += '<div class="gl-definition">' + g.definition + '</div>';
+  html += '<div class="gl-hints" id="gl-hints">';
+  g.hints.forEach((h, i) => {
+    html += '<div class="gl-hint' + (i === 0 ? ' visible' : '') + '" id="gh-' + i + '">' + h + '</div>';
+  });
+  html += '</div>';
+  if (g.hints.length > 1) html += '<button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">N\u00e4chster Hinweis \u2192</button>';
+  html += '<button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden! \u2713</button>';
+  el.innerHTML = html;
+}
+
+function glossaryNextHint() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  if (!g) return;
+  glossaryState.hintIdx++;
+  if (glossaryState.hintIdx < g.hints.length) {
+    document.getElementById('gh-' + glossaryState.hintIdx).classList.add('visible');
+  }
+  if (glossaryState.hintIdx >= g.hints.length - 1) {
+    const btn = document.getElementById('gl-hint-btn');
+    if (btn) btn.style.display = 'none';
+  }
+}
+
+// ── Phase 2: Überprüfen ──
+function glossaryPhase2(g) {
+  const q = g.questions.find(x => x.type === 'fill') || g.questions.find(x => x.type === 'choice') || g.questions[0];
+  const el = document.getElementById('gl-content');
+  if (q.type === 'fill') {
+    el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+      '<input type="text" class="gl-input" id="gl-answer" placeholder="Deine Antwort..." onkeydown="if(event.key===\'Enter\')glossaryCheckFill()">' +
+      (q.hint ? '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Tipp: ' + q.hint + '</div>' : '') +
+      '<button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
+  } else if (q.type === 'choice') {
+    el.innerHTML = '<div class="gl-question">' + q.q + '</div><div class="gl-choices">' +
+      q.options.map((o, i) => '<button class="gl-choice" onclick="glossaryCheckChoice(' + i + ')">' + o + '</button>').join('') +
+      '</div><div id="gl-feedback"></div>';
+  }
+}
+
+function glossaryCheckFill() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'fill');
+  const val = document.getElementById('gl-answer').value.trim();
+  const fb = document.getElementById('gl-feedback');
+  const ok = [q.a, ...(q.alt || [])].some(a => val.toLowerCase() === a.toLowerCase());
+  if (ok) {
+    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89 "' + q.a + '" ist korrekt.</div>';
+    setTimeout(() => glossaryLevelUp(), 1200);
+  } else {
+    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist: <strong>' + q.a + '</strong>. Versuch es nochmal!</div>';
+    document.getElementById('gl-answer').value = '';
+    document.getElementById('gl-answer').focus();
+  }
+}
+
+function glossaryCheckChoice(idx) {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'choice');
+  const btns = document.querySelectorAll('.gl-choice');
+  const fb = document.getElementById('gl-feedback');
+  btns.forEach(b => b.style.pointerEvents = 'none');
+  if (idx === q.correct) {
+    btns[idx].classList.add('correct');
+    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89</div>';
+    setTimeout(() => glossaryLevelUp(), 1200);
+  } else {
+    btns[idx].classList.add('wrong');
+    btns[q.correct].classList.add('correct');
+    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist markiert.</div>';
+    setTimeout(() => {
+      btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('wrong', 'correct'); });
+      fb.innerHTML = '';
+    }, 2500);
+  }
+}
+
+// ── Phase 3: Beweisen ──
+function glossaryPhase3(g) {
+  const q = g.questions.find(x => x.type === 'explain');
+  if (!q) { glossaryLevelUp(); return; }
+  const el = document.getElementById('gl-content');
+  el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
+    '<textarea class="gl-input" id="gl-answer" placeholder="Erkl\u00e4re in eigenen Worten..." rows="4"></textarea>' +
+    '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Verwende Fachbegriffe \u2013 je mehr Schl\u00fcsselw\u00f6rter du nennst, desto besser!</div>' +
+    '<button class="gl-btn primary" onclick="glossaryCheckExplain()">Antwort pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
+}
+
+function glossaryCheckExplain() {
+  const g = GLOSSARY.find(t => t.term === glossaryState.current);
+  const q = g.questions.find(x => x.type === 'explain');
+  const val = document.getElementById('gl-answer').value.trim().toLowerCase();
+  const fb = document.getElementById('gl-feedback');
+  if (!val) { fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe eine Erkl\u00e4rung!</div>'; return; }
+
+  const found = [], missing = [];
+  q.keywords.forEach(kw => {
+    if (val.includes(kw.toLowerCase())) found.push(kw); else missing.push(kw);
+  });
+  const kwHtml = found.map(k => '<span class="gl-keyword found">\u2713 ' + k + '</span>').join('') +
+                 missing.map(k => '<span class="gl-keyword missing">\u2717 ' + k + '</span>').join('');
+
+  if (found.length >= (q.minKeywords || 3)) {
+    fb.innerHTML = '<div class="gl-feedback success">Sehr gut! \uD83C\uDF89 Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt!<br>' + kwHtml + '</div>';
+    setTimeout(() => glossaryLevelUp(), 1800);
+  } else {
+    fb.innerHTML = '<div class="gl-feedback info">Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt (' + (q.minKeywords || 3) + ' ben\u00f6tigt):<br>' + kwHtml +
+      '<br><span style="font-size:12px;margin-top:6px;display:inline-block">Versuch es nochmal \u2013 nutze die fehlenden Begriffe!</span></div>';
+  }
+}
+
+// ── Mastered View ──
+function glossaryMastered(g) {
+  document.getElementById('gl-content').innerHTML =
+    '<div style="text-align:center;padding:20px 0">' +
+    '<div style="font-size:48px;margin-bottom:12px">\u2B50</div>' +
+    '<div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px">Gemeistert!</div>' +
+    '<div style="font-size:13px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.6">' +
+    'Du hast <strong style="color:var(--text)">' + g.term + '</strong> vollst\u00e4ndig gelernt. ' + g.short + '</div>' +
+    '<button class="gl-btn" style="margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)" onclick="glossaryReset(\'' + g.term + '\')">Nochmal lernen \u21BA</button></div>';
+}
+
+function glossaryLevelUp() {
+  const term = glossaryState.current;
+  let lv = (glossaryState.levels[term] || 0) + 1;
+  if (lv > 3) lv = 3;
+  glossaryState.levels[term] = lv;
+  glossarySave();
+  glossaryOpen(term);
+}
+
+function glossaryReset(term) {
+  glossaryState.levels[term] = 0;
+  glossarySave();
+  glossaryOpen(term);
+}
+
+function glossaryClose() {
+  document.getElementById('glossary-learn').classList.remove('visible');
+  glossaryState.current = null;
+  glossaryRenderGrid();
+}
+
+// ── Term Highlighting in Reference Cards ──
+function glossaryHighlightTerms() {
+  const termMap = {};
+  GLOSSARY.forEach(g => { termMap[g.term.toLowerCase()] = g.term; });
+  termMap['verkettete liste'] = 'Linked List';
+  termMap['verketteten liste'] = 'Linked List';
+  termMap['zeiger'] = 'Pointer';
+  termMap['adts'] = 'ADT';
+
+  const allTerms = Object.keys(termMap).sort((a, b) => b.length - a.length);
+  const pattern = new RegExp('\\b(' + allTerms.join('|') + ')\\b', 'gi');
+
+  document.querySelectorAll('.adt-intro p, .ds-desc, .summary-card p').forEach(el => {
+    if (el.dataset.glDone) return;
+    el.dataset.glDone = '1';
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let n;
+    while (n = walker.nextNode()) nodes.push(n);
+
+    nodes.forEach(textNode => {
+      const txt = textNode.textContent;
+      pattern.lastIndex = 0;
+      if (!pattern.test(txt)) return;
+      pattern.lastIndex = 0;
+
+      const frag = document.createDocumentFragment();
+      let last = 0, m;
+      while (m = pattern.exec(txt)) {
+        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
+        const span = document.createElement('span');
+        span.className = 'glossary-term';
+        span.dataset.term = termMap[m[0].toLowerCase()] || m[0];
+        span.textContent = m[0];
+        frag.appendChild(span);
+        last = pattern.lastIndex;
+      }
+      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
+      textNode.parentNode.replaceChild(frag, textNode);
+    });
+  });
+}
+
+// ── Floating Tooltip ──
+const glTooltip = document.createElement('div');
+glTooltip.className = 'glossary-tooltip';
+document.body.appendChild(glTooltip);
+
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('.glossary-term');
+  if (!t) { glTooltip.style.display = 'none'; return; }
+  const g = GLOSSARY.find(x => x.term === t.dataset.term);
+  if (!g) return;
+  const lv = glossaryState.levels[g.term] || 0;
+  const labels = ['Noch nicht gelernt', 'Kennengelernt', '\u00dcberpr\u00fcft', 'Gemeistert \u2B50'];
+  glTooltip.innerHTML = '<div class="gt-name">' + g.term + '</div><div class="gt-short">' + g.short + '</div><div class="gt-link">' + labels[lv] + ' \u00b7 Klicke zum Lernen \u2192</div>';
+  const r = t.getBoundingClientRect();
+  glTooltip.style.display = 'block';
+  glTooltip.style.left = Math.max(8, r.left + r.width / 2 - 130) + 'px';
+  glTooltip.style.top = (r.top - glTooltip.offsetHeight - 8) + 'px';
+  if (parseFloat(glTooltip.style.top) < 8) glTooltip.style.top = (r.bottom + 8) + 'px';
+});
+
+document.addEventListener('mouseout', e => {
+  if (!e.target.closest('.glossary-term')) glTooltip.style.display = 'none';
+});
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('.glossary-term');
+  if (t) { e.preventDefault(); glossaryOpen(t.dataset.term); }
+});
+
+// ── Initialize Glossary ──
+glossaryLoad();
+glossaryRenderGrid();
+glossaryHighlightTerms();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernleitfaden ITI – Prüfungsvorbereitung</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden;line-height:1.6}
+.noise{position:fixed;top:0;left:0;right:0;bottom:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.08;pointer-events:none;z-index:0}
+.glow-orb.cyan{background:#38bdf8;top:-100px;left:-100px}
+.glow-orb.purple{background:#6c63ff;bottom:-150px;right:-100px}
+.container{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);text-decoration:none;margin-bottom:24px;opacity:.8;transition:opacity .2s}
+.back:hover{opacity:1}
+header{text-align:center;margin-bottom:32px}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:12px}
+header h1{font-size:clamp(28px,5vw,42px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:8px}
+header p{color:var(--muted);font-size:15px}
+
+/* Sticky Nav */
+.sticky-nav{position:sticky;top:0;z-index:100;background:rgba(12,14,19,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);margin:0 -24px;padding:0 24px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
+.sticky-nav::-webkit-scrollbar{height:0}
+.nav-tabs{display:flex;gap:4px;padding:8px 0}
+.nav-tab{font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;text-decoration:none}
+.nav-tab:hover,.nav-tab.active{color:var(--cyan);border-color:var(--cyan);background:rgba(56,189,248,.08)}
+
+/* Sections */
+.section{margin-top:48px;scroll-margin-top:60px}
+.section-title{font-size:24px;font-weight:700;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.section-title .icon{font-size:28px}
+
+/* Priority Cards */
+.prio-grid{display:grid;gap:16px;margin-bottom:32px}
+.prio-card{background:var(--surface);border-radius:12px;padding:20px 24px;border-left:4px solid var(--muted)}
+.prio-card.high{border-left-color:var(--red)}
+.prio-card.medium{border-left-color:var(--yellow)}
+.prio-card.low{border-left-color:var(--green)}
+.prio-card h3{font-size:16px;font-weight:700;margin-bottom:12px}
+.prio-card ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.prio-card li{font-size:14px;color:var(--text);display:flex;align-items:center;gap:8px}
+.prio-card li::before{content:'';width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.prio-card.high li::before{background:var(--red)}
+.prio-card.medium li::before{background:var(--yellow)}
+.prio-card.low li::before{background:var(--green)}
+.prio-card a{color:var(--cyan);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:12px;opacity:.8;transition:opacity .2s}
+.prio-card a:hover{opacity:1;text-decoration:underline}
+
+/* Learning Chain */
+.learn-chain{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:24px 0;padding:16px;background:var(--surface);border-radius:12px;border:1px solid var(--border)}
+.chain-item{font-family:'JetBrains Mono',monospace;font-size:13px;padding:6px 14px;border-radius:6px;background:rgba(56,189,248,.1);color:var(--cyan);border:1px solid rgba(56,189,248,.2)}
+.chain-arrow{color:var(--muted);font-size:18px}
+
+/* Overview Table */
+.overview-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}
+.overview-table th{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);text-align:left;padding:10px 12px;border-bottom:2px solid var(--border)}
+.overview-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--text)}
+.overview-table tr:hover td{background:rgba(56,189,248,.03)}
+.overview-table .diff{font-family:'JetBrains Mono',monospace;font-size:12px}
+
+/* Collapsible Sections */
+.collapsible{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;overflow:hidden}
+.collapsible-header{padding:16px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;font-weight:600;font-size:15px;transition:background .2s;user-select:none}
+.collapsible-header:hover{background:rgba(56,189,248,.04)}
+.collapsible-header .heft-tag{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border-radius:4px;background:rgba(56,189,248,.12);color:var(--cyan);margin-right:12px}
+.collapsible-header .chevron{transition:transform .3s;color:var(--muted);font-size:18px}
+.collapsible.open .collapsible-header .chevron{transform:rotate(180deg)}
+.collapsible-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.collapsible.open .collapsible-body{max-height:none}
+.collapsible-content{padding:0 20px 20px}
+.collapsible-content h4{color:var(--cyan);font-size:14px;font-weight:600;margin:16px 0 8px;font-family:'JetBrains Mono',monospace}
+.collapsible-content p,.collapsible-content li{font-size:14px;color:var(--text);line-height:1.7}
+.collapsible-content ul{list-style:disc;padding-left:20px;margin:6px 0}
+.collapsible-content ul ul{list-style:circle}
+.collapsible-content strong{color:#fff}
+
+/* Inner Tables */
+.inner-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:13px}
+.inner-table th{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);text-align:left;padding:8px 10px;border-bottom:2px solid var(--border);background:rgba(56,189,248,.05)}
+.inner-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.inner-table tr:last-child td{border-bottom:none}
+
+/* Formula Block */
+.formula-block{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.15);border-radius:8px;padding:12px 16px;margin:8px 0;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);line-height:1.8;overflow-x:auto}
+
+/* Q&A */
+.qa-group-title{font-size:14px;font-family:'JetBrains Mono',monospace;color:var(--cyan);margin:24px 0 12px;letter-spacing:1px}
+.qa-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:8px;overflow:hidden}
+.qa-question{padding:14px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:12px;font-size:14px;font-weight:500;transition:background .2s;user-select:none}
+.qa-question:hover{background:rgba(56,189,248,.04)}
+.qa-num{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);background:rgba(56,189,248,.1);padding:2px 8px;border-radius:4px;flex-shrink:0;margin-top:1px}
+.qa-chevron{margin-left:auto;color:var(--muted);transition:transform .3s;flex-shrink:0;margin-top:2px}
+.qa-item.open .qa-chevron{transform:rotate(180deg)}
+.qa-answer{max-height:0;overflow:hidden;transition:max-height .3s ease}
+.qa-item.open .qa-answer{max-height:500px}
+.qa-answer-inner{padding:0 18px 16px 52px;font-size:14px;color:var(--green);line-height:1.7;border-top:1px solid var(--border);padding-top:12px;margin:0 12px}
+
+/* Formula Grid */
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.formula-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:border-color .2s}
+.formula-card:hover{border-color:rgba(56,189,248,.3)}
+.formula-card h3{font-size:14px;font-weight:600;color:var(--cyan);margin-bottom:12px;font-family:'JetBrains Mono',monospace}
+.formula-card .formula-line{font-family:'JetBrains Mono',monospace;font-size:12px;padding:4px 0;color:var(--text);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.formula-card .formula-line .desc{color:var(--muted);font-size:11px}
+
+/* Checklist */
+.checklist-section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.checklist-section h3{font-size:15px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.checklist-section h3 .heft-badge{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border-radius:4px;background:rgba(56,189,248,.12);color:var(--cyan)}
+.checklist-progress{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);margin-bottom:12px}
+.progress-bar{height:4px;background:var(--border);border-radius:4px;margin-bottom:14px;overflow:hidden}
+.progress-fill{height:100%;background:var(--cyan);border-radius:4px;transition:width .3s}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:6px 0;cursor:pointer;font-size:14px;user-select:none}
+.check-item input{display:none}
+.check-box{width:18px;height:18px;border:2px solid var(--border);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;margin-top:1px}
+.check-item input:checked~.check-box{background:var(--cyan);border-color:var(--cyan)}
+.check-item input:checked~.check-box::after{content:'✓';color:#0c0e13;font-size:12px;font-weight:700}
+.check-item input:checked~.check-label{color:var(--muted);text-decoration:line-through}
+.check-label{transition:color .2s}
+
+/* Responsive */
+@media(max-width:640px){
+  .container{padding:20px 16px 60px}
+  .sticky-nav{margin:0 -16px;padding:0 16px}
+  .formula-grid{grid-template-columns:1fr}
+  .learn-chain{flex-direction:column;align-items:flex-start}
+  .chain-arrow{transform:rotate(90deg)}
+  .qa-answer-inner{padding-left:18px}
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb cyan"></div>
+<div class="glow-orb purple"></div>
+
+<div class="container">
+<a href="index.html" class="back">&larr; Zur&uuml;ck zur &Uuml;bersicht</a>
+
+<header>
+  <div class="tag">Lernleitfaden</div>
+  <h1>Pr&uuml;fungsvorbereitung ITI</h1>
+  <p>IT-Infrastruktur &ndash; ITI21 bis ITI26</p>
+</header>
+
+<nav class="sticky-nav">
+  <div class="nav-tabs">
+    <a class="nav-tab active" href="#uebersicht" data-target="uebersicht">&Uuml;bersicht</a>
+    <a class="nav-tab" href="#zusammenfassungen" data-target="zusammenfassungen">Zusammenfassungen</a>
+    <a class="nav-tab" href="#uebungsaufgaben" data-target="uebungsaufgaben">&Uuml;bungsaufgaben</a>
+    <a class="nav-tab" href="#formeln" data-target="formeln">Formeln</a>
+    <a class="nav-tab" href="#checkliste" data-target="checkliste">Checkliste</a>
+  </div>
+</nav>
+
+<!-- ==================== SECTION 1: ÜBERSICHT ==================== -->
+<section class="section" id="uebersicht">
+<div class="section-title"><span class="icon">&#128203;</span> &Uuml;bersicht &amp; Lernstrategie</div>
+
+<div class="prio-grid">
+  <div class="prio-card high">
+    <h3>&#128308; H&ouml;chste Priorit&auml;t</h3>
+    <ul>
+      <li>IP-Adressierung &amp; Subnetzberechnung <a href="subnetting-trainer.html">&rarr; Trainer</a></li>
+      <li>OSI-Modell &amp; TCP/IP-Modell <a href="osi-tcpip.html">&rarr; Trainer</a></li>
+      <li>Routing-Algorithmen <a href="tcp-udp-routing.html">&rarr; Trainer</a></li>
+      <li>TCP vs. UDP <a href="tcp-udp-routing.html">&rarr; Trainer</a></li>
+      <li>Entropie &amp; Kanalkapazit&auml;t <a href="shannon-trainer.html">&rarr; Shannon</a> <a href="nyquist-shannon.html">&rarr; Nyquist</a></li>
+    </ul>
+  </div>
+  <div class="prio-card medium">
+    <h3>&#128993; Hohe Priorit&auml;t</h3>
+    <ul>
+      <li>Switch vs. Router <a href="switch-router-vlan.html">&rarr; Trainer</a></li>
+      <li>VLAN <a href="switch-router-vlan.html">&rarr; Trainer</a></li>
+      <li>Ethernet-Standards <a href="medien-ethernet.html">&rarr; Trainer</a></li>
+      <li>Codierung <a href="shannon-trainer.html">&rarr; Trainer</a></li>
+      <li>Kryptografie <a href="kryptographie-rsa.html">&rarr; Trainer</a></li>
+    </ul>
+  </div>
+  <div class="prio-card low">
+    <h3>&#128994; Mittlere Priorit&auml;t</h3>
+    <ul>
+      <li>&Uuml;bertragungsmedien <a href="medien-ethernet.html">&rarr; Trainer</a></li>
+      <li>WLAN-Architektur <a href="mac-csma-wlan.html">&rarr; Trainer</a></li>
+      <li>DNS, DHCP, NAT <a href="anwendungsprotokolle.html">&rarr; Trainer</a></li>
+      <li>SNMP <a href="snmp-cia-trainer.html">&rarr; Trainer</a></li>
+      <li>Netzdesign <a href="vlsm-verkabelung.html">&rarr; Trainer</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="learn-chain">
+  <span style="font-size:13px;color:var(--muted);margin-right:8px;font-family:'JetBrains Mono',monospace">Lernreihenfolge:</span>
+  <span class="chain-item">ITI21</span><span class="chain-arrow">&rarr;</span>
+  <span class="chain-item">ITI22</span><span class="chain-arrow">&rarr;</span>
+  <span class="chain-item">ITI23</span><span class="chain-arrow">&rarr;</span>
+  <span class="chain-item">ITI24</span><span class="chain-arrow">&rarr;</span>
+  <span class="chain-item">ITI25</span><span class="chain-arrow">&rarr;</span>
+  <span class="chain-item">ITI26</span>
+</div>
+
+<table class="overview-table">
+  <thead><tr><th>Heft</th><th>Thema</th><th>Schwerpunkt</th><th>Schwierigkeit</th></tr></thead>
+  <tbody>
+    <tr><td><strong>ITI21</strong></td><td>Grundlagen moderner Computernetze</td><td>Konzepte, Klassifikationen, OSI/TCP-IP</td><td class="diff">&#11088;&#11088; Basis</td></tr>
+    <tr><td><strong>ITI22</strong></td><td>Informationstheorie &amp; Signal&uuml;bertragung</td><td>Entropie, Shannon, Codierung, Formeln</td><td class="diff">&#11088;&#11088;&#11088;&#11088; Rechenlastig</td></tr>
+    <tr><td><strong>ITI23</strong></td><td>Bit&uuml;bertragung &amp; Netzzugang</td><td>Kabel, WLAN, Ethernet, MAC-Schicht</td><td class="diff">&#11088;&#11088;&#11088; Praxisnah</td></tr>
+    <tr><td><strong>ITI24</strong></td><td>TCP/IP-Protokollfamilie</td><td>IP-Adressen, Routing, TCP/UDP, DNS</td><td class="diff">&#11088;&#11088;&#11088;&#11088; Kernthema</td></tr>
+    <tr><td><strong>ITI25</strong></td><td>Internetworking &amp; Netzdesign</td><td>Switch, Router, VLAN, Subnetzplanung</td><td class="diff">&#11088;&#11088;&#11088;&#11088; Praxisnah</td></tr>
+    <tr><td><strong>ITI26</strong></td><td>Anwendungsdienste &amp; Netzmanagement</td><td>WWW, E-Mail, SNMP, Kryptografie</td><td class="diff">&#11088;&#11088;&#11088; Breites Wissen</td></tr>
+  </tbody>
+</table>
+</section>
+
+<!-- ==================== SECTION 2: ZUSAMMENFASSUNGEN ==================== -->
+<section class="section" id="zusammenfassungen">
+<div class="section-title"><span class="icon">&#128218;</span> Zusammenfassungen</div>
+
+<!-- ITI21 -->
+<div class="collapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible(this)">
+    <span><span class="heft-tag">ITI21</span>Grundlagen moderner Computernetze</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="collapsible-body"><div class="collapsible-content">
+    <h4>Kap. 1: Einf&uuml;hrung</h4>
+    <ul>
+      <li><strong>IuK-Technologien</strong> = Informations- und Kommunikationstechnologien</li>
+      <li>Korrekt hei&szlig;t es <strong>Netz</strong> (nicht Netzwerk &ndash; &Uuml;bersetzungsfehler aus dem Englischen &bdquo;network&ldquo;)</li>
+      <li>Internet der Dinge (IoT): gesamte Umgebung wird vernetzt</li>
+    </ul>
+    <h4>Kap. 2: Internet &ndash; Netz der Netze</h4>
+    <ul>
+      <li><strong>Internet</strong> = Zusammenschluss vieler Einzelnetze</li>
+      <li><strong>Elemente</strong>: Hosts, Router, Switches, &Uuml;bertragungsmedien</li>
+      <li><strong>Organisation</strong>: IANA, ICANN, IETF, IEEE, W3C, DENIC (f&uuml;r .de)</li>
+      <li><strong>Dienste vs. Anwendungen</strong>: Dienst = Funktionalit&auml;t (z.B. Dateitransfer), Anwendung = konkrete Software (z.B. FTP-Client)</li>
+      <li><strong>Protokoll</strong>: Satz von Regeln f&uuml;r die Kommunikation</li>
+      <li><strong>Paketvermittlung</strong>: Daten werden in Pakete zerlegt, unabh&auml;ngig geroutet</li>
+      <li><strong>Netzneutralit&auml;t</strong>: Alle Datenpakete gleichberechtigt behandeln</li>
+    </ul>
+    <h4>Kap. 3: Einordnung, Ziele &amp; Anforderungen</h4>
+    <ul>
+      <li><strong>Definition Computernetz</strong>: Verbund von &ge;2 autonomen Computern (Hosts), die kommunizieren und Ressourcen teilen</li>
+      <li><strong>Abgrenzung Multiprozessorsystem</strong>: gemeinsamer Speicher, nicht autonom</li>
+      <li><strong>Ziele</strong>: Kommunikationsverbund, Ressourcenverbund, Informationsverbund, Lastverbund, Verf&uuml;gbarkeitsverbund</li>
+      <li><strong>Anforderungen Anwender</strong>: hohe &Uuml;bertragungsrate, geringe Latenz, Zuverl&auml;ssigkeit, Sicherheit</li>
+      <li><strong>Anforderungen Admin</strong>: einfaches Management, Wartungsfreundlichkeit</li>
+      <li><strong>Anforderungen Betreiber</strong>: geringe Kosten, Kundenanforderungen erf&uuml;llen</li>
+    </ul>
+    <h4>Kap. 4: Bausteine &amp; Klassifikationen</h4>
+    <ul>
+      <li><strong>Bausteine</strong>: Hosts, NIC (Netzwerkkarte), &Uuml;bertragungsmedium, Netzkomponenten (Switch, Router), Protokolle</li>
+      <li><strong>Klassifikationen</strong>:
+        <ul>
+          <li><strong>Administration</strong>: P2P-Netz vs. Client-Server-Netz</li>
+          <li><strong>R&auml;umliche Ausdehnung</strong>: PAN, LAN, MAN, WAN, GAN</li>
+          <li><strong>Topologie</strong>: Bus, Ring, Stern, Baum, Mesh (vermascht)</li>
+          <li><strong>&Uuml;bertragungsmedium</strong>: leitungsgebunden (Kupfer, Glasfaser) vs. drahtlos</li>
+          <li><strong>Bandbreite</strong>: Schmalband vs. Breitband</li>
+          <li><strong>Vermittlung</strong>: Leitungsvermittlung vs. Paketvermittlung</li>
+        </ul>
+      </li>
+      <li><strong>Leitungsvermittlung</strong>: exklusive Verbindung &rarr; schlechtere Auslastung, aber garantierte Bandbreite</li>
+      <li><strong>Paketvermittlung</strong>: Pakete mit Adressen, unterschiedliche Wege m&ouml;glich &rarr; bessere Auslastung</li>
+      <li><strong>&Uuml;bertragungsart</strong>: Simplex, Halbduplex, Vollduplex</li>
+    </ul>
+    <h4>Kap. 5: Kenngr&ouml;&szlig;en in Netzen (Formeln!)</h4>
+    <table class="inner-table">
+      <thead><tr><th>Kenngr&ouml;&szlig;e</th><th>Definition</th><th>Formel</th></tr></thead>
+      <tbody>
+        <tr><td><strong>&Uuml;bertragungsrate (b)</strong></td><td>Bits pro Sekunde</td><td>b [bit/s]</td></tr>
+        <tr><td><strong>Latenz (t<sub>L</sub>)</strong></td><td>Verz&ouml;gerung Sender&rarr;Empf&auml;nger</td><td>t<sub>L</sub> = s/v</td></tr>
+        <tr><td><strong>&Uuml;bertragungszeit (t<sub>&Uuml;</sub>)</strong></td><td>Zeit f&uuml;r Datenblock</td><td>t<sub>&Uuml;</sub> = D/b</td></tr>
+        <tr><td><strong>Antwortzeit</strong></td><td>Hin + Verarbeitung + Zur&uuml;ck</td><td>t<sub>L</sub>(hin) + t<sub>V</sub> + t<sub>L</sub>(zur&uuml;ck)</td></tr>
+        <tr><td><strong>Jitter</strong></td><td>Schwankung der Latenz</td><td>&ndash;</td></tr>
+        <tr><td><strong>Kanalvolumen</strong></td><td>Bits gleichzeitig im Kanal</td><td>V = b &times; t<sub>L</sub></td></tr>
+        <tr><td><strong>Durchsatz</strong></td><td>Tats&auml;chlich nutzbare Datenrate</td><td>&ndash;</td></tr>
+        <tr><td><strong>QoS</strong></td><td>Qualit&auml;tszusage f&uuml;r Dienste</td><td>&ndash;</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>Signalausbreitungsgeschwindigkeit in Kupfer/Glasfaser: ca. &#8532; &times; c (Lichtgeschwindigkeit)</li>
+    </ul>
+    <h4>Kap. 6: Schichtenmodelle &amp; Protokolle</h4>
+    <p><strong>OSI-Modell (7 Schichten):</strong></p>
+    <table class="inner-table">
+      <thead><tr><th>Nr.</th><th>Schicht</th><th>Funktion</th><th>Beispiele</th></tr></thead>
+      <tbody>
+        <tr><td>7</td><td>Anwendung</td><td>Anwendungsdienste</td><td>HTTP, FTP, SMTP, DNS</td></tr>
+        <tr><td>6</td><td>Darstellung</td><td>Datenformat, Verschl&uuml;sselung</td><td>SSL, JPEG</td></tr>
+        <tr><td>5</td><td>Sitzung</td><td>Sitzungsverwaltung</td><td>NetBIOS</td></tr>
+        <tr><td>4</td><td>Transport</td><td>Ende-zu-Ende-Transport</td><td>TCP, UDP</td></tr>
+        <tr><td>3</td><td>Netzwerk</td><td>Routing, IP-Adressierung</td><td>IP, ICMP</td></tr>
+        <tr><td>2</td><td>Datenverbindung</td><td>Frames, MAC-Adressen</td><td>Ethernet, WLAN</td></tr>
+        <tr><td>1</td><td>Bit&uuml;bertragung</td><td>Physikalische &Uuml;bertragung</td><td>Kabel, Funk</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>Schichten 1&ndash;4</strong>: transportorientiert</li>
+      <li><strong>Schichten 5&ndash;7</strong>: anwendungsorientiert</li>
+      <li><strong>Horizontale Kommunikation</strong>: zwischen gleichen Schichten (Protokolle)</li>
+      <li><strong>Vertikale Kommunikation</strong>: zwischen benachbarten Schichten (Dienste)</li>
+      <li><strong>Kapselung (Encapsulation)</strong>: Jede Schicht f&uuml;gt ihren Header hinzu</li>
+      <li><strong>TCP/IP-Modell</strong>: 4 Schichten (Netzzugang, Internet, Transport, Anwendung)</li>
+    </ul>
+  </div></div>
+</div>
+
+<!-- ITI22 -->
+<div class="collapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible(this)">
+    <span><span class="heft-tag">ITI22</span>Informationstheorie &amp; Signal&uuml;bertragung</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="collapsible-body"><div class="collapsible-content">
+    <h4>Kap. 1: Grundlagen Informationstheorie (Rechenaufgaben!)</h4>
+    <p><strong>Shannons Informationsbegriff</strong>: Information = Beseitigung von Ungewissheit</p>
+    <p><strong>Informationsgehalt</strong> eines Ereignisses x<sub>i</sub>:</p>
+    <div class="formula-block">I(x<sub>i</sub>) = &minus;log&#8322;(P(x<sub>i</sub>)) = log&#8322;(1/P(x<sub>i</sub>))&ensp;[bit]</div>
+    <p><strong>Entscheidungsgehalt</strong> (alle Ereignisse gleichwahrscheinlich):</p>
+    <div class="formula-block">H&#8320; = log&#8322;(N)&ensp;[bit]&emsp;N = Anzahl Ereignisse</div>
+    <p><strong>Entropie</strong> (mittlerer Informationsgehalt):</p>
+    <div class="formula-block">H = &minus;&Sigma; P(x<sub>i</sub>) &times; log&#8322;(P(x<sub>i</sub>))&ensp;[bit]</div>
+    <p><strong>Eigenschaften der Entropie</strong>:</p>
+    <ul>
+      <li>H ist maximal bei Gleichverteilung: H<sub>max</sub> = log&#8322;(N)</li>
+      <li>H = 0 wenn ein Ereignis sicher ist (P = 1)</li>
+      <li>0 &le; H &le; H&#8320;</li>
+    </ul>
+    <p><strong>Quellenredundanz</strong>:</p>
+    <div class="formula-block">R<sub>Q</sub> = H&#8320; &minus; H = log&#8322;(N) &minus; H</div>
+    <h4>Kap. 2: Grundlagen Informations&uuml;bertragung</h4>
+    <ul>
+      <li><strong>Grundmodell</strong>: Quelle &rarr; Sender &rarr; Kanal (+ St&ouml;rung) &rarr; Empf&auml;nger &rarr; Senke</li>
+      <li><strong>Verbundquelle</strong>: Abh&auml;ngige Ereignisse (z.B. nach &bdquo;q&ldquo; kommt fast immer &bdquo;u&ldquo;)</li>
+      <li><strong>&Auml;quivokation H(A|B)</strong>: Unsicherheit &uuml;ber Sendesymbol bei bekanntem Empfangssymbol</li>
+      <li><strong>Transinformation H(A;B)</strong>: H(A) &minus; H(A|B) = tats&auml;chlich &uuml;bertragene Information</li>
+      <li><strong>Kanalkapazit&auml;t</strong>: maximale Transinformation</li>
+      <li><strong>Symmetrisch gest&ouml;rter Bin&auml;rkanal</strong>: Bitfehlerwahrscheinlichkeit p; Transinformation maximal bei P(x&#8321;) = P(x&#8322;) = 0,5</li>
+    </ul>
+    <h4>Kap. 3: Signale &amp; Signal&uuml;bertragung</h4>
+    <table class="inner-table">
+      <thead><tr><th>Signaltyp</th><th>Wertebereich</th><th>Zeitbereich</th></tr></thead>
+      <tbody>
+        <tr><td>Analog</td><td>wert-kontinuierlich</td><td>zeit-kontinuierlich</td></tr>
+        <tr><td>Digital</td><td>wert-diskret</td><td>zeit-diskret</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>Digitalisierung</strong>: Abtastung &rarr; Quantisierung &rarr; Codierung</li>
+      <li><strong>Shannon-Abtasttheorem</strong>: f<sub>A</sub> &ge; 2 &times; f<sub>G</sub></li>
+      <li><strong>Fourier-Reihe</strong>: Jedes periodische Signal = Summe von Sinusschwingungen</li>
+      <li><strong>Grenzfrequenz</strong>: Bestimmt die ben&ouml;tigte Bandbreite</li>
+    </ul>
+    <h4>Kap. 4: &Uuml;bertragungskapazit&auml;t von Kan&auml;len (Formeln!)</h4>
+    <p><strong>Nyquist (idealer Kanal, ohne St&ouml;rung)</strong>:</p>
+    <div class="formula-block">C = 2 &times; B &times; log&#8322;(n)&ensp;[bit/s]<br>B = Bandbreite [Hz], n = Anzahl Signalstufen</div>
+    <p><strong>Shannon-Hartley (gest&ouml;rter Kanal)</strong>:</p>
+    <div class="formula-block">C = B &times; log&#8322;(1 + S/N)&ensp;[bit/s]<br>S/N = Signal-Rausch-Verh&auml;ltnis (linear, nicht dB!)</div>
+    <p><strong>Umrechnung dB &rarr; linear</strong>:</p>
+    <div class="formula-block">SNR<sub>linear</sub> = 10^(SNR<sub>dB</sub>/10)</div>
+    <p><strong>Multiplexverfahren</strong>:</p>
+    <ul>
+      <li><strong>FDM</strong> (Frequenzteilung): Frequenzb&auml;nder aufteilen</li>
+      <li><strong>TDM</strong> (Zeitteilung): Zeitschlitze aufteilen</li>
+      <li><strong>CDM</strong> (Codeteilung): Codes zur Trennung</li>
+    </ul>
+    <h4>Kap. 5: Codierung</h4>
+    <table class="inner-table">
+      <thead><tr><th>Art</th><th>Ziel</th><th>Redundanz</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Quellencodierung</strong></td><td>Redundanz entfernen, komprimieren</td><td>wird entfernt</td></tr>
+        <tr><td><strong>Kanalcodierung</strong></td><td>Fehler erkennen/korrigieren</td><td>wird hinzugef&uuml;gt</td></tr>
+        <tr><td><strong>Leitungscodierung</strong></td><td>Anpassung ans physische Medium</td><td>Signalcodierung</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>Quellencodierung</strong>: Verlustfrei (Huffman-Code) oder verlustbehaftet (MP3, JPEG)</li>
+      <li><strong>Coderedundanz</strong>: R<sub>c</sub> = mittlere Codewortl&auml;nge &minus; H</li>
+      <li><strong>Hamming-Distanz</strong>: Mindestanzahl unterschiedlicher Bits zwischen Codew&ouml;rtern
+        <ul>
+          <li>Fehlererkennung: d<sub>min</sub> &minus; 1 Fehler erkennbar</li>
+          <li>Fehlerkorrektur: &lfloor;(d<sub>min</sub> &minus; 1)/2&rfloor; Fehler korrigierbar</li>
+        </ul>
+      </li>
+      <li><strong>Parit&auml;tscode</strong>: 1 Bit hinzuf&uuml;gen &rarr; 1 Fehler erkennbar</li>
+      <li><strong>Hamming-Code</strong>: Mehrere Pr&uuml;fbits &rarr; 1-Bit-Fehler korrigierbar</li>
+      <li><strong>CRC</strong>: Zyklische Codes, weit verbreitet</li>
+      <li><strong>NRZ</strong> (Non-Return-to-Zero): einfach, aber keine Taktr&uuml;ckgewinnung bei langen 0/1-Folgen</li>
+      <li><strong>Manchester</strong>: 1 Bit = 2 Symbole &rarr; doppelte Bandbreite, aber sichere Taktr&uuml;ckgewinnung</li>
+    </ul>
+  </div></div>
+</div>
+
+<!-- ITI23 -->
+<div class="collapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible(this)">
+    <span><span class="heft-tag">ITI23</span>Bit&uuml;bertragung &amp; Netzzugang</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="collapsible-body"><div class="collapsible-content">
+    <h4>Kap. 1&ndash;2: &Uuml;bertragungsmedien</h4>
+    <table class="inner-table">
+      <thead><tr><th>Medium</th><th>Bandbreite</th><th>Reichweite</th><th>St&ouml;ranf&auml;lligkeit</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Twisted Pair (TP)</strong></td><td>bis 40 Gbit/s (Cat. 8)</td><td>100 m</td><td>mittel</td></tr>
+        <tr><td><strong>Koaxialkabel</strong></td><td>bis 10 Gbit/s</td><td>200&ndash;500 m</td><td>gering</td></tr>
+        <tr><td><strong>Glasfaser</strong></td><td>bis 100+ Gbit/s</td><td>km-Bereich</td><td>sehr gering</td></tr>
+      </tbody>
+    </table>
+    <p><strong>TP-Kabel-Kategorien:</strong></p>
+    <ul>
+      <li>Cat. 5e: 1 Gbit/s, 100 MHz</li>
+      <li>Cat. 6: 1 Gbit/s, 250 MHz</li>
+      <li>Cat. 6A: 10 Gbit/s, 500 MHz</li>
+      <li>Cat. 7/7A: 10+ Gbit/s, 600/1000 MHz</li>
+      <li>Schirmungsbezeichnungen: U/UTP (ungeschirmt), S/FTP (foliengeschirmt pro Paar + Gesamtschirmung)</li>
+    </ul>
+    <p><strong>Glasfaser:</strong></p>
+    <ul>
+      <li><strong>Multimode</strong>: gr&ouml;&szlig;erer Kern, mehrere Lichtmoden, kurze Strecken, Modendispersion begrenzt Geschwindigkeit</li>
+      <li><strong>Monomode</strong>: kleiner Kern, eine Mode, lange Strecken, h&ouml;here Geschwindigkeiten</li>
+      <li><strong>BLP</strong> (Bandbreiten-L&auml;ngen-Produkt): konstant, z.B. 1 GHz&middot;km</li>
+    </ul>
+    <p><strong>D&auml;mpfungsberechnung:</strong></p>
+    <div class="formula-block">a<sub>U</sub> = 20 &times; log&#8321;&#8320;(U1/U2)&ensp;[dB]&emsp;(Spannungsverh&auml;ltnis)<br>a<sub>P</sub> = 10 &times; log&#8321;&#8320;(P1/P2)&ensp;[dB]&emsp;(Leistungsverh&auml;ltnis)</div>
+    <p><strong>Drahtlose &Uuml;bertragung:</strong></p>
+    <ul>
+      <li><strong>WLAN (IEEE 802.11)</strong>: 2,4 GHz und 5 GHz B&auml;nder</li>
+      <li>Standards: 802.11n (bis 600 Mbit/s), 802.11ac (bis 6,9 Gbit/s), 802.11ax (WiFi 6)</li>
+      <li><strong>Bluetooth</strong>: kurze Reichweite, 2,4 GHz</li>
+    </ul>
+    <h4>Kap. 3: Datenverbindungsschicht</h4>
+    <p><strong>Aufgaben:</strong></p>
+    <ul>
+      <li>Physikalische Adressierung (MAC-Adressen)</li>
+      <li>Frame-Bildung (Aufteilung in Frames)</li>
+      <li>Fehlererkennung</li>
+      <li>Medienzugriffskontrolle</li>
+      <li>Flusskontrolle</li>
+    </ul>
+    <p><strong>Subschichten:</strong> LLC (Logical Link Control, oben) &amp; MAC (Media Access Control, unten)</p>
+    <p><strong>MAC-Adressen:</strong> 48 Bit (6 Byte), z.B. <code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan)">00:19:99:18:C7:A5</code></p>
+    <ul>
+      <li>Erste 3 Bytes = Herstellerkennung (OUI)</li>
+      <li><code style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan)">FF:FF:FF:FF:FF:FF</code> = Broadcast</li>
+      <li>Bit 0 des 1. Bytes: 0 = Unicast, 1 = Multicast</li>
+    </ul>
+    <p><strong>Framel&auml;nge IEEE 802.3:</strong> min. 64 Byte, max. 1518 Byte (Datenfeld: 46&ndash;1500 Byte)</p>
+    <h4>Kap. 3&ndash;4: Zugriffsverfahren &amp; Ethernet</h4>
+    <ul>
+      <li><strong>CSMA/CD</strong> (Collision Detection): Ethernet, leitergebunden, Kollision erkennen &rarr; Abbruch &rarr; Warten &rarr; Neuversuch</li>
+      <li><strong>Token Passing</strong>: Token kreist, nur Token-Inhaber darf senden</li>
+      <li><strong>CSMA/CA</strong> (Collision Avoidance): WLAN, drahtlos, Kollision vermeiden (RTS/CTS)</li>
+      <li><strong>Flusskontrolle</strong>: Sliding-Window-Verfahren</li>
+    </ul>
+    <table class="inner-table">
+      <thead><tr><th>Standard</th><th>Geschwindigkeit</th><th>Duplex</th><th>Kabel</th></tr></thead>
+      <tbody>
+        <tr><td>10BASE-T</td><td>10 Mbit/s</td><td>Halb/Voll</td><td>Cat. 3+</td></tr>
+        <tr><td>100BASE-TX</td><td>100 Mbit/s</td><td>Halb/Voll</td><td>Cat. 5+</td></tr>
+        <tr><td>1000BASE-T</td><td>1 Gbit/s</td><td>Voll</td><td>Cat. 5e+</td></tr>
+        <tr><td>10GBASE-T</td><td>10 Gbit/s</td><td>Voll</td><td>Cat. 6A+</td></tr>
+        <tr><td>40GBASE-x</td><td>40 Gbit/s</td><td>Voll</td><td>Glasfaser</td></tr>
+        <tr><td>100GBASE-x</td><td>100 Gbit/s</td><td>Voll</td><td>Glasfaser</td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li><strong>Switched Ethernet</strong>: Jeder Switch-Port = eigene Kollisionsdom&auml;ne</li>
+      <li><strong>Autonegotiation</strong>: Hosts handeln automatisch die beste Geschwindigkeit aus</li>
+      <li>Ab 10 Gbit nur Vollduplex, kein CSMA/CD n&ouml;tig</li>
+    </ul>
+    <h4>Kap. 6: WLAN (IEEE 802.11)</h4>
+    <ul>
+      <li><strong>BSS</strong> (Basic Service Set): WLAN-Zelle mit Access Point</li>
+      <li><strong>IBSS</strong> (Independent BSS): Ad-hoc-Modus, kein AP</li>
+      <li><strong>ESS</strong> (Extended Service Set): Mehrere APs, Roaming</li>
+      <li><strong>Infrastrukturmodus</strong>: Kommunikation &uuml;ber AP</li>
+      <li><strong>Phasen der Anmeldung</strong>: Scanning &rarr; Authentifizierung &rarr; Assoziation</li>
+      <li><strong>4 Adressfelder im WLAN-Frame</strong>: Sender, Empf&auml;nger, AP (f&uuml;r Routing innerhalb BSS/ESS)</li>
+      <li><strong>Sicherheit</strong>: WPA2/WPA3, Verschl&uuml;sselung zwingend n&ouml;tig</li>
+    </ul>
+  </div></div>
+</div>
+
+<!-- ITI24 -->
+<div class="collapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible(this)">
+    <span><span class="heft-tag">ITI24</span>TCP/IP-Protokollfamilie</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="collapsible-body"><div class="collapsible-content">
+    <h4>Kap. 1: Einf&uuml;hrung</h4>
+    <ul>
+      <li><strong>Netzwerkschicht</strong>: Best-Effort-Dienst (keine Garantie f&uuml;r Zustellung)</li>
+      <li><strong>Transportschicht</strong>: Ende-zu-Ende-Dienst auf Hosts (nicht auf Routern implementiert!)</li>
+      <li>Router werten nur Layer 3 (IP) aus</li>
+    </ul>
+    <h4>Kap. 2: IP-Adressierung (KERNTHEMA!)</h4>
+    <p><strong>IPv4-Adressen:</strong> 32 Bit, 4 Oktette, z.B. 192.168.1.1</p>
+    <p><strong>Klassenbasierte Adressierung</strong> (veraltet, aber Pr&uuml;fungswissen):</p>
+    <table class="inner-table">
+      <thead><tr><th>Klasse</th><th>Erstes Oktet</th><th>Netzanteil</th><th>Hostanteil</th><th>Netzmaske</th></tr></thead>
+      <tbody>
+        <tr><td>A</td><td>1&ndash;126</td><td>8 Bit</td><td>24 Bit</td><td>255.0.0.0 (/8)</td></tr>
+        <tr><td>B</td><td>128&ndash;191</td><td>16 Bit</td><td>16 Bit</td><td>255.255.0.0 (/16)</td></tr>
+        <tr><td>C</td><td>192&ndash;223</td><td>24 Bit</td><td>8 Bit</td><td>255.255.255.0 (/24)</td></tr>
+      </tbody>
+    </table>
+    <p><strong>CIDR (Classless Inter-Domain Routing)</strong>: flexible Pr&auml;fixl&auml;nge, z.B. /22 &ndash; Vorteil: keine Adressverschwendung, Routenaggregation m&ouml;glich</p>
+    <p><strong>Subnetting</strong> &ndash; zentrale Pr&uuml;fungsaufgabe:</p>
+    <div class="formula-block">Netzadresse = IP AND Netzmaske<br>Broadcast = Netzadresse OR (NOT Netzmaske)<br>Anzahl Hosts = 2^(Hostbits) &minus; 2</div>
+    <p><strong>Beispiel:</strong> 135.7.107.5 / 255.255.252.0 (/22)</p>
+    <ul>
+      <li>Netzadresse: 135.7.104.0 (107 AND 252 = 104)</li>
+      <li>Broadcast: 135.7.107.255</li>
+      <li>Hostanzahl: 2&#185;&#8304; &minus; 2 = 1022</li>
+    </ul>
+    <p><strong>Spezielle Adressen:</strong></p>
+    <ul>
+      <li>0.0.0.0: &bdquo;dieses Netz&ldquo;</li>
+      <li>127.0.0.0/8: Loopback</li>
+      <li>10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16: Private Adressen</li>
+      <li>255.255.255.255: Limited Broadcast</li>
+      <li>169.254.0.0/16: APIPA (Automatic Private IP)</li>
+    </ul>
+    <p><strong>IPv6-Adressen:</strong> 128 Bit, Hexadezimal-Notation</p>
+    <ul>
+      <li>Aufbau: Pr&auml;fix (64 Bit) + Interface Identifier (64 Bit)</li>
+      <li>Link-Local: fe80::/10</li>
+      <li>Global Unicast: 2000::/3</li>
+      <li><strong>Interface Identifier aus MAC</strong>: EUI-64 (MAC splitten, ff:fe einf&uuml;gen, 7. Bit invertieren)</li>
+    </ul>
+    <h4>Kap. 3: IP-Protokolle</h4>
+    <p><strong>IPv4-Header:</strong> 20 Byte (ohne Optionen) &ndash; Wichtige Felder: Version, TTL, Protocol, Source IP, Destination IP, Fragment Offset</p>
+    <p><strong>Fragmentierung:</strong> Wenn Paket > MTU (z.B. 1500 Byte bei Ethernet)</p>
+    <ul>
+      <li>Fragment Offset in 8-Byte-Einheiten</li>
+      <li>M-Flag: More Fragments (1 bei allen au&szlig;er letztem)</li>
+      <li>D-Flag: Don't Fragment</li>
+    </ul>
+    <p><strong>ICMP:</strong> Fehlermeldungen und Diagnose</p>
+    <ul>
+      <li><strong>Ping</strong>: ICMP Echo Request/Reply</li>
+      <li><strong>Traceroute</strong>: TTL inkrementell erh&ouml;hen &rarr; Pfad entdecken</li>
+    </ul>
+    <p><strong>ARP</strong> (Address Resolution Protocol):</p>
+    <ul>
+      <li>IP &rarr; MAC-Adresse aufl&ouml;sen</li>
+      <li>Broadcast-Request, Unicast-Reply</li>
+      <li>ARP-Cache: gespeicherte Zuordnungen</li>
+      <li>Sicherheitsproblem: ARP-Spoofing</li>
+    </ul>
+    <p><strong>NDP</strong> (Neighbor Discovery Protocol): IPv6-Pendant zu ARP &ndash; nutzt Multicast statt Broadcast, Duplicate Address Detection (DAD)</p>
+    <p><strong>DNS</strong> (Domain Name System):</p>
+    <ul>
+      <li>Hierarchische Struktur: Root &rarr; TLD &rarr; Domain &rarr; Subdomain</li>
+      <li>Namensaufl&ouml;sung: Iterativ oder rekursiv</li>
+      <li>DNS-Server: Root-Server, TLD-Server, Autoritative Server</li>
+    </ul>
+    <p><strong>DHCP:</strong> Automatische IP-Konfiguration &ndash; DORA: Discover &rarr; Offer &rarr; Request &rarr; Acknowledge</p>
+    <p><strong>NAT</strong> (Network Address Translation): Private &rarr; &ouml;ffentliche Adressen umsetzen</p>
+    <p><strong>SLAAC</strong> (IPv6): Router Solicitation &rarr; Router Advertisement mit Pr&auml;fix &rarr; Host bildet eigene Adresse</p>
+    <h4>Kap. 4&ndash;5: Routing</h4>
+    <ul>
+      <li><strong>Routing</strong>: Routingtabelle erstellen (Algorithmus)</li>
+      <li><strong>Forwarding</strong>: Paket anhand der Tabelle weiterleiten</li>
+      <li><strong>Statisch</strong>: manuell konfiguriert</li>
+      <li><strong>Dynamisch</strong>: automatisch durch Routing-Protokolle</li>
+      <li><strong>Default-Route</strong>: wenn kein spezifischer Eintrag &rarr; Standardweg</li>
+    </ul>
+    <table class="inner-table">
+      <thead><tr><th>Merkmal</th><th>Distanz-Vektor</th><th>Link-State</th></tr></thead>
+      <tbody>
+        <tr><td>Wissen</td><td>nur Nachbarn</td><td>komplette Topologie</td></tr>
+        <tr><td>Austausch</td><td>gesamte Tabelle</td><td>nur &Auml;nderungen (LSA)</td></tr>
+        <tr><td>Konvergenz</td><td>langsam</td><td>schnell</td></tr>
+        <tr><td>Speicherbedarf</td><td>gering</td><td>h&ouml;her</td></tr>
+        <tr><td>Beispiel</td><td>RIP</td><td>OSPF</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Count-to-Infinity-Problem</strong>: Schleifenbildung bei Ausfall &ndash; Gegenma&szlig;nahmen: Split Horizon, Poison Reverse, Triggered Updates, Hold-Down Timer</p>
+    <table class="inner-table">
+      <thead><tr><th>Protokoll</th><th>Typ</th><th>Algorithmus</th><th>Metrik</th><th>Einsatz</th></tr></thead>
+      <tbody>
+        <tr><td><strong>RIP</strong></td><td>IGP</td><td>Distanz-Vektor</td><td>Hop Count (max. 15)</td><td>kleine Netze</td></tr>
+        <tr><td><strong>OSPF</strong></td><td>IGP</td><td>Link-State</td><td>Bandbreite/Kosten</td><td>gro&szlig;e Netze</td></tr>
+        <tr><td><strong>BGP</strong></td><td>EGP</td><td>Pfad-Vektor</td><td>AS-Pfad</td><td>Internet (zwischen AS)</td></tr>
+      </tbody>
+    </table>
+    <h4>Kap. 6: Transportprotokolle</h4>
+    <table class="inner-table">
+      <thead><tr><th>Merkmal</th><th>TCP</th><th>UDP</th></tr></thead>
+      <tbody>
+        <tr><td>Verbindung</td><td>verbindungsorientiert</td><td>verbindungslos</td></tr>
+        <tr><td>Zuverl&auml;ssigkeit</td><td>ja (Best&auml;tigung, Neu&uuml;bertragung)</td><td>nein</td></tr>
+        <tr><td>Reihenfolge</td><td>garantiert</td><td>nicht garantiert</td></tr>
+        <tr><td>Flusskontrolle</td><td>ja (Sliding Window)</td><td>nein</td></tr>
+        <tr><td>Overhead</td><td>hoch (20 Byte Header)</td><td>gering (8 Byte Header)</td></tr>
+        <tr><td>Einsatz</td><td>HTTP, FTP, E-Mail, SSH</td><td>DNS, VoIP, Streaming, DHCP</td></tr>
+      </tbody>
+    </table>
+    <p><strong>TCP-Verbindungsaufbau (3-Way-Handshake):</strong></p>
+    <ul>
+      <li>1. SYN &rarr;</li>
+      <li>2. &larr; SYN+ACK</li>
+      <li>3. ACK &rarr;</li>
+    </ul>
+    <p><strong>Portnummern:</strong></p>
+    <ul>
+      <li>Well-Known: 0&ndash;1023 (HTTP=80, HTTPS=443, FTP=21, SSH=22, DNS=53, SMTP=25)</li>
+      <li>Registered: 1024&ndash;49151</li>
+      <li>Dynamic: 49152&ndash;65535</li>
+    </ul>
+    <p><strong>Socket:</strong> Kombination aus IP-Adresse + Portnummer</p>
+  </div></div>
+</div>
+
+<!-- ITI25 -->
+<div class="collapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible(this)">
+    <span><span class="heft-tag">ITI25</span>Internetworking &amp; Netzdesign</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="collapsible-body"><div class="collapsible-content">
+    <h4>Kap. 1: &Uuml;berblick Internetworking</h4>
+    <ul>
+      <li><strong>Internetworking</strong>: Zusammenschaltung unterschiedlicher (auch heterogener) Netze</li>
+      <li><strong>Segmentierung</strong>: Aufteilung gro&szlig;er Netze in Segmente &rarr; bessere Performance, Sicherheit</li>
+      <li><strong>Hierarchisches Modell</strong>: Kern-, Verteilungs-, Zugriffsschicht</li>
+    </ul>
+    <h4>Kap. 2: Netzkomponenten</h4>
+    <table class="inner-table">
+      <thead><tr><th>Komponente</th><th>OSI</th><th>Wertet aus</th><th>Kollisionsdom.</th><th>Broadcastdom.</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Repeater</strong></td><td>1</td><td>nichts</td><td>vergr&ouml;&szlig;ert</td><td>vergr&ouml;&szlig;ert</td></tr>
+        <tr><td><strong>Hub</strong></td><td>1</td><td>nichts</td><td>vergr&ouml;&szlig;ert</td><td>vergr&ouml;&szlig;ert</td></tr>
+        <tr><td><strong>Bridge</strong></td><td>2</td><td>MAC</td><td>trennt</td><td>vergr&ouml;&szlig;ert</td></tr>
+        <tr><td><strong>Switch</strong></td><td>2</td><td>MAC</td><td>trennt (jeder Port)</td><td>vergr&ouml;&szlig;ert</td></tr>
+        <tr><td><strong>Router</strong></td><td>3</td><td>IP</td><td>trennt</td><td>trennt</td></tr>
+        <tr><td><strong>Gateway</strong></td><td>4&ndash;7</td><td>Protokoll</td><td>trennt</td><td>trennt</td></tr>
+      </tbody>
+    </table>
+    <h4>Switch im Detail</h4>
+    <ul>
+      <li><strong>Lernprozess</strong>: MAC-Adresse + Port lernen aus eingehenden Frames</li>
+      <li><strong>Switching-Verfahren</strong>:
+        <ul>
+          <li>Cut-Through (Fast Forward): sofort weiterleiten nach Ziel-MAC</li>
+          <li>Store-and-Forward: komplettes Frame empfangen, pr&uuml;fen, weiterleiten</li>
+          <li>Fragment-Free: erste 64 Byte pr&uuml;fen</li>
+        </ul>
+      </li>
+      <li><strong>Interne Bandbreite</strong>: Bei 48 Ports &times; 1Gbit/s Vollduplex = 96 Gbit/s n&ouml;tig</li>
+    </ul>
+    <p><strong>Spanning Tree Protocol (STP):</strong> Vermeidet Schleifen in redundanten Switch-Topologien. Bestimmt Root-Bridge, deaktiviert redundante Pfade. Bei Ausfall: Neuberechnung.</p>
+    <p><strong>Link Aggregation:</strong> B&uuml;ndelung mehrerer physischer Verbindungen &rarr; h&ouml;here Bandbreite</p>
+    <h4>Kap. 3: Subnetzberechnung (PR&Uuml;FUNGSKLASSIKER!)</h4>
+    <p><strong>Methodik (VLSM):</strong></p>
+    <ul>
+      <li>1. Gr&ouml;&szlig;tes Subnetz zuerst</li>
+      <li>2. N&auml;chste Zweierpotenz &ge; Hostanzahl + 2</li>
+      <li>3. Hostbits = log&#8322;(n&auml;chste Zweierpotenz)</li>
+      <li>4. Netzmaske anpassen</li>
+    </ul>
+    <p><strong>Beispiel:</strong> 10.200.180.0/24 aufteilen:</p>
+    <ul>
+      <li>Produktion: 120 Hosts &rarr; 128 = 2&#8311; &rarr; /25</li>
+      <li>Verkauf: 50 Hosts &rarr; 64 = 2&#8310; &rarr; /26</li>
+      <li>Verwaltung: 25 Hosts &rarr; 32 = 2&#8309; &rarr; /27</li>
+      <li>Lager: 20 Hosts &rarr; 32 = 2&#8309; &rarr; /27</li>
+    </ul>
+    <p><strong>Supernetting/CIDR:</strong> Mehrere Netze zusammenfassen &ndash; gemeinsamen Pr&auml;fix finden &rarr; aggregierte Route</p>
+    <p><strong>IPv6-Subnetze:</strong> Standard /64 f&uuml;r Subnetze, Interface ID bleibt 64 Bit</p>
+    <h4>Kap. 4: VLAN</h4>
+    <ul>
+      <li><strong>VLAN (Virtual LAN)</strong>: Logische Trennung des Netzes unabh&auml;ngig von Physik</li>
+      <li><strong>Vorteile</strong>: Sicherheit, Flexibilit&auml;t, Performance (kleinere Broadcast-Dom&auml;nen)</li>
+      <li><strong>VLAN-Typen</strong>:
+        <ul>
+          <li><strong>Port-basiert</strong>: Switch-Port fest einem VLAN zugeordnet</li>
+          <li><strong>Dynamisch</strong>: MAC-basiert oder nach Protokoll</li>
+          <li><strong>802.1Q (Tagged)</strong>: VLAN-Tag (4 Byte) wird in Ethernet-Frame eingef&uuml;gt</li>
+        </ul>
+      </li>
+      <li><strong>Trunk</strong>: Verbindung zwischen Switches, &uuml;bertr&auml;gt Daten mehrerer VLANs (getaggt)</li>
+      <li><strong>Inter-VLAN Routing</strong>: Router oder Layer-3-Switch n&ouml;tig</li>
+      <li><strong>VPN</strong>: Verschl&uuml;sselte Verbindung &uuml;ber &ouml;ffentliches Netz</li>
+    </ul>
+    <h4>Kap. 5: Netzplanung &amp; Design</h4>
+    <p><strong>Vorgehensweise:</strong></p>
+    <ul>
+      <li>1. Anforderungsanalyse / IST-Analyse</li>
+      <li>2. Auswahl &Uuml;bertragungstechnologien</li>
+      <li>3. Strukturierte Verkabelung planen (Prim&auml;r/Sekund&auml;r/Terti&auml;r)</li>
+      <li>4. Aktive Komponenten und WLAN</li>
+      <li>5. Adressierung, Subnetzbildung, VLAN</li>
+      <li>6. Namen-/Verzeichnisservices (DNS, DHCP)</li>
+      <li>7. Sicherheitskomponenten (Firewall)</li>
+    </ul>
+    <p><strong>Strukturierte Verkabelung:</strong></p>
+    <ul>
+      <li><strong>Terti&auml;rbereich</strong>: Etagenverkabelung (Datendose &rarr; Etagenverteiler) &rarr; Zugriffsschicht</li>
+      <li><strong>Sekund&auml;rbereich</strong>: Steigbereichsverkabelung (Etage &rarr; Geb&auml;udeverteiler) &rarr; Verteilungsschicht</li>
+      <li><strong>Prim&auml;rbereich</strong>: Campusverkabelung (Geb&auml;ude &rarr; Hauptverteiler) &rarr; Kernschicht</li>
+    </ul>
+    <h4>Kap. 6: Netzarchitektur &amp; Zugangsnetze</h4>
+    <ul>
+      <li><strong>Netzbetreiber-Sicht</strong>: Kernnetz &rarr; Zugangsnetz &rarr; Kundennetz</li>
+      <li><strong>Letzte Meile</strong>: Verbindung vom Hausanschluss zum DSLAM</li>
+    </ul>
+    <table class="inner-table">
+      <thead><tr><th>Technologie</th><th>Download</th><th>Typ</th></tr></thead>
+      <tbody>
+        <tr><td>ADSL</td><td>16 Mbit/s</td><td>Kupfer</td></tr>
+        <tr><td>VDSL + Vectoring</td><td>100 Mbit/s</td><td>Kupfer</td></tr>
+        <tr><td>VDSL + Supervectoring</td><td>250 Mbit/s</td><td>Kupfer</td></tr>
+        <tr><td>DOCSIS 3.1 (Kabel)</td><td>10 Gbit/s</td><td>Koax</td></tr>
+        <tr><td>FTTH (Glasfaser)</td><td>1+ Gbit/s</td><td>Glasfaser</td></tr>
+        <tr><td>LTE</td><td>1 Gbit/s (theor.)</td><td>Funk</td></tr>
+        <tr><td>5G</td><td>10 Gbit/s (theor.)</td><td>Funk</td></tr>
+      </tbody>
+    </table>
+  </div></div>
+</div>
+
+<!-- ITI26 -->
+<div class="collapsible">
+  <div class="collapsible-header" onclick="toggleCollapsible(this)">
+    <span><span class="heft-tag">ITI26</span>Anwendungsdienste &amp; Netzmanagement</span>
+    <span class="chevron">&#9660;</span>
+  </div>
+  <div class="collapsible-body"><div class="collapsible-content">
+    <h4>Kap. 1: P2P- und Client-Server-Netze</h4>
+    <table class="inner-table">
+      <thead><tr><th>Merkmal</th><th>Client-Server</th><th>Peer-to-Peer</th></tr></thead>
+      <tbody>
+        <tr><td>Kontrolle</td><td>zentral</td><td>dezentral</td></tr>
+        <tr><td>Single Point of Failure</td><td>ja (Server)</td><td>nein</td></tr>
+        <tr><td>Skalierbarkeit</td><td>begrenzt</td><td>gut</td></tr>
+        <tr><td>Datenfluss-Kontrolle</td><td>einfach</td><td>schwierig</td></tr>
+        <tr><td>Beispiel</td><td>Web, E-Mail</td><td>BitTorrent, Blockchain</td></tr>
+      </tbody>
+    </table>
+    <h4>Kap. 2: Anwendungen im Internet</h4>
+    <p><strong>WWW (World Wide Web):</strong></p>
+    <ul>
+      <li>Basis: HTML, HTTP/HTTPS, URL/URI</li>
+      <li><strong>URI</strong> (Uniform Resource Identifier): Oberbegriff</li>
+      <li><strong>URL</strong> (Uniform Resource Locator): Ort einer Ressource</li>
+      <li><strong>URN</strong> (Uniform Resource Name): Name einer Ressource</li>
+      <li>Jede URL ist eine URI &check; | Jeder URN ist eine URI &check;</li>
+    </ul>
+    <p><strong>E-Mail-Protokolle:</strong></p>
+    <ul>
+      <li><strong>SMTP</strong>: Versand (Port 25/587)</li>
+      <li><strong>POP3</strong>: Empfang (Port 110) &ndash; l&auml;dt E-Mails herunter, l&ouml;scht auf Server</li>
+      <li><strong>IMAP</strong>: Empfang (Port 143) &ndash; E-Mails bleiben auf Server (Vorteil: mehrere Ger&auml;te synchron)</li>
+      <li><strong>MIME</strong>: erm&ouml;glicht Anh&auml;nge und verschiedene Formate</li>
+    </ul>
+    <p><strong>Blockchain:</strong></p>
+    <ul>
+      <li>Verteiltes Hauptbuch (Distributed Ledger)</li>
+      <li>Bl&ouml;cke kryptografisch verkettet</li>
+      <li>Dezentral, manipulationssicher</li>
+      <li>Einsatz: Kryptow&auml;hrungen, Smart Contracts, Supply Chain</li>
+    </ul>
+    <p><strong>Web 2.0 &rarr; Web 3.0:</strong></p>
+    <ul>
+      <li>Web 2.0: User-Generated Content, Social Media, Interaktion</li>
+      <li>Web 3.0: Semantisches Web, dezentral, KI-gest&uuml;tzt</li>
+    </ul>
+    <h4>Kap. 3: Netzwerk-Management</h4>
+    <ul>
+      <li><strong>Internes Monitoring</strong>: innerhalb des Netzes (Agent auf Ger&auml;t)</li>
+      <li><strong>Externes Monitoring</strong>: von au&szlig;en (z.B. Ping, Porttests)</li>
+    </ul>
+    <p><strong>OSI Management Framework: FCAPS</strong></p>
+    <ul>
+      <li><strong>F</strong>ault Management (Fehlermanagement)</li>
+      <li><strong>C</strong>onfiguration Management</li>
+      <li><strong>A</strong>ccounting Management</li>
+      <li><strong>P</strong>erformance Management</li>
+      <li><strong>S</strong>ecurity Management</li>
+    </ul>
+    <p><strong>SNMP (Simple Network Management Protocol):</strong></p>
+    <ul>
+      <li><strong>Komponenten</strong>: Manager (NMS), Agent (auf Netzger&auml;t), MIB (Management Information Base)</li>
+      <li><strong>Nachrichten</strong>: GET, GET-NEXT, SET, TRAP (Agent &rarr; Manager bei Ereignis)</li>
+      <li><strong>MIB</strong>: Hierarchische Datenstruktur mit OIDs (Object Identifiers)</li>
+      <li><strong>SMI</strong> (Structure of Management Information): Format der MIB</li>
+    </ul>
+    <h4>Kap. 4: Informationssicherheit</h4>
+    <p><strong>Schutzziele (CIA-Triade):</strong></p>
+    <ul>
+      <li><strong>C</strong>onfidentiality (Vertraulichkeit)</li>
+      <li><strong>I</strong>ntegrity (Integrit&auml;t)</li>
+      <li><strong>A</strong>vailability (Verf&uuml;gbarkeit)</li>
+      <li>+ Authentizit&auml;t, Nicht-Abstreitbarkeit</li>
+    </ul>
+    <p><strong>IT-Grundschutz (BSI):</strong> Systematischer Ansatz f&uuml;r IT-Sicherheit</p>
+    <p><strong>Kryptografie:</strong></p>
+    <table class="inner-table">
+      <thead><tr><th>Verfahren</th><th>Schl&uuml;ssel</th><th>Geschwindigkeit</th><th>Schl&uuml;sseltausch</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Symmetrisch</strong></td><td>1 gemeinsamer Schl&uuml;ssel</td><td>schnell</td><td>problematisch</td></tr>
+        <tr><td><strong>Asymmetrisch</strong></td><td>Public Key + Private Key</td><td>langsam</td><td>einfach</td></tr>
+        <tr><td><strong>Hybrid</strong></td><td>Sessionkey symm. + asymm. Austausch</td><td>schnell + sicher</td><td>gel&ouml;st</td></tr>
+      </tbody>
+    </table>
+    <p><strong>RSA-Verfahren</strong> (asymmetrisch):</p>
+    <ul>
+      <li>Verschl&uuml;sseln: mit dem <strong>&ouml;ffentlichen Schl&uuml;ssel des Empf&auml;ngers</strong></li>
+      <li>Entschl&uuml;sseln: mit dem <strong>privaten Schl&uuml;ssel des Empf&auml;ngers</strong></li>
+      <li>Digitale Signatur: mit dem <strong>privaten Schl&uuml;ssel des Senders</strong> signieren</li>
+    </ul>
+    <p><strong>Digitale Signatur:</strong> Hashwert der Nachricht mit Private Key verschl&uuml;sseln &rarr; Authentizit&auml;t + Integrit&auml;t</p>
+    <p><strong>Angriffe:</strong></p>
+    <ul>
+      <li><strong>Passiv</strong>: Abh&ouml;ren, Analyse (Sniffer)</li>
+      <li><strong>Aktiv</strong>: Man-in-the-Middle, Spoofing, DDoS</li>
+      <li><strong>Trojaner</strong>: versteckt in n&uuml;tzlicher Software &rarr; Firewall kann helfen (Ports sperren), aber Virenschutz n&ouml;tig</li>
+    </ul>
+  </div></div>
+</div>
+
+</section>
+
+<!-- ==================== SECTION 3: ÜBUNGSAUFGABEN ==================== -->
+<section class="section" id="uebungsaufgaben">
+<div class="section-title"><span class="icon">&#9997;&#65039;</span> &Uuml;bungsaufgaben</div>
+
+<div class="qa-group-title">Grundlagen &ndash; ITI21</div>
+
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q1</span><span>Unterschied Computernetz vs. Multiprozessorsystem?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Computernetz: autonome Hosts kommunizieren &uuml;ber ein Netz; Multiprozessorsystem: gemeinsamer Speicher, ein System, nicht autonom.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q2</span><span>Nennen Sie die 7 OSI-Schichten mit je einem Protokollbeispiel.</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">1-Bit&uuml;bertragung (Kabel), 2-Datenverbindung (Ethernet), 3-Netzwerk (IP), 4-Transport (TCP), 5-Sitzung (NetBIOS), 6-Darstellung (SSL), 7-Anwendung (HTTP)</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q3</span><span>Leitungsvermittlung vs. Paketvermittlung?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Leitungsvermittlung: exklusive Verbindung, schlechtere Auslastung, garantierte Bandbreite. Paketvermittlung: Pakete unabh&auml;ngig geroutet, bessere Auslastung, keine Garantie.</div></div>
+</div>
+
+<div class="qa-group-title">Informationstheorie &ndash; ITI22</div>
+
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q4</span><span>Berechnen Sie die Entropie einer Quelle mit P(A)=0,5, P(B)=0,25, P(C)=0,25.</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">H = &minus;(0,5&middot;log&#8322;0,5 + 0,25&middot;log&#8322;0,25 + 0,25&middot;log&#8322;0,25) = 0,5 + 0,5 + 0,5 = 1,5 bit</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q5</span><span>Shannon-Hartley: B=20 MHz, SNR=40 dB &rarr; C=?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">SNR<sub>linear</sub> = 10&#8308; = 10000; C = 20&times;10&#8310; &times; log&#8322;(10001) &asymp; 20&times;10&#8310; &times; 13,29 &asymp; 265,8 Mbit/s</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q6</span><span>Nyquist: B=100 MHz, 256 Stufen &rarr; C=?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">C = 2 &times; 100&times;10&#8310; &times; log&#8322;(256) = 200&times;10&#8310; &times; 8 = 1600 Mbit/s</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q7</span><span>Was ist Hamming-Distanz und wof&uuml;r dient sie?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Mindestanzahl unterschiedlicher Bits zwischen Codew&ouml;rtern. d<sub>min</sub>&minus;1 Fehler erkennbar, &lfloor;(d<sub>min</sub>&minus;1)/2&rfloor; Fehler korrigierbar.</div></div>
+</div>
+
+<div class="qa-group-title">Physische Schicht &ndash; ITI23</div>
+
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q8</span><span>Unterschied Multimode vs. Monomode Glasfaser?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Multimode: gr&ouml;&szlig;erer Kern, mehrere Moden, Modendispersion, k&uuml;rzere Strecken. Monomode: kleiner Kern, eine Mode, h&ouml;here Geschwindigkeit, l&auml;ngere Strecken.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q9</span><span>CSMA/CD vs. CSMA/CA?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">CD (Detection): leitergebunden (Ethernet), Kollision erkennen + abbrechen. CA (Avoidance): drahtlos (WLAN), Kollision vermeiden (RTS/CTS).</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q10</span><span>Min./Max. Framel&auml;nge IEEE 802.3?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Min: 64 Byte, Max: 1518 Byte (Datenfeld: 46&ndash;1500 Byte).</div></div>
+</div>
+
+<div class="qa-group-title">IP &amp; Routing &ndash; ITI24</div>
+
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q11</span><span>IP 172.24.130.50/20 &ndash; Netzadresse, Broadcast, Hostanzahl?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">/20 = 255.255.240.0; Netz: 172.24.128.0; Broadcast: 172.24.143.255; Hosts: 2&#185;&#178; &minus; 2 = 4094</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q12</span><span>TCP vs. UDP &ndash; 4 Unterschiede?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">TCP: verbindungsorientiert, zuverl&auml;ssig, Flusskontrolle, mehr Overhead. UDP: verbindungslos, unzuverl&auml;ssig, kein Flow Control, wenig Overhead.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q13</span><span>3-Way-Handshake erkl&auml;ren?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">1) Client&rarr;Server: SYN; 2) Server&rarr;Client: SYN+ACK; 3) Client&rarr;Server: ACK. Danach ist die TCP-Verbindung aufgebaut.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q14</span><span>Routing vs. Forwarding?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Routing: Erstellen der Routingtabelle (Algorithmus). Forwarding: Paket anhand der Tabelle weiterleiten.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q15</span><span>Distanz-Vektor vs. Link-State?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">DV: nur Nachbarn bekannt, ganze Tabelle austauschen, langsame Konvergenz (RIP). LS: komplette Topologie, nur &Auml;nderungen fluten, schnelle Konvergenz (OSPF).</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q16</span><span>Was ist Count-to-Infinity und wie vermeidet man es?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Routingschleife bei Ausfall durch veraltete Info. Gegenma&szlig;nahmen: Split Horizon, Poison Reverse, Triggered Updates, Hold-Down Timer.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q17</span><span>IPv4-Fragmentierung: 4000 Byte Paket &uuml;ber Ethernet?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">MTU=1500; 1. Fragment: 1480 Byte (Offset 0, M=1); 2. Fragment: 1480 Byte (Offset 185, M=1); 3. Fragment: 1020 Byte (Offset 370, M=0).</div></div>
+</div>
+
+<div class="qa-group-title">Internetworking &ndash; ITI25</div>
+
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q18</span><span>Switch vs. Router &ndash; Gemeinsamkeiten und Unterschiede?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Switch: Layer 2, MAC-Adressen, trennt Kollisions- aber nicht Broadcastdom&auml;nen. Router: Layer 3, IP-Adressen, trennt beides.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q19</span><span>Was ist STP und wozu dient es?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Spanning Tree Protocol: vermeidet Schleifen in redundanten Switch-Topologien durch logische Deaktivierung redundanter Pfade.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q20</span><span>VLAN-Vorteile?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Logische Netztrennung, erh&ouml;hte Sicherheit, Flexibilit&auml;t, kleinere Broadcast-Dom&auml;nen, bessere Performance.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q21</span><span>Was ist ein Trunk (VLAN-Kontext)?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Verbindung zwischen Switches, die getaggte Frames mehrerer VLANs &uuml;bertr&auml;gt (802.1Q).</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q22</span><span>Subnetz 192.168.130.0/24 in 4 Subnetze teilen?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">4 Subnetze: /26; .0/26 (1-62), .64/26 (65-126), .128/26 (129-190), .192/26 (193-254); je 62 Hosts.</div></div>
+</div>
+
+<div class="qa-group-title">Anwendungen &amp; Sicherheit &ndash; ITI26</div>
+
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q23</span><span>E-Mail: Welche Protokolle zum Senden/Empfangen?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Senden: SMTP (Port 25/587). Empfangen: POP3 (Port 110) oder IMAP (Port 143).</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q24</span><span>IMAP-Vorteile gegen&uuml;ber POP3?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">E-Mails bleiben auf Server, Synchronisation &uuml;ber mehrere Ger&auml;te, nur Header werden geladen.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q25</span><span>Symmetrische vs. asymmetrische Verschl&uuml;sselung?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Symmetrisch: gleicher Schl&uuml;ssel f&uuml;r Ver-/Entschl&uuml;sselung, schnell, Schl&uuml;sseltausch-Problem. Asymmetrisch: Public/Private Key, langsamer, einfacher Schl&uuml;sseltausch.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q26</span><span>RSA: Mit welchem Schl&uuml;ssel wird verschl&uuml;sselt?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Mit dem &ouml;ffentlichen Schl&uuml;ssel des Empf&auml;ngers. Entschl&uuml;sselung mit dem privaten Schl&uuml;ssel des Empf&auml;ngers.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q27</span><span>Was ist SNMP und wie funktioniert es?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Netzmanagement-Protokoll. Manager (NMS) fragt Agenten auf Ger&auml;ten ab (GET, SET). Agent meldet Ereignisse (TRAP). Daten in MIB organisiert.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q28</span><span>Was ist ein Trojaner und hilft eine Firewall?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Malware versteckt in n&uuml;tzlicher Software. Firewall kann helfen (ungenutzte Ports sperren), verhindert aber nicht die Installation &rarr; Virenschutz n&ouml;tig.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q29</span><span>Was ist die CIA-Triade?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Confidentiality (Vertraulichkeit), Integrity (Integrit&auml;t), Availability (Verf&uuml;gbarkeit) &ndash; die drei Schutzziele der Informationssicherheit.</div></div>
+</div>
+<div class="qa-item" onclick="toggleQA(this)">
+  <div class="qa-question"><span class="qa-num">Q30</span><span>SLAAC bei IPv6 erkl&auml;ren?</span><span class="qa-chevron">&#9660;</span></div>
+  <div class="qa-answer"><div class="qa-answer-inner">Host sendet Router Solicitation &rarr; Router antwortet mit Pr&auml;fixinfo &rarr; Host bildet Adresse aus Pr&auml;fix + Interface ID (EUI-64 oder Random).</div></div>
+</div>
+
+</section>
+
+<!-- ==================== SECTION 4: FORMELSAMMLUNG ==================== -->
+<section class="section" id="formeln">
+<div class="section-title"><span class="icon">&#128200;</span> Formelsammlung</div>
+
+<div class="formula-grid">
+  <div class="formula-card">
+    <h3>Informationstheorie</h3>
+    <div class="formula-line"><span>I(x<sub>i</sub>) = &minus;log&#8322;(P(x<sub>i</sub>))</span><span class="desc">Informationsgehalt</span></div>
+    <div class="formula-line"><span>H = &minus;&Sigma; P(x<sub>i</sub>)&middot;log&#8322;(P(x<sub>i</sub>))</span><span class="desc">Entropie</span></div>
+    <div class="formula-line"><span>H&#8320; = log&#8322;(N)</span><span class="desc">Entscheidungsgehalt</span></div>
+    <div class="formula-line"><span>R<sub>Q</sub> = H&#8320; &minus; H</span><span class="desc">Quellenredundanz</span></div>
+  </div>
+  <div class="formula-card">
+    <h3>Kanalkapazit&auml;t</h3>
+    <div class="formula-line"><span>C = 2&middot;B&middot;log&#8322;(n)</span><span class="desc">Nyquist (st&ouml;rungsfrei)</span></div>
+    <div class="formula-line"><span>C = B&middot;log&#8322;(1 + S/N)</span><span class="desc">Shannon-Hartley (gest&ouml;rt)</span></div>
+    <div class="formula-line"><span>SNR<sub>lin</sub> = 10^(SNR<sub>dB</sub>/10)</span><span class="desc">dB &rarr; linear</span></div>
+  </div>
+  <div class="formula-card">
+    <h3>&Uuml;bertragung</h3>
+    <div class="formula-line"><span>t<sub>L</sub> = s / v</span><span class="desc">Latenz</span></div>
+    <div class="formula-line"><span>t<sub>&Uuml;</sub> = D / b</span><span class="desc">&Uuml;bertragungszeit</span></div>
+    <div class="formula-line"><span>V = b &middot; t<sub>L</sub></span><span class="desc">Kanalvolumen</span></div>
+    <div class="formula-line"><span>f<sub>A</sub> &ge; 2 &middot; f<sub>G</sub></span><span class="desc">Abtasttheorem</span></div>
+  </div>
+  <div class="formula-card">
+    <h3>D&auml;mpfung</h3>
+    <div class="formula-line"><span>a<sub>U</sub> = 20&middot;log&#8321;&#8320;(U1/U2) [dB]</span><span class="desc">Spannungs-dB</span></div>
+    <div class="formula-line"><span>a<sub>P</sub> = 10&middot;log&#8321;&#8320;(P1/P2) [dB]</span><span class="desc">Leistungs-dB</span></div>
+  </div>
+  <div class="formula-card">
+    <h3>Subnetting</h3>
+    <div class="formula-line"><span>Netz = IP AND Maske</span><span class="desc">Netzadresse</span></div>
+    <div class="formula-line"><span>BC = Netz OR (NOT Maske)</span><span class="desc">Broadcast</span></div>
+    <div class="formula-line"><span>Hosts = 2^(32&minus;Pr&auml;fix) &minus; 2</span><span class="desc">Hostanzahl</span></div>
+  </div>
+  <div class="formula-card">
+    <h3>Hamming-Distanz</h3>
+    <div class="formula-line"><span>Erkennbar: d<sub>min</sub> &minus; 1</span><span class="desc">Fehler erkennen</span></div>
+    <div class="formula-line"><span>Korrigierbar: &lfloor;(d<sub>min</sub>&minus;1)/2&rfloor;</span><span class="desc">Fehler korrigieren</span></div>
+  </div>
+</div>
+</section>
+
+<!-- ==================== SECTION 5: CHECKLISTE ==================== -->
+<section class="section" id="checkliste">
+<div class="section-title"><span class="icon">&#9745;&#65039;</span> Lern-Checkliste</div>
+
+<div id="checklist-container"></div>
+</section>
+
+</div><!-- /container -->
+
+<script>
+/* ===== Checklist Data ===== */
+const checklistData = [
+  {
+    id:'iti21', title:'ITI21 \u2013 Grundlagen',
+    items:[
+      'OSI-Modell mit allen 7 Schichten erkl\u00e4ren',
+      'TCP/IP-Modell vs. OSI-Modell vergleichen',
+      'Kapselung/Entkapselung erkl\u00e4ren',
+      'Netzklassifikationen (PAN, LAN, MAN, WAN)',
+      'Topologien zeichnen und Vor-/Nachteile nennen',
+      'Leitungs- vs. Paketvermittlung erkl\u00e4ren',
+      'Kenngr\u00f6\u00dfen berechnen (Latenz, \u00dcbertragungszeit, Volumen)'
+    ]
+  },
+  {
+    id:'iti22', title:'ITI22 \u2013 Informationstheorie',
+    items:[
+      'Entropie berechnen',
+      'Kanalkapazit\u00e4t nach Nyquist berechnen',
+      'Kanalkapazit\u00e4t nach Shannon-Hartley berechnen',
+      'dB in linear umrechnen',
+      'Quellenredundanz berechnen',
+      'Quellen-/Kanal-/Leitungscodierung unterscheiden',
+      'Hamming-Distanz bestimmen und Fehlererkennbarkeit ableiten',
+      'Abtasttheorem anwenden'
+    ]
+  },
+  {
+    id:'iti23', title:'ITI23 \u2013 Bit\u00fcbertragung',
+    items:[
+      'TP-Kabelkategorien und ihre Eigenschaften kennen',
+      'Glasfaser: Multimode vs. Monomode erkl\u00e4ren',
+      'D\u00e4mpfung berechnen (dB)',
+      'CSMA/CD und CSMA/CA Ablauf erkl\u00e4ren',
+      'MAC-Adressen interpretieren (Broadcast, Multicast, Unicast)',
+      'Ethernet-Standards und Geschwindigkeiten zuordnen',
+      'Wireshark-Filter schreiben',
+      'WLAN-Architektur (BSS, IBSS, ESS) erkl\u00e4ren'
+    ]
+  },
+  {
+    id:'iti24', title:'ITI24 \u2013 TCP/IP',
+    items:[
+      'IPv4-Adressklassen kennen',
+      'CIDR-Notation verstehen und anwenden',
+      'Subnetzberechnung durchf\u00fchren (Netz, Broadcast, Hosts)',
+      'IPv6-Adressaufbau und Interface ID (EUI-64)',
+      'IPv4-Fragmentierung berechnen',
+      'ARP vs. NDP vergleichen',
+      'DNS-Hierarchie und Namensaufl\u00f6sung erkl\u00e4ren',
+      'DHCP DORA-Prozess erkl\u00e4ren',
+      'Distanz-Vektor-Algorithmus durchrechnen',
+      'Link-State-Algorithmus erkl\u00e4ren',
+      'RIP vs. OSPF vs. BGP vergleichen',
+      'TCP 3-Way-Handshake',
+      'TCP vs. UDP tabellarisch vergleichen',
+      'Portnummern wichtiger Dienste nennen'
+    ]
+  },
+  {
+    id:'iti25', title:'ITI25 \u2013 Internetworking',
+    items:[
+      'Netzkomponenten nach OSI einordnen',
+      'Switch-Lernprozess erkl\u00e4ren',
+      'Switching-Verfahren unterscheiden',
+      'Kollisions- und Broadcast-Dom\u00e4nen f\u00fcr jede Komponente',
+      'STP-Zweck erkl\u00e4ren',
+      'Subnetzplanung mit VLSM durchf\u00fchren',
+      'VLAN-Konzept und Typen erkl\u00e4ren',
+      '802.1Q Tagging verstehen',
+      'Netzplanung systematisch durchf\u00fchren',
+      'Strukturierte Verkabelung (Prim\u00e4r/Sekund\u00e4r/Terti\u00e4r)'
+    ]
+  },
+  {
+    id:'iti26', title:'ITI26 \u2013 Anwendungen & Sicherheit',
+    items:[
+      'Client-Server vs. P2P vergleichen',
+      'URI, URL, URN unterscheiden',
+      'E-Mail-Protokolle (SMTP, POP3, IMAP)',
+      'SNMP-Architektur erkl\u00e4ren (Manager, Agent, MIB)',
+      'CIA-Triade',
+      'Symmetrische vs. asymmetrische Verschl\u00fcsselung',
+      'RSA-Prinzip (welcher Schl\u00fcssel wof\u00fcr)',
+      'Digitale Signatur erkl\u00e4ren',
+      'Angriffsvektoren kennen (passiv/aktiv, Trojaner, DDoS)'
+    ]
+  }
+];
+
+/* ===== Build Checklist ===== */
+function buildChecklist(){
+  const c = document.getElementById('checklist-container');
+  checklistData.forEach(sec => {
+    const div = document.createElement('div');
+    div.className = 'checklist-section';
+    let html = '<h3><span class="heft-badge">'+sec.id.toUpperCase()+'</span>'+sec.title+'</h3>';
+    html += '<div class="checklist-progress" id="prog-'+sec.id+'">0/'+sec.items.length+' erledigt</div>';
+    html += '<div class="progress-bar"><div class="progress-fill" id="bar-'+sec.id+'" style="width:0%"></div></div>';
+    sec.items.forEach((item, i) => {
+      const key = 'cl-iti-'+sec.id+'-'+i;
+      const checked = localStorage.getItem(key) === '1';
+      html += '<label class="check-item"><input type="checkbox" data-key="'+key+'" data-sec="'+sec.id+'"'+(checked?' checked':'')+' onchange="updateCheck(this)"><span class="check-box"></span><span class="check-label">'+item+'</span></label>';
+    });
+    div.innerHTML = html;
+    c.appendChild(div);
+  });
+  checklistData.forEach(sec => updateProgress(sec.id));
+}
+
+function updateCheck(el){
+  localStorage.setItem(el.dataset.key, el.checked ? '1' : '0');
+  updateProgress(el.dataset.sec);
+}
+
+function updateProgress(secId){
+  const sec = checklistData.find(s => s.id === secId);
+  let done = 0;
+  sec.items.forEach((_, i) => {
+    if(localStorage.getItem('cl-iti-'+secId+'-'+i) === '1') done++;
+  });
+  const total = sec.items.length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('prog-'+secId).textContent = done+'/'+total+' erledigt';
+  document.getElementById('bar-'+secId).style.width = pct+'%';
+}
+
+/* ===== Collapsible ===== */
+function toggleCollapsible(header){
+  header.parentElement.classList.toggle('open');
+}
+
+/* ===== Q&A ===== */
+function toggleQA(el){
+  el.classList.toggle('open');
+}
+
+/* ===== Sticky Nav ===== */
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', function(e){
+    e.preventDefault();
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    this.classList.add('active');
+    const target = document.getElementById(this.dataset.target);
+    if(target) target.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+/* Highlight active section on scroll */
+const sections = document.querySelectorAll('.section');
+const navTabs = document.querySelectorAll('.nav-tab');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => {
+    const top = s.offsetTop - 80;
+    if(window.scrollY >= top) current = s.id;
+  });
+  navTabs.forEach(t => {
+    t.classList.remove('active');
+    if(t.dataset.target === current) t.classList.add('active');
+  });
+});
+
+/* ===== Init ===== */
+buildChecklist();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

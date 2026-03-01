@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lern-Navigator – Mission Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--surface2:#1a1e27;--border:#232832;--text:#e2e8f0;--muted:#64748b;--accent:#6c63ff;--cyan:#38bdf8;--green:#51cf66;--yellow:#fbbf24;--red:#ff6b6b;--purple:#a78bfa;--orange:#fb923c;--radius:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+::selection{background:var(--accent);color:#fff}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* Header */
+.nav-header{position:sticky;top:0;z-index:50;background:rgba(12,14,19,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;gap:14px}
+.nav-header a{color:var(--muted);text-decoration:none;font-size:13px;font-weight:500;transition:color .2s}
+.nav-header a:hover{color:var(--text)}
+.nav-header h1{font-size:18px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+
+/* Hero */
+.hero{background:linear-gradient(135deg,rgba(108,99,255,.08),rgba(56,189,248,.05));border-bottom:1px solid var(--border);padding:32px 24px}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:900px;margin:0 auto 20px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:20px;text-align:center;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--radius) var(--radius) 0 0}
+.stat-card:nth-child(1)::before{background:linear-gradient(90deg,var(--accent),var(--cyan))}
+.stat-card:nth-child(2)::before{background:var(--green)}
+.stat-card:nth-child(3)::before{background:var(--orange)}
+.stat-card:nth-child(4)::before{background:var(--red)}
+.stat-value{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;margin-bottom:4px}
+.stat-label{font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+.stat-card:nth-child(1) .stat-value{background:linear-gradient(135deg,var(--accent),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-card:nth-child(2) .stat-value{color:var(--green)}
+.stat-card:nth-child(3) .stat-value{color:var(--orange)}
+.stat-card:nth-child(4) .stat-value{color:var(--red)}
+.stat-ring{width:60px;height:60px;border-radius:50%;margin:0 auto 8px;position:relative;display:flex;align-items:center;justify-content:center}
+.stat-ring-inner{width:44px;height:44px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700}
+.next-batch{max-width:900px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;gap:16px;cursor:pointer;transition:all .25s}
+.next-batch:hover{border-color:var(--accent);transform:translateY(-1px)}
+.next-label{font-size:12px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px}
+.next-title{font-size:15px;font-weight:600}
+.next-btn{background:var(--accent);color:#fff;border:none;border-radius:10px;padding:10px 22px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.next-btn:hover{filter:brightness(1.15);transform:scale(1.03)}
+
+/* Countdown Banner */
+.countdown-banner{max-width:900px;margin:20px auto 0;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.countdown-banner.urgent{border-color:rgba(255,107,107,.4);background:rgba(255,107,107,.05)}
+.countdown-left{display:flex;align-items:center;gap:12px}
+.countdown-days{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700}
+.countdown-info{font-size:12px;color:var(--muted);line-height:1.5}
+.countdown-actions{display:flex;gap:8px}
+.countdown-actions button{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:6px 12px;font-family:'Outfit',sans-serif;font-size:11px;cursor:pointer;transition:all .2s}
+.countdown-actions button:hover{border-color:var(--text);color:var(--text)}
+
+/* Phase Timeline */
+.timeline-section{max-width:900px;margin:28px auto;padding:0 24px}
+.timeline-title{font-size:13px;color:var(--muted);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px}
+.timeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.tl-phase{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.tl-phase:hover{border-color:rgba(108,99,255,.3);transform:translateY(-1px)}
+.tl-phase.active{border-color:var(--accent)}
+.tl-phase-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.tl-phase-name{font-size:13px;font-weight:600;margin-bottom:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tl-bar{height:6px;background:rgba(255,255,255,.04);border-radius:3px;overflow:hidden;margin-bottom:6px}
+.tl-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+.tl-phase:nth-child(1) .tl-bar-fill{background:var(--green)}
+.tl-phase:nth-child(2) .tl-bar-fill{background:var(--cyan)}
+.tl-phase:nth-child(3) .tl-bar-fill{background:var(--orange)}
+.tl-phase:nth-child(4) .tl-bar-fill{background:var(--red)}
+.tl-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+
+/* Batch Cards */
+.batches-section{max-width:900px;margin:0 auto;padding:0 24px 80px}
+.phase-header{font-size:14px;font-weight:700;margin:28px 0 12px;display:flex;align-items:center;gap:10px}
+.phase-header .ph-num{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 8px;border-radius:6px;font-weight:600}
+.phase-header .ph-1{background:rgba(81,207,102,.1);color:var(--green)}
+.phase-header .ph-2{background:rgba(56,189,248,.1);color:var(--cyan)}
+.phase-header .ph-3{background:rgba(251,146,60,.1);color:var(--orange)}
+.phase-header .ph-4{background:rgba(255,107,107,.1);color:var(--red)}
+
+.batch-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius);margin-bottom:8px;overflow:hidden;transition:all .3s}
+.batch-card.status-done{border-color:rgba(81,207,102,.3)}
+.batch-card.status-wip{border-color:rgba(251,191,36,.3)}
+.batch-card.status-open{border-color:var(--border)}
+
+.batch-header{padding:16px 20px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:background .2s;user-select:none}
+.batch-header:hover{background:rgba(255,255,255,.02)}
+.batch-num{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.status-done .batch-num{background:rgba(81,207,102,.12);color:var(--green)}
+.status-wip .batch-num{background:rgba(251,191,36,.12);color:var(--yellow)}
+.status-open .batch-num{background:rgba(255,255,255,.04);color:var(--muted)}
+.batch-info{flex:1;min-width:0}
+.batch-title{font-size:14px;font-weight:600;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.batch-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.badge{font-family:'JetBrains Mono',monospace;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:.5px}
+.badge-iti{background:rgba(56,189,248,.12);color:var(--cyan)}
+.badge-tgi{background:rgba(167,139,250,.12);color:var(--purple)}
+.badge-gdi{background:rgba(251,191,36,.12);color:var(--yellow)}
+.badge-mix{background:rgba(251,146,60,.12);color:var(--orange)}
+.prio-dots{display:flex;gap:2px}
+.prio-dot{width:6px;height:6px;border-radius:50%}
+.batch-progress-mini{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap;flex-shrink:0}
+.batch-chevron{color:var(--muted);font-size:14px;transition:transform .3s;flex-shrink:0}
+.batch-card.expanded .batch-chevron{transform:rotate(180deg)}
+
+.batch-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.batch-card.expanded .batch-body{max-height:600px}
+.batch-content{padding:0 20px 20px;border-top:1px solid var(--border)}
+
+.task-list{list-style:none;margin-top:14px}
+.task-item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.03)}
+.task-item:last-child{border-bottom:none}
+.task-check{width:20px;height:20px;border:2px solid var(--border);border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .2s;background:none}
+.task-check:hover{border-color:var(--accent)}
+.task-check.checked{background:var(--green);border-color:var(--green)}
+.task-check.checked::after{content:'\2713';color:#fff;font-size:12px;font-weight:700}
+.task-text{font-size:13px;line-height:1.5;flex:1}
+.task-text.done{color:var(--muted);text-decoration:line-through}
+.task-link{background:rgba(108,99,255,.1);color:var(--accent);border:none;border-radius:8px;padding:5px 12px;font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.task-link:hover{background:rgba(108,99,255,.2)}
+.glossary-live{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--cyan);white-space:nowrap;flex-shrink:0}
+.batch-footer{margin-top:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.related-label{font-size:11px;color:var(--muted)}
+.related-link{font-size:11px;color:var(--accent);cursor:pointer;text-decoration:none;transition:color .2s}
+.related-link:hover{color:var(--cyan)}
+
+/* Recommendations */
+.reco-section{max-width:900px;margin:0 auto 40px;padding:0 24px}
+.reco-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-top:16px}
+.reco-title{font-size:15px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.reco-group{margin-bottom:16px}
+.reco-group:last-child{margin-bottom:0}
+.reco-group-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.reco-item{font-size:13px;padding:6px 0;display:flex;align-items:center;gap:8px}
+.reco-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.reco-item .dot-red{background:var(--red)}
+.reco-item .dot-yellow{background:var(--yellow)}
+.reco-item .dot-orange{background:var(--orange)}
+.reco-link{color:var(--accent);cursor:pointer;text-decoration:none}
+.reco-link:hover{text-decoration:underline}
+
+/* Exam Date Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(4px);z-index:100;display:none;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:90%;max-width:380px;animation:fadeUp .3s ease}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:16px}
+.modal input[type="date"]{width:100%;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Outfit',sans-serif;font-size:14px;margin-bottom:16px}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end}
+.modal-btns button{padding:10px 20px;border-radius:10px;border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.modal-btns .btn-primary{background:var(--accent);color:#fff}
+.modal-btns .btn-primary:hover{filter:brightness(1.15)}
+.modal-btns .btn-secondary{background:none;border:1px solid var(--border);color:var(--muted)}
+.modal-btns .btn-secondary:hover{border-color:var(--text);color:var(--text)}
+
+/* Confetti */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:200;overflow:hidden}
+.confetti-piece{position:absolute;width:10px;height:10px;top:-10px;animation:confettiFall 3s ease-out forwards}
+@keyframes confettiFall{0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}100%{transform:translateY(100vh) rotate(720deg) scale(0);opacity:0}}
+
+/* Floating buttons */
+.fab-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:18px;cursor:pointer;transition:all .2s;box-shadow:0 4px 16px rgba(108,99,255,.3);z-index:40;display:none;align-items:center;justify-content:center}
+.fab-top.show{display:flex}
+.fab-top:hover{transform:scale(1.1)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .5s ease both}
+
+/* Responsive */
+@media(max-width:700px){
+  .hero-stats{grid-template-columns:repeat(2,1fr)}
+  .timeline{grid-template-columns:repeat(2,1fr)}
+  .next-batch{flex-direction:column;text-align:center}
+  .batch-header{padding:12px 14px;gap:10px}
+  .batch-meta{gap:6px}
+  .batch-progress-mini{margin-left:0}
+  .reco-section,.batches-section,.timeline-section{padding:0 14px}
+  .hero{padding:24px 14px}
+  .countdown-banner{flex-direction:column;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="nav-header">
+  <a href="index.html">← Übersicht</a>
+  <h1>LERN-NAVIGATOR</h1>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-stats" id="hero-stats"></div>
+  <div class="next-batch" id="next-batch" onclick="goToNextBatch()"></div>
+  <div id="countdown-container"></div>
+</section>
+
+<!-- Phase Timeline -->
+<section class="timeline-section fade-up">
+  <div class="timeline-title">Phasen-Fortschritt</div>
+  <div class="timeline" id="timeline"></div>
+</section>
+
+<!-- Batches -->
+<section class="batches-section" id="batches-section"></section>
+
+<!-- Recommendations -->
+<section class="reco-section fade-up">
+  <div class="reco-panel" id="reco-panel"></div>
+</section>
+
+<!-- Exam Date Modal -->
+<div class="modal-overlay" id="exam-modal">
+  <div class="modal">
+    <h3>Zieldatum festlegen</h3>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:14px">Wann ist deine Prüfung? Du kannst das Datum jederzeit ändern oder entfernen.</p>
+    <input type="date" id="exam-date-input">
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeExamModal()">Abbrechen</button>
+      <button class="btn-secondary" onclick="clearExamDate()" id="btn-clear-date" style="display:none">Entfernen</button>
+      <button class="btn-primary" onclick="saveExamDate()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating scroll-to-top -->
+<button class="fab-top" id="fab-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- Confetti container -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<script>
+// =====================================================
+// DATA: 25 Lernpakete in 4 Phasen
+// =====================================================
+const PHASES = [
+  { id: 1, name: 'Grundlagen', color: 'var(--green)' },
+  { id: 2, name: 'Kernthemen', color: 'var(--cyan)' },
+  { id: 3, name: 'Fortgeschritten', color: 'var(--orange)' },
+  { id: 4, name: 'Prüfungsvorbereitung', color: 'var(--red)' }
+];
+
+const BATCHES = [
+  // ===== PHASE 1: Grundlagen =====
+  {
+    id: 1, title: 'OSI & TCP/IP Modelle', subject: 'ITI21', phase: 1, priority: 3,
+    trainer: 'osi-tcpip.html', glossaryKey: 'glossary-osi-tcpip', related: [3, 17],
+    tasks: [
+      { text: 'OSI & TCP/IP Trainer komplett durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Alle 7 OSI-Schichten benennen und beschreiben', type: 'exercise' },
+      { text: 'TCP/IP-Modell den OSI-Schichten zuordnen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 2, title: 'EVA-Prinzip & Algorithmen', subject: 'GDI01', phase: 1, priority: 0,
+    trainer: 'eva-algo-kontroll.html', glossaryKey: 'glossary-eva-algo', related: [10],
+    tasks: [
+      { text: 'EVA & Algorithmen Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Kontrollstrukturen (Sequenz, Selektion, Iteration) erklären', type: 'exercise' },
+      { text: 'Einen Algorithmus als Pseudocode/Struktogramm darstellen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 3, title: 'Netzklassifikation & Vermittlung', subject: 'ITI21', phase: 1, priority: 1,
+    trainer: 'netz-vermittlung.html', glossaryKey: 'glossary-netz-vermittlung', related: [1, 9],
+    tasks: [
+      { text: 'Netz-Vermittlung Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'LAN/MAN/WAN sicher unterscheiden', type: 'exercise' },
+      { text: 'Leitungs- vs. Paketvermittlung erklären', type: 'exercise' }
+    ]
+  },
+  {
+    id: 4, title: 'Zahlensysteme & Dualzahlen', subject: 'GDI01', phase: 1, priority: 3,
+    trainer: 'dualzahlen-trainer.html', glossaryKey: 'glossary-dualzahlen', related: [6],
+    tasks: [
+      { text: 'Dualzahlen-Trainer komplett durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: '10 Umrechnungen Dez↔Dual↔Hex fehlerfrei', type: 'exercise' },
+      { text: 'Zweierkomplement-Darstellung verstehen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 5, title: 'Entropie & Informationsgehalt', subject: 'ITI22', phase: 1, priority: 3,
+    trainer: 'shannon-trainer.html', glossaryKey: 'glossary-shannon', related: [7],
+    tasks: [
+      { text: 'Shannon/Entropie-Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: '5 Entropie-Berechnungen fehlerfrei lösen', type: 'exercise' },
+      { text: 'Informationsgehalt-Formel sicher anwenden', type: 'exercise' }
+    ]
+  },
+  {
+    id: 6, title: 'Logik & Addierer', subject: 'GDI01', phase: 1, priority: 2,
+    trainer: 'logik-addierer.html', glossaryKey: 'glossary-logik-addierer', related: [4],
+    tasks: [
+      { text: 'Logik-Addierer Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Wahrheitstabellen für AND, OR, NOT, XOR erstellen', type: 'exercise' },
+      { text: 'Halb- und Volladdierer erklären', type: 'exercise' }
+    ]
+  },
+  {
+    id: 7, title: 'Nyquist & Shannon-Hartley', subject: 'ITI22', phase: 1, priority: 3,
+    trainer: 'nyquist-shannon.html', glossaryKey: 'glossary-nyquist-shannon', related: [5],
+    tasks: [
+      { text: 'Nyquist-Shannon Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Nyquist-Formel und Shannon-Hartley anwenden', type: 'exercise' },
+      { text: 'Abtasttheorem erklären und berechnen', type: 'exercise' }
+    ]
+  },
+  // ===== PHASE 2: Kernthemen =====
+  {
+    id: 8, title: 'Datenstrukturen', subject: 'TGI01', phase: 2, priority: 3,
+    trainer: 'datenstrukturen.html', glossaryKey: 'glossary-datenstrukturen', related: [10, 12],
+    tasks: [
+      { text: 'Datenstrukturen-Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Stack/Queue Operationen sicher durchführen', type: 'exercise' },
+      { text: 'Binärbaum-Traversierungen (In/Pre/Post) erklären', type: 'exercise' }
+    ]
+  },
+  {
+    id: 9, title: 'Ethernet & Übertragungsmedien', subject: 'ITI23', phase: 2, priority: 2,
+    trainer: 'medien-ethernet.html', glossaryKey: 'glossary-medien-ethernet', related: [3, 21],
+    tasks: [
+      { text: 'Medien-Ethernet Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Ethernet-Frame-Aufbau beschreiben', type: 'exercise' },
+      { text: 'Kupfer vs. Glasfaser vs. Funk vergleichen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 10, title: 'Einfache Sortieralgorithmen', subject: 'TGI01', phase: 2, priority: 2,
+    trainer: 'sortier-trainer.html', glossaryKey: 'glossary-sortier', related: [2, 12, 18],
+    tasks: [
+      { text: 'Sortier-Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Bubble, Selection, Insertion Sort per Hand ausführen', type: 'exercise' },
+      { text: 'Best/Worst Case und Stabilität der 3 Algorithmen kennen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 11, title: 'Subnetting & CIDR', subject: 'ITI24', phase: 2, priority: 3,
+    trainer: 'subnetting-trainer.html', glossaryKey: 'glossary-subnetting', related: [1, 17],
+    tasks: [
+      { text: 'Subnetting-Trainer komplett durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: '5 Subnetting-Aufgaben fehlerfrei lösen', type: 'exercise' },
+      { text: 'CIDR-Notation sicher beherrschen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 12, title: 'Quick/Merge/HeapSort', subject: 'TGI02', phase: 2, priority: 3,
+    trainer: 'quickmergeheap-trainer.html', glossaryKey: 'glossary-quickmergeheap', related: [10, 18],
+    tasks: [
+      { text: 'QuickMergeHeap-Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Pivot-Auswahl und Partitionierung bei QuickSort', type: 'exercise' },
+      { text: 'MergeSort Divide-and-Conquer anwenden', type: 'exercise' }
+    ]
+  },
+  {
+    id: 13, title: 'Hashing & Kollisionen', subject: 'TGI02', phase: 2, priority: 2,
+    trainer: 'hashing-trainer.html', glossaryKey: 'glossary-hashing', related: [8],
+    tasks: [
+      { text: 'Hashing-Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Hashfunktion auf Beispieldaten anwenden', type: 'exercise' },
+      { text: 'Verkettung vs. offene Adressierung erklären', type: 'exercise' }
+    ]
+  },
+  {
+    id: 14, title: 'Formale Grammatiken & Chomsky', subject: 'TGI06', phase: 2, priority: 3,
+    trainer: 'grammatiken-chomsky.html', glossaryKey: 'glossary-grammatiken', related: [16, 20],
+    tasks: [
+      { text: 'Grammatiken-Chomsky Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Chomsky-Typ einer Grammatik bestimmen', type: 'exercise' },
+      { text: 'Reguläre vs. kontextfreie Grammatik unterscheiden', type: 'exercise' }
+    ]
+  },
+  // ===== PHASE 3: Fortgeschritten =====
+  {
+    id: 15, title: 'Switch, Router & VLAN', subject: 'ITI25', phase: 3, priority: 2,
+    trainer: 'switch-router-vlan.html', glossaryKey: 'glossary-switch-router-vlan', related: [1, 11],
+    tasks: [
+      { text: 'Switch-Router-VLAN Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'STP (Spanning Tree Protocol) verstehen', type: 'exercise' },
+      { text: 'VLAN-Konfiguration und Trunk-Ports erklären', type: 'exercise' }
+    ]
+  },
+  {
+    id: 16, title: 'DEA & NEA Konstruktion', subject: 'TGI06', phase: 3, priority: 3,
+    trainer: 'dea-nea-trainer.html', glossaryKey: 'glossary-dea-nea', related: [14, 20],
+    tasks: [
+      { text: 'DEA-NEA Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Einen DEA für eine gegebene Sprache konstruieren', type: 'exercise' },
+      { text: 'Einen NEA zeichnen und Akzeptanz prüfen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 17, title: 'TCP vs. UDP & Routing', subject: 'ITI24', phase: 3, priority: 3,
+    trainer: 'tcp-udp-routing.html', glossaryKey: 'glossary-tcp-udp-routing', related: [1, 11, 15],
+    tasks: [
+      { text: 'TCP-UDP-Routing Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'TCP-Handshake (SYN, SYN-ACK, ACK) erklären', type: 'exercise' },
+      { text: 'Routing-Tabelle lesen und nachvollziehen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 18, title: 'O-Notation & Komplexität', subject: 'TGI02', phase: 3, priority: 3,
+    trainer: 'o-notation-master.html', glossaryKey: 'glossary-o-notation', related: [10, 12],
+    tasks: [
+      { text: 'O-Notation Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: '5 Algorithmen korrekt in O-Notation einstufen', type: 'exercise' },
+      { text: 'Best/Average/Worst Case unterscheiden', type: 'exercise' }
+    ]
+  },
+  {
+    id: 19, title: 'Kryptographie & RSA', subject: 'ITI26', phase: 3, priority: 2,
+    trainer: 'kryptographie-rsa.html', glossaryKey: 'glossary-kryptographie', related: [4],
+    tasks: [
+      { text: 'Kryptographie-RSA Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'RSA-Schlüsselerzeugung Schritt für Schritt', type: 'exercise' },
+      { text: 'Symmetrisch vs. asymmetrisch vergleichen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 20, title: 'NEA→DEA & Regex', subject: 'TGI06', phase: 3, priority: 3,
+    trainer: 'nea-dea-regex.html', glossaryKey: 'glossary-nea-dea-regex', related: [14, 16],
+    tasks: [
+      { text: 'NEA-DEA-Regex Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'Potenzmengenkonstruktion NEA→DEA durchführen', type: 'exercise' },
+      { text: 'Regulären Ausdruck für eine Sprache erstellen', type: 'exercise' }
+    ]
+  },
+  {
+    id: 21, title: 'MAC, CSMA & WLAN', subject: 'ITI23', phase: 3, priority: 2,
+    trainer: 'mac-csma-wlan.html', glossaryKey: 'glossary-mac-csma-wlan', related: [9, 15],
+    tasks: [
+      { text: 'MAC-CSMA-WLAN Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'CSMA/CD vs. CSMA/CA erklären', type: 'exercise' },
+      { text: 'MAC-Adressformat und -Funktion beschreiben', type: 'exercise' }
+    ]
+  },
+  // ===== PHASE 4: Prüfungsvorbereitung =====
+  {
+    id: 22, title: 'Kellerautomaten & Turingmaschinen', subject: 'TGI07', phase: 4, priority: 2,
+    trainer: 'kellerautomat-turing.html', glossaryKey: 'glossary-kellerautomat-turing', related: [14, 16],
+    tasks: [
+      { text: 'Kellerautomat-Turing Trainer durcharbeiten', type: 'trainer' },
+      { text: 'Glossar: mind. 5 Begriffe auf Level 2+', type: 'glossary', threshold: 5 },
+      { text: 'PDA für eine kontextfreie Sprache erstellen', type: 'exercise' },
+      { text: 'Turingmaschinen-Konzept erklären', type: 'exercise' }
+    ]
+  },
+  {
+    id: 23, title: 'ITI-Leitfaden durcharbeiten', subject: 'ITI', phase: 4, priority: 3,
+    trainer: 'lernleitfaden-iti.html', glossaryKey: null, related: [24],
+    tasks: [
+      { text: 'Lernleitfaden ITI öffnen und lesen', type: 'trainer' },
+      { text: 'Alle Zusammenfassungen verstehen', type: 'exercise' },
+      { text: '15 Übungsaufgaben im Leitfaden lösen', type: 'exercise' },
+      { text: 'Formelsammlung durchgehen, Schwächen notieren', type: 'exercise' }
+    ]
+  },
+  {
+    id: 24, title: 'TGI-Leitfaden durcharbeiten', subject: 'TGI', phase: 4, priority: 3,
+    trainer: 'lernleitfaden-tgi.html', glossaryKey: null, related: [23],
+    tasks: [
+      { text: 'Lernleitfaden TGI öffnen und lesen', type: 'trainer' },
+      { text: 'Alle Zusammenfassungen verstehen', type: 'exercise' },
+      { text: '15 Übungsaufgaben im Leitfaden lösen', type: 'exercise' },
+      { text: 'Formelsammlung durchgehen, Schwächen notieren', type: 'exercise' }
+    ]
+  },
+  {
+    id: 25, title: 'Generalprobe & Schwächen', subject: 'Mix', phase: 4, priority: 3,
+    trainer: null, glossaryKey: null, related: [],
+    tasks: [
+      { text: 'Alle Glossare auf Level 2+ prüfen (Schwächen-Panel)', type: 'exercise' },
+      { text: 'Schwächste 5 Themen identifizieren und wiederholen', type: 'exercise' },
+      { text: 'Alle Trainer mit Höchster Priorität nochmals durchgehen', type: 'exercise' },
+      { text: 'Probeklausur simulieren (Timer: 90 Min)', type: 'exercise' }
+    ]
+  }
+];
+
+// =====================================================
+// STATE
+// =====================================================
+const state = {
+  tasks: {},
+  examDate: null,
+  streak: { current: 0, best: 0, lastDate: null },
+  expandedBatch: null
+};
+
+// =====================================================
+// LOAD / SAVE
+// =====================================================
+function loadState() {
+  // Load task states
+  BATCHES.forEach(b => {
+    b.tasks.forEach((_, i) => {
+      const v = localStorage.getItem('navigator-batch-' + b.id + '-task-' + i);
+      state.tasks[b.id + '-' + i] = v === '1';
+    });
+  });
+  // Load exam date
+  state.examDate = localStorage.getItem('navigator-exam-date') || null;
+  // Load streak
+  try {
+    const s = JSON.parse(localStorage.getItem('navigator-streak'));
+    if (s) state.streak = s;
+  } catch(e) {}
+}
+
+function saveTask(batchId, taskIdx, val) {
+  state.tasks[batchId + '-' + taskIdx] = val;
+  localStorage.setItem('navigator-batch-' + batchId + '-task-' + taskIdx, val ? '1' : '0');
+}
+
+function saveBatchDone(batchId) {
+  localStorage.setItem('navigator-batch-' + batchId + '-done-at', new Date().toISOString());
+}
+
+function saveStreak() {
+  localStorage.setItem('navigator-streak', JSON.stringify(state.streak));
+}
+
+// =====================================================
+// CALCULATIONS
+// =====================================================
+function getBatchProgress(id) {
+  const b = BATCHES.find(x => x.id === id);
+  let done = 0;
+  b.tasks.forEach((_, i) => { if (state.tasks[id + '-' + i]) done++; });
+  return { done, total: b.tasks.length, pct: Math.round(done / b.tasks.length * 100) };
+}
+
+function isBatchComplete(id) {
+  const b = BATCHES.find(x => x.id === id);
+  return b.tasks.every((_, i) => state.tasks[id + '-' + i]);
+}
+
+function isBatchStarted(id) {
+  const b = BATCHES.find(x => x.id === id);
+  return b.tasks.some((_, i) => state.tasks[id + '-' + i]);
+}
+
+function getPhaseProgress(phase) {
+  const phaseBatches = BATCHES.filter(b => b.phase === phase);
+  const done = phaseBatches.filter(b => isBatchComplete(b.id)).length;
+  return { done, total: phaseBatches.length };
+}
+
+function getTotalProgress() {
+  let done = 0, total = 0;
+  BATCHES.forEach(b => {
+    b.tasks.forEach((_, i) => {
+      total++;
+      if (state.tasks[b.id + '-' + i]) done++;
+    });
+  });
+  return { done, total, pct: total ? Math.round(done / total * 100) : 0 };
+}
+
+function getCompletedBatchCount() {
+  return BATCHES.filter(b => isBatchComplete(b.id)).length;
+}
+
+function getNextBatch() {
+  return BATCHES.find(b => !isBatchComplete(b.id));
+}
+
+// =====================================================
+// GLOSSARY READER
+// =====================================================
+function readGlossaryProgress(key) {
+  if (!key) return { total: 0, mastered: 0, terms: [] };
+  try {
+    const data = JSON.parse(localStorage.getItem(key) || '{}');
+    let total = 0, mastered = 0, terms = [];
+    for (const k in data) {
+      total++;
+      const val = data[k];
+      const level = typeof val === 'number' ? val : (val && typeof val.level === 'number' ? val.level : 0);
+      if (level >= 2) mastered++;
+      terms.push({ term: k, level });
+    }
+    return { total, mastered, terms };
+  } catch(e) { return { total: 0, mastered: 0, terms: [] }; }
+}
+
+// =====================================================
+// STREAK
+// =====================================================
+function updateStreak() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (state.streak.lastDate === today) return;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (state.streak.lastDate === yesterday) {
+    state.streak.current++;
+  } else {
+    state.streak.current = 1;
+  }
+  state.streak.lastDate = today;
+  if (state.streak.current > state.streak.best) state.streak.best = state.streak.current;
+  saveStreak();
+}
+
+function getStreakEmoji() {
+  const s = state.streak.current;
+  if (s >= 14) return '<span style="font-size:32px">🔥</span>';
+  if (s >= 8) return '<span style="font-size:26px">🔥</span>';
+  if (s >= 4) return '<span style="font-size:20px">🔥</span>';
+  if (s >= 1) return '<span style="font-size:16px">🔥</span>';
+  return '<span style="font-size:14px;opacity:.4">🔥</span>';
+}
+
+// =====================================================
+// RENDERING
+// =====================================================
+function renderAll() {
+  renderHero();
+  renderTimeline();
+  renderBatches();
+  renderRecommendations();
+}
+
+function renderHero() {
+  const total = getTotalProgress();
+  const completed = getCompletedBatchCount();
+  const streakVal = state.streak.current;
+  // Build ring SVG for progress
+  const ringPct = total.pct;
+  const circumference = 2 * Math.PI * 26;
+  const offset = circumference - (ringPct / 100) * circumference;
+
+  document.getElementById('hero-stats').innerHTML =
+    '<div class="stat-card">' +
+      '<div class="stat-ring">' +
+        '<svg width="60" height="60" viewBox="0 0 60 60">' +
+          '<circle cx="30" cy="30" r="26" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="5"/>' +
+          '<circle cx="30" cy="30" r="26" fill="none" stroke="url(#grad1)" stroke-width="5" stroke-linecap="round" ' +
+            'stroke-dasharray="' + circumference + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 30 30)"/>' +
+          '<defs><linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="var(--accent)"/><stop offset="100%" stop-color="var(--cyan)"/></linearGradient></defs>' +
+        '</svg>' +
+        '<div class="stat-ring-inner" style="position:absolute">' + ringPct + '%</div>' +
+      '</div>' +
+      '<div class="stat-label">Gesamt</div>' +
+    '</div>' +
+    '<div class="stat-card">' +
+      '<div class="stat-value">' + completed + '/25</div>' +
+      '<div class="stat-label">Pakete</div>' +
+    '</div>' +
+    '<div class="stat-card">' +
+      '<div class="stat-value">' + getStreakEmoji() + ' ' + streakVal + '</div>' +
+      '<div class="stat-label">Streak</div>' +
+    '</div>' +
+    '<div class="stat-card">' +
+      '<div class="stat-value" id="hero-countdown">–</div>' +
+      '<div class="stat-label">Tage übrig</div>' +
+    '</div>';
+
+  renderCountdown();
+
+  // Next batch
+  const next = getNextBatch();
+  const nb = document.getElementById('next-batch');
+  if (next) {
+    nb.style.display = 'flex';
+    nb.innerHTML =
+      '<div>' +
+        '<div class="next-label">Nächstes Paket: #' + next.id + '</div>' +
+        '<div class="next-title">' + next.title + '</div>' +
+      '</div>' +
+      '<button class="next-btn">START →</button>';
+  } else {
+    nb.innerHTML =
+      '<div>' +
+        '<div class="next-label">Alle Pakete abgeschlossen!</div>' +
+        '<div class="next-title">Du bist bereit für die Prüfung 🎉</div>' +
+      '</div>';
+  }
+}
+
+function renderCountdown() {
+  const container = document.getElementById('countdown-container');
+  const heroVal = document.getElementById('hero-countdown');
+  if (!state.examDate) {
+    container.innerHTML =
+      '<div class="countdown-banner">' +
+        '<div class="countdown-left">' +
+          '<div class="countdown-days" style="color:var(--muted)">⏱</div>' +
+          '<div class="countdown-info">Kein Zieldatum gesetzt</div>' +
+        '</div>' +
+        '<div class="countdown-actions"><button onclick="openExamModal()">Datum setzen</button></div>' +
+      '</div>';
+    if (heroVal) heroVal.textContent = '–';
+    return;
+  }
+  const now = new Date(); now.setHours(0,0,0,0);
+  const exam = new Date(state.examDate + 'T00:00:00');
+  const diff = Math.ceil((exam - now) / 86400000);
+  const openBatches = 25 - getCompletedBatchCount();
+  const perDay = diff > 0 ? (openBatches / diff).toFixed(1) : '∞';
+  const urgent = diff <= 7;
+
+  if (heroVal) {
+    heroVal.textContent = diff >= 0 ? diff : '0';
+    if (urgent && heroVal.closest) heroVal.style.color = 'var(--red)';
+  }
+
+  container.innerHTML =
+    '<div class="countdown-banner' + (urgent ? ' urgent' : '') + '">' +
+      '<div class="countdown-left">' +
+        '<div class="countdown-days" style="color:' + (urgent ? 'var(--red)' : 'var(--text)') + '">' + (diff >= 0 ? diff : 0) + ' Tage</div>' +
+        '<div class="countdown-info">' + openBatches + ' Pakete offen · ~' + perDay + ' Pakete/Tag nötig</div>' +
+      '</div>' +
+      '<div class="countdown-actions">' +
+        '<button onclick="openExamModal()">Ändern</button>' +
+      '</div>' +
+    '</div>';
+}
+
+function renderTimeline() {
+  const el = document.getElementById('timeline');
+  el.innerHTML = PHASES.map(p => {
+    const prog = getPhaseProgress(p.id);
+    const pct = prog.total ? Math.round(prog.done / prog.total * 100) : 0;
+    const currentPhase = getCurrentPhase();
+    return '<div class="tl-phase' + (p.id === currentPhase ? ' active' : '') + '" onclick="scrollToPhase(' + p.id + ')">' +
+      '<div class="tl-phase-label">Phase ' + p.id + '</div>' +
+      '<div class="tl-phase-name">' + p.name + '</div>' +
+      '<div class="tl-bar"><div class="tl-bar-fill" style="width:' + pct + '%"></div></div>' +
+      '<div class="tl-count">' + prog.done + '/' + prog.total + (prog.done === prog.total && prog.total > 0 ? ' ✓' : '') + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function getCurrentPhase() {
+  for (let p = 1; p <= 4; p++) {
+    const prog = getPhaseProgress(p);
+    if (prog.done < prog.total) return p;
+  }
+  return 4;
+}
+
+function renderBatches() {
+  const section = document.getElementById('batches-section');
+  let html = '';
+  let currentPhase = 0;
+
+  BATCHES.forEach(b => {
+    if (b.phase !== currentPhase) {
+      currentPhase = b.phase;
+      const p = PHASES.find(x => x.id === currentPhase);
+      html += '<div class="phase-header" id="phase-' + currentPhase + '">' +
+        '<span class="ph-num ph-' + currentPhase + '">PHASE ' + currentPhase + '</span>' +
+        p.name +
+      '</div>';
+    }
+
+    const prog = getBatchProgress(b.id);
+    const complete = isBatchComplete(b.id);
+    const started = isBatchStarted(b.id);
+    const status = complete ? 'done' : started ? 'wip' : 'open';
+    const expanded = state.expandedBatch === b.id;
+    const prioLabels = ['Basis', 'Mittel', 'Hoch', 'Höchste'];
+    const prioColors = ['var(--muted)', 'var(--yellow)', 'var(--orange)', 'var(--red)'];
+    const subjectClass = b.subject.startsWith('ITI') ? 'iti' : b.subject.startsWith('TGI') ? 'tgi' : b.subject.startsWith('GDI') ? 'gdi' : 'mix';
+
+    html += '<div class="batch-card status-' + status + (expanded ? ' expanded' : '') + '" id="batch-' + b.id + '">' +
+      '<div class="batch-header" onclick="toggleBatch(' + b.id + ')">' +
+        '<div class="batch-num">#' + b.id + '</div>' +
+        '<div class="batch-info">' +
+          '<div class="batch-title">' + (complete ? '✓ ' : '') + b.title + '</div>' +
+          '<div class="batch-meta">' +
+            '<span class="badge badge-' + subjectClass + '">' + b.subject + '</span>' +
+            '<span class="prio-dots">' + Array.from({length:3}, (_, i) =>
+              '<span class="prio-dot" style="background:' + (i < b.priority ? prioColors[b.priority] : 'rgba(255,255,255,.08)') + '"></span>'
+            ).join('') + '</span>' +
+            '<span style="font-size:10px;color:' + prioColors[b.priority] + '">' + prioLabels[b.priority] + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<span class="batch-progress-mini">' + prog.done + '/' + prog.total + '</span>' +
+        '<span class="batch-chevron">▼</span>' +
+      '</div>' +
+      '<div class="batch-body">' +
+        '<div class="batch-content">' +
+          renderTaskList(b) +
+          renderBatchFooter(b) +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  });
+
+  section.innerHTML = html;
+}
+
+function renderTaskList(batch) {
+  let html = '<ul class="task-list">';
+  batch.tasks.forEach((t, i) => {
+    const checked = state.tasks[batch.id + '-' + i];
+    let extra = '';
+    if (t.type === 'trainer' && batch.trainer) {
+      extra = '<a class="task-link" href="' + batch.trainer + '?nav=' + batch.id + '" target="_blank">Öffnen</a>';
+    }
+    if (t.type === 'glossary' && batch.glossaryKey) {
+      const gp = readGlossaryProgress(batch.glossaryKey);
+      const color = gp.mastered >= (t.threshold || 5) ? 'var(--green)' : 'var(--cyan)';
+      extra = '<span class="glossary-live" style="color:' + color + '">' + gp.mastered + '/' + gp.total + '</span>';
+    }
+    html += '<li class="task-item">' +
+      '<div class="task-check' + (checked ? ' checked' : '') + '" onclick="checkTask(' + batch.id + ',' + i + ')"></div>' +
+      '<span class="task-text' + (checked ? ' done' : '') + '">' + t.text + '</span>' +
+      extra +
+    '</li>';
+  });
+  html += '</ul>';
+  return html;
+}
+
+function renderBatchFooter(batch) {
+  if (!batch.related || batch.related.length === 0) return '';
+  const links = batch.related.map(rid => {
+    const rb = BATCHES.find(x => x.id === rid);
+    return '<a class="related-link" onclick="goToBatch(' + rid + ')">#' + rid + ' ' + rb.title + '</a>';
+  }).join(', ');
+  return '<div class="batch-footer"><span class="related-label">Verwandt:</span> ' + links + '</div>';
+}
+
+function renderRecommendations() {
+  const panel = document.getElementById('reco-panel');
+  let html = '<div class="reco-title">🎯 Empfohlen für dich</div>';
+
+  // 1. Weak glossary terms (level < 2)
+  let weakTerms = [];
+  BATCHES.forEach(b => {
+    if (!b.glossaryKey) return;
+    const gp = readGlossaryProgress(b.glossaryKey);
+    gp.terms.forEach(t => {
+      if (t.level < 2) weakTerms.push({ term: t.term, level: t.level, batch: b });
+    });
+  });
+  weakTerms.sort((a, b) => a.level - b.level);
+  const showWeak = weakTerms.slice(0, 6);
+
+  if (showWeak.length > 0) {
+    html += '<div class="reco-group">' +
+      '<div class="reco-group-title">⚠ Schwächen (Glossar &lt; Level 2)</div>';
+    showWeak.forEach(w => {
+      html += '<div class="reco-item">' +
+        '<span class="dot dot-red"></span>' +
+        '<span>' + w.term + ' <span style="color:var(--muted)">(' + w.batch.title + ')</span> – Level ' + w.level + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  // 2. Review (completed > 7 days ago)
+  let reviewBatches = [];
+  BATCHES.forEach(b => {
+    if (!isBatchComplete(b.id)) return;
+    const doneAt = localStorage.getItem('navigator-batch-' + b.id + '-done-at');
+    if (!doneAt) return;
+    const daysAgo = Math.floor((Date.now() - new Date(doneAt).getTime()) / 86400000);
+    if (daysAgo >= 7) reviewBatches.push({ batch: b, daysAgo });
+  });
+  reviewBatches.sort((a, b) => b.daysAgo - a.daysAgo);
+  const showReview = reviewBatches.slice(0, 4);
+
+  if (showReview.length > 0) {
+    html += '<div class="reco-group">' +
+      '<div class="reco-group-title">🔄 Wiederholen (zuletzt vor &gt;7 Tagen)</div>';
+    showReview.forEach(r => {
+      html += '<div class="reco-item">' +
+        '<span class="dot dot-yellow"></span>' +
+        '<a class="reco-link" onclick="goToBatch(' + r.batch.id + ')">Paket #' + r.batch.id + ' (' + r.batch.title + ')</a>' +
+        ' <span style="color:var(--muted)">– vor ' + r.daysAgo + ' Tagen</span>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  // 3. Catch up (highest priority, still open)
+  let catchUp = BATCHES.filter(b => b.priority === 3 && !isBatchComplete(b.id));
+  const showCatch = catchUp.slice(0, 4);
+
+  if (showCatch.length > 0) {
+    html += '<div class="reco-group">' +
+      '<div class="reco-group-title">🏃 Aufholen (Höchste Priorität, offen)</div>';
+    showCatch.forEach(b => {
+      html += '<div class="reco-item">' +
+        '<span class="dot dot-orange"></span>' +
+        '<a class="reco-link" onclick="goToBatch(' + b.id + ')">Paket #' + b.id + ' – ' + b.title + '</a>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  if (!showWeak.length && !showReview.length && !showCatch.length) {
+    html += '<div style="color:var(--muted);font-size:13px;padding:12px 0">Alles erledigt – großartig! 🎉</div>';
+  }
+
+  panel.innerHTML = html;
+}
+
+// =====================================================
+// INTERACTIONS
+// =====================================================
+function toggleBatch(id) {
+  if (state.expandedBatch === id) {
+    state.expandedBatch = null;
+  } else {
+    state.expandedBatch = id;
+  }
+  renderBatches();
+  if (state.expandedBatch) {
+    setTimeout(() => {
+      const el = document.getElementById('batch-' + id);
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 50);
+  }
+}
+
+function checkTask(batchId, taskIdx) {
+  const key = batchId + '-' + taskIdx;
+  const newVal = !state.tasks[key];
+  saveTask(batchId, taskIdx, newVal);
+
+  if (newVal) updateStreak();
+
+  const wasComplete = isBatchComplete(batchId);
+
+  renderAll();
+
+  if (wasComplete && newVal) {
+    saveBatchDone(batchId);
+    fireConfetti();
+    checkMilestones(batchId);
+  }
+}
+
+function goToBatch(id) {
+  state.expandedBatch = id;
+  renderBatches();
+  setTimeout(() => {
+    const el = document.getElementById('batch-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+function goToNextBatch() {
+  const next = getNextBatch();
+  if (next) goToBatch(next.id);
+}
+
+function scrollToPhase(phase) {
+  const el = document.getElementById('phase-' + phase);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// =====================================================
+// EXAM DATE
+// =====================================================
+function openExamModal() {
+  const modal = document.getElementById('exam-modal');
+  const input = document.getElementById('exam-date-input');
+  const clearBtn = document.getElementById('btn-clear-date');
+  if (state.examDate) {
+    input.value = state.examDate;
+    clearBtn.style.display = 'inline-block';
+  } else {
+    input.value = '';
+    clearBtn.style.display = 'none';
+  }
+  modal.classList.add('show');
+}
+
+function closeExamModal() {
+  document.getElementById('exam-modal').classList.remove('show');
+}
+
+function saveExamDate() {
+  const val = document.getElementById('exam-date-input').value;
+  if (!val) return;
+  state.examDate = val;
+  localStorage.setItem('navigator-exam-date', val);
+  closeExamModal();
+  renderHero();
+}
+
+function clearExamDate() {
+  state.examDate = null;
+  localStorage.removeItem('navigator-exam-date');
+  closeExamModal();
+  renderHero();
+}
+
+// Close modal on overlay click
+document.getElementById('exam-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeExamModal();
+});
+
+// =====================================================
+// CONFETTI
+// =====================================================
+function fireConfetti() {
+  const container = document.getElementById('confetti-container');
+  const colors = ['#6c63ff', '#38bdf8', '#51cf66', '#fbbf24', '#ff6b6b', '#a78bfa', '#fb923c'];
+  const shapes = ['square', 'circle'];
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const size = 6 + Math.random() * 8;
+    const shape = shapes[Math.floor(Math.random() * shapes.length)];
+    piece.style.cssText =
+      'left:' + (Math.random() * 100) + '%;' +
+      'width:' + size + 'px;height:' + size + 'px;' +
+      'background:' + color + ';' +
+      'border-radius:' + (shape === 'circle' ? '50%' : '2px') + ';' +
+      'animation-delay:' + (Math.random() * 0.8) + 's;' +
+      'animation-duration:' + (2 + Math.random() * 2) + 's;';
+    container.appendChild(piece);
+  }
+  setTimeout(() => { container.innerHTML = ''; }, 4000);
+}
+
+// =====================================================
+// MILESTONES
+// =====================================================
+function checkMilestones(batchId) {
+  const completed = getCompletedBatchCount();
+  const batch = BATCHES.find(b => b.id === batchId);
+  const phase = batch.phase;
+  const phaseProgress = getPhaseProgress(phase);
+
+  // Phase complete?
+  if (phaseProgress.done === phaseProgress.total) {
+    setTimeout(() => {
+      showMilestone('Phase ' + phase + ' geschafft! 🏆');
+    }, 1500);
+  }
+  // Halfway?
+  if (completed === 13) {
+    setTimeout(() => { showMilestone('Halbzeit! 🎯'); }, 1500);
+  }
+  // All done?
+  if (completed === 25) {
+    setTimeout(() => { showMilestone('Alle Pakete abgeschlossen! 🎓🎉'); }, 1500);
+  }
+}
+
+function showMilestone(text) {
+  const div = document.createElement('div');
+  div.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);' +
+    'background:var(--surface);border:2px solid var(--accent);border-radius:20px;' +
+    'padding:28px 40px;font-size:20px;font-weight:700;text-align:center;z-index:300;' +
+    'animation:fadeUp .4s ease;box-shadow:0 16px 64px rgba(108,99,255,.3)';
+  div.textContent = text;
+  document.body.appendChild(div);
+  setTimeout(() => {
+    div.style.transition = 'opacity .5s';
+    div.style.opacity = '0';
+    setTimeout(() => div.remove(), 500);
+  }, 2500);
+}
+
+// =====================================================
+// SCROLL BUTTON
+// =====================================================
+window.addEventListener('scroll', () => {
+  const fab = document.getElementById('fab-top');
+  if (window.scrollY > 400) fab.classList.add('show');
+  else fab.classList.remove('show');
+});
+
+// =====================================================
+// INIT
+// =====================================================
+function init() {
+  loadState();
+  // Auto-expand current batch
+  const next = getNextBatch();
+  if (next) state.expandedBatch = next.id;
+  renderAll();
+}
+
+init();
+</script>
+</body>
+</html>

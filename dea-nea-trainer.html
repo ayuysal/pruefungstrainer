@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEA & NEA Automaten Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}.card.c5::before{background:var(--yellow)}.card.c6::before{background:var(--orange)}
+
+.calc-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.calc-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:end}
+.calc-row label{font-size:12px;font-weight:600;display:block;margin-bottom:4px}
+.calc-row input,.calc-row select{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s;width:220px}
+.calc-row input:focus,.calc-row select:focus{border-color:var(--accent)}
+.calc-btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;background:var(--accent);color:#fff;transition:all .25s}
+.calc-btn:hover{background:#5a52e0;transform:translateY(-1px)}
+
+/* Automaton diagram */
+.automaton-visual{margin:16px 0;padding:20px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:12px;overflow-x:auto}
+.automaton-svg{display:block;margin:0 auto}
+.state-table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px;margin-top:12px}
+.state-table th{padding:12px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+.state-table td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:400;color:var(--muted);text-align:center;font-family:'JetBrains Mono',monospace;font-size:13px}
+.state-table td:first-child{font-weight:600;color:var(--text)}
+.state-table tr:last-child td{border-bottom:none}
+.state-table td.active-cell{background:rgba(108,99,255,.15);color:var(--accent)}
+.state-table td.accept-cell{background:rgba(81,207,102,.1);color:var(--green)}
+.state-table td.reject-cell{background:rgba(255,107,107,.1);color:var(--red)}
+
+/* Simulator */
+.sim-steps{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0;align-items:center}
+.sim-step{font-family:'JetBrains Mono',monospace;font-size:13px;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);transition:all .3s}
+.sim-step.current{background:rgba(108,99,255,.2);border-color:var(--accent);color:var(--accent)}
+.sim-step.done{color:var(--muted);opacity:.6}
+.sim-step.accepted{background:rgba(81,207,102,.15);border-color:var(--green);color:var(--green)}
+.sim-step.rejected{background:rgba(255,107,107,.15);border-color:var(--red);color:var(--red)}
+.sim-arrow{color:var(--muted);font-size:16px}
+.word-display{font-family:'JetBrains Mono',monospace;font-size:16px;display:flex;gap:2px;margin:12px 0;flex-wrap:wrap}
+.word-char{padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:rgba(255,255,255,.03);transition:all .3s}
+.word-char.read{background:rgba(108,99,255,.1);border-color:var(--accent);color:var(--accent)}
+.word-char.current-char{background:rgba(251,191,36,.15);border-color:var(--yellow);color:var(--yellow)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:16px}
+.result-item{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px}
+.result-item .rl{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.result-item .rv{font-family:'JetBrains Mono',monospace;font-size:15px;color:var(--cyan);font-weight:600}
+
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input,.input-row select{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none;white-space:pre-wrap}
+.solution-box.show{display:block}
+
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+.option-btn{font-family:'JetBrains Mono',monospace;font-size:13px;padding:14px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:all .25s;text-align:left}
+.option-btn:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.06)}
+.option-btn.selected{border-color:var(--accent);background:rgba(108,99,255,.1)}
+.option-btn.correct-choice{border-color:var(--green);background:rgba(81,207,102,.1);color:var(--green)}
+.option-btn.wrong-choice{border-color:var(--red);background:rgba(255,107,107,.1);color:var(--red)}
+
+.checkbox-grid{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.chk-btn{font-family:'JetBrains Mono',monospace;font-size:14px;padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:all .25s}
+.chk-btn:hover{border-color:rgba(255,255,255,.15)}
+.chk-btn.selected{border-color:var(--accent);background:rgba(108,99,255,.15);color:var(--accent)}
+.chk-btn.correct-choice{border-color:var(--green);background:rgba(81,207,102,.1);color:var(--green)}
+.chk-btn.wrong-choice{border-color:var(--red);background:rgba(255,107,107,.1);color:var(--red)}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.options-grid{grid-template-columns:1fr}}
+
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zur&uuml;ck zur &Uuml;bersicht</a>
+<header>
+<div class="tag">TGI06 &middot; Formale Sprachen</div>
+<h1>DEA &amp; NEA Automaten</h1>
+<p>Deterministische und Nichtdeterministische Endliche Automaten verstehen, simulieren und &uuml;ben</p>
+</header>
+
+<!-- REFERENCE SECTION -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#x1F4DA;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#x2699;&#xFE0F; DEA &ndash; Deterministischer Endlicher Automat</h3>
+<p><strong>5-Tupel:</strong> A = (Q, &Sigma;, &delta;, q&#x2080;, F)</p>
+<ul><li><strong>Q</strong> &ndash; endliche Zustandsmenge</li><li><strong>&Sigma;</strong> &ndash; Eingabealphabet</li><li><strong>&delta;: Q &times; &Sigma; &rarr; Q</strong> &ndash; &Uuml;bergangsfunktion (total, genau ein Folgezustand)</li><li><strong>q&#x2080;</strong> &ndash; Startzustand</li><li><strong>F &sube; Q</strong> &ndash; Menge der Endzust&auml;nde</li></ul>
+<p style="margin-top:8px">F&uuml;r jedes Symbol gibt es <strong>genau einen</strong> &Uuml;bergang pro Zustand.</p></div>
+
+<div class="card c2"><h3>&#x1F500; NEA &ndash; Nichtdeterministischer Endlicher Automat</h3>
+<p><strong>5-Tupel:</strong> A = (Q, &Sigma;, &delta;, q&#x2080;, F)</p>
+<ul><li><strong>&delta;: Q &times; (&Sigma; &cup; {&epsilon;}) &rarr; P(Q)</strong></li><li>Mehrere oder <strong>keine</strong> &Uuml;berg&auml;nge pro Symbol m&ouml;glich</li><li><strong>&epsilon;-&Uuml;berg&auml;nge</strong>: Zustandswechsel ohne Eingabe</li><li>Ergebnis von &delta; ist eine <strong>Menge</strong> von Zust&auml;nden</li></ul></div>
+
+<div class="card c3"><h3>&#x1F4CB; Zustandstabelle</h3>
+<p>Zeilen = Zust&auml;nde, Spalten = Eingabesymbole. Jede Zelle enth&auml;lt den Folgezustand.</p>
+<ul><li><strong>&rarr;</strong> markiert den Startzustand</li><li><strong>*</strong> markiert Endzust&auml;nde</li><li>DEA: genau ein Eintrag pro Zelle</li><li>NEA: Mengen von Zust&auml;nden oder &empty;</li></ul></div>
+
+<div class="card c4"><h3>&#x1F3A8; Zustandsdiagramm</h3>
+<p>Graphische Darstellung des Automaten:</p>
+<ul><li><strong>Kreise</strong> = Zust&auml;nde</li><li><strong>Doppelkreis</strong> = Endzustand</li><li><strong>Pfeil von au&szlig;en</strong> = Startzustand</li><li><strong>Beschriftete Kanten</strong> = &Uuml;berg&auml;nge mit Eingabesymbol</li></ul></div>
+
+<div class="card c5"><h3>&#x2194;&#xFE0F; DEA vs. NEA &ndash; Unterschiede</h3>
+<ul><li>DEA: <strong>genau ein</strong> Folgezustand pro (Zustand, Symbol)</li><li>NEA: <strong>mehrere, keiner</strong> oder &epsilon;-&Uuml;berg&auml;nge</li><li>Jeder NEA kann in einen DEA umgewandelt werden (Potenzmengenkonstruktion)</li><li>NEA k&ouml;nnen kompakter sein, DEA sind einfacher zu implementieren</li></ul></div>
+
+<div class="card c6"><h3>&#x2705; Akzeptierte Sprache</h3>
+<p><strong>DEA:</strong> Ein Wort w wird akzeptiert, wenn der <strong>eindeutige Pfad</strong> von q&#x2080; mit w in einem Endzustand endet.</p>
+<p><strong>NEA:</strong> Ein Wort w wird akzeptiert, wenn <strong>mindestens ein m&ouml;glicher Pfad</strong> von q&#x2080; mit w in einem Endzustand endet.</p>
+<p style="margin-top:6px">L(A) = {w &isin; &Sigma;* | &delta;*(q&#x2080;, w) &cap; F &ne; &empty;}</p></div>
+</div>
+
+<!-- SIMULATOR SECTION -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#x25B6;&#xFE0F;</div><h2>Interaktiver Simulator</h2></div>
+<div class="calc-wrap">
+<div class="calc-row">
+<div><label>Automat w&auml;hlen</label>
+<select id="sim-select" onchange="loadAutomaton()">
+<option value="0">Endet auf &quot;ab&quot; (&Sigma;={a,b})</option>
+<option value="1">Gerade Anzahl b (&Sigma;={a,b})</option>
+<option value="2">Enth&auml;lt &quot;ba&quot; (&Sigma;={a,b})</option>
+<option value="3">L&auml;nge mod 3 = 0 (&Sigma;={a,b})</option>
+<option value="4">Beginnt mit &quot;ab&quot; (&Sigma;={a,b})</option>
+</select></div>
+<div><label>Eingabewort</label><input type="text" id="sim-word" placeholder="z.B. aabab" value="aabab"></div>
+<button class="calc-btn" onclick="startSimulation()">Simulieren</button>
+</div>
+<div id="sim-description" style="font-size:13px;color:var(--muted);margin-bottom:12px"></div>
+<div id="sim-diagram"></div>
+<div id="sim-table-area"></div>
+<div id="sim-word-display"></div>
+<div id="sim-steps-area"></div>
+<div id="sim-result" style="margin-top:12px;font-size:16px;font-weight:700"></div>
+</div>
+
+<!-- EXERCISE SECTION -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#x1F3CB;&#xFE0F;</div><h2>&Uuml;bungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="wort" onclick="setMode('wort')">Wort pr&uuml;fen</div>
+<div class="tab" data-mode="tabelle" onclick="setMode('tabelle')">Zustandstabelle</div>
+<div class="tab" data-mode="deanea" onclick="setMode('deanea')">DEA vs NEA</div>
+<div class="tab" data-mode="endzustand" onclick="setMode('endzustand')">Endzust&auml;nde</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- EXAMPLE AUTOMATA -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#x1F4CA;</div><h2>Beispielautomaten</h2></div>
+<div id="examples-area"></div>
+
+<!-- GLOSSARY SECTION -->
+<div class="glossary-section" id="glossary-section">
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#x1F4D6;</div><h2>Fachbegriffe lernen</h2></div>
+<div class="glossary-progress-bar">
+<div class="gp-text">Fortschritt</div>
+<div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+<div class="gp-count" id="glossary-count">0 / 8 gemeistert</div>
+</div>
+<div class="glossary-grid" id="glossary-grid"></div>
+<div class="glossary-learn" id="glossary-learn"></div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary">
+<div class="summary-card"><h4>&#x1F4A1; Merke</h4><p>Ein DEA hat f&uuml;r jede Kombination (Zustand, Symbol) genau einen Folgezustand. Fehlt ein &Uuml;bergang, ist es kein vollst&auml;ndiger DEA &ndash; erg&auml;nze einen Fangzustand (Fehlerzustand).</p></div>
+<div class="summary-card"><h4>&#x1F3AF; Pr&uuml;fungstipp</h4><p>Zeichne zuerst das Zustandsdiagramm, dann leite die Tabelle ab. &Uuml;berlege dir: Welche &bdquo;Information&ldquo; muss sich der Automat merken? Jede Information = ein Zustand.</p></div>
+<div class="summary-card"><h4>&#x1F9E9; Konstruktionsstrategie</h4><p>F&uuml;r &bdquo;endet auf XY&ldquo;: Zust&auml;nde repr&auml;sentieren, wie viel vom Suffix bereits gelesen wurde. F&uuml;r &bdquo;gerade/ungerade&ldquo;: Zwei Zust&auml;nde, die zwischen gerade und ungerade wechseln.</p></div>
+<div class="summary-card"><h4>&#x1F504; NEA &rarr; DEA</h4><p>Potenzmengenkonstruktion: Jeder DEA-Zustand ist eine Menge von NEA-Zust&auml;nden. Maximal 2&#x207F; Zust&auml;nde im DEA bei n NEA-Zust&auml;nden. In der Klausur: systematisch alle erreichbaren Teilmengen aufbauen.</p></div>
+</div>
+</div>
+
+<script>
+// ===== PROGRESS =====
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('dea-nea',{status:'in-progress'});
+
+// ===== AUTOMATA DEFINITIONS =====
+const automata = [
+  {
+    name:'Endet auf "ab"', desc:'Akzeptiert alle Wörter über {a,b}, die auf "ab" enden.',
+    states:['q0','q1','q2'], alphabet:['a','b'], start:'q0', accept:['q2'],
+    transitions:{q0:{a:'q1',b:'q0'},q1:{a:'q1',b:'q2'},q2:{a:'q1',b:'q0'}}
+  },
+  {
+    name:'Gerade Anzahl b', desc:'Akzeptiert alle Wörter über {a,b} mit einer geraden Anzahl von b (0 zählt als gerade).',
+    states:['q0','q1'], alphabet:['a','b'], start:'q0', accept:['q0'],
+    transitions:{q0:{a:'q0',b:'q1'},q1:{a:'q1',b:'q0'}}
+  },
+  {
+    name:'Enthält "ba"', desc:'Akzeptiert alle Wörter über {a,b}, die den Teilstring "ba" enthalten.',
+    states:['q0','q1','q2'], alphabet:['a','b'], start:'q0', accept:['q2'],
+    transitions:{q0:{a:'q0',b:'q1'},q1:{a:'q2',b:'q1'},q2:{a:'q2',b:'q2'}}
+  },
+  {
+    name:'Länge mod 3 = 0', desc:'Akzeptiert alle Wörter über {a,b}, deren Länge durch 3 teilbar ist (inkl. leeres Wort).',
+    states:['q0','q1','q2'], alphabet:['a','b'], start:'q0', accept:['q0'],
+    transitions:{q0:{a:'q1',b:'q1'},q1:{a:'q2',b:'q2'},q2:{a:'q0',b:'q0'}}
+  },
+  {
+    name:'Beginnt mit "ab"', desc:'Akzeptiert alle Wörter über {a,b}, die mit "ab" beginnen.',
+    states:['q0','q1','q2','qF'], alphabet:['a','b'], start:'q0', accept:['q2'],
+    transitions:{q0:{a:'q1',b:'qF'},q1:{a:'qF',b:'q2'},q2:{a:'q2',b:'q2'},qF:{a:'qF',b:'qF'}}
+  }
+];
+
+// ===== SVG DIAGRAM RENDERER =====
+function renderAutomatonSVG(auto, highlightState, containerId) {
+  const n = auto.states.length;
+  const w = Math.max(480, n * 120);
+  const h = 160;
+  const cx = w / 2;
+  const cy = h / 2;
+  const radius = 28;
+  const positions = {};
+
+  // Arrange states in a line
+  const spacing = Math.min(120, (w - 80) / n);
+  const startX = (w - (n - 1) * spacing) / 2;
+  auto.states.forEach((s, i) => {
+    positions[s] = { x: startX + i * spacing, y: cy };
+  });
+
+  let svg = `<svg class="automaton-svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" xmlns="http://www.w3.org/2000/svg">`;
+  svg += `<defs><marker id="ah-${containerId}" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6b7084"/></marker>`;
+  svg += `<marker id="ahH-${containerId}" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#6c63ff"/></marker></defs>`;
+
+  // Start arrow
+  const sp = positions[auto.start];
+  svg += `<line x1="${sp.x - 55}" y1="${sp.y}" x2="${sp.x - radius - 2}" y2="${sp.y}" stroke="#6b7084" stroke-width="1.5" marker-end="url(#ah-${containerId})"/>`;
+
+  // Collect transitions per edge pair
+  const edgeLabels = {};
+  for (const from of auto.states) {
+    for (const sym of auto.alphabet) {
+      const to = auto.transitions[from]?.[sym];
+      if (!to) continue;
+      const key = from === to ? `self:${from}` : `${from}->${to}`;
+      if (!edgeLabels[key]) edgeLabels[key] = { from, to, labels: [] };
+      edgeLabels[key].labels.push(sym);
+    }
+  }
+
+  // Draw edges
+  for (const key in edgeLabels) {
+    const e = edgeLabels[key];
+    const label = e.labels.join(', ');
+    const isHighlighted = highlightState && e.from === highlightState;
+    const col = isHighlighted ? '#6c63ff' : '#6b7084';
+    const marker = isHighlighted ? `url(#ahH-${containerId})` : `url(#ah-${containerId})`;
+    const fw = isHighlighted ? '2' : '1.5';
+
+    if (e.from === e.to) {
+      // Self loop
+      const p = positions[e.from];
+      const lx = p.x;
+      const ly = p.y - radius;
+      svg += `<path d="M${lx - 10},${ly} C${lx - 20},${ly - 40} ${lx + 20},${ly - 40} ${lx + 10},${ly}" fill="none" stroke="${col}" stroke-width="${fw}" marker-end="${marker}"/>`;
+      svg += `<text x="${lx}" y="${ly - 34}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="${col}">${label}</text>`;
+    } else {
+      const pf = positions[e.from];
+      const pt = positions[e.to];
+      const dx = pt.x - pf.x;
+      const dy = pt.y - pf.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const ux = dx / dist;
+      const uy = dy / dist;
+
+      // Check if reverse edge exists
+      const revKey = `${e.to}->${e.from}`;
+      const hasBidi = revKey in edgeLabels;
+      const curve = hasBidi ? 18 : 0;
+
+      const x1 = pf.x + ux * (radius + 2);
+      const y1 = pf.y + uy * (radius + 2);
+      const x2 = pt.x - ux * (radius + 4);
+      const y2 = pt.y - uy * (radius + 4);
+
+      if (curve) {
+        const mx = (x1 + x2) / 2 - uy * curve;
+        const my = (y1 + y2) / 2 + ux * curve;
+        svg += `<path d="M${x1},${y1} Q${mx},${my} ${x2},${y2}" fill="none" stroke="${col}" stroke-width="${fw}" marker-end="${marker}"/>`;
+        const tx = (x1 + 2 * mx + x2) / 4;
+        const ty = (y1 + 2 * my + y2) / 4 - 6;
+        svg += `<text x="${tx}" y="${ty}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="${col}">${label}</text>`;
+      } else {
+        svg += `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}" stroke-width="${fw}" marker-end="${marker}"/>`;
+        const tx = (x1 + x2) / 2 - uy * 14;
+        const ty = (y1 + y2) / 2 + ux * 14 - 4;
+        svg += `<text x="${tx}" y="${ty}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="11" fill="${col}">${label}</text>`;
+      }
+    }
+  }
+
+  // Draw states
+  for (const s of auto.states) {
+    const p = positions[s];
+    const isFinal = auto.accept.includes(s);
+    const isActive = s === highlightState;
+    const fillCol = isActive ? 'rgba(108,99,255,0.2)' : 'rgba(255,255,255,0.03)';
+    const strokeCol = isActive ? '#6c63ff' : isFinal ? '#51cf66' : '#6b7084';
+    const textCol = isActive ? '#6c63ff' : '#e2e4ea';
+
+    svg += `<circle cx="${p.x}" cy="${p.y}" r="${radius}" fill="${fillCol}" stroke="${strokeCol}" stroke-width="2"/>`;
+    if (isFinal) {
+      svg += `<circle cx="${p.x}" cy="${p.y}" r="${radius - 5}" fill="none" stroke="${strokeCol}" stroke-width="1.5"/>`;
+    }
+    svg += `<text x="${p.x}" y="${p.y + 4}" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" font-weight="600" fill="${textCol}">${s}</text>`;
+  }
+
+  svg += '</svg>';
+  return svg;
+}
+
+// ===== TRANSITION TABLE RENDERER =====
+function renderTransitionTable(auto, currentState, readSymbol) {
+  let html = '<table class="state-table"><thead><tr><th>Zustand</th>';
+  for (const sym of auto.alphabet) html += `<th>${sym}</th>`;
+  html += '</tr></thead><tbody>';
+  for (const s of auto.states) {
+    const prefix = (s === auto.start ? '&rarr; ' : '') + (auto.accept.includes(s) ? '* ' : '');
+    html += '<tr>';
+    const rowActive = s === currentState;
+    html += `<td style="${rowActive ? 'color:var(--accent)' : ''}">${prefix}${s}</td>`;
+    for (const sym of auto.alphabet) {
+      const target = auto.transitions[s]?.[sym] || '-';
+      const cellActive = rowActive && sym === readSymbol;
+      html += `<td class="${cellActive ? 'active-cell' : ''}">${target}</td>`;
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  return html;
+}
+
+// ===== SIMULATOR =====
+let simAnim = null;
+function loadAutomaton() {
+  clearInterval(simAnim);
+  const idx = parseInt(document.getElementById('sim-select').value);
+  const auto = automata[idx];
+  document.getElementById('sim-description').innerHTML = `<strong>${auto.name}</strong>: ${auto.desc}`;
+  document.getElementById('sim-diagram').innerHTML = `<div class="automaton-visual">${renderAutomatonSVG(auto, null, 'sim')}</div>`;
+  document.getElementById('sim-table-area').innerHTML = renderTransitionTable(auto, null, null);
+  document.getElementById('sim-word-display').innerHTML = '';
+  document.getElementById('sim-steps-area').innerHTML = '';
+  document.getElementById('sim-result').innerHTML = '';
+}
+
+function startSimulation() {
+  clearInterval(simAnim);
+  const idx = parseInt(document.getElementById('sim-select').value);
+  const auto = automata[idx];
+  const word = document.getElementById('sim-word').value.trim();
+
+  // Validate word
+  for (const ch of word) {
+    if (!auto.alphabet.includes(ch)) {
+      document.getElementById('sim-result').innerHTML = `<span style="color:var(--red)">Ungültig: Zeichen '${ch}' nicht im Alphabet {${auto.alphabet.join(',')}}</span>`;
+      return;
+    }
+  }
+
+  const steps = [{ state: auto.start, charIdx: -1, label: 'Start' }];
+  let current = auto.start;
+  for (let i = 0; i < word.length; i++) {
+    const next = auto.transitions[current]?.[word[i]];
+    if (!next) { steps.push({ state: null, charIdx: i, label: `${word[i]}: kein Übergang!` }); break; }
+    current = next;
+    steps.push({ state: current, charIdx: i, label: `${word[i]} → ${current}` });
+  }
+
+  let stepIdx = 0;
+  function renderStep() {
+    const step = steps[stepIdx];
+    // Word display
+    let wd = '<div class="word-display">';
+    if (word.length === 0) {
+      wd += '<span style="font-family:JetBrains Mono,monospace;font-size:14px;color:var(--muted)">&epsilon; (leeres Wort)</span>';
+    } else {
+      for (let i = 0; i < word.length; i++) {
+        const cls = i < step.charIdx ? 'read' : i === step.charIdx ? 'current-char' : '';
+        wd += `<span class="word-char ${cls}">${word[i]}</span>`;
+      }
+    }
+    wd += '</div>';
+    document.getElementById('sim-word-display').innerHTML = wd;
+
+    // Steps
+    let sd = '<div class="sim-steps">';
+    for (let i = 0; i <= stepIdx; i++) {
+      const s = steps[i];
+      const cls = i === stepIdx ? 'current' : 'done';
+      sd += `<div class="sim-step ${cls}">${s.state || '???'}</div>`;
+      if (i < stepIdx) sd += '<span class="sim-arrow">&#x2192;</span>';
+    }
+    sd += '</div>';
+    document.getElementById('sim-steps-area').innerHTML = sd;
+
+    // Update diagram and table
+    const readSym = step.charIdx >= 0 && step.charIdx < word.length ? word[step.charIdx] : null;
+    document.getElementById('sim-diagram').innerHTML = `<div class="automaton-visual">${renderAutomatonSVG(auto, step.state, 'sim')}</div>`;
+    document.getElementById('sim-table-area').innerHTML = renderTransitionTable(auto, step.state, readSym);
+
+    // Result
+    if (stepIdx === steps.length - 1) {
+      clearInterval(simAnim);
+      const accepted = step.state && auto.accept.includes(step.state);
+      const color = accepted ? 'var(--green)' : 'var(--red)';
+      const text = accepted ? '&#x2713; AKZEPTIERT' : '&#x2717; ABGELEHNT';
+      const reason = accepted
+        ? `Endzustand ${step.state} erreicht`
+        : step.state ? `${step.state} ist kein Endzustand` : 'Kein gültiger Übergang';
+      document.getElementById('sim-result').innerHTML = `<span style="color:${color}">${text}</span> <span style="font-size:13px;color:var(--muted);font-weight:300">&mdash; ${reason}</span>`;
+
+      // Final step styling
+      const lastStep = document.querySelector('.sim-step.current');
+      if (lastStep) lastStep.className = `sim-step ${accepted ? 'accepted' : 'rejected'}`;
+    } else {
+      document.getElementById('sim-result').innerHTML = '';
+    }
+
+    stepIdx++;
+  }
+
+  renderStep();
+  if (steps.length > 1) {
+    simAnim = setInterval(() => {
+      if (stepIdx >= steps.length) { clearInterval(simAnim); return; }
+      renderStep();
+    }, 800);
+  }
+}
+
+loadAutomaton();
+
+// ===== EXERCISES =====
+let mode = 'wort';
+let score = { correct: 0, wrong: 0, streak: 0 };
+let currentTask = {};
+let answered = false;
+
+function rand(a, b) { return Math.floor(Math.random() * (b - a + 1)) + a; }
+function shuffle(arr) { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = rand(0, i); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function setMode(m) { mode = m; document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.mode === m)); newTask(); }
+
+function runWord(auto, word) {
+  let s = auto.start;
+  for (const ch of word) {
+    s = auto.transitions[s]?.[ch];
+    if (!s) return false;
+  }
+  return auto.accept.includes(s);
+}
+
+function genRandomWord(alphabet, minLen, maxLen) {
+  const len = rand(minLen, maxLen);
+  let w = '';
+  for (let i = 0; i < len; i++) w += alphabet[rand(0, alphabet.length - 1)];
+  return w;
+}
+
+// Task: Wort prüfen
+function genWortTask() {
+  const autoIdx = rand(0, automata.length - 1);
+  const auto = automata[autoIdx];
+  const word = genRandomWord(auto.alphabet, 1, 6);
+  const accepted = runWord(auto, word);
+
+  // Trace
+  let trace = `Startzustand: ${auto.start}\n`;
+  let s = auto.start;
+  for (let i = 0; i < word.length; i++) {
+    const next = auto.transitions[s]?.[word[i]];
+    trace += `${s} --${word[i]}--> ${next || 'KEIN UEBERGANG'}\n`;
+    if (!next) break;
+    s = next;
+  }
+  trace += `Endzustand: ${s} ${auto.accept.includes(s) ? '(ist Endzustand -> AKZEPTIERT)' : '(kein Endzustand -> ABGELEHNT)'}`;
+
+  return {
+    type: 'choice',
+    question: `Automat: "${auto.name}"<br>Wort: <strong>${word}</strong>`,
+    tableHtml: renderTransitionTable(auto, null, null),
+    diagramHtml: renderAutomatonSVG(auto, null, 'ex'),
+    options: ['Akzeptiert', 'Abgelehnt'],
+    answer: accepted ? 'Akzeptiert' : 'Abgelehnt',
+    solution: trace
+  };
+}
+
+// Task: Zustandstabelle - fill missing transition
+function genTabelleTask() {
+  const autoIdx = rand(0, automata.length - 1);
+  const auto = automata[autoIdx];
+  // Pick a random cell to hide
+  const stateIdx = rand(0, auto.states.length - 1);
+  const symIdx = rand(0, auto.alphabet.length - 1);
+  const hiddenState = auto.states[stateIdx];
+  const hiddenSym = auto.alphabet[symIdx];
+  const answer = auto.transitions[hiddenState][hiddenSym];
+
+  let tableHtml = '<table class="state-table"><thead><tr><th>Zustand</th>';
+  for (const sym of auto.alphabet) tableHtml += `<th>${sym}</th>`;
+  tableHtml += '</tr></thead><tbody>';
+  for (const s of auto.states) {
+    const prefix = (s === auto.start ? '&rarr; ' : '') + (auto.accept.includes(s) ? '* ' : '');
+    tableHtml += '<tr>';
+    tableHtml += `<td>${prefix}${s}</td>`;
+    for (const sym of auto.alphabet) {
+      const target = auto.transitions[s]?.[sym] || '-';
+      if (s === hiddenState && sym === hiddenSym) {
+        tableHtml += `<td style="color:var(--yellow);font-weight:700">???</td>`;
+      } else {
+        tableHtml += `<td>${target}</td>`;
+      }
+    }
+    tableHtml += '</tr>';
+  }
+  tableHtml += '</tbody></table>';
+
+  return {
+    type: 'input',
+    question: `Automat: "${auto.name}"<br>Welcher Zustand fehlt bei <strong>&delta;(${hiddenState}, ${hiddenSym})</strong>?`,
+    tableHtml: tableHtml,
+    diagramHtml: renderAutomatonSVG(auto, null, 'ex'),
+    answer: answer,
+    placeholder: 'z.B. q0',
+    solution: `delta(${hiddenState}, ${hiddenSym}) = ${answer}\n\nVom Zustand ${hiddenState} mit Symbol '${hiddenSym}' geht es nach ${answer}.`
+  };
+}
+
+// Task: DEA vs NEA
+function genDeaNeaTask() {
+  const descriptions = [
+    { desc: 'Für jeden Zustand und jedes Symbol gibt es genau einen Folgezustand. Es gibt keine epsilon-Übergänge.', answer: 'DEA', explain: 'Genau ein Folgezustand pro (Zustand, Symbol) = DEA.' },
+    { desc: 'Vom Zustand q0 gibt es mit dem Symbol "a" zwei mögliche Folgezustände: q1 und q2.', answer: 'NEA', explain: 'Mehrere Folgezustände für dasselbe Symbol = NEA.' },
+    { desc: 'Der Automat hat epsilon-Übergänge von q1 nach q2, d.h. Zustandswechsel ohne Eingabe.', answer: 'NEA', explain: 'Epsilon-Übergänge gibt es nur im NEA.' },
+    { desc: 'Die Übergangsfunktion ist total: delta(q,a) liefert für jede Kombination genau einen Zustand.', answer: 'DEA', explain: 'Totale Funktion mit genau einem Ergebnis = DEA.' },
+    { desc: 'delta(q0, a) = {q1, q3}, delta(q0, b) = {q2}. Die Übergangsfunktion liefert Mengen.', answer: 'NEA', explain: 'Mengenwertige Übergangsfunktion = NEA.' },
+    { desc: 'Vom Zustand q2 gibt es keinen Übergang für das Symbol "b". Der Automat "stirbt" bei Eingabe von b in q2.', answer: 'NEA', explain: 'Fehlender Übergang (kein Fangzustand) = unvollstaendiger Automat, typisch für NEA.' },
+    { desc: 'Die Übergangsfunktion ist definiert als delta: Q x Sigma -> Q (nicht Potenzmenge).', answer: 'DEA', explain: 'Bildet nach Q ab (nicht P(Q)) = DEA.' },
+    { desc: 'delta: Q x (Sigma vereinigt {epsilon}) -> P(Q). Die Funktion bildet in die Potenzmenge ab.', answer: 'NEA', explain: 'P(Q) als Wertebereich und epsilon im Definitionsbereich = NEA.' },
+  ];
+
+  const task = descriptions[rand(0, descriptions.length - 1)];
+  return {
+    type: 'choice',
+    question: task.desc,
+    options: ['DEA', 'NEA'],
+    answer: task.answer,
+    solution: task.explain
+  };
+}
+
+// Task: Endzustände
+function genEndzustandTask() {
+  const autoIdx = rand(0, automata.length - 1);
+  const auto = automata[autoIdx];
+
+  return {
+    type: 'multi',
+    question: `Automat: "${auto.name}"<br>${auto.desc}<br>Welche Zustände sind <strong>Endzustände</strong>?`,
+    tableHtml: renderTransitionTable({ ...auto, accept: [] }, null, null),
+    diagramHtml: '',
+    options: auto.states,
+    answer: auto.accept,
+    solution: `Endzustände: {${auto.accept.join(', ')}}\n\nDie Endzustände sind die Zustände, in denen der Automat ein Wort akzeptiert. Bei "${auto.name}" ${auto.accept.length === 1 ? 'ist das' : 'sind das'} ${auto.accept.join(', ')}.`
+  };
+}
+
+function newTask() {
+  answered = false;
+  if (mode === 'wort') currentTask = genWortTask();
+  else if (mode === 'tabelle') currentTask = genTabelleTask();
+  else if (mode === 'deanea') currentTask = genDeaNeaTask();
+  else if (mode === 'endzustand') currentTask = genEndzustandTask();
+  renderTask();
+}
+
+function renderTask() {
+  const area = document.getElementById('exercise-area');
+  let html = '';
+
+  // Diagram and table
+  if (currentTask.diagramHtml) html += `<div class="automaton-visual">${currentTask.diagramHtml}</div>`;
+  if (currentTask.tableHtml) html += currentTask.tableHtml;
+
+  html += `<div class="task-sub" style="margin-top:16px">${currentTask.question}</div>`;
+
+  if (currentTask.type === 'choice') {
+    html += '<div class="options-grid">';
+    currentTask.options.forEach((opt, i) => {
+      html += `<div class="option-btn" id="opt-${i}" onclick="selectOption(${i})">${opt}</div>`;
+    });
+    html += '</div>';
+  } else if (currentTask.type === 'input') {
+    html += `<div class="input-row"><input type="text" id="user-answer" placeholder="${currentTask.placeholder || 'Deine Antwort...'}" autocomplete="off"></div>`;
+  } else if (currentTask.type === 'multi') {
+    html += '<div class="task-sub" style="font-size:12px;color:var(--accent)">Klicke alle Endzustände an, dann prüfe.</div>';
+    html += '<div class="checkbox-grid">';
+    currentTask.options.forEach((opt, i) => {
+      html += `<div class="chk-btn" id="chk-${i}" onclick="toggleChk(${i})">${opt}</div>`;
+    });
+    html += '</div>';
+  }
+
+  html += `<div class="btn-row" style="margin-top:12px">
+    <button class="btn btn-primary" onclick="checkExAnswer()">Prüfen &#x21B5;</button>
+    <button class="btn btn-secondary" onclick="showExSolution()">Lösung zeigen</button>
+    <button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button>
+  </div>
+  <div class="feedback" id="fb"></div>
+  <div class="solution-box" id="sol"></div>`;
+
+  area.innerHTML = html;
+
+  // Focus input if exists
+  const inp = document.getElementById('user-answer');
+  if (inp) {
+    inp.focus();
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkExAnswer(); });
+  }
+}
+
+let selectedOption = -1;
+let selectedChks = new Set();
+
+function selectOption(i) {
+  if (answered) return;
+  selectedOption = i;
+  document.querySelectorAll('.option-btn').forEach((b, idx) => b.classList.toggle('selected', idx === i));
+}
+
+function toggleChk(i) {
+  if (answered) return;
+  if (selectedChks.has(i)) selectedChks.delete(i); else selectedChks.add(i);
+  document.querySelectorAll('.chk-btn').forEach((b, idx) => b.classList.toggle('selected', selectedChks.has(idx)));
+}
+
+function checkExAnswer() {
+  if (answered) return;
+  const fb = document.getElementById('fb');
+  let correct = false;
+
+  if (currentTask.type === 'choice') {
+    if (selectedOption < 0) return;
+    const chosen = currentTask.options[selectedOption];
+    correct = chosen === currentTask.answer;
+    // Highlight
+    currentTask.options.forEach((opt, i) => {
+      const el = document.getElementById('opt-' + i);
+      if (opt === currentTask.answer) el.classList.add('correct-choice');
+      else if (i === selectedOption && !correct) el.classList.add('wrong-choice');
+    });
+  } else if (currentTask.type === 'input') {
+    const inp = document.getElementById('user-answer');
+    const val = inp.value.trim();
+    if (!val) return;
+    correct = val.toLowerCase() === currentTask.answer.toLowerCase();
+    inp.classList.add(correct ? 'correct' : 'wrong');
+    if (!correct) inp.value = val + '  (richtig: ' + currentTask.answer + ')';
+  } else if (currentTask.type === 'multi') {
+    const chosen = [...selectedChks].map(i => currentTask.options[i]).sort();
+    const expected = [...currentTask.answer].sort();
+    correct = chosen.length === expected.length && chosen.every((v, i) => v === expected[i]);
+    currentTask.options.forEach((opt, i) => {
+      const el = document.getElementById('chk-' + i);
+      if (currentTask.answer.includes(opt)) el.classList.add('correct-choice');
+      else if (selectedChks.has(i)) el.classList.add('wrong-choice');
+    });
+  }
+
+  answered = true;
+  if (correct) {
+    fb.textContent = '\u2713 Richtig!'; fb.className = 'feedback correct';
+    score.correct++; score.streak++;
+    if (score.correct >= 10) saveProgress('dea-nea', { status: 'completed', score: score.correct });
+    setTimeout(newTask, 1200);
+  } else {
+    fb.textContent = '\u2717 Falsch!'; fb.className = 'feedback wrong';
+    score.wrong++; score.streak = 0;
+    showExSolution();
+  }
+  updateScore();
+  selectedOption = -1;
+  selectedChks = new Set();
+}
+
+function showExSolution() {
+  const s = document.getElementById('sol');
+  if (s) { s.textContent = currentTask.solution; s.classList.add('show'); }
+}
+
+function updateScore() {
+  document.getElementById('s-correct').textContent = score.correct;
+  document.getElementById('s-wrong').textContent = score.wrong;
+  document.getElementById('s-streak').textContent = score.streak;
+}
+
+newTask();
+
+// ===== EXAMPLE AUTOMATA DISPLAY =====
+function renderExamples() {
+  const area = document.getElementById('examples-area');
+  let html = '';
+  automata.forEach((auto, idx) => {
+    html += `<div class="calc-wrap" style="margin-bottom:12px">
+      <div style="font-size:15px;font-weight:700;margin-bottom:4px">${auto.name}</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">${auto.desc}</div>
+      <div class="automaton-visual">${renderAutomatonSVG(auto, null, 'ex' + idx)}</div>
+      ${renderTransitionTable(auto, null, null)}
+      <div style="margin-top:8px;font-size:12px;color:var(--muted)">
+        <strong>Q</strong> = {${auto.states.join(', ')}} &nbsp;|&nbsp;
+        <strong>&Sigma;</strong> = {${auto.alphabet.join(', ')}} &nbsp;|&nbsp;
+        <strong>q&#x2080;</strong> = ${auto.start} &nbsp;|&nbsp;
+        <strong>F</strong> = {${auto.accept.join(', ')}}
+      </div>
+    </div>`;
+  });
+  area.innerHTML = html;
+}
+renderExamples();
+
+// ===== GLOSSARY SYSTEM =====
+(function(){
+const STORAGE_KEY = 'glossary-dea-nea';
+const glossaryTerms = [
+  {
+    id: 'endlicher-automat',
+    term: 'Endlicher Automat',
+    short: 'Mathematisches Modell mit endlich vielen Zust\u00e4nden zur Erkennung regul\u00e4rer Sprachen.',
+    icon: '\u2699\uFE0F',
+    difficulty: 1,
+    definition: 'Ein endlicher Automat (Finite Automaton, FA) ist ein abstraktes Berechnungsmodell, das aus einer endlichen Menge von Zust\u00e4nden, einem Eingabealphabet, einer \u00dcbergangsfunktion, einem Startzustand und einer Menge von Endzust\u00e4nden besteht. Er verarbeitet eine Eingabe zeichenweise und wechselt dabei gem\u00e4\u00df der \u00dcbergangsfunktion zwischen Zust\u00e4nden. Man definiert ihn als 5-Tupel A = (Q, \u03a3, \u03b4, q\u2080, F).',
+    analogy: 'Stell dir einen Fahrkartenautomaten vor: Er hat verschiedene Bildschirmseiten (Zust\u00e4nde) und je nach Knopfdruck (Eingabesymbol) wechselt er zur n\u00e4chsten Seite. Am Ende akzeptiert er dein Ticket \u2013 oder eben nicht.',
+    hints: [
+      'Das 5-Tupel besteht aus: Q (Zustandsmenge), \u03a3 (Alphabet), \u03b4 (\u00dcbergangsfunktion), q\u2080 (Startzustand), F (Endzust\u00e4nde).',
+      'Endliche Automaten k\u00f6nnen genau die regul\u00e4ren Sprachen (Chomsky-Typ 3) erkennen.',
+      'Der Automat verarbeitet die Eingabe strikt von links nach rechts, Symbol f\u00fcr Symbol \u2013 er kann nicht zur\u00fcckspringen.'
+    ],
+    questions: {
+      fill: {
+        q: 'Aus welchem 5-Tupel besteht ein endlicher Automat? A = (Q, ___, \u03b4, q\u2080, F)',
+        a: '\u03a3',
+        keywords: ['\u03a3', 'Sigma', 'Alphabet', 'Eingabealphabet']
+      },
+      choice: {
+        q: 'Welche Sprachklasse erkennen endliche Automaten?',
+        choices: ['Kontextfreie Sprachen (Typ 2)', 'Regul\u00e4re Sprachen (Typ 3)', 'Kontextsensitive Sprachen (Typ 1)', 'Rekursiv aufz\u00e4hlbare Sprachen (Typ 0)'],
+        correct: 1
+      },
+      explain: {
+        q: 'Erkl\u00e4re kurz, was ein endlicher Automat ist und nenne die Bestandteile des 5-Tupels.',
+        keywords: ['Zustandsmenge', 'Alphabet', '\u00dcbergangsfunktion', 'Startzustand', 'Endzust\u00e4nde', '5-Tupel']
+      }
+    }
+  },
+  {
+    id: 'dea',
+    term: 'DEA',
+    short: 'Deterministischer Endlicher Automat \u2013 genau ein Folgezustand pro \u00dcbergang.',
+    icon: '\u27a1\uFE0F',
+    difficulty: 1,
+    definition: 'Ein Deterministischer Endlicher Automat (DEA/DFA) ist ein endlicher Automat, bei dem die \u00dcbergangsfunktion \u03b4: Q \u00d7 \u03a3 \u2192 Q total und eindeutig ist. Das bedeutet: F\u00fcr jeden Zustand und jedes Eingabesymbol gibt es genau einen Folgezustand. Es gibt keine \u03b5-\u00dcberg\u00e4nge und keine Mehrdeutigkeit.',
+    analogy: 'Ein DEA ist wie ein Navigationsger\u00e4t mit eindeutigen Anweisungen: An jeder Kreuzung (\u201eZustand\u201c) gibt es f\u00fcr jede Richtung (Symbol) genau eine klare Anweisung. Kein Raten, kein Ausprobieren.',
+    hints: [
+      '\u00dcbergangsfunktion: \u03b4: Q \u00d7 \u03a3 \u2192 Q \u2013 total (f\u00fcr jede Kombination definiert) und eindeutig (genau ein Ergebnis).',
+      'Fehlt ein \u00dcbergang, wird h\u00e4ufig ein Fangzustand (Fehlerzustand) eingef\u00fchrt, um die Totalit\u00e4t sicherzustellen.',
+      'In der Praxis leichter zu implementieren als ein NEA, da kein Backtracking n\u00f6tig ist.'
+    ],
+    questions: {
+      fill: {
+        q: 'Beim DEA ist die \u00dcbergangsfunktion \u03b4: Q \u00d7 \u03a3 \u2192 ___ definiert.',
+        a: 'Q',
+        keywords: ['Q', 'Zustandsmenge', 'genau ein Zustand']
+      },
+      choice: {
+        q: 'Welche Aussage trifft auf einen DEA zu?',
+        choices: ['\u03b5-\u00dcberg\u00e4nge sind erlaubt', 'Mehrere Folgezust\u00e4nde pro Symbol sind m\u00f6glich', 'F\u00fcr jedes (Zustand, Symbol)-Paar gibt es genau einen Folgezustand', 'Die \u00dcbergangsfunktion bildet in die Potenzmenge P(Q) ab'],
+        correct: 2
+      },
+      explain: {
+        q: 'Erkl\u00e4re, was einen DEA von einem NEA unterscheidet. Gehe auf die \u00dcbergangsfunktion ein.',
+        keywords: ['genau ein', 'Folgezustand', 'total', 'eindeutig', 'kein \u03b5', 'deterministisch']
+      }
+    }
+  },
+  {
+    id: 'nea',
+    term: 'NEA',
+    short: 'Nichtdeterministischer Endlicher Automat \u2013 mehrere Folgezust\u00e4nde m\u00f6glich.',
+    icon: '\uD83D\uDD00',
+    difficulty: 2,
+    definition: 'Ein Nichtdeterministischer Endlicher Automat (NEA/NFA) ist ein endlicher Automat, dessen \u00dcbergangsfunktion \u03b4: Q \u00d7 (\u03a3 \u222a {\u03b5}) \u2192 P(Q) in die Potenzmenge von Q abbildet. F\u00fcr ein Zustand-Symbol-Paar kann es null, einen oder mehrere Folgezust\u00e4nde geben. Zus\u00e4tzlich sind \u03b5-\u00dcberg\u00e4nge (spontane Zustands\u00fcberg\u00e4nge ohne Eingabe) erlaubt.',
+    analogy: 'Ein NEA ist wie ein Labyrinth: An manchen Kreuzungen hast du mehrere Wege zur Auswahl. Du pr\u00fcfst quasi alle m\u00f6glichen Pfade gleichzeitig \u2013 wenn auch nur einer zum Ausgang f\u00fchrt, ist das Wort akzeptiert.',
+    hints: [
+      '\u00dcbergangsfunktion: \u03b4: Q \u00d7 (\u03a3 \u222a {\u03b5}) \u2192 P(Q) \u2013 Ergebnis ist eine Menge von Zust\u00e4nden.',
+      '\u03b5-\u00dcberg\u00e4nge erlauben Zustandswechsel ohne dass ein Eingabesymbol verbraucht wird.',
+      'Ein Wort wird akzeptiert, wenn mindestens ein m\u00f6glicher Berechnungspfad in einem Endzustand endet.'
+    ],
+    questions: {
+      fill: {
+        q: 'Beim NEA bildet \u03b4 in die ___ von Q ab.',
+        a: 'Potenzmenge',
+        keywords: ['Potenzmenge', 'P(Q)', 'Teilmengen']
+      },
+      choice: {
+        q: 'Was ist beim NEA im Vergleich zum DEA zus\u00e4tzlich erlaubt?',
+        choices: ['Unendlich viele Zust\u00e4nde', '\u03b5-\u00dcberg\u00e4nge und mehrere Folgezust\u00e4nde', 'Kelleroperationen (Push/Pop)', 'Zweidimensionales Eingabeband'],
+        correct: 1
+      },
+      explain: {
+        q: 'Was bedeutet Nichtdeterminismus beim endlichen Automaten und wann wird ein Wort akzeptiert?',
+        keywords: ['mehrere', 'Folgezust\u00e4nde', '\u03b5', 'Potenzmenge', 'mindestens ein Pfad', 'akzeptiert']
+      }
+    }
+  },
+  {
+    id: 'zustandsuebergangstabelle',
+    term: 'Zustands\u00fcbergangstabelle',
+    short: 'Tabellarische Darstellung der \u00dcbergangsfunktion \u03b4 eines Automaten.',
+    icon: '\uD83D\uDCCB',
+    difficulty: 1,
+    definition: 'Die Zustands\u00fcbergangstabelle ist eine tabellarische Darstellung der \u00dcbergangsfunktion \u03b4. Die Zeilen repr\u00e4sentieren die Zust\u00e4nde (Q), die Spalten die Eingabesymbole (\u03a3). In jeder Zelle steht der Folgezustand (DEA: genau einer) bzw. die Menge der Folgezust\u00e4nde (NEA: ggf. mehrere oder \u2205). Der Startzustand wird mit \u2192 markiert, Endzust\u00e4nde mit *.',
+    analogy: 'Wie ein Fahrplan: Du suchst deine Haltestelle (Zustand) und die Linie (Symbol) \u2013 und findest die n\u00e4chste Haltestelle (Folgezustand). Beim DEA f\u00e4hrt genau ein Bus, beim NEA k\u00f6nnen mehrere Busse gleichzeitig losfahren.',
+    hints: [
+      'Zeilen = Zust\u00e4nde, Spalten = Eingabesymbole. Zelle = Folgezustand(e).',
+      'Markierungen: \u2192 f\u00fcr Startzustand, * f\u00fcr Endzust\u00e4nde.',
+      'Bei einem vollst\u00e4ndigen DEA darf keine Zelle leer sein \u2013 ggf. Fangzustand einf\u00fchren.'
+    ],
+    questions: {
+      fill: {
+        q: 'In der Zustands\u00fcbergangstabelle stehen die ___ in den Zeilen und die Eingabesymbole in den Spalten.',
+        a: 'Zust\u00e4nde',
+        keywords: ['Zust\u00e4nde', 'Zustandsmenge', 'Q']
+      },
+      choice: {
+        q: 'Wie wird der Startzustand in der Tabelle markiert?',
+        choices: ['Mit einem Doppelkreis', 'Mit einem Pfeil (\u2192)', 'Mit einem Stern (*)', 'Durch Fettdruck'],
+        correct: 1
+      },
+      explain: {
+        q: 'Beschreibe den Aufbau einer Zustands\u00fcbergangstabelle und wie sich DEA- und NEA-Tabellen unterscheiden.',
+        keywords: ['Zeilen', 'Spalten', 'Folgezustand', 'Menge', '\u2192', 'Startzustand', '*', 'Endzustand']
+      }
+    }
+  },
+  {
+    id: 'startzustand',
+    term: 'Startzustand',
+    short: 'Der Zustand q\u2080, in dem der Automat die Verarbeitung beginnt.',
+    icon: '\u25B6\uFE0F',
+    difficulty: 1,
+    definition: 'Der Startzustand q\u2080 \u2208 Q ist der ausgezeichnete Zustand, in dem sich ein endlicher Automat zu Beginn der Verarbeitung befindet. Jeder endliche Automat hat genau einen Startzustand. Im Zustandsdiagramm wird er durch einen Pfeil von au\u00dfen gekennzeichnet, in der Zustandstabelle durch das Symbol \u2192.',
+    analogy: 'Wie die Startlinie bei einem Rennen: Egal welches Wort du verarbeitest, der Automat beginnt immer an derselben Stelle. Von dort aus bestimmt die Eingabe den weiteren Weg.',
+    hints: [
+      'Im 5-Tupel ist q\u2080 der vierte Eintrag: A = (Q, \u03a3, \u03b4, q\u2080, F).',
+      'Im Zustandsdiagramm: Pfeil von au\u00dfen, der auf den Startzustand zeigt.',
+      'Es gibt immer genau einen Startzustand \u2013 sowohl beim DEA als auch beim NEA.'
+    ],
+    questions: {
+      fill: {
+        q: 'Im Zustandsdiagramm wird der Startzustand durch einen ___ von au\u00dfen markiert.',
+        a: 'Pfeil',
+        keywords: ['Pfeil', 'Pfeil von au\u00dfen', 'Kante']
+      },
+      choice: {
+        q: 'Wie viele Startzust\u00e4nde hat ein endlicher Automat?',
+        choices: ['Keinen', 'Genau einen', 'Mindestens einen, beliebig viele', 'Genau zwei (einen f\u00fcr DEA, einen f\u00fcr NEA)'],
+        correct: 1
+      },
+      explain: {
+        q: 'Erkl\u00e4re die Rolle des Startzustands im endlichen Automaten und wie er dargestellt wird.',
+        keywords: ['q\u2080', 'Beginn', 'Verarbeitung', 'Pfeil', 'genau ein', 'Zustandsdiagramm']
+      }
+    }
+  },
+  {
+    id: 'endzustand',
+    term: 'Endzustand',
+    short: 'Akzeptierender Zustand \u2013 bestimmt, ob ein Wort akzeptiert wird.',
+    icon: '\u2705',
+    difficulty: 1,
+    definition: 'Die Endzust\u00e4nde (auch: akzeptierende Zust\u00e4nde) bilden die Menge F \u2286 Q im 5-Tupel. Ein Wort wird genau dann akzeptiert, wenn der Automat nach dem Lesen aller Symbole in einem Endzustand steht (DEA) bzw. mindestens ein Berechnungspfad in einem Endzustand endet (NEA). Im Zustandsdiagramm werden Endzust\u00e4nde durch einen Doppelkreis dargestellt.',
+    analogy: 'Endzust\u00e4nde sind wie das Ziel bei einer Schnitzeljagd: Nur wenn du am Ende an einem der markierten Zielorte stehst, hast du gewonnen. Es kann mehrere g\u00fcltige Zielorte geben.',
+    hints: [
+      'F ist eine Teilmenge von Q: F \u2286 Q. Auch F = \u2205 oder F = Q ist m\u00f6glich.',
+      'Im Diagramm: Doppelkreis. In der Tabelle: Stern (*).',
+      'Beim DEA z\u00e4hlt der eine erreichte Zustand; beim NEA reicht es, wenn mindestens ein Pfad in F endet.'
+    ],
+    questions: {
+      fill: {
+        q: 'Im Zustandsdiagramm werden Endzust\u00e4nde durch einen ___ dargestellt.',
+        a: 'Doppelkreis',
+        keywords: ['Doppelkreis', 'doppelter Kreis', 'zwei Kreise']
+      },
+      choice: {
+        q: 'Wann akzeptiert ein NEA ein Wort?',
+        choices: ['Wenn alle Pfade in einem Endzustand enden', 'Wenn kein Pfad in einem Endzustand endet', 'Wenn mindestens ein Pfad in einem Endzustand endet', 'Wenn der k\u00fcrzeste Pfad in einem Endzustand endet'],
+        correct: 2
+      },
+      explain: {
+        q: 'Was sind Endzust\u00e4nde, wie werden sie dargestellt und was ist der Unterschied zwischen DEA und NEA beim Akzeptieren?',
+        keywords: ['F', 'Teilmenge', 'Doppelkreis', 'akzeptiert', 'mindestens ein Pfad', 'Endzustand']
+      }
+    }
+  },
+  {
+    id: 'regulaere-sprache',
+    term: 'Regul\u00e4re Sprache',
+    short: 'Sprachklasse, die von endlichen Automaten erkannt wird (Chomsky Typ 3).',
+    icon: '\uD83D\uDCD0',
+    difficulty: 2,
+    definition: 'Eine regul\u00e4re Sprache ist eine formale Sprache, die von einem endlichen Automaten (DEA oder NEA) erkannt werden kann. Sie bildet die Klasse der Typ-3-Sprachen in der Chomsky-Hierarchie. \u00c4quivalent kann jede regul\u00e4re Sprache durch einen regul\u00e4ren Ausdruck beschrieben und durch eine rechtslineare (oder linkslineare) Grammatik erzeugt werden.',
+    analogy: 'Regul\u00e4re Sprachen sind wie einfache Muster in Textilien: Sie lassen sich durch ein festes Schema beschreiben und wiederholen sich vorhersagbar. Komplexere Muster (wie verschachtelte Klammern) geh\u00f6ren nicht mehr dazu.',
+    hints: [
+      'Typ-3 in der Chomsky-Hierarchie \u2013 die einfachste Sprachklasse.',
+      '\u00c4quivalente Beschreibungen: DEA \u2194 NEA \u2194 regul\u00e4rer Ausdruck \u2194 rechtslineare Grammatik.',
+      'Regul\u00e4re Sprachen sind abgeschlossen unter Vereinigung, Durchschnitt, Komplement, Konkatenation und Kleene-Stern.'
+    ],
+    questions: {
+      fill: {
+        q: 'Regul\u00e4re Sprachen entsprechen Typ ___ in der Chomsky-Hierarchie.',
+        a: '3',
+        keywords: ['3', 'Typ 3', 'Typ-3', 'drei']
+      },
+      choice: {
+        q: 'Welches Modell kann KEINE regul\u00e4ren Sprachen beschreiben?',
+        choices: ['DEA', 'NEA', 'Regul\u00e4rer Ausdruck', 'Kontextfreie Grammatik (die ist m\u00e4chtiger)'],
+        correct: 3
+      },
+      explain: {
+        q: 'Was ist eine regul\u00e4re Sprache und welche Beschreibungsmittel sind daf\u00fcr \u00e4quivalent?',
+        keywords: ['Typ 3', 'Chomsky', 'DEA', 'NEA', 'regul\u00e4rer Ausdruck', 'Grammatik', 'endlicher Automat']
+      }
+    }
+  },
+  {
+    id: 'aequivalenz',
+    term: '\u00c4quivalenz',
+    short: 'DEA und NEA erkennen dieselbe Sprachklasse \u2013 Umwandlung per Potenzmengenkonstruktion.',
+    icon: '\uD83D\uDD04',
+    difficulty: 3,
+    definition: 'DEA und NEA sind ausdrucks\u00e4quivalent: Zu jedem NEA existiert ein \u00e4quivalenter DEA (und umgekehrt), der dieselbe Sprache erkennt. Die Umwandlung NEA \u2192 DEA erfolgt durch die Potenzmengenkonstruktion (auch Teilmengenkonstruktion). Dabei wird jede Menge von gleichzeitig aktiven NEA-Zust\u00e4nden zu einem einzelnen DEA-Zustand. Im schlimmsten Fall hat der DEA 2\u207f Zust\u00e4nde bei n NEA-Zust\u00e4nden.',
+    analogy: 'Stell dir vor, du beschreibst einen Weg einmal als \u201eFolge der m\u00f6glichen Abzweigungen\u201c (NEA) und einmal als \u201eexakte Route auf einer Karte\u201c (DEA). Beide beschreiben dieselben erreichbaren Ziele, nur die Darstellung ist anders.',
+    hints: [
+      'Jeder NEA kann in einen \u00e4quivalenten DEA umgewandelt werden (Satz der \u00c4quivalenz).',
+      'Potenzmengenkonstruktion: DEA-Zustand = Menge von NEA-Zust\u00e4nden. Maximal 2\u207f DEA-Zust\u00e4nde bei n NEA-Zust\u00e4nden.',
+      'In der Praxis sind oft deutlich weniger als 2\u207f Zust\u00e4nde erreichbar.'
+    ],
+    questions: {
+      fill: {
+        q: 'Die Umwandlung NEA \u2192 DEA erfolgt durch die ___.',
+        a: 'Potenzmengenkonstruktion',
+        keywords: ['Potenzmengenkonstruktion', 'Teilmengenkonstruktion', 'Potenzmengen']
+      },
+      choice: {
+        q: 'Wie viele Zust\u00e4nde kann der DEA maximal haben, wenn der NEA n Zust\u00e4nde hat?',
+        choices: ['n', 'n\u00b2', '2\u207f', 'n!'],
+        correct: 2
+      },
+      explain: {
+        q: 'Erkl\u00e4re die \u00c4quivalenz von DEA und NEA und beschreibe das Prinzip der Potenzmengenkonstruktion.',
+        keywords: ['gleiche Sprache', '\u00e4quivalent', 'Potenzmengenkonstruktion', 'Menge von Zust\u00e4nden', '2\u207f', 'Teilmenge']
+      }
+    }
+  }
+];
+
+const termMap = {};
+glossaryTerms.forEach(t => {
+  termMap[t.term.toLowerCase()] = t.id;
+});
+// Additional variants for inline highlighting
+termMap['endlicher automat'] = 'endlicher-automat';
+termMap['endliche automaten'] = 'endlicher-automat';
+termMap['finite automaton'] = 'endlicher-automat';
+termMap['endlichen automaten'] = 'endlicher-automat';
+termMap['dea'] = 'dea';
+termMap['dfa'] = 'dea';
+termMap['deterministischer endlicher automat'] = 'dea';
+termMap['deterministischen endlichen automaten'] = 'dea';
+termMap['nea'] = 'nea';
+termMap['nfa'] = 'nea';
+termMap['nichtdeterministischer endlicher automat'] = 'nea';
+termMap['nichtdeterministischen endlichen automaten'] = 'nea';
+termMap['zustands\u00fcbergangstabelle'] = 'zustandsuebergangstabelle';
+termMap['zustandstabelle'] = 'zustandsuebergangstabelle';
+termMap['\u00fcbergangstabelle'] = 'zustandsuebergangstabelle';
+termMap['startzustand'] = 'startzustand';
+termMap['startzust\u00e4nde'] = 'startzustand';
+termMap['q\u2080'] = 'startzustand';
+termMap['endzustand'] = 'endzustand';
+termMap['endzust\u00e4nde'] = 'endzustand';
+termMap['akzeptierender zustand'] = 'endzustand';
+termMap['akzeptierende zust\u00e4nde'] = 'endzustand';
+termMap['regul\u00e4re sprache'] = 'regulaere-sprache';
+termMap['regul\u00e4re sprachen'] = 'regulaere-sprache';
+termMap['typ-3-sprache'] = 'regulaere-sprache';
+termMap['typ 3'] = 'regulaere-sprache';
+termMap['\u00e4quivalenz'] = 'aequivalenz';
+termMap['dea-nea-\u00e4quivalenz'] = 'aequivalenz';
+termMap['potenzmengenkonstruktion'] = 'aequivalenz';
+termMap['teilmengenkonstruktion'] = 'aequivalenz';
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+}
+function saveGlossaryProgress(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function getLevel(termId) {
+  const p = loadProgress();
+  return (p[termId] && p[termId].level) || 0;
+}
+function setLevel(termId, level) {
+  const p = loadProgress();
+  if (!p[termId]) p[termId] = {};
+  p[termId].level = Math.min(3, Math.max(0, level));
+  saveGlossaryProgress(p);
+}
+
+function countMastered() {
+  const p = loadProgress();
+  return glossaryTerms.filter(t => (p[t.id] && p[t.id].level || 0) >= 3).length;
+}
+
+function updateProgressBar() {
+  const m = countMastered();
+  const pct = Math.round((m / glossaryTerms.length) * 100);
+  const fill = document.getElementById('glossary-fill');
+  const count = document.getElementById('glossary-count');
+  if (fill) fill.style.width = pct + '%';
+  if (count) count.textContent = m + ' / ' + glossaryTerms.length + ' gemeistert';
+}
+
+function renderGlossaryGrid() {
+  const grid = document.getElementById('glossary-grid');
+  if (!grid) return;
+  let html = '';
+  glossaryTerms.forEach(t => {
+    const lvl = getLevel(t.id);
+    html += `<div class="glossary-card" data-level="${lvl}" data-id="${t.id}" onclick="window._glossaryOpen('${t.id}')">
+      <div class="gc-level"></div>
+      <div class="gc-icon">${t.icon}</div>
+      <div class="gc-term">${t.term}</div>
+      <div class="gc-short">${t.short}</div>
+    </div>`;
+  });
+  grid.innerHTML = html;
+  updateProgressBar();
+}
+
+const phases = ['Verstehen', 'L\u00fcckentext', 'Multiple Choice', 'Erkl\u00e4ren'];
+let currentGlossaryTerm = null;
+let currentPhase = 0;
+let glossaryHintIdx = 0;
+
+window._glossaryOpen = function(termId) {
+  const term = glossaryTerms.find(t => t.id === termId);
+  if (!term) return;
+  currentGlossaryTerm = term;
+  currentPhase = 0;
+  glossaryHintIdx = 0;
+  const el = document.getElementById('glossary-learn');
+  el.classList.add('visible');
+  renderGlossaryPhase();
+  // Mark active card
+  document.querySelectorAll('.glossary-card').forEach(c => c.classList.toggle('active', c.dataset.id === termId));
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
+function closeGlossaryLearn() {
+  const el = document.getElementById('glossary-learn');
+  el.classList.remove('visible');
+  currentGlossaryTerm = null;
+  document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
+}
+
+function renderGlossaryPhase() {
+  const t = currentGlossaryTerm;
+  if (!t) return;
+  const el = document.getElementById('glossary-learn');
+  let html = `<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="closeGlossaryLearn()">&times;</button></div>`;
+  html += '<div class="gl-phase-indicator">';
+  phases.forEach((p, i) => {
+    const cls = i < currentPhase ? 'done' : i === currentPhase ? 'current' : '';
+    const click = i <= currentPhase ? ` onclick="window._glossaryGoToPhase(${i})"` : '';
+    html += `<div class="gl-phase ${cls}"${click}>${p}</div>`;
+  });
+  html += '</div><div class="gl-content">';
+
+  if (currentPhase === 0) {
+    html += `<div class="gl-analogy">\uD83D\uDCA1 ${t.analogy}</div>`;
+    html += `<div class="gl-definition">${t.definition}</div>`;
+    html += '<div class="gl-hints">';
+    t.hints.forEach((h, i) => {
+      html += `<div class="gl-hint ${i < glossaryHintIdx ? 'visible' : ''}" id="gl-hint-${i}">\uD83D\uDD0D ${h}</div>`;
+    });
+    html += '</div>';
+    if (glossaryHintIdx < t.hints.length) {
+      html += `<button class="gl-hint-btn" onclick="window._glossaryShowHint()">+ Hinweis anzeigen (${glossaryHintIdx}/${t.hints.length})</button>`;
+    }
+    html += `<button class="gl-btn primary" onclick="window._glossaryNextPhase()">Verstanden &rarr;</button>`;
+  } else if (currentPhase === 1) {
+    // Fill
+    const q = t.questions.fill;
+    html += `<div class="gl-question">${q.q}</div>`;
+    html += `<input class="gl-input" id="gl-fill-input" type="text" placeholder="Deine Antwort..." autocomplete="off">`;
+    html += `<button class="gl-btn primary" onclick="window._glossaryCheckFill()">Pr\u00fcfen</button>`;
+    html += '<div id="gl-fill-feedback"></div>';
+  } else if (currentPhase === 2) {
+    // Choice
+    const q = t.questions.choice;
+    html += `<div class="gl-question">${q.q}</div>`;
+    html += '<div class="gl-choices">';
+    q.choices.forEach((c, i) => {
+      html += `<button class="gl-choice" data-idx="${i}" onclick="window._glossaryCheckChoice(${i})">${c}</button>`;
+    });
+    html += '</div>';
+    html += '<div id="gl-choice-feedback"></div>';
+  } else if (currentPhase === 3) {
+    // Explain
+    const q = t.questions.explain;
+    html += `<div class="gl-question">${q.q}</div>`;
+    html += `<textarea class="gl-input" id="gl-explain-input" placeholder="Erkl\u00e4re in eigenen Worten..."></textarea>`;
+    html += `<button class="gl-btn primary" onclick="window._glossaryCheckExplain()">Pr\u00fcfen</button>`;
+    html += '<div id="gl-explain-feedback"></div>';
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+
+  // Focus inputs
+  const fi = document.getElementById('gl-fill-input');
+  if (fi) { fi.focus(); fi.addEventListener('keydown', e => { if (e.key === 'Enter') window._glossaryCheckFill(); }); }
+  const ei = document.getElementById('gl-explain-input');
+  if (ei) ei.focus();
+}
+
+window._glossaryShowHint = function() {
+  glossaryHintIdx++;
+  renderGlossaryPhase();
+};
+
+window._glossaryNextPhase = function() {
+  currentPhase++;
+  glossaryHintIdx = 0;
+  if (currentPhase >= phases.length) {
+    // Completed all phases
+    const lvl = getLevel(currentGlossaryTerm.id);
+    setLevel(currentGlossaryTerm.id, Math.min(3, lvl + 1));
+    renderGlossaryGrid();
+    closeGlossaryLearn();
+    return;
+  }
+  renderGlossaryPhase();
+};
+
+window._glossaryGoToPhase = function(idx) {
+  if (idx > currentPhase) return;
+  currentPhase = idx;
+  glossaryHintIdx = 0;
+  renderGlossaryPhase();
+};
+
+window._glossaryCheckFill = function() {
+  const input = document.getElementById('gl-fill-input');
+  if (!input) return;
+  const val = input.value.trim().toLowerCase();
+  if (!val) return;
+  const fb = document.getElementById('gl-fill-feedback');
+  const q = currentGlossaryTerm.questions.fill;
+  const found = q.keywords.some(k => val.includes(k.toLowerCase()));
+  if (found) {
+    fb.innerHTML = `<div class="gl-feedback success">\u2713 Richtig! Die Antwort ist: <strong>${q.a}</strong></div>`;
+    input.disabled = true;
+    setTimeout(() => window._glossaryNextPhase(), 1200);
+  } else {
+    fb.innerHTML = `<div class="gl-feedback error">\u2717 Nicht ganz. Die richtige Antwort ist: <strong>${q.a}</strong></div>`;
+    input.disabled = true;
+    setTimeout(() => window._glossaryNextPhase(), 2000);
+  }
+};
+
+window._glossaryCheckChoice = function(idx) {
+  const q = currentGlossaryTerm.questions.choice;
+  const btns = document.querySelectorAll('.gl-choice');
+  btns.forEach((b, i) => {
+    b.style.pointerEvents = 'none';
+    if (i === q.correct) b.classList.add('correct');
+    else if (i === idx && idx !== q.correct) b.classList.add('wrong');
+  });
+  const fb = document.getElementById('gl-choice-feedback');
+  if (idx === q.correct) {
+    fb.innerHTML = '<div class="gl-feedback success">\u2713 Richtig!</div>';
+  } else {
+    fb.innerHTML = `<div class="gl-feedback error">\u2717 Falsch. Richtige Antwort: <strong>${q.choices[q.correct]}</strong></div>`;
+  }
+  setTimeout(() => window._glossaryNextPhase(), 1500);
+};
+
+window._glossaryCheckExplain = function() {
+  const input = document.getElementById('gl-explain-input');
+  if (!input) return;
+  const val = input.value.trim().toLowerCase();
+  if (val.length < 10) return;
+  const q = currentGlossaryTerm.questions.explain;
+  const foundKw = [];
+  const missingKw = [];
+  q.keywords.forEach(k => {
+    if (val.includes(k.toLowerCase())) foundKw.push(k); else missingKw.push(k);
+  });
+  const fb = document.getElementById('gl-explain-feedback');
+  let kwHtml = '<div style="margin-top:8px">';
+  foundKw.forEach(k => { kwHtml += `<span class="gl-keyword found">\u2713 ${k}</span>`; });
+  missingKw.forEach(k => { kwHtml += `<span class="gl-keyword missing">\u2717 ${k}</span>`; });
+  kwHtml += '</div>';
+  const ratio = foundKw.length / q.keywords.length;
+  if (ratio >= 0.5) {
+    fb.innerHTML = `<div class="gl-feedback success">\u2713 Gute Erkl\u00e4rung! ${foundKw.length}/${q.keywords.length} Schl\u00fcsselw\u00f6rter erkannt.${kwHtml}</div>`;
+    input.disabled = true;
+    setTimeout(() => window._glossaryNextPhase(), 2000);
+  } else {
+    fb.innerHTML = `<div class="gl-feedback error">\u2717 Versuche mehr Fachbegriffe einzubauen. ${foundKw.length}/${q.keywords.length} Schl\u00fcsselw\u00f6rter erkannt.${kwHtml}</div>`;
+    fb.innerHTML += `<div style="margin-top:8px"><button class="gl-btn primary" onclick="window._glossaryNextPhase()">Trotzdem weiter &rarr;</button></div>`;
+  }
+};
+
+// ===== TOOLTIP =====
+const tooltipEl = document.createElement('div');
+tooltipEl.className = 'glossary-tooltip';
+tooltipEl.innerHTML = '<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">Klicke zum Lernen</div>';
+document.body.appendChild(tooltipEl);
+
+function highlightGlossaryTerms() {
+  const selectors = ['.card p', '.card li', '.task-sub', '.summary-card p', 'header p', '.calc-wrap div', '.result-item .rl'];
+  const sortedKeys = Object.keys(termMap).sort((a, b) => b.length - a.length);
+  const escapedKeys = sortedKeys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  if (escapedKeys.length === 0) return;
+  const regex = new RegExp('\\b(' + escapedKeys.join('|') + ')\\b', 'gi');
+
+  selectors.forEach(sel => {
+    document.querySelectorAll(sel).forEach(el => {
+      if (el.querySelector('.glossary-term')) return;
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+      const textNodes = [];
+      while (walker.nextNode()) textNodes.push(walker.currentNode);
+      textNodes.forEach(node => {
+        const text = node.textContent;
+        if (!regex.test(text)) return;
+        regex.lastIndex = 0;
+        const frag = document.createDocumentFragment();
+        let lastIdx = 0;
+        let match;
+        while ((match = regex.exec(text)) !== null) {
+          if (match.index > lastIdx) frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
+          const span = document.createElement('span');
+          span.className = 'glossary-term';
+          span.textContent = match[0];
+          span.dataset.termId = termMap[match[0].toLowerCase()];
+          frag.appendChild(span);
+          lastIdx = regex.lastIndex;
+        }
+        if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
+        node.parentNode.replaceChild(frag, node);
+      });
+    });
+  });
+
+  document.querySelectorAll('.glossary-term').forEach(el => {
+    el.addEventListener('mouseenter', function(e) {
+      const tid = this.dataset.termId;
+      const t = glossaryTerms.find(x => x.id === tid);
+      if (!t) return;
+      tooltipEl.querySelector('.gt-name').textContent = t.icon + ' ' + t.term;
+      tooltipEl.querySelector('.gt-short').textContent = t.short;
+      tooltipEl.style.display = 'block';
+      const rect = this.getBoundingClientRect();
+      let top = rect.bottom + 8;
+      let left = rect.left;
+      if (left + 270 > window.innerWidth) left = window.innerWidth - 275;
+      if (left < 5) left = 5;
+      if (top + 120 > window.innerHeight) top = rect.top - 120;
+      tooltipEl.style.top = top + 'px';
+      tooltipEl.style.left = left + 'px';
+    });
+    el.addEventListener('mouseleave', function() {
+      tooltipEl.style.display = 'none';
+    });
+    el.addEventListener('click', function() {
+      tooltipEl.style.display = 'none';
+      const tid = this.dataset.termId;
+      window._glossaryOpen(tid);
+    });
+  });
+}
+
+// Init
+renderGlossaryGrid();
+setTimeout(highlightGlossaryTerms, 200);
+})();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

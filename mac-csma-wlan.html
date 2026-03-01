@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAC-Schicht, CSMA & WLAN Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:17px;font-weight:700;margin:16px 0 8px;line-height:1.5}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input,.input-row select{font-family:'JetBrains Mono',monospace;font-size:15px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus,.input-row select:focus{border-color:var(--accent)}
+.input-row input.correct,.input-row select.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong,.input-row select.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.input-row select option{background:var(--surface);color:var(--text)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none;white-space:pre-wrap}
+.solution-box.show{display:block}
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+/* Visualizer */
+.viz-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.viz-controls{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.viz-canvas{position:relative;width:100%;min-height:320px;background:rgba(0,0,0,.25);border-radius:10px;padding:20px;overflow:hidden}
+.viz-lane{position:relative;height:60px;margin-bottom:12px;display:flex;align-items:center;border-radius:8px;background:rgba(255,255,255,.02);border:1px solid var(--border);overflow:hidden}
+.viz-lane-label{position:absolute;left:10px;top:50%;transform:translateY(-50%);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--muted);z-index:2;white-space:nowrap}
+.viz-medium{height:24px;margin:12px 0;background:rgba(255,255,255,.04);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);border:1px dashed var(--border)}
+.viz-step-label{font-size:13px;color:var(--text);font-weight:500;margin-top:16px;min-height:44px;line-height:1.6}
+.viz-step-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:600;display:inline-block;margin-right:6px}
+.pkt{position:absolute;height:36px;border-radius:6px;display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:#fff;transition:all .6s ease;z-index:1}
+.pkt.a{background:linear-gradient(135deg,var(--cyan),var(--accent))}
+.pkt.b{background:linear-gradient(135deg,var(--pink),var(--purple))}
+.pkt.jam{background:var(--red);animation:pulse .4s ease infinite alternate}
+.pkt.ack{background:var(--green);font-size:9px}
+.pkt.rts{background:var(--orange);font-size:9px}
+.pkt.cts{background:var(--yellow);color:#000;font-size:9px}
+.collision-flash{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:60px;height:60px;border-radius:50%;background:radial-gradient(var(--red),transparent);opacity:0;animation:flash .5s ease;z-index:3}
+@keyframes pulse{from{opacity:1}to{opacity:.6}}
+@keyframes flash{0%{opacity:.9;transform:translate(-50%,-50%) scale(.5)}100%{opacity:0;transform:translate(-50%,-50%) scale(2)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.viz-canvas{padding:12px}}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">ITI23 &middot; Netzwerke</div>
+<h1>MAC-Schicht, CSMA & WLAN</h1>
+<p>MAC-Adressen, Medienzugriff (CSMA/CD & CSMA/CA), WLAN-Standards und Sicherheit &ndash; interaktiv lernen und üben</p>
+</header>
+
+<!-- ========== REFERENZ ========== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>&#128279; MAC-Schicht</h3>
+<p>Teilschicht von Layer 2 (Data Link Layer). Regelt den Zugriff auf das gemeinsame Medium.</p>
+<ul>
+<li><strong>MAC-Adresse:</strong> 48 Bit, hexadezimal (z.B. <code>A4:3E:51:0F:C2:7B</code>)</li>
+<li><strong>Aufbau:</strong> OUI (24 Bit, Hersteller) + Device ID (24 Bit)</li>
+<li><strong>Ethernet Frame:</strong> Preamble (8B) | Dest MAC (6B) | Src MAC (6B) | Type/Length (2B) | Data (46-1500B) | FCS (4B)</li>
+</ul></div>
+<div class="card c2"><h3>&#128268; CSMA/CD (802.3)</h3>
+<p>Carrier Sense Multiple Access / Collision Detection &ndash; kabelgebundenes Ethernet.</p>
+<ul>
+<li><strong>1.</strong> Listen before Talk (Kanal frei?)</li>
+<li><strong>2.</strong> Senden &amp; gleichzeitig hoeren</li>
+<li><strong>3.</strong> Kollision erkennen &rarr; Jam Signal senden</li>
+<li><strong>4.</strong> Binary Exponential Backoff (0..2<sup>n</sup>-1)</li>
+<li>Nur bei <strong>Halbduplex</strong> relevant; Vollduplex (Switches) braucht kein CSMA/CD</li>
+</ul></div>
+<div class="card c3"><h3>&#128225; CSMA/CA (802.11)</h3>
+<p>Carrier Sense Multiple Access / Collision Avoidance &ndash; WLAN.</p>
+<ul>
+<li><strong>1.</strong> Listen (Kanal frei?)</li>
+<li><strong>2.</strong> DIFS abwarten (Distributed Inter-Frame Spacing)</li>
+<li><strong>3.</strong> Zufälliger Backoff Timer</li>
+<li><strong>4.</strong> Senden</li>
+<li><strong>5.</strong> ACK empfangen (Bestätigung)</li>
+<li>Optional: <strong>RTS/CTS</strong> gegen Hidden Station Problem</li>
+</ul></div>
+<div class="card c4"><h3>&#128274; WLAN-Sicherheit</h3>
+<p>Verschlüsselungsstandards für drahtlose Netze:</p>
+<ul>
+<li><strong>WEP:</strong> Veraltet, unsicher (RC4, leicht knackbar)</li>
+<li><strong>WPA:</strong> TKIP, Übergang, besser als WEP</li>
+<li><strong>WPA2:</strong> AES/CCMP, aktueller Standard</li>
+<li><strong>WPA3:</strong> SAE Handshake, verbesserte Sicherheit</li>
+</ul></div>
+</div>
+<div class="cards" style="margin-top:12px">
+<div class="card c1"><h3>&#128225; WLAN-Standards</h3>
+<ul>
+<li><strong>802.11b</strong> (Wi-Fi 1): 2.4 GHz, bis 11 Mbit/s</li>
+<li><strong>802.11a</strong> (Wi-Fi 2): 5 GHz, bis 54 Mbit/s</li>
+<li><strong>802.11g</strong> (Wi-Fi 3): 2.4 GHz, bis 54 Mbit/s</li>
+<li><strong>802.11n</strong> (Wi-Fi 4): 2.4/5 GHz, bis 600 Mbit/s</li>
+<li><strong>802.11ac</strong> (Wi-Fi 5): 5 GHz, bis 6.9 Gbit/s</li>
+<li><strong>802.11ax</strong> (Wi-Fi 6): 2.4/5 GHz, bis 9.6 Gbit/s</li>
+</ul></div>
+<div class="card c2"><h3>&#127758; WLAN-Topologien</h3>
+<ul>
+<li><strong>BSS</strong> (Basic Service Set): Ein AP, mehrere Clients &ndash; Infrastrukturmodus</li>
+<li><strong>ESS</strong> (Extended Service Set): Mehrere APs verbunden, Roaming möglich</li>
+<li><strong>IBSS</strong> (Independent BSS): Ad-hoc, ohne AP, direkte Verbindung</li>
+</ul></div>
+</div>
+
+<!-- ========== CSMA VISUALIZER ========== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#9654;</div><h2>CSMA Visualizer</h2></div>
+<div class="viz-wrap">
+<div class="viz-controls">
+<button class="btn btn-primary" onclick="vizStart('cd')" id="btn-cd">CSMA/CD starten</button>
+<button class="btn btn-secondary" onclick="vizStart('ca')" id="btn-ca">CSMA/CA starten</button>
+<button class="btn btn-secondary" onclick="vizReset()">Zurücksetzen</button>
+</div>
+<div class="viz-canvas" id="viz-canvas">
+<div class="viz-lane" id="lane-a"><span class="viz-lane-label">Station A</span></div>
+<div class="viz-medium" id="viz-medium">-- Medium / Kanal --</div>
+<div class="viz-lane" id="lane-b"><span class="viz-lane-label">Station B</span></div>
+<div class="viz-step-label" id="viz-step">Wähle oben CSMA/CD oder CSMA/CA, um die Animation zu starten.</div>
+</div>
+</div>
+
+<!-- ========== VERGLEICHSTABELLE ========== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#128202;</div><h2>CSMA/CD vs. CSMA/CA</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Eigenschaft</th><th>CSMA/CD</th><th>CSMA/CA</th></tr></thead>
+<tbody>
+<tr><td>Standard</td><td>802.3 (Ethernet)</td><td>802.11 (WLAN)</td></tr>
+<tr><td>Medium</td><td>Kabel (Kupfer)</td><td>Funk (Luft)</td></tr>
+<tr><td>Prinzip</td><td>Kollision erkennen</td><td>Kollision vermeiden</td></tr>
+<tr><td>Ablauf</td><td>Listen &rarr; Send &rarr; Detect &rarr; Jam &rarr; Backoff</td><td>Listen &rarr; DIFS &rarr; Backoff &rarr; Send &rarr; ACK</td></tr>
+<tr><td>Kollisionsbehandlung</td><td>Jam Signal + Backoff</td><td>ACK fehlt &rarr; erneut senden</td></tr>
+<tr><td>Duplex</td><td>Nur Halbduplex</td><td>Immer Halbduplex (Funk)</td></tr>
+<tr><td>Optional</td><td>&ndash;</td><td>RTS/CTS (Hidden Station)</td></tr>
+<tr><td>Relevanz heute</td><td>Kaum (Vollduplex-Switches)</td><td>Sehr hoch (WLAN überall)</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- ========== UEBUNGEN ========== -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#127947;</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="proto" onclick="setMode('proto')">CSMA/CD vs CA</div>
+<div class="tab" data-mode="standards" onclick="setMode('standards')">WLAN-Standards</div>
+<div class="tab" data-mode="mac" onclick="setMode('mac')">MAC-Adressen</div>
+<div class="tab" data-mode="topo" onclick="setMode('topo')">Topologien</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- ========== ZUSAMMENFASSUNG ========== -->
+<div class="summary">
+<div class="summary-card"><h4>&#128161; Merke</h4><p>CSMA/CD = Collision <strong>Detection</strong> (Kabel, erkennen). CSMA/CA = Collision <strong>Avoidance</strong> (Funk, vermeiden). Im Funk kann man nicht gleichzeitig senden und hoeren!</p></div>
+<div class="summary-card"><h4>&#127919; Prüfungstipp</h4><p>MAC-Adressen: Immer 48 Bit = 6 Byte = 12 Hex-Zeichen. Die ersten 3 Byte (OUI) identifizieren den Hersteller. Broadcast-MAC = FF:FF:FF:FF:FF:FF.</p></div>
+<div class="summary-card"><h4>&#128272; Sicherheit merken</h4><p>WEP &rarr; WPA &rarr; WPA2 (AES) &rarr; WPA3 (SAE). In der Prüfung: WEP ist IMMER unsicher. WPA2 mit AES/CCMP ist der aktuelle Mindeststandard.</p></div>
+<div class="summary-card"><h4>&#128246; Frequenzen</h4><p>2.4 GHz: größere Reichweite, mehr Störungen, weniger Kanäle. 5 GHz: höhere Datenrate, geringere Reichweite, mehr Kanäle. Wi-Fi 4/6 können beide.</p></div>
+</div>
+
+<!-- ========== GLOSSAR ========== -->
+<div class="glossary-section" id="glossary-section">
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128218;</div><h2>Glossar &ndash; Begriffe meistern</h2></div>
+<div class="glossary-progress-bar"><span class="gp-text">Fortschritt</span><div class="gp-bar"><div class="gp-fill" id="gp-fill" style="width:0%"></div></div><span class="gp-count" id="gp-count">0 / 8 gemeistert</span></div>
+<div class="glossary-grid" id="glossary-grid"></div>
+<div class="glossary-learn" id="glossary-learn"></div>
+</div>
+
+<div id="glossary-tooltip" class="glossary-tooltip"><div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">&#128073; Klicken zum Lernen</div></div>
+</div>
+
+<script>
+// ===== Progress =====
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('mac-csma-wlan',{status:'in-progress'});
+
+// ===== CSMA Visualizer =====
+let vizTimer=null,vizStep=0;
+function vizReset(){
+  clearInterval(vizTimer);vizStep=0;
+  document.getElementById('lane-a').innerHTML='<span class="viz-lane-label">Station A</span>';
+  document.getElementById('lane-b').innerHTML='<span class="viz-lane-label">Station B</span>';
+  document.getElementById('viz-medium').textContent='-- Medium / Kanal --';
+  document.getElementById('viz-step').textContent='Wähle oben CSMA/CD oder CSMA/CA, um die Animation zu starten.';
+  document.querySelectorAll('.collision-flash').forEach(e=>e.remove());
+}
+function addPkt(lane,cls,text,left){
+  const el=document.createElement('div');el.className='pkt '+cls;el.textContent=text;
+  el.style.left=left;el.style.width='60px';el.style.top='12px';
+  document.getElementById(lane).appendChild(el);return el;
+}
+function vizStart(type){
+  vizReset();
+  const steps=type==='cd'?[
+    {fn:()=>{addPkt('lane-a','a','DATA','80px');addPkt('lane-b','b','DATA','calc(100% - 140px)');},msg:'1. Beide Stationen prüfen den Kanal (Listen before Talk) und beginnen zu senden.'},
+    {fn:()=>{document.querySelectorAll('#lane-a .pkt.a').forEach(p=>p.style.left='45%');document.querySelectorAll('#lane-b .pkt.b').forEach(p=>p.style.left='45%');},msg:'2. Die Signale breiten sich auf dem Kabel aus und treffen aufeinander...'},
+    {fn:()=>{const c=document.createElement('div');c.className='collision-flash';document.getElementById('viz-medium').appendChild(c);document.getElementById('viz-medium').textContent='!! KOLLISION !!';document.getElementById('viz-medium').style.color='var(--red)';},msg:'3. Kollision erkannt! Beide Stationen detektieren die Signalverzerrung.'},
+    {fn:()=>{document.querySelectorAll('.pkt.a,.pkt.b').forEach(e=>e.remove());addPkt('lane-a','jam','JAM','45%');addPkt('lane-b','jam','JAM','45%');},msg:'4. Jam Signal wird gesendet (32 Bit), um alle Stationen zu informieren.'},
+    {fn:()=>{document.querySelectorAll('.pkt').forEach(e=>e.remove());document.getElementById('viz-medium').textContent='-- Warten: Backoff --';document.getElementById('viz-medium').style.color='var(--yellow)';},msg:'5. Binary Exponential Backoff: Beide warten eine zufaellige Zeit (0..2^n - 1 Slotzeiten).'},
+    {fn:()=>{document.getElementById('viz-medium').textContent='-- Medium frei --';document.getElementById('viz-medium').style.color='';addPkt('lane-a','a','DATA','80px');},msg:'6. Station A gewinnt (kuerzerer Backoff) und sendet erfolgreich.'},
+    {fn:()=>{document.querySelectorAll('#lane-a .pkt.a').forEach(p=>p.style.left='calc(100% - 140px)');},msg:'7. Daten erfolgreich übertragen. Station B wartet und sendet danach.'}
+  ]:[
+    {fn:()=>{},msg:'1. Station A moechte senden. Sie hoert den Kanal ab (Carrier Sense).'},
+    {fn:()=>{document.getElementById('viz-medium').textContent='-- DIFS warten --';document.getElementById('viz-medium').style.color='var(--yellow)';},msg:'2. Kanal ist frei: Station A wartet die DIFS-Zeit (Distributed Inter-Frame Spacing) ab.'},
+    {fn:()=>{document.getElementById('viz-medium').textContent='-- Backoff Timer --';addPkt('lane-a','rts','RTS','80px');},msg:'3. Optional: Station A sendet RTS (Request to Send) an den Access Point.'},
+    {fn:()=>{document.querySelectorAll('.pkt.rts').forEach(p=>p.style.left='calc(100% - 140px)');},msg:'4. RTS erreicht den Empfänger (Station B / AP).'},
+    {fn:()=>{document.querySelectorAll('.pkt.rts').forEach(e=>e.remove());addPkt('lane-b','cts','CTS','calc(100% - 140px)');},msg:'5. Empfänger antwortet mit CTS (Clear to Send). Alle anderen Stationen warten.'},
+    {fn:()=>{document.querySelectorAll('.pkt.cts').forEach(p=>p.style.left='80px');},msg:'6. CTS empfangen. Station A darf jetzt exklusiv senden.'},
+    {fn:()=>{document.querySelectorAll('.pkt.cts').forEach(e=>e.remove());addPkt('lane-a','a','DATA','80px');document.getElementById('viz-medium').textContent='-- Senden --';document.getElementById('viz-medium').style.color='var(--cyan)';},msg:'7. Station A sendet die Daten über den Kanal.'},
+    {fn:()=>{document.querySelectorAll('#lane-a .pkt.a').forEach(p=>p.style.left='calc(100% - 140px)');},msg:'8. Daten erreichen den Empfänger (Station B / AP).'},
+    {fn:()=>{document.querySelectorAll('.pkt.a').forEach(e=>e.remove());addPkt('lane-b','ack','ACK','calc(100% - 140px)');},msg:'9. Empfänger sendet ACK (Acknowledgement) als Bestätigung zurueck.'},
+    {fn:()=>{document.querySelectorAll('.pkt.ack').forEach(p=>p.style.left='80px');document.getElementById('viz-medium').textContent='-- Erfolgreich --';document.getElementById('viz-medium').style.color='var(--green)';},msg:'10. ACK empfangen! Übertragung erfolgreich abgeschlossen.'}
+  ];
+  let i=0;
+  function next(){
+    if(i>=steps.length){clearInterval(vizTimer);return;}
+    steps[i].fn();
+    document.getElementById('viz-step').innerHTML='<span class="viz-step-num">Schritt '+steps[i].msg.split('.')[0]+'.</span>'+steps[i].msg.split('.').slice(1).join('.');
+    i++;
+  }
+  next();
+  vizTimer=setInterval(next,2200);
+}
+
+// ===== Exercise Engine =====
+let mode='proto',score={correct:0,wrong:0,streak:0},currentTask={};
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+
+const protoQuestions=[
+  {q:'Ein PC ist per Kupferkabel an einen Hub angeschlossen. Welches Zugriffsverfahren wird verwendet?',a:'CSMA/CD',s:'Hubs arbeiten im Halbduplex. Kabelgebundenes Ethernet mit Hub = CSMA/CD (802.3).'},
+  {q:'Ein Laptop verbindet sich per Wi-Fi mit einem Access Point. Welches Verfahren?',a:'CSMA/CA',s:'WLAN = 802.11 = CSMA/CA. Funk kann nicht gleichzeitig senden und empfangen.'},
+  {q:'Zwei PCs an einem Switch mit Vollduplex-Verbindung. Wird CSMA/CD benötigt?',a:'Nein',s:'Bei Vollduplex gibt es keine Kollisionen, da Senden und Empfangen auf getrennten Leitungen erfolgt.'},
+  {q:'Im WLAN: Station sendet Daten, erhält aber kein ACK. Was passiert?',a:'Erneut senden',s:'CSMA/CA: Wenn kein ACK kommt, wird angenommen, dass eine Kollision stattfand. Die Station wartet (Backoff) und sendet erneut.'},
+  {q:'Welches Signal wird bei CSMA/CD nach einer Kollision gesendet?',a:'Jam Signal',s:'Nach einer Kollisionserkennung senden alle beteiligten Stationen ein 32-Bit Jam Signal.'},
+  {q:'Was bedeutet RTS/CTS und bei welchem Verfahren wird es eingesetzt?',a:'CSMA/CA',s:'RTS (Request to Send) / CTS (Clear to Send) ist optional bei CSMA/CA (WLAN) und loest das Hidden Station Problem.'},
+  {q:'Warum kann man im WLAN Kollisionen nicht erkennen (nur vermeiden)?',a:'CSMA/CA',s:'Im Funk kann eine Station nicht gleichzeitig senden und empfangen. Daher ist Collision Detection (CD) unmöglich. Stattdessen: Collision Avoidance (CA).'},
+  {q:'Ein altes 10BASE-T Netzwerk mit Hub. Welcher Standard regelt den Zugriff?',a:'CSMA/CD',s:'10BASE-T mit Hub = Halbduplex Ethernet = IEEE 802.3 = CSMA/CD.'},
+];
+
+const standardsDB=[
+  {std:'802.11b',wifi:'Wi-Fi 1',freq:'2.4 GHz',speed:'11 Mbit/s'},
+  {std:'802.11a',wifi:'Wi-Fi 2',freq:'5 GHz',speed:'54 Mbit/s'},
+  {std:'802.11g',wifi:'Wi-Fi 3',freq:'2.4 GHz',speed:'54 Mbit/s'},
+  {std:'802.11n',wifi:'Wi-Fi 4',freq:'2.4/5 GHz',speed:'600 Mbit/s'},
+  {std:'802.11ac',wifi:'Wi-Fi 5',freq:'5 GHz',speed:'6.9 Gbit/s'},
+  {std:'802.11ax',wifi:'Wi-Fi 6',freq:'2.4/5 GHz',speed:'9.6 Gbit/s'},
+];
+
+const macQuestions=[
+  {q:'Wie viele Bits hat eine MAC-Adresse?',a:'48',s:'Eine MAC-Adresse ist 48 Bit lang (6 Byte = 12 Hex-Zeichen).'},
+  {q:'Welcher Teil der MAC-Adresse identifiziert den Hersteller?',a:'OUI',s:'Die ersten 24 Bit (3 Byte) = OUI (Organizationally Unique Identifier) identifizieren den Hersteller.'},
+  {q:'Wie lautet die Broadcast-MAC-Adresse?',a:'FF:FF:FF:FF:FF:FF',s:'Die Broadcast-MAC ist FF:FF:FF:FF:FF:FF (alle Bits auf 1). Damit werden alle Geräte im lokalen Netz angesprochen.'},
+  {q:'In welcher Schreibweise werden MAC-Adressen dargestellt?',a:'Hexadezimal',s:'MAC-Adressen werden hexadezimal dargestellt, z.B. A4:3E:51:0F:C2:7B.'},
+  {q:'Wie viele Bytes hat eine MAC-Adresse?',a:'6',s:'48 Bit / 8 = 6 Byte. Dargestellt als 6 Hex-Paare getrennt durch Doppelpunkte oder Bindestriche.'},
+  {q:'Auf welcher OSI-Schicht arbeitet die MAC-Adresse?',a:'2',s:'Die MAC-Adresse arbeitet auf Schicht 2 (Data Link Layer), genauer auf der MAC-Teilschicht.'},
+  {q:'Wie gross ist der Datenteil (Payload) eines Ethernet Frames (min-max in Byte)?',a:'46-1500',s:'Der Datenteil eines Ethernet Frames ist mindestens 46 Byte und maximal 1500 Byte gross.'},
+  {q:'Was prueft das FCS-Feld am Ende eines Ethernet Frames?',a:'Fehler',s:'FCS = Frame Check Sequence. Eine CRC-Prüfsumme, die Übertragungsfehler erkennt.'},
+];
+
+const topoQuestions=[
+  {q:'Mehrere Clients verbinden sich mit EINEM Access Point. Welche Topologie?',a:'BSS',s:'BSS = Basic Service Set. Ein AP mit seinen verbundenen Clients im Infrastrukturmodus.'},
+  {q:'Mehrere APs sind verbunden, Clients können roamen. Welche Topologie?',a:'ESS',s:'ESS = Extended Service Set. Mehrere APs mit gleichem SSID ermöglichen nahtloses Roaming.'},
+  {q:'Zwei Laptops verbinden sich direkt ohne Access Point. Welche Topologie?',a:'IBSS',s:'IBSS = Independent Basic Service Set (Ad-hoc-Modus). Direkte Verbindung ohne AP.'},
+  {q:'Ein Firmennetzwerk mit 12 APs auf 3 Etagen und Roaming. Welche Topologie?',a:'ESS',s:'Mehrere APs im selben Netzwerk mit Roaming-Fähigkeit = Extended Service Set (ESS).'},
+  {q:'Auf einer Konferenz verbinden sich 3 Laptops direkt für Dateiaustausch. Welche Topologie?',a:'IBSS',s:'Direkte Verbindung ohne Infrastruktur = IBSS (Ad-hoc / Independent BSS).'},
+  {q:'Ein Heimnetzwerk mit einem WLAN-Router. Welche Topologie?',a:'BSS',s:'Ein einzelner AP (WLAN-Router) mit Clients = BSS (Basic Service Set).'},
+];
+
+function genTask(){
+  if(mode==='proto'){
+    const q=protoQuestions[rand(0,protoQuestions.length-1)];
+    const isYesNo=q.a==='Nein'||q.a==='Ja';
+    const isJam=q.a==='Jam Signal';
+    const isResend=q.a==='Erneut senden';
+    let opts;
+    if(isYesNo) opts=shuffle(['Ja','Nein']);
+    else if(isJam) opts=shuffle(['Jam Signal','ACK','RTS','Backoff Timer']);
+    else if(isResend) opts=shuffle(['Erneut senden','Jam Signal senden','Verbindung trennen','Nichts']);
+    else opts=shuffle(['CSMA/CD','CSMA/CA']);
+    return{q:q.q,answer:q.a,options:opts,solution:q.s,type:'select'};
+  }
+  if(mode==='standards'){
+    const s=standardsDB[rand(0,standardsDB.length-1)];
+    const types=[
+      {q:'Welche maximale Datenrate hat '+s.std+' ('+s.wifi+')?',a:s.speed,opts:shuffle([...new Set([s.speed,'11 Mbit/s','54 Mbit/s','600 Mbit/s','6.9 Gbit/s','9.6 Gbit/s'])]).slice(0,4),s:s.std+' ('+s.wifi+'): '+s.freq+', bis '+s.speed},
+      {q:'Auf welcher Frequenz arbeitet '+s.std+' ('+s.wifi+')?',a:s.freq,opts:shuffle([...new Set([s.freq,'2.4 GHz','5 GHz','2.4/5 GHz'])]).slice(0,3),s:s.std+' ('+s.wifi+'): '+s.freq+', bis '+s.speed},
+      {q:'Welcher Wi-Fi-Name gehört zu '+s.std+'?',a:s.wifi,opts:shuffle(['Wi-Fi 1','Wi-Fi 2','Wi-Fi 3','Wi-Fi 4','Wi-Fi 5','Wi-Fi 6']).slice(0,4),s:s.std+' = '+s.wifi+' ('+s.freq+', '+s.speed+')'}
+    ];
+    const t=types[rand(0,types.length-1)];
+    if(!t.opts.includes(t.a))t.opts[0]=t.a;
+    t.opts=shuffle(t.opts);
+    return{q:t.q,answer:t.a,options:t.opts,solution:t.s,type:'select'};
+  }
+  if(mode==='mac'){
+    const q=macQuestions[rand(0,macQuestions.length-1)];
+    return{q:q.q,answer:q.a,solution:q.s,type:'input'};
+  }
+  if(mode==='topo'){
+    const q=topoQuestions[rand(0,topoQuestions.length-1)];
+    return{q:q.q,answer:q.a,options:shuffle(['BSS','ESS','IBSS']),solution:q.s,type:'select'};
+  }
+}
+
+function newTask(){
+  currentTask=genTask();
+  const area=document.getElementById('exercise-area');
+  let html='<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">'+{proto:'CSMA/CD vs. CSMA/CA',standards:'WLAN-Standards zuordnen',mac:'MAC-Adressen Wissen',topo:'WLAN-Topologien erkennen'}[mode]+'</div>';
+  html+='<div class="task-display">'+currentTask.q+'</div>';
+  if(currentTask.type==='select'){
+    html+='<div class="task-sub">Wähle die richtige Antwort:</div><div class="input-row">';
+    html+='<select id="user-answer">';
+    html+='<option value="">-- Antwort wählen --</option>';
+    currentTask.options.forEach(o=>{html+='<option value="'+o+'">'+o+'</option>';});
+    html+='</select></div>';
+  }else{
+    html+='<div class="task-sub">Gib deine Antwort ein:</div>';
+    html+='<div class="input-row"><input type="text" id="user-answer" placeholder="Deine Antwort..." autocomplete="off"></div>';
+  }
+  html+='<div class="btn-row"><button class="btn btn-primary" onclick="checkAnswer()">Prüfen &#8629;</button><button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button><button class="btn btn-secondary" onclick="newTask()">Überspringen &rarr;</button></div>';
+  html+='<div class="feedback" id="fb"></div><div class="solution-box" id="sol"></div>';
+  area.innerHTML=html;
+  const inp=document.getElementById('user-answer');
+  inp.focus();
+  inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer();});
+}
+
+function normalize(s){return s.trim().toLowerCase().replace(/[^a-z0-9äöü\/\-:.]/g,'');}
+function checkAnswer(){
+  const inp=document.getElementById('user-answer');
+  const fb=document.getElementById('fb');
+  const v=inp.value.trim();
+  if(!v)return;
+  const correct=normalize(v)===normalize(currentTask.answer);
+  if(correct){
+    inp.classList.add('correct');fb.textContent='\u2713 Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('mac-csma-wlan',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  }else{
+    inp.classList.add('wrong');fb.textContent='\u2717 Falsch \u2013 richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+function showSolution(){const s=document.getElementById('sol');s.textContent=currentTask.solution;s.classList.add('show');}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+newTask();
+
+// ===== GLOSSAR SYSTEM =====
+const glossaryTerms=[
+  {id:'csma-cd',term:'CSMA/CD',icon:'&#128268;',short:'Carrier Sense Multiple Access / Collision Detection',
+   definition:'CSMA/CD (IEEE 802.3) ist das Medienzugriffsverfahren für kabelgebundenes Ethernet im Halbduplex-Betrieb. Jede Station hört den Kanal ab (Carrier Sense), bevor sie sendet. Senden mehrere Stationen gleichzeitig, wird die Kollision erkannt (Collision Detection), ein Jam Signal (32 Bit) gesendet und nach dem Binary Exponential Backoff (zufällige Wartezeit aus 0..2^n-1 Slotzeiten) erneut versucht. Bei Vollduplex-Switches ist CSMA/CD nicht mehr nötig.',
+   analogy:'Stell dir ein Gespräch am Tisch vor: Bevor du sprichst, hörst du, ob jemand redet. Falls zwei gleichzeitig anfangen, bemerken beide das Durcheinander (Kollision) und schweigen. Dann wartet jeder eine zufällige Zeit, bevor er es erneut versucht.',
+   hints:['Nur bei Halbduplex-Verbindungen relevant (z.B. Hub-basierte Netze)','Jam Signal = 32 Bit, um alle Stationen über die Kollision zu informieren','Backoff-Formel: zufällige Wartezeit aus 0 bis 2^n - 1 Slotzeiten (n = Versuchsnummer)'],
+   questions:[
+     {type:'fill',q:'CSMA/CD steht für Carrier Sense Multiple Access / Collision ___.',a:'Detection',keywords:['Detection','Erkennung']},
+     {type:'choice',q:'Wann ist CSMA/CD NICHT mehr nötig?',correct:'Bei Vollduplex-Verbindungen über Switches',wrong:['Bei WLAN-Verbindungen über Access Points','Bei Verbindungen mit hoher Bandbreite','Bei IPv6-Netzwerken']},
+     {type:'explain',q:'Erkläre den Ablauf von CSMA/CD in eigenen Worten.',keywords:['kanal','abhören','senden','kollision','erkennen','jam','backoff','warten']}
+   ],difficulty:1},
+
+  {id:'csma-ca',term:'CSMA/CA',icon:'&#128225;',short:'Carrier Sense Multiple Access / Collision Avoidance',
+   definition:'CSMA/CA (IEEE 802.11) ist das Medienzugriffsverfahren für WLAN. Da im Funk eine Kollisionserkennung unmöglich ist (man kann nicht gleichzeitig senden und empfangen), werden Kollisionen vermieden (Avoidance). Der Ablauf: Kanal abhören, DIFS abwarten, zufälligen Backoff-Timer herunterzählen, senden, auf ACK warten. Optional kann RTS/CTS eingesetzt werden, um das Hidden-Station-Problem zu lösen.',
+   analogy:'Wie ein höfliches Walkie-Talkie-Gespräch: Du wartest eine kurze Pause ab, zählst innerlich bis zu einer zufälligen Zahl, und erst dann drückst du die Sprechtaste. Nach dem Sprechen wartest du auf ein "Roger" (ACK) als Bestätigung.',
+   hints:['Im Funk kann man nicht gleichzeitig senden und empfangen – daher Vermeidung statt Erkennung','DIFS = Distributed Inter-Frame Spacing – Pflichtwartezeit vor dem Senden','ACK = Acknowledgement – ohne Bestätigung wird die Übertragung wiederholt'],
+   questions:[
+     {type:'fill',q:'CSMA/CA steht für Carrier Sense Multiple Access / Collision ___.',a:'Avoidance',keywords:['Avoidance','Vermeidung']},
+     {type:'choice',q:'Warum wird im WLAN Collision Avoidance statt Detection verwendet?',correct:'Weil Funkstationen nicht gleichzeitig senden und empfangen können',wrong:['Weil WLAN schneller ist als Ethernet','Weil Kollisionen im Funk nicht vorkommen','Weil der Access Point alle Kollisionen verhindert']},
+     {type:'explain',q:'Beschreibe den vollständigen Ablauf einer CSMA/CA-Übertragung.',keywords:['kanal','abhören','difs','backoff','senden','ack','bestätigung']}
+   ],difficulty:1},
+
+  {id:'mac-schicht',term:'MAC-Schicht',icon:'&#128279;',short:'Media Access Control – Teilschicht von OSI Layer 2',
+   definition:'Die MAC-Schicht (Media Access Control) ist die untere Teilschicht des Data Link Layers (OSI-Schicht 2). Sie regelt den Zugriff mehrerer Stationen auf ein gemeinsames Übertragungsmedium. Die MAC-Adresse ist eine weltweit eindeutige 48-Bit-Hardwareadresse (6 Byte, 12 Hex-Zeichen), bestehend aus OUI (Organizationally Unique Identifier, 24 Bit, Herstellerkennung) und Device ID (24 Bit). Die Broadcast-MAC ist FF:FF:FF:FF:FF:FF.',
+   analogy:'Die MAC-Schicht ist wie ein Verkehrspolizist an einer Kreuzung ohne Ampel: Sie regelt, wer wann die Straße (das Medium) benutzen darf, und jedes Fahrzeug hat ein einzigartiges Nummernschild (MAC-Adresse).',
+   hints:['MAC-Adresse = 48 Bit = 6 Byte = 12 Hex-Zeichen (z.B. A4:3E:51:0F:C2:7B)','OUI (erste 3 Byte) identifiziert den Hersteller der Netzwerkkarte','Broadcast-MAC FF:FF:FF:FF:FF:FF erreicht alle Geräte im lokalen Netz'],
+   questions:[
+     {type:'fill',q:'Eine MAC-Adresse ist ___ Bit lang.',a:'48',keywords:['48']},
+     {type:'choice',q:'Welcher Teil der MAC-Adresse identifiziert den Hersteller?',correct:'OUI (Organizationally Unique Identifier) – die ersten 24 Bit',wrong:['Device ID – die letzten 24 Bit','FCS – Frame Check Sequence','Das Type/Length-Feld im Ethernet-Frame']},
+     {type:'explain',q:'Erkläre den Aufbau einer MAC-Adresse und die Rolle der MAC-Schicht.',keywords:['48 bit','6 byte','oui','hersteller','device id','schicht 2','zugriff','medium']}
+   ],difficulty:1},
+
+  {id:'kollision',term:'Kollision',icon:'&#128165;',short:'Gleichzeitiges Senden zweier Stationen auf dem gleichen Medium',
+   definition:'Eine Kollision entsteht, wenn zwei oder mehr Stationen gleichzeitig Daten auf einem gemeinsamen Medium senden. Die Signale überlagern sich und werden unlesbar. Bei kabelgebundenem Ethernet (CSMA/CD) werden Kollisionen erkannt und mit einem Jam Signal signalisiert. Im WLAN (CSMA/CA) werden Kollisionen nicht erkannt, sondern durch Wartezeiten und ACK-Mechanismen vermieden. Ein fehlender ACK deutet auf eine Kollision hin.',
+   analogy:'Wie wenn zwei Personen gleichzeitig in ein Megafon sprechen – die Zuhörer verstehen nur Lärm. Im Kabel-Netzwerk hört man den Lärm sofort (Detection), beim Funk merkt man es erst, wenn keine Antwort kommt (kein ACK).',
+   hints:['Kollisionsdomäne: Alle Geräte, die sich ein Medium teilen (z.B. an einem Hub)','Switches teilen Kollisionsdomänen auf – jeder Port ist eine eigene Domäne','Im Vollduplex gibt es keine Kollisionen (getrennte Sende-/Empfangsleitungen)'],
+   questions:[
+     {type:'fill',q:'Nach einer Kollision bei CSMA/CD wird ein ___ Signal gesendet.',a:'Jam',keywords:['Jam','Jam-Signal']},
+     {type:'choice',q:'Wie erkennt CSMA/CA, dass eine Kollision stattgefunden hat?',correct:'Das ACK (Acknowledgement) vom Empfänger bleibt aus',wrong:['Durch Messung der Signalverzerrung auf dem Kabel','Durch das Jam Signal des Empfängers','Gar nicht – Kollisionen sind bei WLAN unmöglich']},
+     {type:'explain',q:'Erkläre den Unterschied der Kollisionsbehandlung bei CSMA/CD und CSMA/CA.',keywords:['erkennen','detect','vermeiden','avoid','jam','ack','kabel','funk']}
+   ],difficulty:2},
+
+  {id:'backoff',term:'Backoff-Algorithmus',icon:'&#9200;',short:'Zufällige Wartezeit nach einer Kollision',
+   definition:'Der Binary Exponential Backoff ist der Algorithmus, der nach einer Kollision die Wartezeit bestimmt. Die Station wählt eine zufällige Zahl aus dem Intervall [0, 2^n - 1] (n = Anzahl bisheriger Versuche für dieses Frame) und wartet diese Anzahl an Slotzeiten. Mit jedem Fehlversuch verdoppelt sich das Intervall (exponentiell), wodurch die Wahrscheinlichkeit weiterer Kollisionen sinkt. Nach 16 Versuchen wird das Frame verworfen.',
+   analogy:'Wie wenn sich zwei Personen an einer Tür treffen: Beim ersten Mal wartet jeder 0 oder 1 Sekunde. Beim zweiten Treffen wählt jeder aus 0-3 Sekunden. Beim dritten aus 0-7. Je öfter man sich blockiert, desto länger könnte man warten – damit nicht immer beide gleichzeitig losgehen.',
+   hints:['Formel: Wartezeit = Zufallszahl aus [0, 2^n - 1] × Slotzeit','n steigt mit jedem Fehlversuch (1. Versuch: 0-1, 2. Versuch: 0-3, 3. Versuch: 0-7 ...)','Nach 16 Versuchen wird aufgegeben und das Frame verworfen'],
+   questions:[
+     {type:'fill',q:'Beim Binary Exponential Backoff wählt die Station eine Zufallszahl aus 0 bis 2^n - ___.',a:'1',keywords:['1']},
+     {type:'choice',q:'Was passiert mit dem Backoff-Intervall bei weiteren Kollisionen?',correct:'Es verdoppelt sich mit jedem Fehlversuch (exponentielles Wachstum)',wrong:['Es bleibt konstant','Es halbiert sich mit jedem Fehlversuch','Es wird auf 0 zurückgesetzt']},
+     {type:'explain',q:'Erkläre, warum der Backoff-Algorithmus exponentiell wächst.',keywords:['kollision','wahrscheinlichkeit','verdoppel','intervall','zufall','slotzeit']}
+   ],difficulty:2},
+
+  {id:'wlan',term:'WLAN (IEEE 802.11)',icon:'&#128225;',short:'Wireless Local Area Network – Drahtloses lokales Netzwerk',
+   definition:'WLAN (Wireless LAN) nach IEEE 802.11 ermöglicht drahtlose Netzwerkkommunikation über Funkwellen. Wichtige Standards: 802.11b (2.4 GHz, 11 Mbit/s), 802.11a (5 GHz, 54 Mbit/s), 802.11g (2.4 GHz, 54 Mbit/s), 802.11n/Wi-Fi 4 (2.4/5 GHz, 600 Mbit/s), 802.11ac/Wi-Fi 5 (5 GHz, 6.9 Gbit/s), 802.11ax/Wi-Fi 6 (2.4/5 GHz, 9.6 Gbit/s). Topologien: BSS (ein AP), ESS (mehrere APs, Roaming), IBSS (Ad-hoc). Sicherheit: WEP (unsicher), WPA (TKIP), WPA2 (AES/CCMP), WPA3 (SAE).',
+   analogy:'WLAN ist wie ein unsichtbares Sprechzimmer: Alle können reden (Funk), aber nur einer gleichzeitig. Der Access Point ist der Moderator, der regelt, wer dran ist. Je neuer der Standard, desto schneller und sicherer das "Gespräch".',
+   hints:['2.4 GHz: größere Reichweite, mehr Störungen. 5 GHz: höhere Datenrate, kürzere Reichweite','BSS = ein AP, ESS = mehrere APs (Roaming), IBSS = ohne AP (Ad-hoc)','Sicherheitsreihenfolge: WEP (unsicher) → WPA → WPA2 (AES) → WPA3 (SAE)'],
+   questions:[
+     {type:'fill',q:'Der aktuelle Sicherheitsstandard für WLAN verwendet AES/CCMP und heißt ___.',a:'WPA2',keywords:['WPA2']},
+     {type:'choice',q:'Welcher WLAN-Standard unterstützt sowohl 2.4 GHz als auch 5 GHz?',correct:'802.11n (Wi-Fi 4) und 802.11ax (Wi-Fi 6)',wrong:['802.11b (Wi-Fi 1) und 802.11g (Wi-Fi 3)','802.11a (Wi-Fi 2) und 802.11ac (Wi-Fi 5)','Alle WLAN-Standards unterstützen beide Frequenzen']},
+     {type:'explain',q:'Vergleiche die WLAN-Topologien BSS, ESS und IBSS.',keywords:['bss','ess','ibss','access point','roaming','ad-hoc','infrastruktur']}
+   ],difficulty:1},
+
+  {id:'hidden-station',term:'Hidden-Station-Problem',icon:'&#128123;',short:'Zwei Stationen können sich gegenseitig nicht hören',
+   definition:'Das Hidden-Station-Problem (auch Hidden-Node-Problem) tritt in WLAN-Netzen auf, wenn zwei Stationen jeweils den Access Point erreichen können, aber aufgrund der Entfernung oder Hindernisse nicht voneinander wissen. Beide prüfen den Kanal, finden ihn frei (weil sie die Sendung der anderen nicht hören) und senden gleichzeitig – es kommt zur Kollision am AP. Die Lösung ist der RTS/CTS-Mechanismus (Request to Send / Clear to Send).',
+   analogy:'Stell dir zwei Personen vor, die auf verschiedenen Seiten eines Berges stehen und beide mit jemandem auf dem Gipfel (AP) reden wollen. Keiner hört den anderen, also reden beide gleichzeitig los. Der auf dem Gipfel versteht nichts mehr – eine "versteckte" Kollision.',
+   hints:['Tritt auf, wenn Stationen außerhalb der Funkreichweite voneinander liegen','Der AP empfängt beide Signale gleichzeitig → Kollision am AP','Lösung: RTS/CTS reserviert den Kanal, sodass versteckte Stationen gewarnt werden'],
+   questions:[
+     {type:'fill',q:'Das Hidden-Station-Problem wird durch den ___/CTS-Mechanismus gelöst.',a:'RTS',keywords:['RTS','Request to Send']},
+     {type:'choice',q:'Wann tritt das Hidden-Station-Problem auf?',correct:'Wenn zwei Stationen den AP erreichen, aber sich gegenseitig nicht hören können',wrong:['Wenn der Access Point ausfällt','Wenn zu viele Stationen im Netzwerk sind','Wenn die Verschlüsselung falsch konfiguriert ist']},
+     {type:'explain',q:'Erkläre das Hidden-Station-Problem und seine Lösung.',keywords:['station','hören','reichweite','ap','access point','kollision','rts','cts']}
+   ],difficulty:2},
+
+  {id:'rts-cts',term:'RTS/CTS',icon:'&#128172;',short:'Request to Send / Clear to Send – Kanalreservierung',
+   definition:'RTS/CTS (Request to Send / Clear to Send) ist ein optionaler Mechanismus bei CSMA/CA (IEEE 802.11), der das Hidden-Station-Problem löst. Ablauf: Die sendende Station schickt ein kurzes RTS-Frame an den Empfänger (AP). Der Empfänger antwortet mit einem CTS-Frame, das von allen Stationen in seiner Reichweite empfangen wird. Alle Stationen, die das CTS hören, wissen, dass der Kanal reserviert ist, und warten (NAV = Network Allocation Vector). Erst nach Ablauf des NAV oder nach dem ACK dürfen sie senden.',
+   analogy:'Wie das Handheben im Klassenzimmer: Du hebst die Hand (RTS), der Lehrer zeigt auf dich (CTS) und alle anderen wissen, dass sie still sein müssen. Erst wenn du fertig bist (ACK), darf der nächste sprechen.',
+   hints:['RTS/CTS ist optional und wird nur bei größeren Frames empfohlen (Overhead!)','CTS wird von allen Stationen in Reichweite des AP gehört – auch von "versteckten"','NAV (Network Allocation Vector) gibt an, wie lange der Kanal reserviert ist'],
+   questions:[
+     {type:'fill',q:'RTS steht für Request to ___, CTS für Clear to ___.',a:'Send',keywords:['Send','Senden']},
+     {type:'choice',q:'Warum ist RTS/CTS optional und wird nicht immer verwendet?',correct:'Weil der zusätzliche Overhead (RTS+CTS-Frames) bei kleinen Datenpaketen ineffizient ist',wrong:['Weil RTS/CTS nur bei 5-GHz-Netzen funktioniert','Weil moderne Access Points keine Kollisionen mehr haben','Weil WPA2 die Funktion von RTS/CTS übernommen hat']},
+     {type:'explain',q:'Beschreibe den vollständigen RTS/CTS-Ablauf und warum er das Hidden-Station-Problem löst.',keywords:['rts','cts','ap','reserv','nav','versteckt','hidden','kanal']}
+   ],difficulty:3}
+];
+
+const GLOSSARY_KEY='glossary-mac-csma-wlan';
+let glossaryState={};
+function loadGlossaryState(){try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){glossaryState={};}}
+function saveGlossaryState(){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));}
+function getLevel(id){return glossaryState[id]||0;}
+function setLevel(id,lv){glossaryState[id]=Math.min(3,Math.max(0,lv));saveGlossaryState();renderGlossaryGrid();updateGlossaryProgress();}
+
+function updateGlossaryProgress(){
+  const mastered=glossaryTerms.filter(t=>getLevel(t.id)>=3).length;
+  const pct=Math.round(mastered/glossaryTerms.length*100);
+  document.getElementById('gp-fill').style.width=pct+'%';
+  document.getElementById('gp-count').textContent=mastered+' / '+glossaryTerms.length+' gemeistert';
+}
+
+function renderGlossaryGrid(){
+  const grid=document.getElementById('glossary-grid');
+  grid.innerHTML=glossaryTerms.map(t=>{
+    const lv=getLevel(t.id);
+    return '<div class="glossary-card'+(glossaryState._active===t.id?' active':'')+'" data-level="'+lv+'" data-id="'+t.id+'" onclick="openGlossaryLearn(\''+t.id+'\')"><div class="gc-icon">'+t.icon+'</div><div class="gc-term">'+t.term+'</div><div class="gc-short">'+t.short+'</div><div class="gc-level"></div></div>';
+  }).join('');
+}
+
+// ===== Glossary Learn Panel =====
+let glCurrentPhase=0,glHintIdx=0,glCurrentTerm=null;
+function openGlossaryLearn(id){
+  glCurrentTerm=glossaryTerms.find(t=>t.id===id);
+  if(!glCurrentTerm)return;
+  glossaryState._active=id;
+  glCurrentPhase=0;glHintIdx=0;
+  renderGlossaryGrid();
+  renderGlossaryPhase();
+  const panel=document.getElementById('glossary-learn');
+  panel.classList.add('visible');
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function closeGlossaryLearn(){
+  document.getElementById('glossary-learn').classList.remove('visible');
+  glossaryState._active=null;renderGlossaryGrid();
+}
+function renderGlossaryPhase(){
+  const t=glCurrentTerm;
+  const phases=['Verstehen','Vertiefen','Prüfen'];
+  let html='<div class="gl-header"><h3>'+t.icon+' '+t.term+'</h3><button class="gl-close" onclick="closeGlossaryLearn()">&times;</button></div>';
+  html+='<div class="gl-phase-indicator">'+phases.map((p,i)=>'<span class="gl-phase'+(i===glCurrentPhase?' current':'')+(i<glCurrentPhase?' done':'')+'"'+(i<=glCurrentPhase?' onclick="glGoToPhase('+i+')"':'')+'>'+p+'</span>').join('')+'</div>';
+  html+='<div class="gl-content">';
+  if(glCurrentPhase===0){
+    html+='<div class="gl-analogy">&#128161; '+t.analogy+'</div>';
+    html+='<div class="gl-definition">'+t.definition+'</div>';
+    html+='<div style="margin-top:14px"><button class="gl-btn primary" onclick="glNextPhase()">Verstanden &rarr;</button></div>';
+  }else if(glCurrentPhase===1){
+    html+='<div class="gl-hints" id="gl-hints">';
+    t.hints.forEach((h,i)=>{html+='<div class="gl-hint'+(i<glHintIdx?' visible':'')+'" id="gl-hint-'+i+'">&#128204; '+h+'</div>';});
+    html+='</div>';
+    if(glHintIdx<t.hints.length) html+='<button class="gl-hint-btn" onclick="glShowHint()">&#128161; Nächster Hinweis ('+glHintIdx+'/'+t.hints.length+')</button>';
+    else html+='<button class="gl-btn primary" onclick="glNextPhase()">Zur Prüfung &rarr;</button>';
+  }else{
+    const q=t.questions[Math.min(getLevel(t.id),t.questions.length-1)];
+    html+='<div class="gl-question">'+q.q+'</div>';
+    if(q.type==='fill'){
+      html+='<input class="gl-input" id="gl-answer" placeholder="Antwort eingeben..." autocomplete="off">';
+      html+='<button class="gl-btn primary" onclick="glCheckFill()">Prüfen</button>';
+    }else if(q.type==='choice'){
+      const opts=shuffle([q.correct,...q.wrong]);
+      html+='<div class="gl-choices">'+opts.map(o=>'<button class="gl-choice" onclick="glCheckChoice(this,\''+btoa(unescape(encodeURIComponent(q.correct)))+'\')">'+o+'</button>').join('')+'</div>';
+    }else if(q.type==='explain'){
+      html+='<textarea class="gl-input" id="gl-answer" placeholder="Erkläre in eigenen Worten..."></textarea>';
+      html+='<div style="margin-bottom:8px;font-size:11px;color:var(--muted)">Schlüsselwörter: '+q.keywords.map(k=>'<span class="gl-keyword" style="background:rgba(255,255,255,.04);color:var(--muted)">'+k+'</span>').join(' ')+'</div>';
+      html+='<button class="gl-btn primary" onclick="glCheckExplain()">Prüfen</button>';
+    }
+    html+='<div id="gl-feedback"></div>';
+  }
+  html+='</div>';
+  document.getElementById('glossary-learn').innerHTML=html;
+  const inp=document.getElementById('gl-answer');
+  if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(glCurrentTerm.questions[Math.min(getLevel(glCurrentTerm.id),glCurrentTerm.questions.length-1)].type==='fill')glCheckFill();}});}
+}
+function glGoToPhase(idx){if(idx<=glCurrentPhase){glCurrentPhase=idx;glHintIdx=0;renderGlossaryPhase();}}
+function glNextPhase(){glCurrentPhase++;glHintIdx=0;renderGlossaryPhase();}
+function glShowHint(){glHintIdx++;renderGlossaryPhase();}
+
+function glCheckFill(){
+  const inp=document.getElementById('gl-answer');
+  const fb=document.getElementById('gl-feedback');
+  if(!inp.value.trim())return;
+  const q=glCurrentTerm.questions[Math.min(getLevel(glCurrentTerm.id),glCurrentTerm.questions.length-1)];
+  const val=inp.value.trim().toLowerCase();
+  const correct=q.keywords.some(k=>val.includes(k.toLowerCase()));
+  if(correct){
+    fb.innerHTML='<div class="gl-feedback success">&#10003; Richtig! '+q.a+'</div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelUp()">Weiter &rarr;</button></div>';
+    inp.style.borderColor='var(--green)';
+  }else{
+    fb.innerHTML='<div class="gl-feedback error">&#10007; Nicht ganz. Die richtige Antwort ist: <strong>'+q.a+'</strong></div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelDown()">Nochmal lernen</button></div>';
+    inp.style.borderColor='var(--red)';
+  }
+}
+function glCheckChoice(btn,b64){
+  const correct=decodeURIComponent(escape(atob(b64)));
+  const all=btn.parentElement.querySelectorAll('.gl-choice');
+  all.forEach(b=>{b.disabled=true;b.style.pointerEvents='none';if(b.textContent===correct)b.classList.add('correct');});
+  const fb=document.getElementById('gl-feedback');
+  if(btn.textContent===correct){
+    btn.classList.add('correct');
+    fb.innerHTML='<div class="gl-feedback success">&#10003; Richtig!</div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelUp()">Weiter &rarr;</button></div>';
+  }else{
+    btn.classList.add('wrong');
+    fb.innerHTML='<div class="gl-feedback error">&#10007; Falsch. Richtig wäre: <strong>'+correct+'</strong></div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelDown()">Nochmal lernen</button></div>';
+  }
+}
+function glCheckExplain(){
+  const inp=document.getElementById('gl-answer');
+  const fb=document.getElementById('gl-feedback');
+  if(!inp.value.trim())return;
+  const q=glCurrentTerm.questions[Math.min(getLevel(glCurrentTerm.id),glCurrentTerm.questions.length-1)];
+  const val=inp.value.trim().toLowerCase();
+  const found=q.keywords.filter(k=>val.includes(k.toLowerCase()));
+  const missing=q.keywords.filter(k=>!val.includes(k.toLowerCase()));
+  const ratio=found.length/q.keywords.length;
+  let html='<div class="gl-feedback '+(ratio>=0.5?'success':'error')+'">'+
+    (ratio>=0.5?'&#10003; Gute Erklärung!':'&#10007; Einige Schlüsselbegriffe fehlen.')+
+    ' ('+found.length+'/'+q.keywords.length+' Schlüsselwörter)</div>';
+  html+='<div style="margin-top:8px">'+q.keywords.map(k=>'<span class="gl-keyword '+(found.map(f=>f.toLowerCase()).includes(k.toLowerCase())?'found':'missing')+'">'+k+'</span>').join(' ')+'</div>';
+  html+='<div style="margin-top:10px"><button class="gl-btn primary" onclick="'+(ratio>=0.5?'glLevelUp()':'glLevelDown()')+'">'+(ratio>=0.5?'Weiter &rarr;':'Nochmal lernen')+'</button></div>';
+  fb.innerHTML=html;
+}
+function glLevelUp(){setLevel(glCurrentTerm.id,getLevel(glCurrentTerm.id)+1);glCurrentPhase=0;renderGlossaryPhase();}
+function glLevelDown(){const lv=getLevel(glCurrentTerm.id);if(lv>0)setLevel(glCurrentTerm.id,lv-1);glCurrentPhase=0;renderGlossaryPhase();}
+
+// ===== Tooltip =====
+const termMap={
+  'csma/cd':'csma-cd','csma cd':'csma-cd','collision detection':'csma-cd',
+  'csma/ca':'csma-ca','csma ca':'csma-ca','collision avoidance':'csma-ca',
+  'mac-schicht':'mac-schicht','mac schicht':'mac-schicht','mac-adresse':'mac-schicht','mac adresse':'mac-schicht','media access control':'mac-schicht',
+  'kollision':'kollision','kollisionen':'kollision','jam signal':'kollision','jam-signal':'kollision',
+  'backoff':'backoff','backoff-algorithmus':'backoff','binary exponential backoff':'backoff','backoff timer':'backoff','backoff-timer':'backoff',
+  'wlan':'wlan','ieee 802.11':'wlan','802.11':'wlan','wi-fi':'wlan','wifi':'wlan','wireless lan':'wlan',
+  'hidden-station':'hidden-station','hidden station':'hidden-station','hidden-station-problem':'hidden-station','hidden station problem':'hidden-station','hidden-node':'hidden-station','hidden node':'hidden-station',
+  'rts/cts':'rts-cts','rts cts':'rts-cts','rts':'rts-cts','cts':'rts-cts','request to send':'rts-cts','clear to send':'rts-cts'
+};
+
+function highlightGlossaryTerms(){
+  const selectors='.card p,.card li,.task-sub,.viz-step-label,.summary-card p,.gl-definition,.gl-analogy';
+  document.querySelectorAll(selectors).forEach(el=>{
+    if(el.dataset.glDone)return;el.dataset.glDone='1';
+    let h=el.innerHTML;
+    const patterns=[
+      [/\bCSMA\/CD\b/g,'csma-cd'],
+      [/\bCSMA\/CA\b/g,'csma-ca'],
+      [/\bMAC-Schicht\b/g,'mac-schicht'],
+      [/\bMAC-Adresse[n]?\b/g,'mac-schicht'],
+      [/\bKollision(?:en)?\b/g,'kollision'],
+      [/\bBackoff(?:-Algorithmus|-Timer)?\b/gi,'backoff'],
+      [/\bBinary Exponential Backoff\b/gi,'backoff'],
+      [/\bWLAN\b/g,'wlan'],
+      [/\bHidden[- ]Station(?:[- ]Problem)?\b/gi,'hidden-station'],
+      [/\bRTS\/CTS\b/g,'rts-cts']
+    ];
+    patterns.forEach(([re,id])=>{
+      h=h.replace(re,m=>{
+        if(m.indexOf('glossary-term')!==-1)return m;
+        return '<span class="glossary-term" data-g="'+id+'">'+m+'</span>';
+      });
+    });
+    el.innerHTML=h;
+  });
+}
+
+const tooltip=document.getElementById('glossary-tooltip');
+document.addEventListener('mouseover',e=>{
+  const g=e.target.closest('.glossary-term');
+  if(!g)return;
+  const t=glossaryTerms.find(t=>t.id===g.dataset.g);
+  if(!t)return;
+  tooltip.querySelector('.gt-name').textContent=t.term;
+  tooltip.querySelector('.gt-short').textContent=t.short;
+  tooltip.style.display='block';
+  const r=g.getBoundingClientRect();
+  let top=r.bottom+8,left=r.left;
+  if(top+200>window.innerHeight)top=r.top-tooltip.offsetHeight-8;
+  if(left+270>window.innerWidth)left=window.innerWidth-280;
+  tooltip.style.top=top+'px';tooltip.style.left=Math.max(8,left)+'px';
+});
+document.addEventListener('mouseout',e=>{if(e.target.closest('.glossary-term'))tooltip.style.display='none';});
+document.addEventListener('click',e=>{
+  const g=e.target.closest('.glossary-term');
+  if(!g)return;
+  tooltip.style.display='none';
+  openGlossaryLearn(g.dataset.g);
+});
+
+// ===== Init Glossar =====
+loadGlossaryState();
+renderGlossaryGrid();
+updateGlossaryProgress();
+setTimeout(highlightGlossaryTerms,300);
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

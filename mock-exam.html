@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probeprüfungs-Simulator</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover{background:#e55a5a}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+
+/* Selection Screen */
+#selection{animation:fadeUp .6s ease both}
+.exam-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:24px 0}
+.exam-opt{background:var(--surface);border:2px solid var(--border);border-radius:14px;padding:24px;cursor:pointer;transition:all .25s;text-align:center}
+.exam-opt:hover{border-color:var(--accent);transform:translateY(-2px)}
+.exam-opt.selected{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.exam-opt h3{font-size:16px;margin-bottom:6px}
+.exam-opt p{font-size:13px;color:var(--muted)}
+.exam-info{display:flex;gap:24px;justify-content:center;margin:24px 0;flex-wrap:wrap}
+.exam-info-item{text-align:center}
+.exam-info-item .val{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--cyan)}
+.exam-info-item .lbl{font-size:12px;color:var(--muted);margin-top:4px}
+
+/* Timer */
+.timer-bar{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin:-40px -24px 20px;border-radius:14px}
+.timer-display{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;color:var(--cyan);transition:color .3s}
+.timer-display.urgent{color:var(--red);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.progress-text{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+
+/* Question Nav */
+.q-nav{display:flex;flex-wrap:wrap;gap:4px;margin:16px 0}
+.q-nav-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:12px;cursor:pointer;transition:all .2s;display:grid;place-items:center}
+.q-nav-btn:hover{border-color:var(--accent)}
+.q-nav-btn.current{background:var(--accent);color:#fff;border-color:var(--accent)}
+.q-nav-btn.answered{background:rgba(81,207,102,.15);color:var(--green);border-color:rgba(81,207,102,.3)}
+.q-nav-btn.flagged{position:relative}
+.q-nav-btn.flagged::after{content:'';position:absolute;top:2px;right:2px;width:6px;height:6px;background:var(--orange);border-radius:50%}
+
+/* Question Area */
+.question-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin:12px 0}
+.q-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.q-number{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);letter-spacing:1px;text-transform:uppercase}
+.q-topic{font-size:11px;color:var(--muted);background:rgba(255,255,255,.04);padding:4px 10px;border-radius:6px}
+.q-text{font-size:16px;font-weight:600;line-height:1.5;margin-bottom:20px}
+.q-text code{font-family:'JetBrains Mono',monospace;background:rgba(108,99,255,.1);padding:2px 6px;border-radius:4px;font-size:14px}
+.mc-options{display:flex;flex-direction:column;gap:8px}
+.mc-opt{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;transition:all .2s;font-size:14px;display:flex;align-items:center;gap:10px}
+.mc-opt:hover{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.05)}
+.mc-opt.selected{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.mc-opt .mc-letter{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.06);display:grid;place-items:center;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;flex-shrink:0}
+.mc-opt.selected .mc-letter{background:var(--accent);color:#fff}
+.free-input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;width:100%;max-width:400px}
+.free-input:focus{border-color:var(--accent)}
+.q-actions{display:flex;gap:8px;margin-top:20px;flex-wrap:wrap;align-items:center}
+.flag-btn{font-size:12px;color:var(--orange);cursor:pointer;background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);padding:6px 14px;border-radius:8px;transition:all .2s}
+.flag-btn:hover,.flag-btn.active{background:rgba(251,146,60,.2)}
+
+/* Results */
+#results{animation:fadeUp .6s ease both}
+.result-header{text-align:center;margin-bottom:32px}
+.result-score{font-size:64px;font-weight:900;font-family:'JetBrains Mono',monospace;margin:16px 0}
+.result-pass{font-size:20px;font-weight:700;padding:8px 24px;border-radius:12px;display:inline-block;margin-bottom:8px}
+.result-pass.pass{background:rgba(81,207,102,.12);color:var(--green)}
+.result-pass.fail{background:rgba(255,107,107,.12);color:var(--red)}
+.topic-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px;margin:24px 0}
+.topic-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px}
+.topic-card h4{font-size:13px;margin-bottom:8px}
+.topic-bar{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin:8px 0}
+.topic-bar-fill{height:100%;border-radius:3px;transition:width .5s}
+.topic-pct{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}
+.recommendations{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin:24px 0}
+.recommendations h3{font-size:16px;margin-bottom:12px}
+.rec-item{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.rec-item:last-child{border-bottom:none}
+.rec-icon{font-size:16px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.timer-bar{margin:-24px -16px 20px;padding:8px 12px}.timer-display{font-size:18px}.q-nav-btn{width:30px;height:30px;font-size:10px}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">Probeprüfung · ITI &amp; TGI</div>
+<h1>Probeprüfungs-Simulator</h1>
+<p>Simuliere eine echte Prüfung mit Zeitdruck, Fragennavigation und detaillierter Auswertung</p>
+</header>
+
+<div id="selection">
+ <div style="text-align:center;margin-bottom:16px;font-size:16px;font-weight:600">Prüfungsmodus wählen</div>
+ <div class="exam-options">
+  <div class="exam-opt" onclick="selectExam('iti')" id="opt-iti"><h3>ITI Prüfung</h3><p>Netzwerke, Protokolle, Sicherheit, Kryptographie</p><p style="color:var(--cyan);margin-top:8px">20 Fragen &middot; 90 Minuten</p></div>
+  <div class="exam-opt" onclick="selectExam('tgi')" id="opt-tgi"><h3>TGI Prüfung</h3><p>Zahlensysteme, Algorithmen, Automaten, Datenstrukturen</p><p style="color:var(--pink);margin-top:8px">20 Fragen &middot; 90 Minuten</p></div>
+  <div class="exam-opt" onclick="selectExam('both')" id="opt-both"><h3>Beide kombiniert</h3><p>Komplette Prüfungssimulation über beide Fächer</p><p style="color:var(--purple);margin-top:8px">40 Fragen &middot; 90 Minuten</p></div>
+ </div>
+ <div class="exam-info">
+  <div class="exam-info-item"><div class="val" id="info-count">20</div><div class="lbl">Fragen</div></div>
+  <div class="exam-info-item"><div class="val" id="info-time">90:00</div><div class="lbl">Minuten</div></div>
+  <div class="exam-info-item"><div class="val">50%</div><div class="lbl">Bestehensgrenze</div></div>
+ </div>
+ <div style="text-align:center"><button class="btn btn-primary" style="padding:14px 48px;font-size:16px" onclick="startExam()">Prüfung starten</button></div>
+</div>
+
+<div id="exam" style="display:none">
+ <div class="timer-bar">
+  <div><span class="timer-display" id="timer">90:00</span></div>
+  <div class="progress-text"><span id="answered-count">0</span>/<span id="total-count">20</span> beantwortet</div>
+  <div style="display:flex;gap:8px">
+   <button class="btn btn-secondary" onclick="submitExam()" style="font-size:12px">Prüfung abgeben</button>
+  </div>
+ </div>
+ <div class="q-nav" id="q-nav"></div>
+ <div id="question-area"></div>
+ <div class="q-actions" id="q-actions">
+  <button class="btn btn-secondary" onclick="prevQ()">&#8592; Zurück</button>
+  <button class="btn btn-primary" onclick="nextQ()">Weiter &#8594;</button>
+  <button class="flag-btn" id="flag-btn" onclick="toggleFlag()">Markieren</button>
+  <span style="flex:1"></span>
+  <button class="btn btn-danger" onclick="submitExam()" style="font-size:12px">Abgeben</button>
+ </div>
+</div>
+
+<div id="results" style="display:none"></div>
+</div>
+
+<script>
+// ── Progress ──
+function saveProgress(id,data){const a=JSON.parse(localStorage.getItem('trainer-progress')||'{}');a[id]={...a[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(a));}
+saveProgress('mock-exam',{status:'in-progress'});
+
+// ── Helpers ──
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function ipToArr(s){return s.split('.').map(Number);}
+function arrToIp(a){return a.join('.');}
+function prefixToMask(p){const m=[];for(let i=0;i<4;i++){const b=Math.min(8,Math.max(0,p-i*8));m.push(256-Math.pow(2,8-b));}return m;}
+
+// ── ITI Question Generators ──
+function itiQuestions(){
+ const qs=[];
+ // 1 OSI Router
+ qs.push({topic:'OSI-Modell',type:'mc',text:'Auf welcher Schicht des OSI-Modells arbeitet ein Router?',
+  options:['Schicht 1 (Bitübertragung)','Schicht 2 (Sicherung)','Schicht 3 (Vermittlung)','Schicht 4 (Transport)'],correct:2});
+ // 2 OSI Transport
+ qs.push({topic:'OSI-Modell',type:'mc',text:'Welche OSI-Schicht ist für die Ende-zu-Ende-Kommunikation zuständig?',
+  options:['Schicht 2','Schicht 3','Schicht 4 (Transportschicht)','Schicht 5'],correct:2});
+ // 3 Entropie
+ (()=>{const n=rand(2,4);const probs=[];let s=1;for(let i=0;i<n-1;i++){const p=+(Math.random()*s*.6+0.05).toFixed(2);probs.push(p);s-=p;}probs.push(+s.toFixed(2));
+  const H=-probs.reduce((a,p)=>a+(p>0?p*Math.log2(p):0),0);
+  qs.push({topic:'Entropie',type:'free',text:`Berechne die Entropie H für die Wahrscheinlichkeiten: ${probs.map(p=>'p='+p).join(', ')}. Runde auf 2 Dezimalstellen.`,
+   answer:H.toFixed(2),unit:'bit/Symbol',check:(v)=>Math.abs(parseFloat(v)-H)<0.05});})();
+ // 4 Shannon
+ (()=>{const B=rand(1,10)*1000;const snrDb=rand(10,30);const snr=Math.pow(10,snrDb/10);const C=B*Math.log2(1+snr);const Ckbps=Math.round(C/1000);
+  qs.push({topic:'Shannon-Hartley',type:'free',text:`Berechne die Kanalkapazität C bei B = ${B} Hz und SNR = ${snrDb} dB. Antwort in kbit/s (ganzzahlig).`,
+   answer:String(Ckbps),check:(v)=>Math.abs(parseInt(v)-Ckbps)<=1});})();
+ // 5 Subnetting Netzadresse
+ (()=>{const prefix=[24,25,26,27,28][rand(0,4)];const ip=[rand(10,200),rand(0,255),rand(0,255),rand(1,254)];const mask=prefixToMask(prefix);const net=ip.map((o,i)=>o&mask[i]);
+  qs.push({topic:'Subnetting',type:'free',text:`Berechne die Netzadresse: ${arrToIp(ip)}/${prefix}`,answer:arrToIp(net),check:(v)=>v.trim()===arrToIp(net)});})();
+ // 6 Subnetting Hosts
+ (()=>{const prefix=[22,23,24,25,26,27,28][rand(0,6)];const hosts=Math.pow(2,32-prefix)-2;
+  qs.push({topic:'Subnetting',type:'free',text:`Wie viele nutzbare Hosts hat ein /${prefix}-Netz?`,answer:String(hosts),check:(v)=>parseInt(v)===hosts});})();
+ // 7 TCP
+ qs.push({topic:'TCP/UDP',type:'mc',text:'Welches Transportprotokoll nutzt einen 3-Way-Handshake zur Verbindungsherstellung?',
+  options:['UDP','TCP','ICMP','SCTP'],correct:1});
+ // 8 Port HTTPS
+ qs.push({topic:'Ports',type:'mc',text:'Welcher Port gehört zu HTTPS?',
+  options:['80','443','8080','21'],correct:1});
+ // 9 CSMA
+ qs.push({topic:'CSMA',type:'mc',text:'Welches Zugriffsverfahren nutzt WLAN (IEEE 802.11)?',
+  options:['CSMA/CD','Token Ring','CSMA/CA','TDMA'],correct:2});
+ // 10 OSPF
+ qs.push({topic:'Routing',type:'mc',text:'Welchen Algorithmus verwendet das Routing-Protokoll OSPF?',
+  options:['Bellman-Ford','Dijkstra','Floyd-Warshall','A*'],correct:1});
+ // 11 Ethernet Kabel
+ qs.push({topic:'Ethernet',type:'mc',text:'Welche Kabelkategorie unterstützt 10 Gbit/s Ethernet?',
+  options:['Cat 5','Cat 5e','Cat 6','Cat 6a'],correct:3});
+ // 12 VLAN
+ qs.push({topic:'VLAN',type:'mc',text:'Auf welcher OSI-Schicht arbeiten VLANs?',
+  options:['Layer 1','Layer 2','Layer 3','Layer 4'],correct:1});
+ // 13 DHCP
+ qs.push({topic:'DHCP',type:'mc',text:'In welcher Reihenfolge läuft der DHCP-Prozess ab?',
+  options:['DORA (Discover, Offer, Request, Acknowledge)','ROAD (Request, Offer, Acknowledge, Discover)','ORDA (Offer, Request, Discover, Acknowledge)','DARO (Discover, Acknowledge, Request, Offer)'],correct:0});
+ // 14 Kryptographie
+ qs.push({topic:'Kryptographie',type:'mc',text:'Was ist ein Merkmal der asymmetrischen Verschlüsselung im Vergleich zur symmetrischen?',
+  options:['Schneller als symmetrische Verschlüsselung','Verwendet ein Schlüsselpaar (öffentlich/privat)','Beide Seiten nutzen denselben Schlüssel','Wird nur für Hashing verwendet'],correct:1});
+ // 15 CIA
+ qs.push({topic:'CIA-Schutzziele',type:'mc',text:'Welches Schutzziel wird primär durch Verschlüsselung geschützt?',
+  options:['Verfügbarkeit','Integrität','Vertraulichkeit','Authentizität'],correct:2});
+ // 16 RSA
+ (()=>{const primes=[3,5,7,11,13];const p=primes[rand(0,2)];let q=primes[rand(1,4)];while(q===p)q=primes[rand(1,4)];const n=p*q;const phi=(p-1)*(q-1);
+  qs.push({topic:'RSA',type:'free',text:`RSA: Bei p = ${p} und q = ${q}, berechne n = p * q und φ(n) = (p-1)(q-1). Gib φ(n) an.`,answer:String(phi),check:(v)=>parseInt(v)===phi});})();
+ // 17 SNMP
+ qs.push({topic:'SNMP',type:'mc',text:'Welche SNMP-Version bietet als erste Verschlüsselung und Authentifizierung?',
+  options:['SNMPv1','SNMPv2','SNMPv2c','SNMPv3'],correct:3});
+ // 18 DNS Port
+ qs.push({topic:'Ports',type:'mc',text:'Auf welchem Port arbeitet DNS standardmäßig?',
+  options:['23','53','80','110'],correct:1});
+ // 19 OSI Switch
+ qs.push({topic:'OSI-Modell',type:'mc',text:'Auf welcher Schicht arbeitet ein Switch?',
+  options:['Schicht 1','Schicht 2','Schicht 3','Schicht 4'],correct:1});
+ // 20 Firewall
+ qs.push({topic:'Sicherheit',type:'mc',text:'Welche Firewall-Art untersucht den Zustand einer Verbindung (Stateful)?',
+  options:['Paketfilter','Stateful Packet Inspection','Application Gateway','Circuit-Level Gateway'],correct:1});
+ return qs;
+}
+
+// ── TGI Question Generators ──
+function tgiQuestions(){
+ const qs=[];
+ // 1 Dezimal → Binär
+ (()=>{const n=rand(20,255);qs.push({topic:'Dualzahlen',type:'free',text:`Wandle die Dezimalzahl ${n} in eine Binärzahl um.`,answer:n.toString(2),check:(v)=>parseInt(v,2)===n});})();
+ // 2 Binäraddition
+ (()=>{const a=rand(10,127);const b=rand(10,127);const s=a+b;
+  qs.push({topic:'Dualzahlen',type:'free',text:`Addiere die Binärzahlen: ${a.toString(2)} + ${b.toString(2)}. Gib das Ergebnis binär an.`,answer:s.toString(2),check:(v)=>parseInt(v,2)===s});})();
+ // 3 BubbleSort
+ qs.push({topic:'Sortieralgorithmen',type:'mc',text:'Welche Zeitkomplexität hat BubbleSort im Worst Case?',
+  options:['O(n)','O(n log n)','O(n²)','O(2^n)'],correct:2});
+ // 4 Sortierung Schritte
+ (()=>{const arr=[rand(1,9),rand(1,9),rand(1,9),rand(1,9)];const sorted=[...arr].sort((a,b)=>a-b);
+  qs.push({topic:'Sortieralgorithmen',type:'free',text:`Sortiere aufsteigend mit BubbleSort: [${arr.join(', ')}]. Gib das Ergebnis an (z.B. 1,2,3,4).`,answer:sorted.join(','),check:(v)=>v.replace(/\s/g,'')===sorted.join(',')});})();
+ // 5 Stack
+ qs.push({topic:'Datenstrukturen',type:'mc',text:'Welche Datenstruktur arbeitet nach dem LIFO-Prinzip (Last In, First Out)?',
+  options:['Queue','Stack','Heap','Array'],correct:1});
+ // 6 Queue
+ qs.push({topic:'Datenstrukturen',type:'mc',text:'Welche Datenstruktur arbeitet nach dem FIFO-Prinzip (First In, First Out)?',
+  options:['Stack','Heap','Queue','Baum'],correct:2});
+ // 7 Master-Theorem
+ (()=>{const cases=[{a:2,b:2,f:'n',ans:'O(n log n)',desc:'Fall 2: f(n) = Θ(n^log_b(a))'},{a:4,b:2,f:'n',ans:'O(n²)',desc:'Fall 1: f(n) = O(n^(log_b(a)-ε))'},{a:2,b:2,f:'n²',ans:'O(n²)',desc:'Fall 3: f(n) = Ω(n^(log_b(a)+ε))'}];
+  const c=cases[rand(0,2)];
+  qs.push({topic:'Master-Theorem',type:'mc',text:`Bestimme die Komplexität: T(n) = ${c.a}T(n/${c.b}) + ${c.f}`,
+   options:['O(n)','O(n log n)','O(n²)','O(log n)'],correct:['O(n)','O(n log n)','O(n²)','O(log n)'].indexOf(c.ans)});})();
+ // 8 O-Notation sortieren
+ qs.push({topic:'O-Notation',type:'mc',text:'Welche Reihenfolge ist aufsteigend korrekt?',
+  options:['O(1), O(log n), O(n), O(n log n), O(n²)','O(1), O(n), O(log n), O(n²), O(n log n)','O(log n), O(1), O(n), O(n²), O(n log n)','O(n²), O(n log n), O(n), O(log n), O(1)'],correct:0});
+ // 9 Chomsky Kellerautomat
+ qs.push({topic:'Chomsky-Hierarchie',type:'mc',text:'Welcher Automatentyp erkennt kontextfreie Sprachen (Typ 2)?',
+  options:['Endlicher Automat (DEA)','Kellerautomat (PDA)','Turingmaschine','Linear beschränkter Automat'],correct:1});
+ // 10 DEA
+ qs.push({topic:'Automatentheorie',type:'mc',text:'Was unterscheidet einen DEA von einem NEA?',
+  options:['DEA hat keinen Endzustand','DEA hat für jedes Symbol genau einen Folgezustand','DEA kann keine regulären Sprachen erkennen','DEA hat unendlich viele Zustände'],correct:1});
+ // 11 Hashing
+ (()=>{const m=[7,11,13,17][rand(0,3)];const k=rand(20,99);const h=k%m;
+  qs.push({topic:'Hashing',type:'free',text:`Berechne h(${k}) = ${k} mod ${m}`,answer:String(h),check:(v)=>parseInt(v)===h});})();
+ // 12 Regex
+ qs.push({topic:'Reguläre Ausdrücke',type:'mc',text:'Welche Wörter akzeptiert der reguläre Ausdruck (a|b)*c ?',
+  options:['Nur "c"','Alle Wörter über {a,b} gefolgt von genau einem c','Alle Wörter die mit c beginnen','Nur "ac" und "bc"'],correct:1});
+ // 13 Grammatik Typ 2
+ qs.push({topic:'Grammatiken',type:'mc',text:'Welchem Chomsky-Typ entspricht die Grammatik mit der Regel S → aSb | ε ?',
+  options:['Typ 0','Typ 1 (kontextsensitiv)','Typ 2 (kontextfrei)','Typ 3 (regulär)'],correct:2});
+ // 14 P/NP
+ qs.push({topic:'P/NP',type:'mc',text:'Was bedeutet die Komplexitätsklasse NP?',
+  options:['Nicht berechenbar','In Polynomialzeit lösbar','In Polynomialzeit verifizierbar','Exponentiell lösbar'],correct:2});
+ // 15 EVA
+ qs.push({topic:'EVA-Prinzip',type:'mc',text:'Wofür steht das EVA-Prinzip in der Informatik?',
+  options:['Eingabe, Verarbeitung, Ausgabe','Entwicklung, Validierung, Analyse','Entwurf, Verifizierung, Anwendung','Extraktion, Visualisierung, Archivierung'],correct:0});
+ // 16 Logik AND
+ (()=>{const a=rand(0,1);const b=rand(0,1);const r=a&b;
+  qs.push({topic:'Logik',type:'free',text:`Boolesche Algebra: ${a} AND ${b} = ?`,answer:String(r),check:(v)=>parseInt(v)===r});})();
+ // 17 Logik XOR
+ (()=>{const a=rand(0,1);const b=rand(0,1);const r=a^b;
+  qs.push({topic:'Logik',type:'free',text:`Boolesche Algebra: ${a} XOR ${b} = ?`,answer:String(r),check:(v)=>parseInt(v)===r});})();
+ // 18 PDA vs DEA
+ qs.push({topic:'Kellerautomaten',type:'mc',text:'Welche Sprache kann ein Kellerautomat (PDA) erkennen, die ein DEA nicht erkennen kann?',
+  options:['a*b*','(ab)*','a^n b^n (n ≥ 0)','a|b'],correct:2});
+ // 19 Dezimal → Hexadezimal
+ (()=>{const n=rand(16,255);qs.push({topic:'Zahlensysteme',type:'free',text:`Wandle ${n} (dezimal) in Hexadezimal um. Gib das Ergebnis ohne Präfix an (z.B. FF).`,answer:n.toString(16).toUpperCase(),check:(v)=>v.trim().toUpperCase()===n.toString(16).toUpperCase()});})();
+ // 20 Komplexität QuickSort
+ qs.push({topic:'Sortieralgorithmen',type:'mc',text:'Welche durchschnittliche Zeitkomplexität hat QuickSort?',
+  options:['O(n)','O(n log n)','O(n²)','O(log n)'],correct:1});
+ return qs;
+}
+
+// ── State ──
+let examType='iti';
+let questions=[];
+let answers=[];
+let flags=[];
+let currentQ=0;
+let timerSec=0;
+let timerInterval=null;
+
+function selectExam(type){
+ examType=type;
+ document.querySelectorAll('.exam-opt').forEach(e=>e.classList.remove('selected'));
+ document.getElementById('opt-'+type).classList.add('selected');
+ const counts={iti:20,tgi:20,both:40};
+ document.getElementById('info-count').textContent=counts[type];
+ document.getElementById('info-time').textContent='90:00';
+}
+selectExam('iti');
+
+function startExam(){
+ let pool=[];
+ if(examType==='iti') pool=itiQuestions();
+ else if(examType==='tgi') pool=tgiQuestions();
+ else pool=[...itiQuestions(),...tgiQuestions()];
+ questions=shuffle(pool);
+ answers=new Array(questions.length).fill(null);
+ flags=new Array(questions.length).fill(false);
+ currentQ=0;
+ timerSec=90*60;
+ document.getElementById('selection').style.display='none';
+ document.getElementById('exam').style.display='block';
+ document.getElementById('results').style.display='none';
+ document.getElementById('total-count').textContent=questions.length;
+ buildNav();
+ showQuestion(0);
+ startTimer();
+}
+
+function startTimer(){
+ clearInterval(timerInterval);
+ updateTimerDisplay();
+ timerInterval=setInterval(()=>{
+  timerSec--;
+  if(timerSec<=0){clearInterval(timerInterval);timerSec=0;submitExam();}
+  updateTimerDisplay();
+ },1000);
+}
+
+function updateTimerDisplay(){
+ const m=Math.floor(timerSec/60);const s=timerSec%60;
+ const el=document.getElementById('timer');
+ el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+ el.classList.toggle('urgent',timerSec<300);
+ // update answered count
+ document.getElementById('answered-count').textContent=answers.filter(a=>a!==null).length;
+}
+
+function buildNav(){
+ const nav=document.getElementById('q-nav');
+ nav.innerHTML='';
+ questions.forEach((_,i)=>{
+  const b=document.createElement('button');b.className='q-nav-btn';b.textContent=i+1;
+  b.onclick=()=>showQuestion(i);nav.appendChild(b);
+ });
+ updateNav();
+}
+
+function updateNav(){
+ const btns=document.querySelectorAll('.q-nav-btn');
+ btns.forEach((b,i)=>{
+  b.className='q-nav-btn';
+  if(i===currentQ) b.classList.add('current');
+  if(answers[i]!==null) b.classList.add('answered');
+  if(flags[i]) b.classList.add('flagged');
+ });
+ document.getElementById('answered-count').textContent=answers.filter(a=>a!==null).length;
+ const fb=document.getElementById('flag-btn');
+ fb.classList.toggle('active',flags[currentQ]);
+ fb.textContent=flags[currentQ]?'Markiert':'Markieren';
+}
+
+function showQuestion(idx){
+ saveCurrentAnswer();
+ currentQ=idx;
+ const q=questions[idx];const area=document.getElementById('question-area');
+ let html=`<div class="question-card"><div class="q-header"><span class="q-number">Frage ${idx+1} von ${questions.length}</span><span class="q-topic">${q.topic}</span></div>`;
+ html+=`<div class="q-text">${q.text}</div>`;
+ if(q.type==='mc'){
+  html+='<div class="mc-options">';
+  const letters='ABCD';
+  q.options.forEach((opt,i)=>{
+   const sel=answers[idx]===i?'selected':'';
+   html+=`<div class="mc-opt ${sel}" onclick="selectMC(${idx},${i},this)"><span class="mc-letter">${letters[i]}</span><span>${opt}</span></div>`;
+  });
+  html+='</div>';
+ } else {
+  html+=`<input type="text" class="free-input" id="free-answer" placeholder="Deine Antwort..." value="${answers[idx]!==null?answers[idx]:''}" autocomplete="off">`;
+ }
+ html+='</div>';
+ area.innerHTML=html;
+ updateNav();
+ if(q.type==='free'){const inp=document.getElementById('free-answer');if(inp)inp.focus();}
+}
+
+function selectMC(qIdx,optIdx,el){
+ answers[qIdx]=optIdx;
+ el.parentElement.querySelectorAll('.mc-opt').forEach(o=>o.classList.remove('selected'));
+ el.classList.add('selected');
+ updateNav();
+}
+
+function saveCurrentAnswer(){
+ const q=questions[currentQ];
+ if(q&&q.type==='free'){const inp=document.getElementById('free-answer');if(inp&&inp.value.trim())answers[currentQ]=inp.value.trim();}
+}
+
+function nextQ(){saveCurrentAnswer();if(currentQ<questions.length-1)showQuestion(currentQ+1);}
+function prevQ(){saveCurrentAnswer();if(currentQ>0)showQuestion(currentQ-1);}
+function toggleFlag(){flags[currentQ]=!flags[currentQ];updateNav();}
+
+// ── Submit & Grade ──
+function submitExam(){
+ saveCurrentAnswer();
+ const unanswered=answers.filter(a=>a===null).length;
+ if(unanswered>0&&timerSec>0){if(!confirm(`Du hast noch ${unanswered} unbeantwortete Fragen. Wirklich abgeben?`))return;}
+ clearInterval(timerInterval);
+ gradeExam();
+}
+
+function gradeExam(){
+ let totalCorrect=0;
+ const topicStats={};
+ questions.forEach((q,i)=>{
+  if(!topicStats[q.topic]) topicStats[q.topic]={correct:0,total:0};
+  topicStats[q.topic].total++;
+  let isCorrect=false;
+  if(q.type==='mc'){isCorrect=answers[i]===q.correct;}
+  else if(q.check&&answers[i]!==null){isCorrect=q.check(answers[i]);}
+  else if(answers[i]!==null){isCorrect=answers[i].trim()===q.answer;}
+  if(isCorrect){totalCorrect++;topicStats[q.topic].correct++;}
+ });
+
+ const pct=Math.round(totalCorrect/questions.length*100);
+ const passed=pct>=50;
+
+ if(passed) saveProgress('mock-exam',{status:'completed',score:pct,examType});
+ else saveProgress('mock-exam',{status:'in-progress',score:pct,examType});
+
+ // Build results
+ let html=`<div class="result-header"><div class="result-pass ${passed?'pass':'fail'}">${passed?'BESTANDEN':'NICHT BESTANDEN'}</div>`;
+ html+=`<div class="result-score" style="color:${passed?'var(--green)':'var(--red)'}">${pct}%</div>`;
+ html+=`<p style="color:var(--muted)">${totalCorrect} von ${questions.length} Fragen richtig</p></div>`;
+
+ // Topic breakdown
+ html+='<div style="font-size:16px;font-weight:700;margin:24px 0 12px">Auswertung nach Themen</div>';
+ html+='<div class="topic-breakdown">';
+ const sortedTopics=Object.entries(topicStats).sort((a,b)=>(a[1].correct/a[1].total)-(b[1].correct/b[1].total));
+ sortedTopics.forEach(([topic,st])=>{
+  const tp=st.total>0?Math.round(st.correct/st.total*100):0;
+  const col=tp>=80?'var(--green)':tp>=50?'var(--yellow)':'var(--red)';
+  html+=`<div class="topic-card"><h4>${topic}</h4><div class="topic-pct" style="color:${col}">${tp}%</div><div class="topic-bar"><div class="topic-bar-fill" style="width:${tp}%;background:${col}"></div></div><p style="font-size:12px;color:var(--muted)">${st.correct}/${st.total} richtig</p></div>`;
+ });
+ html+='</div>';
+
+ // Recommendations
+ html+='<div class="recommendations"><h3>Empfehlungen</h3>';
+ const weak=sortedTopics.filter(([_,s])=>s.correct/s.total<0.5);
+ const medium=sortedTopics.filter(([_,s])=>{const r=s.correct/s.total;return r>=0.5&&r<0.8;});
+ const strong=sortedTopics.filter(([_,s])=>s.correct/s.total>=0.8);
+
+ if(weak.length===0&&medium.length===0){html+='<div class="rec-item"><span class="rec-icon" style="color:var(--green)">&#10004;</span> Hervorragend! Alle Themen gut beherrscht.</div>';}
+ weak.forEach(([t])=>{html+=`<div class="rec-item"><span class="rec-icon" style="color:var(--red)">&#10008;</span> <strong>${t}</strong> – Dringend üben! Besuche den jeweiligen Trainer.</div>`;});
+ medium.forEach(([t])=>{html+=`<div class="rec-item"><span class="rec-icon" style="color:var(--yellow)">&#9888;</span> <strong>${t}</strong> – Gut, aber noch Verbesserungspotential.</div>`;});
+ strong.forEach(([t])=>{html+=`<div class="rec-item"><span class="rec-icon" style="color:var(--green)">&#10004;</span> <strong>${t}</strong> – Sicher beherrscht!</div>`;});
+ html+='</div>';
+
+ // Detail review
+ html+='<div style="font-size:16px;font-weight:700;margin:24px 0 12px">Detailübersicht</div>';
+ questions.forEach((q,i)=>{
+  let isCorrect=false;
+  if(q.type==='mc') isCorrect=answers[i]===q.correct;
+  else if(q.check&&answers[i]!==null) isCorrect=q.check(answers[i]);
+  else if(answers[i]!==null) isCorrect=answers[i].trim()===q.answer;
+  const icon=isCorrect?'<span style="color:var(--green)">&#10004;</span>':'<span style="color:var(--red)">&#10008;</span>';
+  const yourAns=answers[i]!==null?(q.type==='mc'?q.options[answers[i]]:answers[i]):'<em style="color:var(--muted)">nicht beantwortet</em>';
+  const correctAns=q.type==='mc'?q.options[q.correct]:q.answer;
+  html+=`<div class="question-card" style="padding:16px"><div style="display:flex;gap:8px;align-items:start"><span style="font-size:18px">${icon}</span><div style="flex:1"><div style="font-size:12px;color:var(--muted);margin-bottom:4px">${q.topic} – Frage ${i+1}</div><div style="font-size:14px;font-weight:600;margin-bottom:6px">${q.text}</div><div style="font-size:13px;color:var(--muted)">Deine Antwort: <span style="color:${isCorrect?'var(--green)':'var(--red)'}"> ${yourAns}</span></div>${!isCorrect?`<div style="font-size:13px;color:var(--cyan);margin-top:2px">Richtige Antwort: ${correctAns}</div>`:''}</div></div></div>`;
+ });
+
+ // Restart button
+ html+='<div style="text-align:center;margin-top:32px"><button class="btn btn-primary" style="padding:14px 48px;font-size:16px" onclick="resetExam()">Neue Prüfung starten</button></div>';
+
+ document.getElementById('exam').style.display='none';
+ document.getElementById('results').style.display='block';
+ document.getElementById('results').innerHTML=html;
+}
+
+function resetExam(){
+ document.getElementById('results').style.display='none';
+ document.getElementById('selection').style.display='block';
+ questions=[];answers=[];flags=[];currentQ=0;
+ clearInterval(timerInterval);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown',e=>{
+ if(document.getElementById('exam').style.display==='none')return;
+ if(e.target.tagName==='INPUT')return;
+ if(e.key==='ArrowRight')nextQ();
+ if(e.key==='ArrowLeft')prevQ();
+ if(e.key==='m'||e.key==='M')toggleFlag();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lernleitfaden TGI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}.glow-orb.one{background:var(--purple);top:-120px;left:-80px}.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}.back:hover{color:var(--text)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+
+/* Sticky Nav */
+.sticky-nav{position:sticky;top:0;z-index:10;background:var(--bg);padding:12px 0;border-bottom:1px solid var(--border);margin-bottom:32px}
+.nav-tabs{display:flex;gap:4px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.nav-tab{font-family:'JetBrains Mono',monospace;font-size:11px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s;white-space:nowrap;flex-shrink:0}
+.nav-tab:hover{color:var(--text);border-color:rgba(255,255,255,.15)}
+.nav-tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+/* Section headers */
+.st{display:flex;align-items:center;gap:12px;margin:52px 0 18px}.st .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;color:#fff}.st h2{font-size:20px;font-weight:700}
+
+/* Priority cards */
+.prio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.prio-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.prio-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.prio-card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.prio-card.high::before{background:var(--red)}.prio-card.high{border-color:rgba(255,107,107,.2)}
+.prio-card.medium::before{background:var(--yellow)}.prio-card.medium{border-color:rgba(251,191,36,.2)}
+.prio-card.low::before{background:var(--green)}.prio-card.low{border-color:rgba(81,207,102,.2)}
+.prio-card h3{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.prio-card ul{list-style:none;padding:0}
+.prio-card li{font-size:13px;font-weight:300;color:var(--muted);line-height:1.8;padding-left:16px;position:relative}
+.prio-card li::before{content:'';position:absolute;left:0;top:10px;width:6px;height:6px;border-radius:50%;background:var(--muted)}
+.prio-card a{color:var(--cyan);text-decoration:none;font-size:11px;font-family:'JetBrains Mono',monospace;transition:color .2s}
+.prio-card a:hover{color:var(--accent)}
+
+/* Dependency chain */
+.dep-chain{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:16px;text-align:center}
+.dep-chain h3{font-size:14px;font-weight:700;margin-bottom:16px}
+.dep-chain pre{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--cyan);line-height:1.8;display:inline-block;text-align:left}
+
+/* Collapsible sections */
+.coll-section{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.coll-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;transition:background .2s;user-select:none}
+.coll-header:hover{background:rgba(255,255,255,.02)}
+.coll-header h3{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.coll-header .meta{display:flex;align-items:center;gap:12px}
+.coll-header .topic-count{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.coll-header .chevron{font-size:12px;color:var(--muted);transition:transform .3s}
+.coll-section.open .chevron{transform:rotate(90deg)}
+.coll-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.coll-section.open .coll-body{max-height:none}
+.coll-content{padding:0 20px 20px}
+.coll-content h4{font-size:13px;font-weight:700;color:var(--cyan);margin:16px 0 8px;display:flex;align-items:center;gap:6px}
+.coll-content p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;margin-bottom:8px}
+.coll-content strong{color:var(--text);font-weight:600}
+.coll-content code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);background:rgba(56,189,248,.08);padding:2px 6px;border-radius:4px}
+.coll-content pre{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);background:rgba(255,255,255,.03);padding:14px;border-radius:8px;overflow-x:auto;line-height:1.7;margin:8px 0}
+.coll-content ul{list-style:none;padding:0;margin:4px 0 8px}
+.coll-content ul li{font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;padding-left:16px;position:relative}
+.coll-content ul li::before{content:'';position:absolute;left:0;top:10px;width:5px;height:5px;border-radius:50%;background:var(--accent)}
+
+/* Tables */
+.tbl-wrap{overflow-x:auto;margin:12px 0}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:12px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+
+/* QA Items */
+.qa-group{margin-bottom:24px}
+.qa-group-title{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px}
+.qa-item{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:4px;overflow:hidden}
+.qa-q{display:flex;align-items:center;gap:10px;padding:14px 16px;cursor:pointer;transition:background .2s;user-select:none}
+.qa-q:hover{background:rgba(255,255,255,.02)}
+.qa-num{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--accent);min-width:32px}
+.qa-q span:nth-child(2){flex:1;font-size:13px;font-weight:500}
+.qa-chevron{font-size:10px;color:var(--muted);transition:transform .3s}
+.qa-item.open .qa-chevron{transform:rotate(90deg)}
+.qa-a{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.qa-item.open .qa-a{max-height:none}
+.qa-a-inner{padding:0 16px 16px;font-size:13px;font-weight:300;color:var(--muted);line-height:1.7;border-top:1px solid var(--border);padding-top:12px;margin:0 16px}
+.qa-a-inner strong{color:var(--text);font-weight:600}
+.qa-a-inner code{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);background:rgba(56,189,248,.08);padding:2px 6px;border-radius:4px}
+.qa-a-inner pre{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--cyan);background:rgba(255,255,255,.03);padding:12px;border-radius:8px;overflow-x:auto;line-height:1.6;margin:8px 0}
+.qa-a-inner table{margin:8px 0}
+
+/* Formula cards */
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.formula-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all .25s}
+.formula-card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.formula-card .f-label{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:8px}
+.formula-card .f-formula{font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--cyan);margin-bottom:8px;line-height:1.6}
+.formula-card .f-vars{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6}
+.formula-card table{font-size:11px;margin-top:8px}
+.formula-card th{font-size:9px;padding:8px}
+.formula-card td{padding:6px 8px;font-size:11px}
+
+/* Checklist */
+.check-section{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden}
+.check-header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;user-select:none}
+.check-header:hover{background:rgba(255,255,255,.02)}
+.check-header h3{font-size:14px;font-weight:700}
+.check-header .check-meta{display:flex;align-items:center;gap:12px}
+.check-progress-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
+.check-progress-bar{width:100px;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.check-progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+.check-header .chevron{font-size:12px;color:var(--muted);transition:transform .3s}
+.check-section.open .chevron{transform:rotate(90deg)}
+.check-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.check-section.open .check-body{max-height:none}
+.check-items{padding:0 20px 16px}
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.check-item:last-child{border-bottom:none}
+.check-item input[type=checkbox]{appearance:none;-webkit-appearance:none;width:18px;height:18px;border:2px solid var(--border);border-radius:5px;cursor:pointer;flex-shrink:0;margin-top:1px;transition:all .2s;position:relative;background:transparent}
+.check-item input[type=checkbox]:checked{background:var(--accent);border-color:var(--accent)}
+.check-item input[type=checkbox]:checked::after{content:'';position:absolute;left:5px;top:2px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.check-item label{font-size:13px;font-weight:300;color:var(--muted);cursor:pointer;line-height:1.5;transition:color .2s}
+.check-item input[type=checkbox]:checked+label{color:var(--text);text-decoration:line-through;text-decoration-color:var(--muted)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+/* Responsive */
+@media(max-width:600px){
+  .container{padding:24px 16px 60px}
+  .prio-grid{grid-template-columns:1fr}
+  .formula-grid{grid-template-columns:1fr}
+  .nav-tab{font-size:10px;padding:6px 12px}
+}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+<a href="index.html" class="back">&larr; Zur&uuml;ck zur &Uuml;bersicht</a>
+<header>
+  <div class="tag">Lernleitfaden</div>
+  <h1>Pr&uuml;fungsvorbereitung TGI</h1>
+  <p>Theoretische Grundlagen der Informatik &ndash; GDI01, TGI01, TGI02, TGI06</p>
+</header>
+
+<!-- Sticky Navigation -->
+<div class="sticky-nav">
+  <div class="nav-tabs">
+    <div class="nav-tab active" data-target="sec-uebersicht" onclick="scrollToSection(this)">&Uuml;bersicht</div>
+    <div class="nav-tab" data-target="sec-zusammenfassungen" onclick="scrollToSection(this)">Zusammenfassungen</div>
+    <div class="nav-tab" data-target="sec-uebungsaufgaben" onclick="scrollToSection(this)">&Uuml;bungsaufgaben</div>
+    <div class="nav-tab" data-target="sec-formeln" onclick="scrollToSection(this)">Formeln</div>
+    <div class="nav-tab" data-target="sec-checkliste" onclick="scrollToSection(this)">Checkliste</div>
+  </div>
+</div>
+
+<!-- ============================================== -->
+<!-- SECTION 1: ÜBERSICHT -->
+<!-- ============================================== -->
+<div id="sec-uebersicht">
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--accent),var(--purple))">&#128218;</div><h2>Priorit&auml;tsmatrix</h2></div>
+
+<div class="prio-grid">
+  <!-- Höchste Priorität -->
+  <div class="prio-card high">
+    <h3>&#128308; H&ouml;chste Priorit&auml;t</h3>
+    <ul>
+      <li>Sortieralgorithmen: QuickSort, MergeSort, HeapSort <a href="quickmergeheap-trainer.html">&rarr; Trainer</a></li>
+      <li>Komplexit&auml;tsanalyse: O-Notation <a href="o-notation-master.html">&rarr; Trainer</a></li>
+      <li>Master-Theorem <a href="o-notation-master.html">&rarr; Trainer</a></li>
+      <li>Chomsky-Hierarchie Typ 0-3 <a href="grammatiken-chomsky.html">&rarr; Trainer</a></li>
+      <li>DEA/NEA Konstruktion, NEA&rarr;DEA <a href="dea-nea-trainer.html">&rarr; Trainer</a> <a href="nea-dea-regex.html">&rarr; Regex</a></li>
+      <li>Regul&auml;re Ausdr&uuml;cke <a href="nea-dea-regex.html">&rarr; Trainer</a></li>
+      <li>Dualzahlen <a href="dualzahlen-trainer.html">&rarr; Trainer</a></li>
+      <li>Datenstrukturen: Stack, Queue, Liste <a href="datenstrukturen.html">&rarr; Trainer</a></li>
+    </ul>
+  </div>
+  <!-- Hohe Priorität -->
+  <div class="prio-card medium">
+    <h3>&#128993; Hohe Priorit&auml;t</h3>
+    <ul>
+      <li>Hashing <a href="hashing-trainer.html">&rarr; Trainer</a></li>
+      <li>Matching: KMP, Boyer-Moore</li>
+      <li>B&auml;ume und Graphen <a href="datenstrukturen.html">&rarr; Trainer</a></li>
+      <li>Turing-Maschine <a href="kellerautomat-turing.html">&rarr; Trainer</a></li>
+      <li>Formale Grammatiken <a href="grammatiken-chomsky.html">&rarr; Trainer</a></li>
+      <li>Logische Schaltungen <a href="logik-addierer.html">&rarr; Trainer</a></li>
+      <li>P/NP <a href="o-notation-master.html">&rarr; Trainer</a></li>
+    </ul>
+  </div>
+  <!-- Grundwissen -->
+  <div class="prio-card low">
+    <h3>&#128994; Grundwissen</h3>
+    <ul>
+      <li>EVA-Prinzip <a href="eva-algo-kontroll.html">&rarr; Trainer</a></li>
+      <li>Programmierparadigmen</li>
+      <li>Hex/Oktal <a href="dualzahlen-trainer.html">&rarr; Trainer</a></li>
+      <li>Algebren</li>
+      <li>Compiler vs. Interpreter</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Dependency chain -->
+<div class="dep-chain">
+  <h3>Empfohlene Lernreihenfolge</h3>
+  <pre>GDI01 (Grundlagen)  &rarr;  TGI01 (Datenstrukturen)  &rarr;  TGI02 (Algorithmen)
+                                                           &darr;
+                                              TGI06 (Formale Sprachen)  &rarr;  TGI07</pre>
+</div>
+</div>
+
+<!-- ============================================== -->
+<!-- SECTION 2: ZUSAMMENFASSUNGEN -->
+<!-- ============================================== -->
+<div id="sec-zusammenfassungen">
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128214;</div><h2>Zusammenfassungen</h2></div>
+
+<!-- GDI01 -->
+<div class="coll-section">
+  <div class="coll-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>&#128215; GDI01 &ndash; Einf&uuml;hrung in die Informatik</h3>
+    <div class="meta">
+      <span class="topic-count">5 Kapitel</span>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="coll-body"><div class="coll-content">
+    <h4>Kap. 1: Informatik und Algorithmen</h4>
+    <p><strong>EVA-Prinzip:</strong> Eingabe &rarr; Verarbeitung &rarr; Ausgabe &ndash; Grundprinzip jeder Datenverarbeitung.</p>
+    <p><strong>Algorithmus</strong> &ndash; F&uuml;nf Eigenschaften:</p>
+    <ul>
+      <li><strong>Endlichkeit</strong> (Finitheit): Endliche Beschreibung</li>
+      <li><strong>Ausf&uuml;hrbarkeit:</strong> Jeder Schritt ist ausf&uuml;hrbar</li>
+      <li><strong>Eindeutigkeit</strong> (Determiniertheit): Gleiche Eingabe &rarr; gleiches Ergebnis</li>
+      <li><strong>Terminierung:</strong> Endet nach endlich vielen Schritten</li>
+      <li><strong>Allgemeinheit:</strong> L&ouml;st eine Klasse von Problemen</li>
+    </ul>
+
+    <h4>Kap. 2: Umsetzung von Algorithmen</h4>
+    <p><strong>Kontrollstrukturen:</strong></p>
+    <ul>
+      <li><strong>Sequenz:</strong> Anweisungen hintereinander</li>
+      <li><strong>Selektion</strong> (if/else): Bedingte Ausf&uuml;hrung</li>
+      <li><strong>Iteration</strong> (while/for): Wiederholung</li>
+    </ul>
+    <p><strong>OOP:</strong> Klassen = Baupl&auml;ne mit Attributen + Methoden; Objekte = Instanzen. Kapselung, Vererbung, Polymorphie.</p>
+
+    <h4>Kap. 3: Rechner</h4>
+    <p><strong>Turing-Maschine</strong> (1936): Unendliches Band, Lese-/Schreibkopf, endliche Zustandsmenge, &Uuml;bergangsfunktion. Church-Turing-These: Alles intuitiv Berechenbare ist Turing-berechenbar.</p>
+    <p><strong>Von-Neumann-Architektur:</strong> Rechenwerk (ALU), Steuerwerk, Speicher (Daten UND Programme), Ein-/Ausgabewerk. Befehlszyklus: Fetch &rarr; Decode &rarr; Execute.</p>
+
+    <h4>Kap. 4: Dualzahlen</h4>
+    <p><strong>Dual &rarr; Dezimal:</strong> Zweierpotenzen aufsummieren. Bsp: <code>10110&#x2082; = 16+4+2 = 22</code></p>
+    <p><strong>Dezimal &rarr; Dual:</strong> Sukzessive Division durch 2, Reste von unten nach oben ablesen.</p>
+    <p><strong>Duale Addition:</strong> Wie dezimal, &Uuml;bertrag bei 1+1=10&#x2082;.</p>
+    <p><strong>Zweierkomplement:</strong> 1. Einerkomplement (alle Bits invertieren) 2. +1 addieren 3. Addition durchf&uuml;hren</p>
+    <p><strong>Hexadezimal</strong> (Basis 16): 1 Hex-Ziffer = 4 Bit. <strong>Oktal</strong> (Basis 8): 1 Oktalziffer = 3 Bit.</p>
+
+    <h4>Kap. 5: Logische Schaltungen</h4>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Gatter</th><th>Symbol</th><th>Funktion</th></tr></thead>
+      <tbody>
+        <tr><td>AND</td><td>&and;</td><td>Output = 1 nur wenn ALLE Inputs = 1</td></tr>
+        <tr><td>OR</td><td>&or;</td><td>Output = 1 wenn mind. EIN Input = 1</td></tr>
+        <tr><td>NOT</td><td>&not;</td><td>Invertiert den Input</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Halbaddierer:</strong> <code>S = A &oplus; B</code>, <code>C = A &and; B</code></p>
+    <p><strong>Volladdierer:</strong> <code>S = A &oplus; B &oplus; C&#7522;&#7524;</code>, <code>C&#7506;&#7524;&#7511; = (A &and; B) &or; (C&#7522;&#7524; &and; (A &oplus; B))</code></p>
+  </div></div>
+</div>
+
+<!-- TGI01 -->
+<div class="coll-section">
+  <div class="coll-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>&#128215; TGI01 &ndash; Datenstrukturen und Algorithmen</h3>
+    <div class="meta">
+      <span class="topic-count">4 Kapitel</span>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="coll-body"><div class="coll-content">
+    <h4>Kap. 1-2: Algorithmen und Darstellung</h4>
+    <p><strong>Darstellungsformen:</strong> Pseudocode, Flussdiagramm (Oval=Start/Ende, Rechteck=Verarbeitung, Raute=Entscheidung), Struktogramm (Nassi-Shneiderman).</p>
+
+    <h4>Kap. 3: Mathematische Grundlagen</h4>
+    <p><strong>Mengen:</strong> M = {x | Bedingung}. <strong>Potenzmenge</strong> P(M) = Menge aller Teilmengen.</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Eigenschaft</th><th>Definition</th></tr></thead>
+      <tbody>
+        <tr><td>Reflexiv</td><td>&forall;x: (x,x) &isin; R</td></tr>
+        <tr><td>Symmetrisch</td><td>(x,y) &isin; R &rarr; (y,x) &isin; R</td></tr>
+        <tr><td>Antisymmetrisch</td><td>(x,y) &isin; R &and; (y,x) &isin; R &rarr; x = y</td></tr>
+        <tr><td>Transitiv</td><td>(x,y) &isin; R &and; (y,z) &isin; R &rarr; (x,z) &isin; R</td></tr>
+      </tbody>
+    </table></div>
+    <p>&Auml;quivalenzrelation = reflexiv + symmetrisch + transitiv. Partielle Ordnung = reflexiv + antisymmetrisch + transitiv.</p>
+
+    <h4>Kap. 4: Datentypen (ADT)</h4>
+    <pre>Datentypen
+&#9500;&#9472;&#9472; Statisch
+&#9474;   &#9500;&#9472;&#9472; Basisdatentypen (int, float, char, boolean)
+&#9474;   &#9492;&#9472;&#9472; Aggregiert (Array, Record/Struct, String)
+&#9492;&#9472;&#9472; Dynamisch
+    &#9500;&#9472;&#9472; Liste (einfach/doppelt verkettet)
+    &#9500;&#9472;&#9472; Stack (Keller) &ndash; LIFO
+    &#9492;&#9472;&#9472; Queue (Schlange) &ndash; FIFO</pre>
+    <p><strong>Stack (LIFO):</strong> <code>push(x)</code>, <code>pop()</code>, <code>top()</code>, <code>isEmpty()</code> &ndash; Anwendung: Klammerpr&uuml;fung, Funktionsaufrufe.</p>
+    <p><strong>Queue (FIFO):</strong> <code>enqueue(x)</code>, <code>dequeue()</code>, <code>front()</code>, <code>isEmpty()</code> &ndash; Anwendung: Druckerwarteschlange, BFS.</p>
+    <p><strong>Verkettete Liste:</strong> Knoten mit Datenelement + Zeiger. Einfach verkettet (nur vorw&auml;rts) oder doppelt verkettet.</p>
+
+    <h4>Kap. 5: Sortier- und Suchalgorithmen</h4>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Algorithmus</th><th>Prinzip</th><th>Stabil?</th><th>Komplexit&auml;t</th></tr></thead>
+      <tbody>
+        <tr><td>BubbleSort</td><td>Benachbarte vergleichen &amp; tauschen</td><td>Ja</td><td>O(n&sup2;)</td></tr>
+        <tr><td>SelectionSort</td><td>Minimum suchen, an Anfang tauschen</td><td>Nein</td><td>O(n&sup2;)</td></tr>
+        <tr><td>InsertionSort</td><td>Element in sortierte Teilliste einf&uuml;gen</td><td>Ja</td><td>O(n&sup2;)</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Suche:</strong> Linear O(n), Bin&auml;r O(log n), Fibonacci-Suche, Interpolatorische Suche O(log log n).</p>
+
+    <h4>Kap. 6: B&auml;ume und Graphen</h4>
+    <p><strong>Baum:</strong> Zusammenh&auml;ngender, zyklenfreier Graph. Ordnung k = max. k S&ouml;hne. Max. Bl&auml;tter Niveau m: <code>k&#7504;</code>.</p>
+    <p><strong>Traversierung:</strong> Preorder (WLR), Inorder (LWR &ndash; sortiert bei BST), Postorder (LRW).</p>
+    <p><strong>Graph:</strong> G = (V, E). Adjazenzmatrix: n&times;n-Matrix, A[i][j]=1 falls Kante existiert.</p>
+  </div></div>
+</div>
+
+<!-- TGI02 -->
+<div class="coll-section">
+  <div class="coll-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>&#128215; TGI02 &ndash; Algorithmen und Komplexit&auml;t</h3>
+    <div class="meta">
+      <span class="topic-count">6 Kapitel</span>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="coll-body"><div class="coll-content">
+    <h4>Kap. 1: H&ouml;heres Sortieren</h4>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Algorithmus</th><th>Prinzip</th><th>Worst</th><th>Average</th><th>Best</th><th>Stabil?</th><th>In-situ?</th></tr></thead>
+      <tbody>
+        <tr><td>QuickSort</td><td>Pivot, partitionieren, rekursiv</td><td>O(n&sup2;)</td><td>O(n log n)</td><td>O(n log n)</td><td>Nein</td><td>Ja</td></tr>
+        <tr><td>MergeSort</td><td>Teilen, sortiert zusammenf&uuml;hren</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Ja</td><td>Nein</td></tr>
+        <tr><td>HeapSort</td><td>Max-Heap, Maximum entnehmen</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Nein</td><td>Ja</td></tr>
+        <tr><td>RadixSort</td><td>Nicht-vergleichsbasiert, Boxen</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>Ja</td><td>Nein</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>QuickSort:</strong> Pivot w&auml;hlen &rarr; partitionieren (kleiner links, gr&ouml;&szlig;er rechts) &rarr; rekursiv. Worst Case bei sortierter Liste.</p>
+    <p><strong>MergeSort:</strong> Halbieren bis Einzelelemente &rarr; Merge durch Vergleich der ersten Elemente. Immer O(n log n), braucht O(n) extra Speicher.</p>
+    <p><strong>HeapSort:</strong> Max-Heap aufbauen &rarr; Maximum (Wurzel) entnehmen &rarr; letztes Blatt als Wurzel, durchsickern &rarr; wiederholen.</p>
+    <p><strong>Heap im Array:</strong> Knoten i hat Kinder bei <code>2i+1</code> und <code>2i+2</code>, Elternknoten bei <code>&lfloor;(i-1)/2&rfloor;</code>.</p>
+
+    <h4>Kap. 2: Ausw&auml;hlen</h4>
+    <p>Min-Max-Auswahl: <code>&lceil;3n/2&rceil; - 2</code> Vergleiche. QuickSelection: k-kleinstes Element, &auml;hnlich QuickSort.</p>
+
+    <h4>Kap. 3: Hashing</h4>
+    <p><strong>Hashfunktionen:</strong> Divisionsrestverfahren <code>h(k) = k mod m</code> (m = Primzahl optimal). Multiplikation: <code>h(k) = &lfloor;m &middot; (k&middot;A mod 1)&rfloor;</code>.</p>
+    <p><strong>Kollisionsbehandlung:</strong></p>
+    <ul>
+      <li><strong>Chaining</strong> (geschlossen): Verkettete Listen an jedem Tabellenplatz</li>
+      <li><strong>Open Addressing</strong> (offen): Lineares/quadratisches Sondieren</li>
+    </ul>
+
+    <h4>Kap. 4: Matching</h4>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Algorithmus</th><th>Prinzip</th><th>Komplexit&auml;t</th></tr></thead>
+      <tbody>
+        <tr><td>Naiv</td><td>Zeichen f&uuml;r Zeichen, bei Fehler +1</td><td>O(n&middot;m)</td></tr>
+        <tr><td>KMP</td><td>next[]-Tabelle, intelligent zur&uuml;ckspringen</td><td>O(n+m)</td></tr>
+        <tr><td>Boyer-Moore</td><td>Von rechts vergleichen, gro&szlig;e Spr&uuml;nge</td><td>O(n/m) best</td></tr>
+        <tr><td>Rabin-Karp</td><td>Hashwert des Fensters vergleichen</td><td>O(n+m) avg</td></tr>
+      </tbody>
+    </table></div>
+
+    <h4>Kap. 5-6: Analyse und Komplexit&auml;t</h4>
+    <p><strong>O-Notation:</strong> <code>O(f) = {g | &exist; n&#8320;, c > 0: &forall; n &ge; n&#8320;: g(n) &le; c&middot;f(n)}</code></p>
+    <p><strong>Wachstumsordnung:</strong> <code>O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n&sup2;) &lt; O(n&sup3;) &lt; O(2&#8319;) &lt; O(n!)</code></p>
+    <p><strong>Master-Theorem</strong> f&uuml;r T(n) = a&middot;T(n/b) + n&#7496;:</p>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Bedingung</th><th>Ergebnis</th></tr></thead>
+      <tbody>
+        <tr><td>a &lt; b&#7496;</td><td>T(n) = O(n&#7496;)</td></tr>
+        <tr><td>a = b&#7496;</td><td>T(n) = O(n&#7496; &middot; log n)</td></tr>
+        <tr><td>a &gt; b&#7496;</td><td>T(n) = O(n^(log_b(a)))</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>Chip &amp; Conquer:</strong> T(n) = T(n-c) + f(n) &rarr; O(&int;f(x)dx)</p>
+    <p><strong>Chip &amp; Be Conquered:</strong> T(n) = b&middot;T(n-c) + f(n), b>1 &rarr; O(b^(n/c)) &ndash; exponentiell!</p>
+    <p><strong>P vs. NP:</strong> P = polynomial l&ouml;sbar. NP = polynomial verifizierbar. P &sube; NP &sube; PSPACE &sube; EXPTIME.</p>
+  </div></div>
+</div>
+
+<!-- TGI06 -->
+<div class="coll-section">
+  <div class="coll-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>&#128215; TGI06 &ndash; Formale Sprachen und Automaten</h3>
+    <div class="meta">
+      <span class="topic-count">4 Kapitel</span>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="coll-body"><div class="coll-content">
+    <h4>Kap. 1: Grundbegriffe</h4>
+    <p><strong>Alphabet &Sigma;:</strong> Endliche, nichtleere Menge von Zeichen. Z.B. &Sigma; = {0, 1}.</p>
+    <p><strong>Wort:</strong> Endliche Folge von Zeichen aus &Sigma;. |w| = Wortl&auml;nge. &epsilon; = leeres Wort.</p>
+    <p><strong>Wortmenge:</strong> &Sigma;* = alle W&ouml;rter (inkl. &epsilon;). &Sigma;&#8314; = &Sigma;* \ {&epsilon;}.</p>
+    <p><strong>Sprache L:</strong> Teilmenge von &Sigma;* (L &sube; &Sigma;*). Kann endlich oder unendlich sein.</p>
+
+    <h4>Kap. 2: Formale Grammatiken</h4>
+    <p><strong>Grammatik G = (N, T, P, s):</strong> N = Nichtterminale, T = Terminale, P = Produktionsregeln, s = Startsymbol.</p>
+    <p><strong>Ableitung:</strong> <code>S &rArr; aSb &rArr; aaSbb &rArr; aabb</code>. L(G) = {w &isin; T* | S &rArr;* w}.</p>
+
+    <h4>Chomsky-Hierarchie</h4>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Typ</th><th>Name</th><th>Regelform</th><th>Automat</th><th>Beispiel</th></tr></thead>
+      <tbody>
+        <tr><td style="color:var(--red)">Typ 0</td><td>Rekursiv aufz&auml;hlbar</td><td>&alpha; &rarr; &beta; (keine Einschr.)</td><td>Turingmaschine</td><td>&ndash;</td></tr>
+        <tr><td style="color:var(--yellow)">Typ 1</td><td>Kontextsensitiv</td><td>|&alpha;| &le; |&beta;|</td><td>Linear beschr. Automat</td><td>{a&#8319;b&#8319;c&#8319;}</td></tr>
+        <tr><td style="color:var(--cyan)">Typ 2</td><td>Kontextfrei</td><td>A &rarr; &beta;</td><td>Kellerautomat</td><td>{a&#8319;b&#8319;}</td></tr>
+        <tr><td style="color:var(--green)">Typ 3</td><td>Regul&auml;r</td><td>A &rarr; aB | a</td><td>Endlicher Automat</td><td>{a&#8319;}</td></tr>
+      </tbody>
+    </table></div>
+    <p>Hierarchie: Typ 3 &sub; Typ 2 &sub; Typ 1 &sub; Typ 0.</p>
+
+    <h4>Kap. 3: Sprach&uuml;bersetzer</h4>
+    <p><strong>Compiler:</strong> &Uuml;bersetzt gesamtes Programm vor Ausf&uuml;hrung &rarr; schneller. <strong>Interpreter:</strong> Zeile f&uuml;r Zeile &rarr; langsamer bei Schleifen.</p>
+    <p><strong>Scanner</strong> (Lexer): Erkennt Tokens &ndash; basiert auf regul&auml;ren Ausdr&uuml;cken/DEA.</p>
+    <p><strong>Parser:</strong> Pr&uuml;ft Syntax anhand Grammatik &ndash; basiert auf kontextfreien Grammatiken.</p>
+
+    <h4>Kap. 4: Regul&auml;re Sprachen &amp; Automaten</h4>
+    <p><strong>DEA</strong> M = (Q, &Sigma;, &delta;, q&#8320;, F): &delta;: Q &times; &Sigma; &rarr; Q (genau ein Folgezustand).</p>
+    <p><strong>NEA:</strong> &delta;: Q &times; &Sigma; &rarr; P(Q) (mehrere oder kein Folgezustand m&ouml;glich).</p>
+    <p><strong>NEA &rarr; DEA</strong> (Potenzmengenkonstruktion): Startzustand = {q&#8320;}. F&uuml;r jeden Zustand (=Menge von NEA-Zust&auml;nden) und jedes Zeichen Vereinigung berechnen. Endzustand = jede Menge mit mind. einem NEA-Endzustand.</p>
+    <p><strong>Regul&auml;re Ausdr&uuml;cke:</strong> &empty; (leere Menge), &epsilon; (leeres Wort), a (Zeichen), u&middot;v (Verkettung), u|v (Alternative), u* (Kleene-Stern).</p>
+    <p><strong>&Auml;quivalenz:</strong> DEA &harr; NEA &harr; NEA&epsilon; &harr; Regul&auml;re Grammatik &harr; Regul&auml;re Ausdr&uuml;cke = <strong>genau die regul&auml;ren Sprachen (Typ 3)</strong>.</p>
+  </div></div>
+</div>
+</div>
+
+<!-- ============================================== -->
+<!-- SECTION 3: ÜBUNGSAUFGABEN -->
+<!-- ============================================== -->
+<div id="sec-uebungsaufgaben">
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--pink),var(--orange))">&#128170;</div><h2>&Uuml;bungsaufgaben</h2></div>
+
+<!-- Dualzahlen -->
+<div class="qa-group">
+<div class="qa-group-title">Dualzahlen (GDI01)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.1</span>
+    <span>Rechnen Sie 11011001&#x2082; in dezimal um.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><code>1+8+16+64+128 =</code> <strong>217</strong></p>
+    <p>Aufl&ouml;sung: 1&middot;2&#8304; + 0&middot;2&sup1; + 0&middot;2&sup2; + 1&middot;2&sup3; + 1&middot;2&#8308; + 0&middot;2&#8309; + 1&middot;2&#8310; + 1&middot;2&#8311; = 1+8+16+64+128 = 217</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.2</span>
+    <span>Rechnen Sie 93&#x2081;&#x2080; in dual um.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><code>93 = 64+16+8+4+1</code> &rarr; <strong>1011101&#x2082;</strong></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.3</span>
+    <span>Addieren Sie dual: 1011&#x2082; + 1101&#x2082;</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <pre>  1 0 1 1  (11)
++ 1 1 0 1  (13)
+---------
+1 1 0 0 0  (24)</pre>
+    <p>Ergebnis: <strong>11000&#x2082;</strong> = 24 &#10003;</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.4</span>
+    <span>Rechnen Sie 0xBE in dezimal um.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><code>B&middot;16 + E = 11&middot;16 + 14 =</code> <strong>190</strong></p>
+  </div></div>
+</div>
+</div>
+
+<!-- Logische Schaltungen -->
+<div class="qa-group">
+<div class="qa-group-title">Logische Schaltungen (GDI01)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.5</span>
+    <span>Erstellen Sie die Wahrheitstabelle f&uuml;r: (A &and; B) &or; (&not;A &and; C)</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>A</th><th>B</th><th>C</th><th>A&and;B</th><th>&not;A</th><th>&not;A&and;C</th><th>Ergebnis</th></tr></thead>
+      <tbody>
+        <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>0</td><td>1</td><td>0</td><td>1</td><td>1</td><td><strong>1</strong></td></tr>
+        <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td><td><strong>1</strong></td></tr>
+        <tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>0</td><td>0</td><td><strong>1</strong></td></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td><strong>1</strong></td></tr>
+      </tbody>
+    </table></div>
+  </div></div>
+</div>
+</div>
+
+<!-- Datenstrukturen -->
+<div class="qa-group">
+<div class="qa-group-title">Datenstrukturen (TGI01)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.6</span>
+    <span>Stack-Operationen: push(5), push(3), push(7), pop(), push(1), top(), pop()</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><code>push(5)</code>: [5] | <code>push(3)</code>: [5,3] | <code>push(7)</code>: [5,3,7] | <code>pop()</code>&rarr;7: [5,3] | <code>push(1)</code>: [5,3,1] | <code>top()</code>&rarr;1: [5,3,1] | <code>pop()</code>&rarr;1: <strong>[5,3]</strong></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.7</span>
+    <span>Was ist der Unterschied zwischen Stack und Queue? Je eine Anwendung.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><strong>Stack = LIFO</strong> (Last In First Out) &rarr; Funktionsaufrufe, Klammerpr&uuml;fung.</p>
+    <p><strong>Queue = FIFO</strong> (First In First Out) &rarr; Druckerwarteschlange, BFS in Graphen.</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.8</span>
+    <span>Adjazenzmatrix f&uuml;r Graph {1,2,3,4} mit Kanten {1&rarr;2, 1&rarr;3, 2&rarr;4, 3&rarr;2, 4&rarr;3}</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <div class="tbl-wrap"><table>
+      <thead><tr><th></th><th>1</th><th>2</th><th>3</th><th>4</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+        <tr><td>2</td><td>0</td><td>0</td><td>0</td><td>1</td></tr>
+        <tr><td>3</td><td>0</td><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>4</td><td>0</td><td>0</td><td>1</td><td>0</td></tr>
+      </tbody>
+    </table></div>
+  </div></div>
+</div>
+</div>
+
+<!-- Sortieralgorithmen -->
+<div class="qa-group">
+<div class="qa-group-title">Sortieralgorithmen (TGI01/02)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.9</span>
+    <span>SelectionSort: [15, 8, 23, 4, 42, 16] &ndash; alle Zwischenschritte</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Schritt 1: Min=4 bei Pos 3, tausche mit Pos 0 &rarr; [<strong>4</strong>, 8, 23, 15, 42, 16]</p>
+    <p>Schritt 2: Min=8 bereits an Pos 1 &rarr; [4, <strong>8</strong>, 23, 15, 42, 16]</p>
+    <p>Schritt 3: Min=15 bei Pos 3, tausche mit Pos 2 &rarr; [4, 8, <strong>15</strong>, 23, 42, 16]</p>
+    <p>Schritt 4: Min=16 bei Pos 5, tausche mit Pos 3 &rarr; [4, 8, 15, <strong>16</strong>, 42, 23]</p>
+    <p>Schritt 5: Min=23 bei Pos 5, tausche mit Pos 4 &rarr; [4, 8, 15, 16, <strong>23</strong>, <strong>42</strong>]</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.10</span>
+    <span>QuickSort auf [5, 3, 8, 1, 9, 2] (Pivot = erstes Element)</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Pivot=5: Links [3,1,2], Rechts [8,9] &rarr; [3,1,2] <strong>5</strong> [8,9]</p>
+    <p>Links: Pivot=3: [1,2] <strong>3</strong> [] &rarr; [1,2] 3</p>
+    <p>[1,2]: Pivot=1: [] <strong>1</strong> [2] &rarr; 1, 2</p>
+    <p>Rechts: Pivot=8: [] <strong>8</strong> [9] &rarr; 8, 9</p>
+    <p>Ergebnis: <strong>[1, 2, 3, 5, 8, 9]</strong></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.11</span>
+    <span>Max-Heap aus [4, 10, 3, 5, 1, 8] aufbauen und erstes Maximum entnehmen</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <pre>Als Baum:       4
+             10    3
+            5  1  8</pre>
+    <p>Durchsickern ab Pos 2: 3&lt;8 &rarr; tausche: [4, 10, 8, 5, 1, 3]</p>
+    <p>Durchsickern ab Pos 1: 10&gt;4, ok &rarr; keine &Auml;nderung</p>
+    <p>Durchsickern ab Pos 0: 4&lt;10 &rarr; tausche: <strong>[10, 5, 8, 4, 1, 3]</strong></p>
+    <p>Max-Heap: [10, 5, 8, 4, 1, 3] &#10003;</p>
+    <p>Entnahme: Max=10, letztes Blatt (3) wird Wurzel &rarr; [3, 5, 8, 4, 1]</p>
+    <p>Durchsickern: 3&lt;8 &rarr; tausche &rarr; <strong>[8, 5, 3, 4, 1]</strong> &#10003;</p>
+  </div></div>
+</div>
+</div>
+
+<!-- Hashing -->
+<div class="qa-group">
+<div class="qa-group-title">Hashing (TGI02)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.12</span>
+    <span>Hashtabelle m=7, h(k)=k mod 7. Einf&uuml;gen: 19, 26, 13, 33. Chaining vs. lineares Sondieren.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><code>h(19)=5, h(26)=5, h(13)=6, h(33)=5</code></p>
+    <p><strong>(a) Chaining:</strong> Pos 5: 19&rarr;26&rarr;33, Pos 6: 13</p>
+    <p><strong>(b) Lineares Sondieren:</strong> Pos 5: 19, Pos 6: 13 &rarr; 26 kollidiert bei 5 (belegt), 6 (belegt) &rarr; Pos 0: 26 | 33 kollidiert bei 5,6,0 (belegt) &rarr; Pos 1: 33</p>
+  </div></div>
+</div>
+</div>
+
+<!-- Komplexitätsanalyse -->
+<div class="qa-group">
+<div class="qa-group-title">Komplexit&auml;tsanalyse (TGI02)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.13</span>
+    <span>Zeitkomplexit&auml;t: for i=1 to n: for j=1 to n: print(i+j)</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Zwei geschachtelte Schleifen, je n Durchl&auml;ufe &rarr; <strong>O(n&sup2;)</strong></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.14</span>
+    <span>Master-Theorem: T(n) = 4&middot;T(n/2) + n</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>a=4, b=2, k=1. b&#7496; = 2&sup1; = 2. Da a(4) &gt; b&#7496;(2) &rarr; Fall 3:</p>
+    <p>T(n) = O(n^(log&#8322;4)) = <strong>O(n&sup2;)</strong></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.15</span>
+    <span>Master-Theorem: T(n) = 2&middot;T(n/2) + n&sup2;</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>a=2, b=2, k=2. b&#7496; = 2&sup2; = 4. Da a(2) &lt; b&#7496;(4) &rarr; Fall 1:</p>
+    <p><strong>T(n) = O(n&sup2;)</strong></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.16</span>
+    <span>Bestimmen Sie: T(n) = T(n-1) + 1</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Chip-and-Conquer (b=1): T(n) = O(&int;1 dx) = <strong>O(n)</strong></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.17</span>
+    <span>Bestimmen Sie: T(n) = 3&middot;T(n-1) + n</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Chip-and-Be-Conquered (b=3, c=1): <strong>T(n) = O(3&#8319;)</strong> &ndash; exponentiell!</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.18</span>
+    <span>Ordnen Sie nach Wachstum: n&sup2;, 2&#8319;, n log n, log n, n!, n, 1</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><strong>O(1) &lt; O(log n) &lt; O(n) &lt; O(n log n) &lt; O(n&sup2;) &lt; O(2&#8319;) &lt; O(n!)</strong></p>
+  </div></div>
+</div>
+</div>
+
+<!-- Chomsky -->
+<div class="qa-group">
+<div class="qa-group-title">Chomsky-Hierarchie (TGI06)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.19</span>
+    <span>G = ({S}, {a,b}, {S&rarr;aSb, S&rarr;ab}, S). Welcher Typ? Welche Sprache?</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Regeln: S&rarr;aSb und S&rarr;ab. Links immer einzelnes Nichtterminal &rarr; <strong>Typ 2 (kontextfrei)</strong>.</p>
+    <p>L(G) = {a&#8319;b&#8319; | n &ge; 1}.</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.20</span>
+    <span>G = ({S,A}, {0,1}, {S&rarr;0A, S&rarr;1, A&rarr;0A, A&rarr;1}, S). Typ? Sprache?</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Alle Regeln der Form A&rarr;aB oder A&rarr;a &rarr; <strong>Typ 3 (regul&auml;r)</strong>.</p>
+    <p>L(G) = Alle W&ouml;rter aus {0,1}&#8314; die mit 1 enden.</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.21</span>
+    <span>Ist L = {a&#8319;b&#8319;c&#8319; | n &ge; 1} kontextfrei?</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><strong>Nein.</strong> L ist kontextsensitiv (Typ 1), aber nicht kontextfrei. Ein Kellerautomat kann nicht zwei unabh&auml;ngige Z&auml;hler verwalten.</p>
+  </div></div>
+</div>
+</div>
+
+<!-- Endliche Automaten -->
+<div class="qa-group">
+<div class="qa-group-title">Endliche Automaten (TGI06)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.22</span>
+    <span>DEA &uuml;ber &Sigma;={0,1}, der alle W&ouml;rter akzeptiert, die mit &bdquo;01&ldquo; enden.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>M = ({q&#8320;, q&#8321;, q&#8322;}, {0,1}, &delta;, q&#8320;, {q&#8322;})</p>
+    <pre>&delta;(q&#8320;, 0) = q&#8321;    &delta;(q&#8320;, 1) = q&#8320;
+&delta;(q&#8321;, 0) = q&#8321;    &delta;(q&#8321;, 1) = q&#8322;
+&delta;(q&#8322;, 0) = q&#8321;    &delta;(q&#8322;, 1) = q&#8320;</pre>
+    <p>Pr&uuml;fung: &ldquo;101&rdquo; &rarr; q&#8320;&rarr;q&#8320;&rarr;q&#8321;&rarr;q&#8322; &#10003;</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.23</span>
+    <span>NEA mit q&#8320; &rarr;a&rarr; {q&#8320;,q&#8321;}, q&#8320; &rarr;b&rarr; {q&#8320;}, q&#8321; &rarr;b&rarr; {q&#8322;}. DEA konstruieren.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Startzustand: {q&#8320;}</p>
+    <pre>&delta;({q&#8320;}, a) = {q&#8320;,q&#8321;}       &delta;({q&#8320;}, b) = {q&#8320;}
+&delta;({q&#8320;,q&#8321;}, a) = {q&#8320;,q&#8321;}   &delta;({q&#8320;,q&#8321;}, b) = {q&#8320;,q&#8322;} &larr; Endzustand
+&delta;({q&#8320;,q&#8322;}, a) = {q&#8320;,q&#8321;}   &delta;({q&#8320;,q&#8322;}, b) = {q&#8320;}</pre>
+    <p>L(M) = Alle W&ouml;rter &uuml;ber {a,b} die mit &ldquo;ab&rdquo; enden.</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.24</span>
+    <span>Regul&auml;rer Ausdruck f&uuml;r Bin&auml;rstrings mit mind. zwei aufeinanderfolgenden Nullen.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><code>(0|1)*00(0|1)*</code></p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.25</span>
+    <span>Regul&auml;ren Ausdruck a(a|b)*b in einen NEA umwandeln.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <pre>q&#8320; &rarr;a&rarr; q&#8321;, q&#8321; &rarr;a&rarr; q&#8321;, q&#8321; &rarr;b&rarr; q&#8321;, q&#8321; &rarr;b&rarr; q&#8322; (Endzustand)</pre>
+    <p>Prinzip: <code>a</code> am Anfang, beliebig viele a/b in der Mitte, <code>b</code> am Ende.</p>
+  </div></div>
+</div>
+</div>
+
+<!-- Matching -->
+<div class="qa-group">
+<div class="qa-group-title">Matching (TGI02)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.26</span>
+    <span>Boyer-Moore: Wie viele Vergleiche f&uuml;r &bdquo;mal&ldquo; in &bdquo;Man muss seinen Text erst einmal&ldquo;?</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>BM vergleicht von rechts: erst &lsquo;l&rsquo; mit Position 2 (n&rarr;Mismatch, springe 3), dann weiter... Ergebnis: ca. <strong>11 Vergleiche</strong> (deutlich weniger als naiv).</p>
+  </div></div>
+</div>
+</div>
+
+<!-- Bäume -->
+<div class="qa-group">
+<div class="qa-group-title">B&auml;ume (TGI01)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.27</span>
+    <span>Bin&auml;rbaum Wurzel 15, links 8(4,12), rechts 20(17,25). Preorder, Inorder, Postorder?</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><strong>Preorder</strong> (WLR): 15, 8, 4, 12, 20, 17, 25</p>
+    <p><strong>Inorder</strong> (LWR): 4, 8, 12, 15, 17, 20, 25 &larr; sortiert!</p>
+    <p><strong>Postorder</strong> (LRW): 4, 12, 8, 17, 25, 20, 15</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.28</span>
+    <span>Wie viele Bl&auml;tter hat ein Baum der Ordnung 3 und H&ouml;he 4 maximal?</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p>Max. Bl&auml;tter = k&#7504; = 3&#8308; = <strong>81</strong></p>
+  </div></div>
+</div>
+</div>
+
+<!-- P/NP -->
+<div class="qa-group">
+<div class="qa-group-title">P/NP (TGI02)</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.29</span>
+    <span>Unterschied zwischen P und NP anhand eines Beispiels.</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><strong>P:</strong> L&ouml;sung kann in Polynomialzeit <em>gefunden</em> werden (z.B. Sortieren in O(n log n)).</p>
+    <p><strong>NP:</strong> L&ouml;sung kann in Polynomialzeit <em>verifiziert</em> werden, aber Finden m&ouml;glicherweise nicht polynomial (z.B. Rucksackproblem: Optimale Packung zu finden ist schwer, aber eine gegebene Packung zu &uuml;berpr&uuml;fen ist einfach).</p>
+  </div></div>
+</div>
+
+<div class="qa-item">
+  <div class="qa-q" onclick="this.parentElement.classList.toggle('open')">
+    <span class="qa-num">C.30</span>
+    <span>Ist &bdquo;Jedes Problem in P ist auch in NP&ldquo; korrekt?</span>
+    <span class="qa-chevron">&#9654;</span>
+  </div>
+  <div class="qa-a"><div class="qa-a-inner">
+    <p><strong>Ja.</strong> P &sube; NP. Wenn ein Problem in Polynomialzeit l&ouml;sbar ist, kann die L&ouml;sung trivialerweise auch in Polynomialzeit verifiziert werden (einfach nochmal l&ouml;sen).</p>
+  </div></div>
+</div>
+</div>
+</div>
+
+<!-- ============================================== -->
+<!-- SECTION 4: FORMELSAMMLUNG -->
+<!-- ============================================== -->
+<div id="sec-formeln">
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">&#128203;</div><h2>Formelsammlung</h2></div>
+
+<div class="formula-grid">
+
+<!-- Zahlensysteme -->
+<div class="formula-card">
+  <div class="f-label">Zahlensysteme</div>
+  <div class="f-formula">Dual&rarr;Dez: &Sigma; a&#7522; &middot; 2&#8305;</div>
+  <div class="f-vars">Dez&rarr;Dual: Sukzessive Division durch 2, Reste r&uuml;ckw&auml;rts<br>
+  Hex&rarr;Dez: &Sigma; a&#7522; &middot; 16&#8305; (A=10 ... F=15)<br>
+  1 Hex-Ziffer = 4 Bit, 1 Oktal-Ziffer = 3 Bit</div>
+</div>
+
+<!-- Zweierkomplement -->
+<div class="formula-card">
+  <div class="f-label">Zweierkomplement (n Bit)</div>
+  <div class="f-formula">EK = alle Bits invertieren<br>ZK = EK + 1</div>
+  <div class="f-vars">Darstellbarer Bereich: -2&#8319;&#8315;&#185; bis 2&#8319;&#8315;&#185; - 1</div>
+</div>
+
+<!-- Logische Gatter -->
+<div class="formula-card">
+  <div class="f-label">Logische Gatter</div>
+  <div class="f-formula">AND: A &and; B<br>OR: A &or; B<br>NOT: &not;A<br>XOR: A &oplus; B = (A&and;&not;B) &or; (&not;A&and;B)</div>
+  <div class="f-vars">&and; = Konjunktion, &or; = Disjunktion, &not; = Negation</div>
+</div>
+
+<!-- Halbaddierer / Volladdierer -->
+<div class="formula-card">
+  <div class="f-label">Halbaddierer / Volladdierer</div>
+  <div class="f-formula">HA: S = A&oplus;B, C = A&and;B<br>VA: S = A&oplus;B&oplus;C&#7522;&#7524;<br>C&#7506;&#7524;&#7511; = (A&and;B) &or; (C&#7522;&#7524; &and; (A&oplus;B))</div>
+  <div class="f-vars">S = Summe, C = Carry (&Uuml;bertrag)</div>
+</div>
+
+<!-- Bäume -->
+<div class="formula-card">
+  <div class="f-label">B&auml;ume</div>
+  <div class="f-formula">Max. Bl&auml;tter Niveau m: k&#7504;<br>H&ouml;he vollst. Bin&auml;rbaum: &lfloor;log&#8322; n&rfloor;</div>
+  <div class="f-vars">k = Ordnung, m = H&ouml;he, n = Knotenanzahl</div>
+</div>
+
+<!-- O-Notation -->
+<div class="formula-card">
+  <div class="f-label">O-Notation</div>
+  <div class="f-formula">O(f) = {g | &exist;c, n&#8320;:<br>g(n) &le; c&middot;f(n) &forall; n &ge; n&#8320;}</div>
+  <div class="f-vars">Obere Schranke f&uuml;r Laufzeit / Wachstum</div>
+</div>
+
+<!-- Master-Theorem -->
+<div class="formula-card">
+  <div class="f-label">Master-Theorem</div>
+  <div class="f-formula">T(n) = a&middot;T(n/b) + n&#7496;</div>
+  <div class="f-vars">
+    Fall 1: a &lt; b&#7496; &rarr; O(n&#7496;)<br>
+    Fall 2: a = b&#7496; &rarr; O(n&#7496; &middot; log n)<br>
+    Fall 3: a &gt; b&#7496; &rarr; O(n^(log_b(a)))
+  </div>
+</div>
+
+<!-- Chip and Conquer -->
+<div class="formula-card">
+  <div class="f-label">Chip &amp; Conquer / Be Conquered</div>
+  <div class="f-formula">C&amp;C: T(n) = T(n-c) + f(n)<br>&rarr; O(&int;f(x)dx)<br>C&amp;BC: T(n) = b&middot;T(n-c) + f(n)<br>&rarr; O(b^(n/c))</div>
+  <div class="f-vars">b&gt;1 bei C&amp;BC &rarr; exponentiell!</div>
+</div>
+
+<!-- Sortieralgorithmen Komplexitäten -->
+<div class="formula-card" style="grid-column: 1 / -1">
+  <div class="f-label">Sortieralgorithmen &ndash; Komplexit&auml;ten</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Algorithmus</th><th>Best</th><th>Average</th><th>Worst</th><th>Stabil?</th><th>In-situ?</th></tr></thead>
+    <tbody>
+      <tr><td>BubbleSort</td><td>O(n)</td><td>O(n&sup2;)</td><td>O(n&sup2;)</td><td>Ja</td><td>Ja</td></tr>
+      <tr><td>SelectionSort</td><td>O(n&sup2;)</td><td>O(n&sup2;)</td><td>O(n&sup2;)</td><td>Nein</td><td>Ja</td></tr>
+      <tr><td>InsertionSort</td><td>O(n)</td><td>O(n&sup2;)</td><td>O(n&sup2;)</td><td>Ja</td><td>Ja</td></tr>
+      <tr><td>QuickSort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n&sup2;)</td><td>Nein</td><td>Ja</td></tr>
+      <tr><td>MergeSort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Ja</td><td>Nein</td></tr>
+      <tr><td>HeapSort</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Nein</td><td>Ja</td></tr>
+      <tr><td>RadixSort</td><td>O(n)</td><td>O(n)</td><td>O(n)</td><td>Ja</td><td>Nein</td></tr>
+    </tbody>
+  </table></div>
+  <div class="f-vars" style="margin-top:8px">Untere Schranke f&uuml;r vergleichsbasiertes Sortieren: O(n log n)</div>
+</div>
+
+<!-- Hashing -->
+<div class="formula-card">
+  <div class="f-label">Hashing</div>
+  <div class="f-formula">Divisionsrest: h(k) = k mod m<br>Multiplikation: h(k) = &lfloor;m&middot;(k&middot;A mod 1)&rfloor;</div>
+  <div class="f-vars">m = Tabellengr&ouml;&szlig;e (Primzahl optimal), 0 &lt; A &lt; 1</div>
+</div>
+
+<!-- Chomsky -->
+<div class="formula-card">
+  <div class="f-label">Chomsky-Hierarchie</div>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>Typ</th><th>Sprache</th><th>Regelform</th><th>Automat</th></tr></thead>
+    <tbody>
+      <tr><td style="color:var(--red)">0</td><td>Rek. aufz&auml;hlbar</td><td>&alpha; &rarr; &beta;</td><td>TM</td></tr>
+      <tr><td style="color:var(--yellow)">1</td><td>Kontextsensitiv</td><td>|&alpha;| &le; |&beta;|</td><td>LBA</td></tr>
+      <tr><td style="color:var(--cyan)">2</td><td>Kontextfrei</td><td>A &rarr; &beta;</td><td>Kellerautomat</td></tr>
+      <tr><td style="color:var(--green)">3</td><td>Regul&auml;r</td><td>A &rarr; aB | a</td><td>DEA/NEA</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<!-- Reguläre Ausdrücke -->
+<div class="formula-card">
+  <div class="f-label">Regul&auml;re Ausdr&uuml;cke</div>
+  <div class="f-formula">&empty; = leere Sprache<br>&epsilon; = leeres Wort<br>a&middot;b = Verkettung<br>a|b = Alternative<br>a* = Kleene-Stern (0+)<br>a&#8314; = a&middot;a* (1+)</div>
+  <div class="f-vars">Definieren genau die regul&auml;ren Sprachen (Typ 3)</div>
+</div>
+
+<!-- DEA/NEA -->
+<div class="formula-card">
+  <div class="f-label">DEA / NEA</div>
+  <div class="f-formula">DEA: &delta;: Q &times; &Sigma; &rarr; Q<br>NEA: &delta;: Q &times; &Sigma; &rarr; P(Q)</div>
+  <div class="f-vars">DEA: genau ein Folgezustand<br>NEA: mehrere/kein Folgezustand<br>NEA&rarr;DEA: Potenzmengenkonstruktion</div>
+</div>
+
+</div>
+</div>
+
+<!-- ============================================== -->
+<!-- SECTION 5: LERN-CHECKLISTE -->
+<!-- ============================================== -->
+<div id="sec-checkliste">
+<div class="st"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--accent))">&#9989;</div><h2>Lern-Checkliste</h2></div>
+
+<!-- GDI01 -->
+<div class="check-section open" data-section="gdi01">
+  <div class="check-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>GDI01 &ndash; Einf&uuml;hrung in die Informatik</h3>
+    <div class="check-meta">
+      <span class="check-progress-text" data-progress="gdi01">0/11 erledigt</span>
+      <div class="check-progress-bar"><div class="check-progress-fill" data-fill="gdi01" style="width:0%"></div></div>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="check-body"><div class="check-items">
+    <div class="check-item" data-key="tgi-gdi01-0"><input type="checkbox" id="cl-gdi01-0"><label for="cl-gdi01-0">EVA-Prinzip erkl&auml;ren k&ouml;nnen</label></div>
+    <div class="check-item" data-key="tgi-gdi01-1"><input type="checkbox" id="cl-gdi01-1"><label for="cl-gdi01-1">5 Eigenschaften eines Algorithmus nennen</label></div>
+    <div class="check-item" data-key="tgi-gdi01-2"><input type="checkbox" id="cl-gdi01-2"><label for="cl-gdi01-2">Kontrollstrukturen (Sequenz, Selektion, Iteration) erkl&auml;ren</label></div>
+    <div class="check-item" data-key="tgi-gdi01-3"><input type="checkbox" id="cl-gdi01-3"><label for="cl-gdi01-3">OOP-Grundbegriffe: Klasse, Objekt, Attribut, Methode, Vererbung</label></div>
+    <div class="check-item" data-key="tgi-gdi01-4"><input type="checkbox" id="cl-gdi01-4"><label for="cl-gdi01-4">Turing-Maschine: Aufbau und Bedeutung erkl&auml;ren</label></div>
+    <div class="check-item" data-key="tgi-gdi01-5"><input type="checkbox" id="cl-gdi01-5"><label for="cl-gdi01-5">Von-Neumann-Architektur: 4 Komponenten, Befehlszyklus</label></div>
+    <div class="check-item" data-key="tgi-gdi01-6"><input type="checkbox" id="cl-gdi01-6"><label for="cl-gdi01-6">Dezimal&harr;Dual umrechnen (in beide Richtungen)</label></div>
+    <div class="check-item" data-key="tgi-gdi01-7"><input type="checkbox" id="cl-gdi01-7"><label for="cl-gdi01-7">Duale Addition und Subtraktion (Zweierkomplement)</label></div>
+    <div class="check-item" data-key="tgi-gdi01-8"><input type="checkbox" id="cl-gdi01-8"><label for="cl-gdi01-8">Hexadezimal&harr;Dual&harr;Dezimal umrechnen</label></div>
+    <div class="check-item" data-key="tgi-gdi01-9"><input type="checkbox" id="cl-gdi01-9"><label for="cl-gdi01-9">Wahrheitstabellen f&uuml;r AND, OR, NOT erstellen</label></div>
+    <div class="check-item" data-key="tgi-gdi01-10"><input type="checkbox" id="cl-gdi01-10"><label for="cl-gdi01-10">Halbaddierer und Volladdierer erkl&auml;ren und Tabelle aufstellen</label></div>
+  </div></div>
+</div>
+
+<!-- TGI01 -->
+<div class="check-section" data-section="tgi01">
+  <div class="check-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>TGI01 &ndash; Datenstrukturen und Algorithmen</h3>
+    <div class="check-meta">
+      <span class="check-progress-text" data-progress="tgi01">0/8 erledigt</span>
+      <div class="check-progress-bar"><div class="check-progress-fill" data-fill="tgi01" style="width:0%"></div></div>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="check-body"><div class="check-items">
+    <div class="check-item" data-key="tgi-tgi01-0"><input type="checkbox" id="cl-tgi01-0"><label for="cl-tgi01-0">Algorithmen als Flussdiagramm und Pseudocode darstellen</label></div>
+    <div class="check-item" data-key="tgi-tgi01-1"><input type="checkbox" id="cl-tgi01-1"><label for="cl-tgi01-1">Mengen, Relationen, Potenzmenge formal beschreiben</label></div>
+    <div class="check-item" data-key="tgi-tgi01-2"><input type="checkbox" id="cl-tgi01-2"><label for="cl-tgi01-2">Reflexiv, symmetrisch, transitiv, antisymmetrisch unterscheiden</label></div>
+    <div class="check-item" data-key="tgi-tgi01-3"><input type="checkbox" id="cl-tgi01-3"><label for="cl-tgi01-3">ADT: Stack, Queue, Liste &ndash; Operationen und Unterschiede</label></div>
+    <div class="check-item" data-key="tgi-tgi01-4"><input type="checkbox" id="cl-tgi01-4"><label for="cl-tgi01-4">BubbleSort, SelectionSort, InsertionSort von Hand durchf&uuml;hren</label></div>
+    <div class="check-item" data-key="tgi-tgi01-5"><input type="checkbox" id="cl-tgi01-5"><label for="cl-tgi01-5">Fibonacci-Suche und interpolatorische Suche erkl&auml;ren</label></div>
+    <div class="check-item" data-key="tgi-tgi01-6"><input type="checkbox" id="cl-tgi01-6"><label for="cl-tgi01-6">Bin&auml;rbaum-Traversierung: Preorder, Inorder, Postorder</label></div>
+    <div class="check-item" data-key="tgi-tgi01-7"><input type="checkbox" id="cl-tgi01-7"><label for="cl-tgi01-7">Adjazenzmatrix eines Graphen erstellen</label></div>
+  </div></div>
+</div>
+
+<!-- TGI02 -->
+<div class="check-section" data-section="tgi02">
+  <div class="check-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>TGI02 &ndash; Algorithmen und Komplexit&auml;t</h3>
+    <div class="check-meta">
+      <span class="check-progress-text" data-progress="tgi02">0/11 erledigt</span>
+      <div class="check-progress-bar"><div class="check-progress-fill" data-fill="tgi02" style="width:0%"></div></div>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="check-body"><div class="check-items">
+    <div class="check-item" data-key="tgi-tgi02-0"><input type="checkbox" id="cl-tgi02-0"><label for="cl-tgi02-0">QuickSort von Hand durchf&uuml;hren (mit Pivot-Wahl)</label></div>
+    <div class="check-item" data-key="tgi-tgi02-1"><input type="checkbox" id="cl-tgi02-1"><label for="cl-tgi02-1">MergeSort von Hand durchf&uuml;hren (Teilen und Mergen)</label></div>
+    <div class="check-item" data-key="tgi-tgi02-2"><input type="checkbox" id="cl-tgi02-2"><label for="cl-tgi02-2">HeapSort: Max-Heap aufbauen und sortieren</label></div>
+    <div class="check-item" data-key="tgi-tgi02-3"><input type="checkbox" id="cl-tgi02-3"><label for="cl-tgi02-3">Hashfunktion anwenden, Kollisionen l&ouml;sen (Chaining, Open Addressing)</label></div>
+    <div class="check-item" data-key="tgi-tgi02-4"><input type="checkbox" id="cl-tgi02-4"><label for="cl-tgi02-4">KMP- und Boyer-Moore-Matching erkl&auml;ren</label></div>
+    <div class="check-item" data-key="tgi-tgi02-5"><input type="checkbox" id="cl-tgi02-5"><label for="cl-tgi02-5">Zeitkomplexit&auml;t einfacher Algorithmen bestimmen</label></div>
+    <div class="check-item" data-key="tgi-tgi02-6"><input type="checkbox" id="cl-tgi02-6"><label for="cl-tgi02-6">O-Notation: Definition und Wachstumsordnung kennen</label></div>
+    <div class="check-item" data-key="tgi-tgi02-7"><input type="checkbox" id="cl-tgi02-7"><label for="cl-tgi02-7">Master-Theorem: Alle 3 F&auml;lle anwenden k&ouml;nnen</label></div>
+    <div class="check-item" data-key="tgi-tgi02-8"><input type="checkbox" id="cl-tgi02-8"><label for="cl-tgi02-8">Chip-and-Conquer / Be-Conquered anwenden</label></div>
+    <div class="check-item" data-key="tgi-tgi02-9"><input type="checkbox" id="cl-tgi02-9"><label for="cl-tgi02-9">P, NP, PSPACE, EXPTIME definieren und einordnen</label></div>
+    <div class="check-item" data-key="tgi-tgi02-10"><input type="checkbox" id="cl-tgi02-10"><label for="cl-tgi02-10">Untere Schranke f&uuml;r vergleichsbasiertes Sortieren: O(n log n)</label></div>
+  </div></div>
+</div>
+
+<!-- TGI06 -->
+<div class="check-section" data-section="tgi06">
+  <div class="check-header" onclick="this.parentElement.classList.toggle('open')">
+    <h3>TGI06 &ndash; Formale Sprachen und Automaten</h3>
+    <div class="check-meta">
+      <span class="check-progress-text" data-progress="tgi06">0/10 erledigt</span>
+      <div class="check-progress-bar"><div class="check-progress-fill" data-fill="tgi06" style="width:0%"></div></div>
+      <span class="chevron">&#9654;</span>
+    </div>
+  </div>
+  <div class="check-body"><div class="check-items">
+    <div class="check-item" data-key="tgi-tgi06-0"><input type="checkbox" id="cl-tgi06-0"><label for="cl-tgi06-0">Alphabet, Wort, Wortl&auml;nge, Verkettung, &Sigma;* definieren</label></div>
+    <div class="check-item" data-key="tgi-tgi06-1"><input type="checkbox" id="cl-tgi06-1"><label for="cl-tgi06-1">Formale Grammatik G=(N,T,P,s) aufstellen</label></div>
+    <div class="check-item" data-key="tgi-tgi06-2"><input type="checkbox" id="cl-tgi06-2"><label for="cl-tgi06-2">Ableitungen durchf&uuml;hren und Ableitungsb&auml;ume zeichnen</label></div>
+    <div class="check-item" data-key="tgi-tgi06-3"><input type="checkbox" id="cl-tgi06-3"><label for="cl-tgi06-3">Chomsky-Hierarchie: Alle 4 Typen mit Regelform und Automat</label></div>
+    <div class="check-item" data-key="tgi-tgi06-4"><input type="checkbox" id="cl-tgi06-4"><label for="cl-tgi06-4">Mehrdeutigkeit einer Grammatik erkennen</label></div>
+    <div class="check-item" data-key="tgi-tgi06-5"><input type="checkbox" id="cl-tgi06-5"><label for="cl-tgi06-5">Compiler vs. Interpreter erkl&auml;ren</label></div>
+    <div class="check-item" data-key="tgi-tgi06-6"><input type="checkbox" id="cl-tgi06-6"><label for="cl-tgi06-6">DEA konstruieren f&uuml;r gegebene Sprache</label></div>
+    <div class="check-item" data-key="tgi-tgi06-7"><input type="checkbox" id="cl-tgi06-7"><label for="cl-tgi06-7">NEA konstruieren und in DEA umwandeln</label></div>
+    <div class="check-item" data-key="tgi-tgi06-8"><input type="checkbox" id="cl-tgi06-8"><label for="cl-tgi06-8">Regul&auml;re Ausdr&uuml;cke schreiben und interpretieren</label></div>
+    <div class="check-item" data-key="tgi-tgi06-9"><input type="checkbox" id="cl-tgi06-9"><label for="cl-tgi06-9">&Auml;quivalenz DEA/NEA/RegEx kennen</label></div>
+  </div></div>
+</div>
+
+</div>
+
+</div><!-- end container -->
+
+<script>
+// ========== Sticky Nav ==========
+function scrollToSection(tab) {
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  const target = document.getElementById(tab.dataset.target);
+  if (target) {
+    const navH = document.querySelector('.sticky-nav').offsetHeight;
+    const y = target.getBoundingClientRect().top + window.pageYOffset - navH - 16;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+}
+
+// Highlight active tab on scroll
+const sections = ['sec-uebersicht','sec-zusammenfassungen','sec-uebungsaufgaben','sec-formeln','sec-checkliste'];
+window.addEventListener('scroll', function() {
+  const navH = document.querySelector('.sticky-nav').offsetHeight + 40;
+  let current = sections[0];
+  for (const id of sections) {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top <= navH) current = id;
+  }
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.target === current);
+  });
+});
+
+// ========== Checklist with localStorage ==========
+function initChecklist() {
+  document.querySelectorAll('.check-item').forEach(function(item) {
+    const key = 'cl-' + item.dataset.key;
+    const cb = item.querySelector('input');
+    cb.checked = localStorage.getItem(key) === '1';
+    cb.addEventListener('change', function() {
+      localStorage.setItem(key, cb.checked ? '1' : '0');
+      updateChecklistProgress();
+    });
+  });
+  updateChecklistProgress();
+}
+
+function updateChecklistProgress() {
+  document.querySelectorAll('.check-section').forEach(function(sec) {
+    const sectionName = sec.dataset.section;
+    const items = sec.querySelectorAll('.check-item input');
+    const total = items.length;
+    let done = 0;
+    items.forEach(function(cb) { if (cb.checked) done++; });
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+    const textEl = sec.querySelector('[data-progress="' + sectionName + '"]');
+    const fillEl = sec.querySelector('[data-fill="' + sectionName + '"]');
+    if (textEl) textEl.textContent = done + '/' + total + ' erledigt';
+    if (fillEl) fillEl.style.width = pct + '%';
+  });
+}
+
+// ========== Init ==========
+document.addEventListener('DOMContentLoaded', function() {
+  initChecklist();
+});
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

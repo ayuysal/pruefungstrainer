@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SNMP, CIA-Triade & Netzwerkmanagement Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}
+
+/* CIA Explorer */
+.cia-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.cia-pillar{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:all .3s;text-align:center;position:relative;overflow:hidden}
+.cia-pillar::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.cia-pillar.conf::before{background:var(--cyan)}
+.cia-pillar.integ::before{background:var(--green)}
+.cia-pillar.avail::before{background:var(--orange)}
+.cia-pillar:hover{border-color:rgba(255,255,255,.15);transform:translateY(-2px)}
+.cia-pillar.active{border-color:var(--accent);box-shadow:0 0 20px rgba(108,99,255,.15)}
+.cia-icon{font-size:32px;margin-bottom:8px}
+.cia-pillar h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.cia-pillar .subtitle{font-size:12px;color:var(--muted);font-weight:300}
+.cia-detail{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .4s ease}
+.cia-detail.show{display:block}
+.cia-detail h4{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.cia-detail p,.cia-detail ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.8}
+.cia-detail ul{padding-left:16px}
+.cia-detail .tag-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cia-tag{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 10px;border-radius:6px;font-weight:600}
+
+/* Exercise */
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace;line-height:1.5}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.option-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin-bottom:12px}
+.option-btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:all .2s;text-align:left}
+.option-btn:hover{border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.06)}
+.option-btn.selected{border-color:var(--accent);background:rgba(108,99,255,.1)}
+.option-btn.correct-opt{border-color:var(--green);background:rgba(81,207,102,.1);color:var(--green)}
+.option-btn.wrong-opt{border-color:var(--red);background:rgba(255,107,107,.1);color:var(--red)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none}
+.solution-box.show{display:block}
+
+/* Table */
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.cia-wrap{grid-template-columns:1fr}.option-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">ITI26 · Netzwerke</div>
+<h1>SNMP, CIA-Triade & Netzwerkmanagement</h1>
+<p>Schutzziele, SNMP-Protokoll und FCAPS-Modell verstehen – interaktiv üben</p>
+</header>
+
+<!-- Reference Section -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">📚</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>🛡️ CIA-Triade</h3>
+<p>Die drei Schutzziele der IT-Sicherheit:</p>
+<ul>
+<li><strong>Confidentiality</strong> (Vertraulichkeit) – Nur Berechtigte haben Zugriff</li>
+<li><strong>Integrity</strong> (Integrität) – Daten bleiben unverändert und korrekt</li>
+<li><strong>Availability</strong> (Verfügbarkeit) – Systeme sind erreichbar und nutzbar</li>
+</ul></div>
+<div class="card c2"><h3>⚠️ Bedrohungen & Maßnahmen</h3>
+<ul>
+<li><strong>Sniffing</strong> → Vertraulichkeit → <em>Verschlüsselung</em></li>
+<li><strong>Manipulation</strong> → Integrität → <em>Hashfunktionen / Signaturen</em></li>
+<li><strong>DoS-Angriff</strong> → Verfügbarkeit → <em>Redundanz / Backup</em></li>
+</ul></div>
+<div class="card c3"><h3>📡 SNMP-Grundlagen</h3>
+<p>Simple Network Management Protocol – Überwachung und Verwaltung von Netzwerkgeräten.</p>
+<ul>
+<li><strong>Komponenten:</strong> Manager, Agent, MIB</li>
+<li><strong>Operationen:</strong> GET, GET-NEXT, GET-BULK, SET, TRAP, INFORM</li>
+<li><strong>Ports:</strong> 161 (Agent), 162 (Trap-Empfänger)</li>
+</ul></div>
+<div class="card c4"><h3>🔄 SNMP-Versionen</h3>
+<ul>
+<li><strong>SNMPv1:</strong> Community Strings (Klartext), unsicher</li>
+<li><strong>SNMPv2c:</strong> Bulk-Operationen, aber weiterhin Community Strings</li>
+<li><strong>SNMPv3:</strong> Authentifizierung + Verschlüsselung, sicher</li>
+</ul></div>
+</div>
+
+<div class="cards" style="margin-top:12px">
+<div class="card c1"><h3>🏗️ FCAPS-Modell</h3>
+<ul>
+<li><strong>F</strong>ault Management – Fehlererkennung und -behebung</li>
+<li><strong>C</strong>onfiguration Management – Gerätekonfiguration</li>
+<li><strong>A</strong>ccounting Management – Nutzungsverfolgung, Abrechnung</li>
+<li><strong>P</strong>erformance Management – Leistungsüberwachung</li>
+<li><strong>S</strong>ecurity Management – Zugriffskontrolle, Sicherheit</li>
+</ul></div>
+<div class="card c2"><h3>📊 Netzwerkmanagement</h3>
+<ul>
+<li><strong>Monitoring:</strong> Laufende Überwachung von Geräten und Diensten</li>
+<li><strong>Logging:</strong> Protokollierung von Ereignissen (Syslog)</li>
+<li><strong>Alerting:</strong> Benachrichtigung bei Schwellenwertüberschreitungen</li>
+<li><strong>SNMP-Überwachung:</strong> Polling (GET) und Events (TRAP)</li>
+</ul></div>
+<div class="card c3"><h3>🔑 MIB & OIDs</h3>
+<p>Die <strong>Management Information Base</strong> ist eine hierarchische Datenbank aller verwaltbaren Objekte. Jedes Objekt hat eine eindeutige <strong>OID</strong> (Object Identifier), z.B. 1.3.6.1.2.1.1.1 für sysDescr.</p></div>
+</div>
+
+<!-- CIA Explorer -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">🔍</div><h2>CIA Explorer – Interaktiv</h2></div>
+<div class="cia-wrap">
+<div class="cia-pillar conf" onclick="showCIA('conf')">
+<div class="cia-icon">🔒</div>
+<h3>Confidentiality</h3>
+<div class="subtitle">Vertraulichkeit</div>
+</div>
+<div class="cia-pillar integ" onclick="showCIA('integ')">
+<div class="cia-icon">✅</div>
+<h3>Integrity</h3>
+<div class="subtitle">Integrität</div>
+</div>
+<div class="cia-pillar avail" onclick="showCIA('avail')">
+<div class="cia-icon">⚡</div>
+<h3>Availability</h3>
+<div class="subtitle">Verfügbarkeit</div>
+</div>
+</div>
+<div class="cia-detail" id="cia-detail"></div>
+
+<!-- SNMP Operations Table -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--pink),var(--purple))">📋</div><h2>SNMP-Operationen</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Operation</th><th>Richtung</th><th>Beschreibung</th></tr></thead>
+<tbody>
+<tr><td style="color:var(--cyan)">GET</td><td>Manager → Agent</td><td>Wert eines bestimmten OID abfragen</td></tr>
+<tr><td style="color:var(--cyan)">GET-NEXT</td><td>Manager → Agent</td><td>Nächsten OID in der MIB-Hierarchie abfragen</td></tr>
+<tr><td style="color:var(--cyan)">GET-BULK</td><td>Manager → Agent</td><td>Mehrere Werte auf einmal abfragen (ab SNMPv2c)</td></tr>
+<tr><td style="color:var(--green)">SET</td><td>Manager → Agent</td><td>Wert eines OID setzen / ändern</td></tr>
+<tr><td style="color:var(--orange)">TRAP</td><td>Agent → Manager</td><td>Unaufgeforderte Benachrichtigung bei Ereignis</td></tr>
+<tr><td style="color:var(--orange)">INFORM</td><td>Agent → Manager</td><td>Wie TRAP, aber mit Bestätigung (ab SNMPv2c)</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- Exercise Mode -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">🏋️</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="cia" onclick="setMode('cia')">CIA zuordnen</div>
+<div class="tab" data-mode="snmp" onclick="setMode('snmp')">SNMP</div>
+<div class="tab" data-mode="fcaps" onclick="setMode('fcaps')">FCAPS</div>
+<div class="tab" data-mode="mass" onclick="setMode('mass')">Maßnahmen</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- Summary -->
+<div class="summary">
+<div class="summary-card"><h4>💡 Merke</h4><p>Die CIA-Triade ist das Fundament der IT-Sicherheit. Jede Sicherheitsmaßnahme schützt mindestens eines der drei Schutzziele. In der Prüfung musst du Bedrohungen den Schutzzielen zuordnen können.</p></div>
+<div class="summary-card"><h4>🎯 Prüfungstipp</h4><p>SNMPv3 ist die einzige Version mit Verschlüsselung und Authentifizierung! TRAP geht vom Agent zum Manager (ohne Anfrage). GET-BULK gibt es erst ab SNMPv2c.</p></div>
+<div class="summary-card"><h4>🧩 FCAPS merken</h4><p>Eselsbrücke: <strong>F</strong>ünf <strong>C</strong>levere <strong>A</strong>dministratoren <strong>P</strong>flegen <strong>S</strong>icherheit. Fault, Configuration, Accounting, Performance, Security – das ISO-Modell für Netzwerkmanagement.</p></div>
+</div>
+</div>
+
+<script>
+// Progress
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('snmp-cia',{status:'in-progress'});
+
+// CIA Explorer
+const ciaData={
+  conf:{title:'Confidentiality – Vertraulichkeit',color:'var(--cyan)',
+    desc:'Nur autorisierte Personen und Systeme dürfen auf Informationen zugreifen.',
+    threats:['Sniffing / Abhören von Netzwerkverkehr','Man-in-the-Middle-Angriff','Unbefugter Zugriff auf Datenbanken','Social Engineering / Phishing'],
+    measures:['Verschlüsselung (AES, TLS, VPN)','Zugriffskontrollen (ACLs, RBAC)','Authentifizierung (Passwörter, MFA)','SNMPv3 statt SNMPv1/v2c'],
+    tagColor:'rgba(56,189,248,.15)',tagText:'var(--cyan)'},
+  integ:{title:'Integrity – Integrität',color:'var(--green)',
+    desc:'Daten dürfen nicht unbemerkt verändert werden. Jede Änderung muss nachvollziehbar sein.',
+    threats:['Datenmanipulation während der Übertragung','SQL-Injection','Malware / Ransomware','Unautorisierte Konfigurationsänderungen'],
+    measures:['Hashfunktionen (SHA-256, MD5)','Digitale Signaturen','Prüfsummen bei Dateiübertragung','Versionierung und Audit-Logs'],
+    tagColor:'rgba(81,207,102,.15)',tagText:'var(--green)'},
+  avail:{title:'Availability – Verfügbarkeit',color:'var(--orange)',
+    desc:'Systeme und Daten müssen jederzeit für berechtigte Nutzer erreichbar sein.',
+    threats:['DoS / DDoS-Angriffe','Hardwareausfälle','Stromausfall','Naturkatastrophen'],
+    measures:['Redundanz (RAID, Cluster, Failover)','Backup-Strategien (3-2-1-Regel)','USV (Unterbrechungsfreie Stromversorgung)','Load Balancing und CDN'],
+    tagColor:'rgba(251,146,60,.15)',tagText:'var(--orange)'}
+};
+
+function showCIA(key){
+  document.querySelectorAll('.cia-pillar').forEach(p=>p.classList.remove('active'));
+  document.querySelector('.cia-pillar.'+key).classList.add('active');
+  const d=ciaData[key],el=document.getElementById('cia-detail');
+  el.className='cia-detail show';
+  el.innerHTML=`<h4 style="color:${d.color}">${d.title}</h4><p>${d.desc}</p>
+    <h4 style="margin-top:16px">⚠️ Bedrohungen</h4><ul>${d.threats.map(t=>'<li>'+t+'</li>').join('')}</ul>
+    <h4 style="margin-top:16px">🛡️ Gegenmaßnahmen</h4><ul>${d.measures.map(m=>'<li>'+m+'</li>').join('')}</ul>
+    <div class="tag-row">${d.measures.map(m=>`<span class="cia-tag" style="background:${d.tagColor};color:${d.tagText}">${m.split('(')[0].trim()}</span>`).join('')}</div>`;
+}
+
+// Exercise Engine
+let mode='cia',score={correct:0,wrong:0,streak:0},currentTask={},selectedOpt=null,answered=false;
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=rand(0,i);[b[i],b[j]]=[b[j],b[i]];}return b;}
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+
+// Question banks
+const ciaQuestions=[
+  {q:'Ein Angreifer liest unverschlüsselte E-Mails mit.',a:'Vertraulichkeit',s:'Sniffing/Mitlesen verletzt die Vertraulichkeit. Gegenmaßnahme: E-Mail-Verschlüsselung (S/MIME, PGP).'},
+  {q:'Ein Webserver ist durch einen DDoS-Angriff nicht erreichbar.',a:'Verfügbarkeit',s:'DoS/DDoS-Angriffe zielen auf die Verfügbarkeit. Gegenmaßnahme: DDoS-Schutz, Redundanz.'},
+  {q:'Ein Angreifer ändert eine Überweisung von 100€ auf 10.000€.',a:'Integrität',s:'Manipulation von Daten verletzt die Integrität. Gegenmaßnahme: Digitale Signaturen.'},
+  {q:'Unbefugte Mitarbeiter können auf vertrauliche Personalakten zugreifen.',a:'Vertraulichkeit',s:'Fehlende Zugriffskontrollen verletzen die Vertraulichkeit. Gegenmaßnahme: RBAC, ACLs.'},
+  {q:'Ein Festplattenausfall führt zum Verlust aller Kundendaten.',a:'Verfügbarkeit',s:'Hardwareausfälle bedrohen die Verfügbarkeit. Gegenmaßnahme: RAID, Backups.'},
+  {q:'Jemand verändert heimlich Logdateien, um Spuren zu verwischen.',a:'Integrität',s:'Manipulation von Logs verletzt die Integrität. Gegenmaßnahme: Signierte Logs, WORM-Speicher.'},
+  {q:'Ein Man-in-the-Middle-Angriff fängt Login-Daten ab.',a:'Vertraulichkeit',s:'MITM-Angriffe verletzen die Vertraulichkeit. Gegenmaßnahme: TLS/HTTPS, Zertifikate.'},
+  {q:'Ransomware verschlüsselt alle Dateien auf dem Server.',a:'Verfügbarkeit',s:'Ransomware macht Daten unzugänglich → Verfügbarkeit. Gegenmaßnahme: Backups, Malware-Schutz.'},
+  {q:'Ein Virus verändert die Prüfsummen von Systemdateien.',a:'Integrität',s:'Veränderung von Prüfsummen = Integritätsverletzung. Gegenmaßnahme: Integritätsmonitoring (Tripwire).'},
+  {q:'SNMPv1 überträgt Community Strings im Klartext.',a:'Vertraulichkeit',s:'Klartext-Übertragung verletzt die Vertraulichkeit. Gegenmaßnahme: SNMPv3 mit Verschlüsselung.'},
+  {q:'Ein Stromausfall legt das gesamte Rechenzentrum lahm.',a:'Verfügbarkeit',s:'Stromausfall → Verfügbarkeit. Gegenmaßnahme: USV, Notstromgeneratoren.'},
+  {q:'SQL-Injection verändert Datenbankeinträge.',a:'Integrität',s:'SQL-Injection manipuliert Daten → Integrität. Gegenmaßnahme: Prepared Statements, Input-Validierung.'}
+];
+
+const snmpQuestions=[
+  {q:'Welche SNMP-Operation sendet der Agent unaufgefordert an den Manager?',opts:['GET','SET','TRAP','GET-NEXT'],a:'TRAP',s:'TRAP wird vom Agent gesendet, wenn ein Ereignis auftritt – ohne vorherige Anfrage.'},
+  {q:'Auf welchem Port empfängt der SNMP-Agent Anfragen?',opts:['161','162','80','443'],a:'161',s:'Port 161 = SNMP-Agent (Anfragen empfangen), Port 162 = Trap-Empfänger beim Manager.'},
+  {q:'Welche SNMP-Version bietet Verschlüsselung und Authentifizierung?',opts:['SNMPv1','SNMPv2c','SNMPv3','Alle'],a:'SNMPv3',s:'Nur SNMPv3 bietet Authentifizierung (AuthNoPriv/AuthPriv) und Verschlüsselung.'},
+  {q:'Was ist die MIB?',opts:['Ein Verschlüsselungsprotokoll','Eine hierarchische Datenbank verwaltbarer Objekte','Ein Netzwerk-Switch','Ein Monitoring-Tool'],a:'Eine hierarchische Datenbank verwaltbarer Objekte',s:'MIB = Management Information Base. Baumstruktur aller verwaltbaren Objekte mit OIDs.'},
+  {q:'Welche Operation fragt mehrere Werte gleichzeitig ab?',opts:['GET','GET-NEXT','GET-BULK','SET'],a:'GET-BULK',s:'GET-BULK (ab SNMPv2c) ruft effizient mehrere OID-Werte in einer Anfrage ab.'},
+  {q:'Was unterscheidet INFORM von TRAP?',opts:['INFORM ist schneller','INFORM erfordert Bestätigung','INFORM verwendet Port 161','INFORM gibt es nur in SNMPv1'],a:'INFORM erfordert Bestätigung',s:'INFORM sendet wie TRAP eine Nachricht, wartet aber auf eine Bestätigung (Acknowledgement).'},
+  {q:'Welche SNMP-Operation ändert einen Wert auf dem Agent?',opts:['GET','SET','TRAP','GET-NEXT'],a:'SET',s:'SET wird vom Manager gesendet, um einen Wert in der MIB des Agents zu ändern.'},
+  {q:'Auf welchem Port empfängt der Manager SNMP-Traps?',opts:['22','161','162','443'],a:'162',s:'Port 162 ist der Standardport für den Empfang von SNMP-Traps beim Manager.'},
+  {q:'Was verwendet SNMPv1 zur Authentifizierung?',opts:['Zertifikate','Community Strings','Kerberos-Tickets','OAuth-Tokens'],a:'Community Strings',s:'SNMPv1 nutzt Community Strings (Klartext-Passwörter) – sehr unsicher!'},
+  {q:'GET-BULK ist verfügbar ab welcher SNMP-Version?',opts:['SNMPv1','SNMPv2c','SNMPv3','Keiner'],a:'SNMPv2c',s:'GET-BULK wurde mit SNMPv2c eingeführt, um effizientere Massenabfragen zu ermöglichen.'},
+  {q:'Wer initiiert eine GET-Anfrage?',opts:['Der Agent','Der Manager','Die MIB','Der Switch'],a:'Der Manager',s:'GET-Anfragen gehen immer vom Manager aus – er fragt den Agent nach Informationen.'},
+  {q:'Was beschreibt ein OID?',opts:['Einen Netzwerk-Port','Eine eindeutige Adresse eines MIB-Objekts','Eine IP-Adresse','Einen SNMP-Benutzer'],a:'Eine eindeutige Adresse eines MIB-Objekts',s:'OID = Object Identifier. Numerische Adresse in der MIB-Baumstruktur (z.B. 1.3.6.1.2.1.1.1).'}
+];
+
+const fcapsQuestions=[
+  {q:'Erkennung und Behebung von Netzwerkfehlern',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Fault',s:'Fault Management: Fehler erkennen, isolieren und beheben (z.B. Alarme, Diagnosetests).'},
+  {q:'Verwaltung und Änderung von Gerätekonfigurationen',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Configuration',s:'Configuration Management: Geräte konfigurieren, Firmware-Updates, Bestandsverwaltung.'},
+  {q:'Erfassung der Netzwerknutzung für Abrechnung',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Accounting',s:'Accounting Management: Ressourcennutzung messen, Kosten zuordnen, Quotas.'},
+  {q:'Überwachung von Bandbreite und Latenz',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Performance',s:'Performance Management: Durchsatz, Latenz, Fehlerrate messen und optimieren.'},
+  {q:'Zugriffskontrolle und Benutzerauthentifizierung im Netzwerk',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Security',s:'Security Management: Authentifizierung, Autorisierung, Verschlüsselung, Audit-Logs.'},
+  {q:'SNMP-Traps bei Geräteausfällen auswerten',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Fault',s:'Traps bei Ausfällen gehören zum Fault Management – automatische Fehlererkennung.'},
+  {q:'Firmware-Update auf allen Switches ausrollen',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Configuration',s:'Firmware-Updates sind Teil des Configuration Managements.'},
+  {q:'Traffic-Statistiken pro Abteilung erstellen',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Accounting',s:'Nutzungsstatistiken pro Abteilung = Accounting Management.'},
+  {q:'CPU-Auslastung eines Routers überwachen',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Performance',s:'CPU-Last überwachen = Performance Management.'},
+  {q:'Firewall-Regeln für VPN-Zugang konfigurieren',opts:['Fault','Configuration','Accounting','Performance','Security'],a:'Security',s:'Firewall-Regeln und VPN-Zugang = Security Management.'}
+];
+
+const massQuestions=[
+  {q:'Schutz gegen Sniffing im Netzwerk',opts:['Verschlüsselung','Hashfunktionen','Redundanz','Firewall'],a:'Verschlüsselung',s:'Verschlüsselung (TLS, VPN, WPA3) schützt vor Abhören / Sniffing → Vertraulichkeit.'},
+  {q:'Sicherstellung, dass eine Datei nicht manipuliert wurde',opts:['Verschlüsselung','Hashfunktionen / Prüfsummen','Backup','Load Balancing'],a:'Hashfunktionen / Prüfsummen',s:'Hashwerte (SHA-256) beweisen, dass Daten nicht verändert wurden → Integrität.'},
+  {q:'Server soll trotz Hardwareausfall erreichbar bleiben',opts:['Verschlüsselung','Digitale Signaturen','Redundanz / Failover','Intrusion Detection'],a:'Redundanz / Failover',s:'Redundanz (Cluster, Failover) sichert die Verfügbarkeit bei Ausfällen.'},
+  {q:'Nachweis, dass eine Nachricht wirklich vom Absender stammt',opts:['Backup','Digitale Signaturen','Firewall','RAID'],a:'Digitale Signaturen',s:'Digitale Signaturen sichern Authentizität und Integrität → Nicht-Abstreitbarkeit.'},
+  {q:'Schutz vor Datenverlust bei Ransomware-Angriff',opts:['Verschlüsselung','Hashfunktionen','Backup-Strategie','ACLs'],a:'Backup-Strategie',s:'Regelmäßige Backups (3-2-1-Regel) ermöglichen Wiederherstellung → Verfügbarkeit.'},
+  {q:'SNMP-Kommunikation gegen Abhören absichern',opts:['SNMPv1 nutzen','Community String ändern','SNMPv3 mit Verschlüsselung','Port ändern'],a:'SNMPv3 mit Verschlüsselung',s:'Nur SNMPv3 bietet echte Verschlüsselung (AuthPriv-Modus) → Vertraulichkeit.'},
+  {q:'Schutz gegen DDoS-Angriffe',opts:['Verschlüsselung','Hashfunktionen','DDoS-Schutz / CDN / Redundanz','Digitale Signaturen'],a:'DDoS-Schutz / CDN / Redundanz',s:'DDoS-Abwehr schützt die Verfügbarkeit: Rate Limiting, CDN, Anycast, Redundanz.'},
+  {q:'Sicherstellung, dass nur autorisierte Nutzer auf Daten zugreifen',opts:['Zugriffskontrollen (ACLs, RBAC)','RAID','Backup','Load Balancing'],a:'Zugriffskontrollen (ACLs, RBAC)',s:'ACLs und RBAC kontrollieren den Zugriff → Vertraulichkeit.'}
+];
+
+function genTask(){
+  if(mode==='cia'){
+    const q=ciaQuestions[rand(0,ciaQuestions.length-1)];
+    return{q:q.q,opts:shuffle(['Vertraulichkeit','Integrität','Verfügbarkeit']),answer:q.a,solution:q.s,type:'opts'};
+  }
+  if(mode==='snmp'){
+    const q=snmpQuestions[rand(0,snmpQuestions.length-1)];
+    return{q:q.q,opts:shuffle(q.opts),answer:q.a,solution:q.s,type:'opts'};
+  }
+  if(mode==='fcaps'){
+    const q=fcapsQuestions[rand(0,fcapsQuestions.length-1)];
+    return{q:q.q,opts:shuffle(q.opts),answer:q.a,solution:q.s,type:'opts'};
+  }
+  if(mode==='mass'){
+    const q=massQuestions[rand(0,massQuestions.length-1)];
+    return{q:q.q,opts:shuffle(q.opts),answer:q.a,solution:q.s,type:'opts'};
+  }
+}
+
+function newTask(){
+  selectedOpt=null;answered=false;
+  currentTask=genTask();
+  const area=document.getElementById('exercise-area');
+  const labels={cia:'Welches CIA-Schutzziel ist betroffen?',snmp:'SNMP-Wissen testen',fcaps:'Welchem FCAPS-Bereich gehört das zu?',mass:'Welche Maßnahme passt?'};
+  area.innerHTML=`
+    <div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${labels[mode]}</div>
+    <div class="task-display">${currentTask.q}</div>
+    <div class="task-sub">Wähle die richtige Antwort:</div>
+    <div class="option-grid" id="opt-grid">${currentTask.opts.map((o,i)=>`<button class="option-btn" data-idx="${i}" onclick="selectOpt(this,'${o.replace(/'/g,"\\'")}')"> ${o}</button>`).join('')}</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkAnswer()">Prüfen ↵</button>
+      <button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>
+      <button class="btn btn-secondary" onclick="newTask()">Überspringen →</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="solution-box" id="sol"></div>`;
+  document.addEventListener('keydown',handleEnter);
+}
+
+function handleEnter(e){if(e.key==='Enter'&&!answered)checkAnswer();}
+
+function selectOpt(el,val){
+  if(answered)return;
+  selectedOpt=val;
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function checkAnswer(){
+  if(!selectedOpt||answered)return;
+  answered=true;
+  const fb=document.getElementById('fb');
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach(b=>{
+    const txt=b.textContent.trim();
+    if(txt===currentTask.answer)b.classList.add('correct-opt');
+    else if(b.classList.contains('selected'))b.classList.add('wrong-opt');
+  });
+  if(selectedOpt===currentTask.answer){
+    fb.textContent='✓ Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10)saveProgress('snmp-cia',{status:'completed',score:score.correct});
+    setTimeout(()=>{document.removeEventListener('keydown',handleEnter);newTask();},1200);
+  }else{
+    fb.textContent='✗ Falsch – richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function showSolution(){const s=document.getElementById('sol');s.textContent=currentTask.solution;s.classList.add('show');}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+newTask();
+</script>
+</body>
+</html>

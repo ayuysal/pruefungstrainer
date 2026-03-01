@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informationsgehalt · Entropie · Shannon</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;
+    --accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;
+    --pink:#f472b6;--purple:#a78bfa;--orange:#fb923c;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+  .noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+  .glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+  .glow-orb.one{background:var(--purple);top:-120px;left:-80px}
+  .glow-orb.two{background:var(--cyan);bottom:-160px;right:-100px}
+  .container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+
+  header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease}
+  header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+  header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+  header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+
+  .section-title{display:flex;align-items:center;gap:12px;margin-bottom:18px;margin-top:52px;flex-wrap:wrap}
+  .section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0}
+  .section-title h2{font-size:20px;font-weight:700}
+  .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
+
+  /* ── Formula Cards ── */
+  .formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;animation:fadeUp .6s ease .1s both}
+  .formula-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;position:relative;overflow:hidden;transition:all .3s}
+  .formula-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:16px 16px 0 0}
+  .formula-card:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.1)}
+  .formula-card h3{font-size:16px;font-weight:700;margin-bottom:4px}
+  .formula-card .f-en{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--muted);letter-spacing:.5px;margin-bottom:14px}
+  .formula-card .formula{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;text-align:center;padding:16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;margin-bottom:14px;line-height:1.6}
+  .formula-card .f-desc{font-size:12px;font-weight:300;color:var(--muted);line-height:1.6}
+  .formula-card .f-desc strong{color:var(--text);font-weight:600}
+  .formula-card .f-unit{font-family:'JetBrains Mono',monospace;font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);display:inline-block;margin-top:8px}
+
+  .fc-info::before{background:var(--cyan)}
+  .fc-entropy::before{background:var(--purple)}
+  .fc-decision::before{background:var(--orange)}
+
+  /* ── Interactive Calculator ── */
+  .calc-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;animation:fadeUp .6s ease .15s both}
+  .calc-card h3{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+  .calc-row{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;align-items:flex-end}
+  .calc-field{flex:1;min-width:140px}
+  .calc-field label{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .calc-field input,.calc-field select{width:100%;font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;transition:border .2s}
+  .calc-field input:focus,.calc-field select:focus{border-color:var(--accent)}
+  .calc-field select option{background:var(--surface);color:var(--text)}
+  .calc-output{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;padding:16px 20px;font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8;color:var(--muted);min-height:60px}
+  .calc-output strong{color:var(--text);font-weight:700}
+  .calc-output .val{color:var(--green);font-weight:700;font-size:16px}
+  .calc-output .step{color:var(--cyan)}
+  .calc-output .hl{color:var(--yellow)}
+
+  /* ── Entropy Visualizer ── */
+  .entropy-viz{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:12px;animation:fadeUp .6s ease .2s both}
+  .entropy-viz h3{font-size:16px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .entropy-viz .ev-sub{font-size:12px;color:var(--muted);font-weight:300;margin-bottom:18px}
+  .slider-row{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .slider-row label{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);min-width:120px}
+  .slider-row input[type=range]{flex:1;accent-color:var(--accent);height:6px}
+  .slider-row .slider-val{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;min-width:60px;text-align:right}
+  .bar-container{display:flex;gap:3px;height:120px;align-items:flex-end;margin:20px 0 10px;padding:0 4px}
+  .bar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .bar-fill{width:100%;border-radius:4px 4px 0 0;transition:height .4s ease,background .4s;min-width:8px}
+  .bar-label{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-align:center;writing-mode:vertical-rl;transform:rotate(180deg);max-height:50px;overflow:hidden}
+  .bar-prob{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);text-align:center}
+  .entropy-result{margin-top:14px;padding:14px 18px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);line-height:1.7}
+  .entropy-result strong{color:var(--text)}
+  .entropy-result .val{color:var(--green);font-weight:700;font-size:16px}
+
+  /* ── Exercise Mode ── */
+  .mode-tabs{display:flex;gap:6px;margin-bottom:18px;animation:fadeUp .6s ease .25s both}
+  .mode-tab{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;padding:12px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;transition:all .25s;flex:1;text-align:center}
+  .mode-tab:hover{background:rgba(255,255,255,.04)}
+  .mode-tab.active{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.08)}
+
+  .score-bar{display:flex;gap:16px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+  .score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:13px}
+  .score-dot{width:10px;height:10px;border-radius:50%}
+
+  .exercise-area{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;min-height:280px;animation:fadeUp .6s ease .3s both;display:flex;flex-direction:column;align-items:center}
+  .exercise-label{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+  .task-display{font-family:'JetBrains Mono',monospace;font-size:clamp(16px,4vw,24px);font-weight:600;text-align:center;margin-bottom:6px;line-height:1.5}
+  .task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:22px;text-align:center;max-width:500px;line-height:1.5}
+  .input-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;justify-content:center}
+  .input-row input{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:600;background:rgba(255,255,255,.04);border:2px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;width:200px;text-align:center;transition:all .25s}
+  .input-row input:focus{border-color:var(--accent)}
+  .input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+  .input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+  .input-row .suffix{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted)}
+
+  .btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:10px 28px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{background:#5a52e0;transform:translateY(-1px)}
+  .btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+  .btn-secondary:hover{background:rgba(255,255,255,.1)}
+  .btn-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+  .feedback{margin-top:14px;font-size:14px;font-weight:500;text-align:center;min-height:22px}
+  .feedback.correct{color:var(--green)}
+  .feedback.wrong{color:var(--red)}
+  .solution-box{margin-top:12px;padding:16px 20px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted);line-height:1.8;text-align:left;max-width:100%;overflow-x:auto;display:none;width:100%}
+  .solution-box.show{display:block;animation:fadeUp .3s ease}
+  .solution-box strong{color:var(--text);font-weight:600}
+  .solution-box .step{color:var(--cyan)}
+  .solution-box .val{color:var(--green);font-weight:700}
+  .solution-box .hl{color:var(--yellow)}
+
+  /* ── Summary ── */
+  .summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;animation:fadeUp .6s ease .35s both}
+  .summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+  .summary-card:hover{border-color:rgba(108,99,255,.3)}
+  .summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+  .summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+  .summary-card p strong{color:var(--text);font-weight:600}
+
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+
+<div class="container">
+  <header>
+    <div class="tag">Informationstheorie</div>
+    <h1>Informationsgehalt · Entropie · Shannon</h1>
+    <p>Formeln verstehen, interaktiv berechnen und mit Übungsaufgaben trainieren.</p>
+  </header>
+
+  <!-- ═══════════════════════════════════
+       FORMELN
+       ═══════════════════════════════════ -->
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple));">📐</div>
+    <h2>Die drei Kernformeln</h2>
+  </div>
+
+  <div class="formula-grid">
+    <div class="formula-card fc-info">
+      <h3 style="color:var(--cyan);">Informationsgehalt</h3>
+      <div class="f-en">INFORMATION CONTENT · eines Zeichens</div>
+      <div class="formula" style="color:var(--cyan);">I = log₂(1 / p)</div>
+      <div class="f-desc">
+        <strong>I</strong> = Informationsgehalt in Bit<br>
+        <strong>p</strong> = Auftretens­wahrscheinlichkeit des Zeichens<br><br>
+        Je <strong>unwahrscheinlicher</strong> ein Zeichen, desto <strong>mehr Information</strong> trägt es.
+        Alternativ: <strong>I = −log₂(p)</strong>
+      </div>
+      <span class="f-unit" style="color:var(--cyan);">Einheit: Bit</span>
+    </div>
+
+    <div class="formula-card fc-entropy">
+      <h3 style="color:var(--purple);">Entropie (Shannon)</h3>
+      <div class="f-en">ENTROPY · mittlerer Informationsgehalt</div>
+      <div class="formula" style="color:var(--purple);">H = Σ pᵢ · log₂(1/pᵢ)</div>
+      <div class="f-desc">
+        <strong>H</strong> = Entropie in Bit/Zeichen<br>
+        <strong>pᵢ</strong> = Wahrscheinlichkeit des i-ten Zeichens<br><br>
+        Der <strong>gewichtete Durchschnitt</strong> aller Informationsgehalte. H ist <strong>maximal</strong>, wenn alle Zeichen gleich wahrscheinlich sind.
+      </div>
+      <span class="f-unit" style="color:var(--purple);">Einheit: Bit/Zeichen</span>
+    </div>
+
+    <div class="formula-card fc-decision">
+      <h3 style="color:var(--orange);">Entscheidungsgehalt</h3>
+      <div class="f-en">DECISION CONTENT · bei Gleichverteilung</div>
+      <div class="formula" style="color:var(--orange);">H₀ = log₂(N)</div>
+      <div class="f-desc">
+        <strong>H₀</strong> = Entscheidungsgehalt<br>
+        <strong>N</strong> = Anzahl möglicher Zeichen<br><br>
+        Spezialfall: Wenn alle N Zeichen <strong>gleich wahrscheinlich</strong> sind (p = 1/N), entspricht die Entropie dem Entscheidungsgehalt.
+      </div>
+      <span class="f-unit" style="color:var(--orange);">Einheit: Bit/Zeichen</span>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       INTERAKTIVER RECHNER
+       ═══════════════════════════════════ -->
+  <div class="section-title" style="margin-top:52px;">
+    <div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan));">🧮</div>
+    <h2>Interaktiver Rechner</h2>
+  </div>
+
+  <!-- Info-gehalt Rechner -->
+  <div class="calc-card">
+    <h3>📊 Informationsgehalt berechnen</h3>
+    <div class="calc-row">
+      <div class="calc-field">
+        <label>Wahrscheinlichkeit p</label>
+        <input type="number" id="calc-p" value="0.25" min="0.001" max="1" step="0.01">
+      </div>
+      <div class="calc-field" style="flex:.6">
+        <label>&nbsp;</label>
+        <button class="btn btn-primary" onclick="calcInfo()" style="width:100%;padding:11px">Berechnen</button>
+      </div>
+    </div>
+    <div class="calc-row" style="margin-bottom:0;">
+      <div class="calc-field" style="flex:1;">
+        <label>Oder: Gleichverteilung mit N Zeichen</label>
+        <div style="display:flex;gap:8px">
+          <input type="number" id="calc-n" value="" min="2" max="10000" step="1" placeholder="z.B. 26">
+          <button class="btn btn-secondary" onclick="calcFromN()" style="white-space:nowrap">p = 1/N</button>
+        </div>
+      </div>
+    </div>
+    <div class="calc-output" id="calc-info-output" style="margin-top:14px;">
+      Gib eine Wahrscheinlichkeit ein und klicke <strong>Berechnen</strong>.
+    </div>
+  </div>
+
+  <!-- Entropie Visualizer -->
+  <div class="entropy-viz">
+    <h3>📈 Entropie-Visualizer</h3>
+    <div class="ev-sub">Gib eine Zeichenverteilung ein und sieh live, wie sich die Entropie verändert.</div>
+
+    <div class="calc-row">
+      <div class="calc-field" style="flex:2">
+        <label>Zeichen & Wahrscheinlichkeiten (kommasepariert)</label>
+        <input type="text" id="ev-input" value="A:0.4, B:0.3, C:0.2, D:0.1" placeholder="A:0.4, B:0.3, C:0.2, D:0.1">
+      </div>
+      <div class="calc-field" style="flex:.5">
+        <label>&nbsp;</label>
+        <button class="btn btn-primary" onclick="calcEntropy()" style="width:100%;padding:11px">Berechnen</button>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:8px;font-family:'JetBrains Mono',monospace;">
+      Schnellwahl:
+      <span style="cursor:pointer;color:var(--cyan);text-decoration:underline" onclick="setPreset('equal4')">4 gleich</span> ·
+      <span style="cursor:pointer;color:var(--cyan);text-decoration:underline" onclick="setPreset('equal8')">8 gleich</span> ·
+      <span style="cursor:pointer;color:var(--cyan);text-decoration:underline" onclick="setPreset('skewed')">ungleich</span> ·
+      <span style="cursor:pointer;color:var(--cyan);text-decoration:underline" onclick="setPreset('extreme')">extrem</span> ·
+      <span style="cursor:pointer;color:var(--cyan);text-decoration:underline" onclick="setPreset('coin')">Münzwurf</span>
+    </div>
+    <div class="bar-container" id="ev-bars"></div>
+    <div class="entropy-result" id="ev-result">Klicke <strong>Berechnen</strong>, um die Entropie zu sehen.</div>
+  </div>
+
+  <!-- Binary Entropy Slider -->
+  <div class="entropy-viz" style="margin-top:12px;">
+    <h3>🎚️ Binäre Entropie (Münzwurf)</h3>
+    <div class="ev-sub">Wie verändert sich die Entropie bei einer binären Quelle (zwei Zeichen)?</div>
+    <div class="slider-row">
+      <label>p(Kopf) =</label>
+      <input type="range" id="coin-slider" min="0.01" max="0.99" step="0.01" value="0.5">
+      <div class="slider-val" id="coin-p">0.50</div>
+    </div>
+    <div style="display:flex;gap:12px;margin:10px 0">
+      <div style="flex:1;height:8px;border-radius:4px;background:var(--cyan);transition:all .3s" id="coin-bar-a"></div>
+      <div style="flex:1;height:8px;border-radius:4px;background:var(--pink);transition:all .3s" id="coin-bar-b"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);">
+      <span>Kopf: <span id="coin-pa" style="color:var(--cyan)">0.50</span></span>
+      <span>Zahl: <span id="coin-pb" style="color:var(--pink)">0.50</span></span>
+    </div>
+    <div class="entropy-result" id="coin-result" style="margin-top:14px;"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       ÜBUNGEN
+       ═══════════════════════════════════ -->
+  <div class="section-title" style="margin-top:56px;">
+    <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--pink));">🏋️</div>
+    <h2>Übungen</h2>
+  </div>
+
+  <div class="mode-tabs">
+    <div class="mode-tab active" data-mode="info">Informationsgehalt</div>
+    <div class="mode-tab" data-mode="entropy">Entropie</div>
+    <div class="mode-tab" data-mode="decision">Entscheidungsgehalt</div>
+  </div>
+
+  <div class="score-bar">
+    <div class="score-item"><div class="score-dot" style="background:var(--green)"></div> Richtig: <span id="score-correct">0</span></div>
+    <div class="score-item"><div class="score-dot" style="background:var(--red)"></div> Falsch: <span id="score-wrong">0</span></div>
+    <div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div> Serie: <span id="score-streak">0</span> 🔥</div>
+  </div>
+
+  <div class="exercise-area" id="exercise-area"></div>
+
+  <!-- ═══════════════════════════════════
+       GLOSSAR
+       ═══════════════════════════════════ -->
+  <div class="glossary-section" id="glossary-section">
+    <div class="section-title">
+      <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green));">📖</div>
+      <h2>Glossar &middot; Begriffe lernen</h2>
+      <div class="sub">INTERAKTIVES LERNMODUL</div>
+    </div>
+
+    <div class="glossary-progress-bar">
+      <div class="gp-text">Fortschritt</div>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-progress-fill" style="width:0%"></div></div>
+      <div class="gp-count" id="glossary-progress-count">0 / 8 gemeistert</div>
+    </div>
+
+    <div class="glossary-grid" id="glossary-grid"></div>
+    <div class="glossary-learn" id="glossary-learn"></div>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       SUMMARY
+       ═══════════════════════════════════ -->
+  <div class="summary">
+    <div class="summary-card">
+      <h4>🧩 Zusammenhang</h4>
+      <p><strong>Informationsgehalt I</strong> = wie viel Info ein einzelnes Zeichen trägt. <strong>Entropie H</strong> = der gewichtete Durchschnitt aller I-Werte. <strong>H₀</strong> = Spezialfall bei Gleichverteilung.</p>
+    </div>
+    <div class="summary-card">
+      <h4>🎯 Prüfungstipp</h4>
+      <p>Die Entropie ist <strong>maximal</strong> bei Gleichverteilung (dann H = H₀). Entropie ist immer <strong>≤ H₀</strong>. Die Redundanz ist <strong>R = H₀ − H</strong> (ungenutzte Bit).</p>
+    </div>
+    <div class="summary-card">
+      <h4>💡 Merkhilfe</h4>
+      <p><strong>Seltenes = wertvoll:</strong> Ein seltenes Zeichen (kleines p) hat einen <strong>hohen</strong> Informationsgehalt. Ein häufiges Zeichen (grosses p) trägt <strong>wenig</strong> Information.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const log2 = x => Math.log2(x);
+const round = (x, d=4) => Math.round(x * Math.pow(10,d)) / Math.pow(10,d);
+
+// ── Info-gehalt Calculator ──
+function calcInfo() {
+  const p = parseFloat(document.getElementById('calc-p').value);
+  if (isNaN(p) || p <= 0 || p > 1) {
+    document.getElementById('calc-info-output').innerHTML = '<span style="color:var(--red)">Bitte einen Wert zwischen 0 und 1 eingeben.</span>';
+    return;
+  }
+  const I = log2(1/p);
+  document.getElementById('calc-info-output').innerHTML =
+    `<span class="step">I = log₂(1 / ${p})</span>\n` +
+    `<span class="step">I = log₂(${round(1/p,4)})</span>\n` +
+    `<span class="step">I = </span><span class="val">${round(I,4)} Bit</span>\n\n` +
+    `<span style="color:var(--muted)">Interpretation: Bei p = ${p} (${round(p*100,1)}%) trägt dieses Zeichen <strong>${round(I,2)} Bit</strong> Information.</span>`;
+}
+
+function calcFromN() {
+  const N = parseInt(document.getElementById('calc-n').value);
+  if (isNaN(N) || N < 2) return;
+  const p = round(1/N, 6);
+  document.getElementById('calc-p').value = p;
+  calcInfo();
+}
+
+// ── Entropy Visualizer ──
+function parseInput(str) {
+  return str.split(',').map(s => s.trim()).filter(Boolean).map(s => {
+    const [name, prob] = s.split(':');
+    return { name: name.trim(), p: parseFloat(prob) };
+  }).filter(e => !isNaN(e.p) && e.p > 0);
+}
+
+function setPreset(key) {
+  const presets = {
+    equal4: 'A:0.25, B:0.25, C:0.25, D:0.25',
+    equal8: 'A:0.125, B:0.125, C:0.125, D:0.125, E:0.125, F:0.125, G:0.125, H:0.125',
+    skewed: 'A:0.5, B:0.25, C:0.15, D:0.1',
+    extreme: 'A:0.9, B:0.05, C:0.03, D:0.02',
+    coin: 'Kopf:0.5, Zahl:0.5',
+  };
+  document.getElementById('ev-input').value = presets[key];
+  calcEntropy();
+}
+
+const barColors = ['#38bdf8','#f472b6','#fbbf24','#51cf66','#a78bfa','#fb923c','#ff6b6b','#34d399','#818cf8','#e879f9'];
+
+function calcEntropy() {
+  const items = parseInput(document.getElementById('ev-input').value);
+  if (!items.length) return;
+
+  const sumP = items.reduce((s,e) => s+e.p, 0);
+  const barsEl = document.getElementById('ev-bars');
+  barsEl.innerHTML = '';
+
+  let H = 0;
+  let steps = [];
+  items.forEach((e, i) => {
+    const Ii = log2(1/e.p);
+    const contrib = e.p * Ii;
+    H += contrib;
+    steps.push({ name: e.name, p: e.p, I: Ii, contrib });
+
+    const bar = document.createElement('div');
+    bar.className = 'bar-item';
+    const height = Math.max(4, (e.p / Math.max(...items.map(x=>x.p))) * 100);
+    bar.innerHTML = `
+      <div class="bar-prob">${round(e.p,3)}</div>
+      <div class="bar-fill" style="height:${height}px;background:${barColors[i%barColors.length]}"></div>
+      <div class="bar-label" style="color:${barColors[i%barColors.length]}">${e.name}</div>`;
+    barsEl.appendChild(bar);
+  });
+
+  const H0 = log2(items.length);
+  const R = H0 - H;
+  const r = H0 > 0 ? (R / H0) * 100 : 0;
+
+  let html = `<strong>Berechnung der Entropie H:</strong>\n`;
+  steps.forEach(s => {
+    html += `<span class="step">  ${s.name}: ${round(s.p,3)} · log₂(1/${round(s.p,3)}) = ${round(s.p,3)} · ${round(s.I,4)} = </span><span class="hl">${round(s.contrib,4)}</span>\n`;
+  });
+  html += `\n<strong>H = </strong><span class="val">${round(H,4)} Bit/Zeichen</span>\n`;
+  html += `<strong>H₀ = log₂(${items.length}) = </strong>${round(H0,4)} Bit/Zeichen\n`;
+  html += `<strong>Redundanz R = H₀ − H = </strong>${round(R,4)} Bit/Zeichen (${round(r,1)}%)\n`;
+
+  if (Math.abs(sumP - 1) > 0.01) {
+    html += `\n<span style="color:var(--yellow)">⚠ Wahrscheinlichkeiten summieren sich zu ${round(sumP,3)} statt 1.0!</span>`;
+  }
+
+  document.getElementById('ev-result').innerHTML = html;
+}
+
+// ── Binary Entropy Slider ──
+const coinSlider = document.getElementById('coin-slider');
+coinSlider.addEventListener('input', updateCoin);
+updateCoin();
+
+function updateCoin() {
+  const p = parseFloat(coinSlider.value);
+  const q = 1 - p;
+  document.getElementById('coin-p').textContent = p.toFixed(2);
+  document.getElementById('coin-pa').textContent = p.toFixed(2);
+  document.getElementById('coin-pb').textContent = q.toFixed(2);
+  document.getElementById('coin-bar-a').style.flex = p;
+  document.getElementById('coin-bar-b').style.flex = q;
+
+  let H = 0;
+  if (p > 0 && p < 1) H = -(p * log2(p) + q * log2(q));
+
+  const pct = (H / 1 * 100).toFixed(0);
+  document.getElementById('coin-result').innerHTML =
+    `<strong>H = </strong>−(${p.toFixed(2)} · log₂(${p.toFixed(2)}) + ${q.toFixed(2)} · log₂(${q.toFixed(2)}))\n` +
+    `<strong>H = <span class="val">${round(H,4)} Bit/Zeichen</span></strong>\n` +
+    `Maximale Entropie (H₀ = 1 Bit) bei p = 0.5. Aktuell: <strong>${pct}%</strong> des Maximums.`;
+}
+
+// ── Exercise Engine ──
+let mode = 'info';
+let score = { correct: 0, wrong: 0, streak: 0 };
+
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    mode = tab.dataset.mode;
+    newTask();
+  });
+});
+
+function rand(min, max) { return Math.floor(Math.random()*(max-min+1))+min; }
+function pickP() {
+  const ps = [0.1, 0.125, 0.15, 0.2, 0.25, 0.3, 1/3, 0.4, 0.5, 0.6, 0.75, 0.8, 0.9, 1/8, 1/16, 1/32, 1/64];
+  return ps[rand(0, ps.length-1)];
+}
+
+function genInfoTask() {
+  const p = pickP();
+  const I = log2(1/p);
+  const pStr = p === 1/3 ? '1/3' : round(p, 4).toString();
+  return {
+    display: `<span style="color:var(--cyan)">p = ${pStr}</span>`,
+    sub: `Berechne den Informationsgehalt I = log₂(1/p). Runde auf 2 Nachkommastellen.`,
+    answer: round(I, 2),
+    suffix: 'Bit',
+    solution: `<span class="step">I = log₂(1 / ${pStr})</span>\n<span class="step">I = log₂(${round(1/p,4)})</span>\n<span class="step">I = <span class="val">${round(I,4)} ≈ ${round(I,2)} Bit</span></span>`
+  };
+}
+
+function genEntropyTask() {
+  const n = rand(2, 4);
+  const names = ['A','B','C','D'];
+  let probs = [];
+  let remaining = 1;
+  for (let i = 0; i < n - 1; i++) {
+    const maxP = remaining - (n - i - 1) * 0.05;
+    const p = Math.round((Math.random() * (maxP - 0.05) + 0.05) * 20) / 20;
+    probs.push(Math.max(0.05, Math.min(p, remaining - (n-i-1)*0.05)));
+    remaining -= probs[i];
+  }
+  probs.push(Math.round(remaining * 100) / 100);
+
+  let H = 0;
+  let lines = [];
+  let display = [];
+  probs.forEach((p, i) => {
+    const Ii = log2(1/p);
+    const c = p * Ii;
+    H += c;
+    display.push(`${names[i]}:${round(p,2)}`);
+    lines.push(`<span class="step">${names[i]}: ${round(p,2)} · log₂(1/${round(p,2)}) = ${round(p,2)} · ${round(Ii,4)} = <span class="hl">${round(c,4)}</span></span>`);
+  });
+
+  return {
+    display: `<span style="color:var(--purple)">${display.join(' &nbsp;│&nbsp; ')}</span>`,
+    sub: `Berechne die Entropie H = Σ pᵢ · log₂(1/pᵢ). Runde auf 2 Nachkommastellen.`,
+    answer: round(H, 2),
+    suffix: 'Bit/Zeichen',
+    solution: lines.join('\n') + `\n\n<strong>H = </strong><span class="val">${round(H,4)} ≈ ${round(H,2)} Bit/Zeichen</span>`
+  };
+}
+
+function genDecisionTask() {
+  const ns = [2, 4, 8, 16, 26, 32, 64, 128, 256, 10, 6, 52, 12, 20, 100];
+  const N = ns[rand(0, ns.length-1)];
+  const H0 = log2(N);
+  const contexts = {
+    2: 'Münzwurf (Kopf/Zahl)',
+    4: 'Himmelsrichtungen (N/S/O/W)',
+    8: 'Oktale Ziffern (0–7)',
+    16: 'Hex-Ziffern (0–F)',
+    26: 'Buchstaben des Alphabets',
+    32: '5-Bit-Code (z.B. Baudot)',
+    64: 'Base64-Zeichen',
+    128: 'ASCII-Zeichen (7 Bit)',
+    256: 'Erweiterte ASCII-Zeichen (8 Bit)',
+    10: 'Dezimalziffern (0–9)',
+    6: 'Würfel (1–6)',
+    52: 'Spielkarten eines Decks',
+    12: 'Monate des Jahres',
+    20: 'Aminosäuren',
+    100: '100 verschiedene Zeichen',
+  };
+  return {
+    display: `<span style="color:var(--orange)">N = ${N}</span> <span style="color:var(--muted);font-size:14px">(${contexts[N] || N + ' Zeichen'})</span>`,
+    sub: `Berechne den Entscheidungsgehalt H₀ = log₂(N). Runde auf 2 Nachkommastellen.`,
+    answer: round(H0, 2),
+    suffix: 'Bit/Zeichen',
+    solution: `<span class="step">H₀ = log₂(${N})</span>\n<span class="step">H₀ = <span class="val">${round(H0,4)} ≈ ${round(H0,2)} Bit/Zeichen</span></span>\n\n<span style="color:var(--muted)">Das bedeutet: Man braucht mindestens ${round(H0,2)} Bit, um eines von ${N} gleich wahrscheinlichen Zeichen zu codieren.</span>`
+  };
+}
+
+function newTask() {
+  const generators = { info: genInfoTask, entropy: genEntropyTask, decision: genDecisionTask };
+  const task = generators[mode]();
+  window._currentTask = task;
+
+  const area = document.getElementById('exercise-area');
+  const labels = { info: 'INFORMATIONSGEHALT BERECHNEN', entropy: 'ENTROPIE BERECHNEN', decision: 'ENTSCHEIDUNGSGEHALT BERECHNEN' };
+  area.innerHTML = `
+    <div class="exercise-label">${labels[mode]}</div>
+    <div class="task-display">${task.display}</div>
+    <div class="task-sub">${task.sub}</div>
+    <div class="input-row">
+      <input type="text" id="user-answer" placeholder="z.B. 3.32" autocomplete="off" spellcheck="false">
+      <span class="suffix">${task.suffix}</span>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="btn-check">Prüfen ↵</button>
+      <button class="btn btn-secondary" id="btn-show">Lösung zeigen</button>
+      <button class="btn btn-secondary" id="btn-skip">Überspringen →</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <div class="solution-box" id="solution-box"></div>`;
+
+  const input = document.getElementById('user-answer');
+  input.focus();
+  input.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+  document.getElementById('btn-check').addEventListener('click', checkAnswer);
+  document.getElementById('btn-show').addEventListener('click', showSolution);
+  document.getElementById('btn-skip').addEventListener('click', newTask);
+}
+
+function checkAnswer() {
+  const input = document.getElementById('user-answer');
+  const fb = document.getElementById('feedback');
+  const raw = input.value.trim().replace(',', '.');
+  if (!raw) return;
+
+  const userVal = parseFloat(raw);
+  const correctVal = window._currentTask.answer;
+  const tolerance = 0.05;
+
+  if (Math.abs(userVal - correctVal) <= tolerance) {
+    input.classList.add('correct'); input.classList.remove('wrong');
+    fb.textContent = '✓ Richtig! Weiter so!';
+    fb.className = 'feedback correct';
+    score.correct++; score.streak++;
+    updateScore();
+    setTimeout(newTask, 1300);
+  } else {
+    input.classList.add('wrong'); input.classList.remove('correct');
+    fb.textContent = `✗ Falsch – die richtige Antwort ist: ${correctVal}`;
+    fb.className = 'feedback wrong';
+    score.wrong++; score.streak = 0;
+    updateScore();
+    showSolution();
+  }
+}
+
+function showSolution() {
+  const box = document.getElementById('solution-box');
+  box.innerHTML = window._currentTask.solution;
+  box.classList.add('show');
+}
+
+function updateScore() {
+  document.getElementById('score-correct').textContent = score.correct;
+  document.getElementById('score-wrong').textContent = score.wrong;
+  document.getElementById('score-streak').textContent = score.streak;
+}
+
+// Init
+calcEntropy();
+newTask();
+
+// ═══════════════════════════════════════════════
+//  GLOSSAR – Interaktives Begriffe-Lernsystem
+// ═══════════════════════════════════════════════
+(function(){
+  const STORAGE_KEY = 'glossary-shannon';
+
+  const glossaryTerms = [
+    {
+      id: 'entropie',
+      term: 'Entropie',
+      icon: '🔀',
+      short: 'Mittlerer Informationsgehalt einer Quelle',
+      definition: 'Die Shannon-Entropie H ist der gewichtete Durchschnitt der Informationsgehalte aller Zeichen einer Quelle. Sie wird berechnet als H = Σ pᵢ · log₂(1/pᵢ) und gibt an, wie viele Bit pro Zeichen im Mittel benötigt werden. Die Entropie ist ein Mass für die Unsicherheit bzw. den mittleren Überraschungswert einer Nachrichtenquelle.',
+      analogy: 'Stell dir eine Lostrommel vor: Sind alle Lose verschieden beschriftet, weisst du vorher nicht, was kommt – die Unsicherheit (Entropie) ist maximal. Sind fast alle Lose gleich, ist die Überraschung gering – die Entropie ist niedrig.',
+      hints: [
+        'Die Entropie wird in Bit/Zeichen gemessen.',
+        'H ist maximal bei Gleichverteilung und beträgt dann log₂(N).',
+        'H ist immer ≥ 0 und ≤ H₀ (Entscheidungsgehalt).'
+      ],
+      questions: {
+        fill: { q: 'Wie lautet die Formel für die Shannon-Entropie?', a: 'H = Σ pᵢ · log₂(1/pᵢ)', keywords: ['Summe','p','log','1/p'] },
+        choice: {
+          q: 'Wann ist die Entropie einer Quelle maximal?',
+          choices: [
+            'Wenn ein Zeichen deutlich häufiger vorkommt als alle anderen',
+            'Wenn alle Zeichen gleich wahrscheinlich sind (Gleichverteilung)',
+            'Wenn die Quelle nur ein einziges Zeichen enthält',
+            'Wenn die Wahrscheinlichkeiten exponentiell verteilt sind'
+          ],
+          correct: 1
+        },
+        explain: { q: 'Erkläre in eigenen Worten, was die Entropie einer Quelle beschreibt und warum sie bei Gleichverteilung maximal ist.', keywords: ['mittler','Informationsgehalt','Unsicherheit','Gleichverteilung','maximal','Bit'] }
+      },
+      difficulty: 2
+    },
+    {
+      id: 'informationsgehalt',
+      term: 'Informationsgehalt',
+      icon: '📊',
+      short: 'Überraschungswert eines einzelnen Zeichens',
+      definition: 'Der Informationsgehalt I eines Zeichens gibt an, wie viel Information (in Bit) das Auftreten dieses Zeichens liefert. Er wird berechnet als I = log₂(1/p) = −log₂(p), wobei p die Auftrittswahrscheinlichkeit ist. Je unwahrscheinlicher ein Zeichen, desto höher sein Informationsgehalt.',
+      analogy: 'Wenn dir jemand sagt "Morgen geht die Sonne auf" (sehr wahrscheinlich), ist das wenig überraschend – geringer Informationsgehalt. Sagt man dir "Morgen schneit es im Juli", ist das sehr überraschend – hoher Informationsgehalt.',
+      hints: [
+        'Formel: I = log₂(1/p) oder gleichwertig I = −log₂(p).',
+        'Bei p = 1 (sicheres Ereignis) ist I = 0 Bit.',
+        'Bei p = 0.5 ist I = 1 Bit, bei p = 0.25 ist I = 2 Bit.'
+      ],
+      questions: {
+        fill: { q: 'Wie berechnet man den Informationsgehalt eines Zeichens mit Wahrscheinlichkeit p?', a: 'I = log₂(1/p)', keywords: ['log','1/p','I'] },
+        choice: {
+          q: 'Ein Zeichen tritt mit p = 0.125 auf. Wie gross ist sein Informationsgehalt?',
+          choices: ['1 Bit','2 Bit','3 Bit','8 Bit'],
+          correct: 2
+        },
+        explain: { q: 'Erkläre, warum ein seltenes Zeichen mehr Information trägt als ein häufiges.', keywords: ['selten','unwahrscheinlich','Überraschung','Information','häufig','wenig'] }
+      },
+      difficulty: 1
+    },
+    {
+      id: 'wahrscheinlichkeit',
+      term: 'Wahrscheinlichkeit',
+      icon: '🎲',
+      short: 'Auftrittswahrscheinlichkeit eines Zeichens',
+      definition: 'Die Auftrittswahrscheinlichkeit p(x) gibt an, mit welcher relativen Häufigkeit ein bestimmtes Zeichen x in einer Nachrichtenquelle vorkommt. Alle Wahrscheinlichkeiten einer Quelle summieren sich zu 1. Die Wahrscheinlichkeit bestimmt direkt den Informationsgehalt: p klein → I gross, p gross → I klein.',
+      analogy: 'In einem Beutel mit 100 Buchstaben-Plättchen: Wenn 40 davon ein "E" sind, ist p(E) = 0.4 (40%). Das "E" kommt oft vor und überrascht daher wenig.',
+      hints: [
+        'Es gilt immer: Σ pᵢ = 1 (alle Wahrscheinlichkeiten zusammen ergeben 1).',
+        'Bei Gleichverteilung ist p = 1/N für jedes Zeichen.',
+        'Die Wahrscheinlichkeit liegt immer zwischen 0 und 1.'
+      ],
+      questions: {
+        fill: { q: 'Wie lautet die Bedingung für die Summe aller Zeichenwahrscheinlichkeiten einer Quelle?', a: 'Σ pᵢ = 1', keywords: ['Summe','1','p'] },
+        choice: {
+          q: 'Ein Alphabet hat 8 gleichverteilte Zeichen. Wie gross ist p für jedes Zeichen?',
+          choices: ['0.25','0.125','0.0625','0.5'],
+          correct: 1
+        },
+        explain: { q: 'Erkläre den Zusammenhang zwischen der Auftrittswahrscheinlichkeit p und dem Informationsgehalt I.', keywords: ['klein','gross','Informationsgehalt','unwahrscheinlich','selten','umgekehrt'] }
+      },
+      difficulty: 1
+    },
+    {
+      id: 'logarithmus',
+      term: 'Logarithmus',
+      icon: '📐',
+      short: 'log₂ als Basis der Informationsberechnung',
+      definition: 'Der binäre Logarithmus (log₂) ist die mathematische Grundlage der Informationstheorie. log₂(x) beantwortet die Frage: "Welche Potenz von 2 ergibt x?" Er wird verwendet, weil digitale Systeme auf Binärziffern (0 und 1) basieren. Beispiele: log₂(8) = 3, log₂(16) = 4, log₂(1) = 0.',
+      analogy: 'Der Logarithmus zählt, wie oft man halbieren muss: Um aus 8 Möglichkeiten eine zu finden, braucht man 3 Ja/Nein-Fragen – das entspricht log₂(8) = 3.',
+      hints: [
+        'log₂(2ⁿ) = n, z.B. log₂(8) = log₂(2³) = 3.',
+        'log₂(1) = 0, log₂(2) = 1, log₂(1024) = 10.',
+        'Umrechnung: log₂(x) = ln(x) / ln(2) ≈ log₁₀(x) / 0.301.'
+      ],
+      questions: {
+        fill: { q: 'Was ergibt log₂(32)?', a: '5', keywords: ['5'] },
+        choice: {
+          q: 'Warum verwendet die Informationstheorie log₂ statt log₁₀?',
+          choices: [
+            'Weil log₂ einfacher zu berechnen ist',
+            'Weil digitale Systeme binär arbeiten (0 und 1)',
+            'Weil Shannon den Logarithmus zur Basis 2 erfunden hat',
+            'Weil log₁₀ keine ganzen Zahlen liefert'
+          ],
+          correct: 1
+        },
+        explain: { q: 'Erkläre, was log₂(x) anschaulich bedeutet und warum er in der Informationstheorie verwendet wird.', keywords: ['binär','Bit','halbieren','Potenz','2','digital'] }
+      },
+      difficulty: 1
+    },
+    {
+      id: 'bit',
+      term: 'Bit',
+      icon: '💾',
+      short: 'Grundeinheit der Information',
+      definition: 'Ein Bit (Binary Digit) ist die fundamentale Einheit der Information. Ein Bit entspricht der Informationsmenge einer einzelnen Ja/Nein-Entscheidung (Binärentscheidung). Der Informationsgehalt wird in Bit gemessen, die Entropie in Bit/Zeichen. Ein Bit kann die Werte 0 oder 1 annehmen.',
+      analogy: 'Ein Bit ist wie ein Lichtschalter: an oder aus, ja oder nein, 0 oder 1. Eine einzelne Ja/Nein-Frage liefert genau 1 Bit Information.',
+      hints: [
+        'Ein fairer Münzwurf liefert genau 1 Bit Information (log₂(2) = 1).',
+        'Informationsgehalt wird in Bit gemessen, Entropie in Bit/Zeichen.',
+        '1 Byte = 8 Bit, 1 Kilobyte = 1024 Byte.'
+      ],
+      questions: {
+        fill: { q: 'Wie viel Bit Information liefert ein fairer Münzwurf (2 gleichwahrscheinliche Ergebnisse)?', a: '1 Bit', keywords: ['1','Bit'] },
+        choice: {
+          q: 'Was beschreibt die Einheit "Bit/Zeichen"?',
+          choices: [
+            'Die Speichergrösse einer Datei',
+            'Die Übertragungsgeschwindigkeit',
+            'Den mittleren Informationsgehalt pro Zeichen (Entropie)',
+            'Die Anzahl der Zeichen in einer Nachricht'
+          ],
+          correct: 2
+        },
+        explain: { q: 'Erkläre, was ein Bit ist und warum es die natürliche Einheit der Information ist.', keywords: ['Binär','Entscheidung','0','1','Ja','Nein','Einheit'] }
+      },
+      difficulty: 1
+    },
+    {
+      id: 'redundanz',
+      term: 'Redundanz',
+      icon: '📦',
+      short: 'Überschüssige, nicht genutzte Bit-Kapazität',
+      definition: 'Die Redundanz R = H₀ − H gibt an, wie viele Bit pro Zeichen "verschwendet" werden, weil die Zeichen nicht gleichverteilt sind. Die relative Redundanz r = R/H₀ = 1 − H/H₀ wird in Prozent angegeben. Hohe Redundanz bedeutet: Die Quelle nutzt ihren Zeichenvorrat ineffizient und lässt sich gut komprimieren.',
+      analogy: 'Stell dir einen Rucksack vor, der 10 kg tragen kann, aber nur 6 kg drin sind. Die 4 kg ungenutzter Platz sind die Redundanz. Bei Texten: Der deutsche Buchstabenvorrat könnte pro Zeichen ~4.7 Bit tragen, nutzt aber nur ~4.1 Bit – der Rest ist Redundanz.',
+      hints: [
+        'Formel: R = H₀ − H (absolute Redundanz in Bit/Zeichen).',
+        'Relative Redundanz: r = 1 − H/H₀ (Anteil ungenutzter Kapazität).',
+        'Bei Gleichverteilung ist R = 0 (keine Redundanz).'
+      ],
+      questions: {
+        fill: { q: 'Wie berechnet man die absolute Redundanz R?', a: 'R = H₀ − H', keywords: ['H₀','H','Differenz','minus'] },
+        choice: {
+          q: 'Was bedeutet eine hohe Redundanz einer Quelle?',
+          choices: [
+            'Die Quelle hat eine hohe Entropie',
+            'Die Quelle nutzt ihren Zeichenvorrat ineffizient und lässt sich gut komprimieren',
+            'Alle Zeichen sind gleichverteilt',
+            'Die Quelle enthält viele verschiedene Zeichen'
+          ],
+          correct: 1
+        },
+        explain: { q: 'Erkläre den Zusammenhang zwischen Redundanz, Entropie und Komprimierbarkeit.', keywords: ['H₀','H','Differenz','komprimier','ungleichverteilt','ineffizient'] }
+      },
+      difficulty: 2
+    },
+    {
+      id: 'gleichverteilung',
+      term: 'Gleichverteilung',
+      icon: '⚖️',
+      short: 'Maximale Entropie wenn alle p gleich',
+      definition: 'Bei einer Gleichverteilung haben alle N Zeichen die gleiche Auftrittswahrscheinlichkeit p = 1/N. In diesem Fall erreicht die Entropie ihr Maximum: H = H₀ = log₂(N). Dies ist der Zustand maximaler Unsicherheit, da kein Zeichen vorhersagbar ist. Die Redundanz ist dann R = 0.',
+      analogy: 'Ein perfekt fairer Würfel mit 6 Seiten: Jede Seite hat p = 1/6. Du kannst das Ergebnis am wenigsten vorhersagen – maximale Überraschung, maximale Entropie.',
+      hints: [
+        'Bei Gleichverteilung: p = 1/N für alle Zeichen.',
+        'Dann gilt: H = H₀ = log₂(N) (Entscheidungsgehalt).',
+        'Gleichverteilung = maximale Entropie = maximale Unsicherheit = Redundanz 0.'
+      ],
+      questions: {
+        fill: { q: 'Wie gross ist die Entropie bei Gleichverteilung von N Zeichen?', a: 'H = log₂(N)', keywords: ['log','N','H'] },
+        choice: {
+          q: 'Ein Alphabet hat 16 gleichverteilte Zeichen. Wie gross ist H?',
+          choices: ['2 Bit/Zeichen','3 Bit/Zeichen','4 Bit/Zeichen','16 Bit/Zeichen'],
+          correct: 2
+        },
+        explain: { q: 'Erkläre, warum die Entropie bei Gleichverteilung maximal ist.', keywords: ['gleich','wahrscheinlich','Unsicherheit','vorhersag','maximal','ungewiss'] }
+      },
+      difficulty: 2
+    },
+    {
+      id: 'codierung',
+      term: 'Codierung',
+      icon: '🔣',
+      short: 'Quellencodierung zur Datenkompression',
+      definition: 'Die Quellencodierung (Source Coding) wandelt Nachrichten in Bitfolgen um. Nach Shannons Quellencodierungstheorem kann eine optimale Codierung im Mittel nicht weniger als H Bit pro Zeichen verwenden. Häufige Zeichen erhalten kurze Codes, seltene Zeichen lange Codes (z.B. Huffman-Codierung). Die untere Grenze für die mittlere Codewortlänge ist die Entropie H.',
+      analogy: 'Wie Abkürzungen in einer SMS: Häufige Wörter wie "und" kürzt man ab ("u"), seltene Wörter schreibt man aus. So spart man insgesamt Platz – genau wie bei optimaler Codierung.',
+      hints: [
+        'Shannon-Theorem: Die mittlere Codewortlänge L ≥ H (Entropie ist die untere Grenze).',
+        'Huffman-Code: Häufige Zeichen → kurze Codes, seltene → lange Codes.',
+        'Optimale Codierung eliminiert Redundanz.'
+      ],
+      questions: {
+        fill: { q: 'Was ist die theoretische untere Grenze für die mittlere Codewortlänge?', a: 'Die Entropie H', keywords: ['Entropie','H','untere','Grenze'] },
+        choice: {
+          q: 'Welches Prinzip nutzt die Huffman-Codierung?',
+          choices: [
+            'Alle Zeichen erhalten gleich lange Codes',
+            'Häufige Zeichen erhalten kurze, seltene Zeichen lange Codes',
+            'Codes werden zufällig zugewiesen',
+            'Nur Zeichen mit p > 0.1 werden codiert'
+          ],
+          correct: 1
+        },
+        explain: { q: 'Erkläre das Shannon-Quellencodierungstheorem und seine Bedeutung für die Datenkompression.', keywords: ['Entropie','mittlere','Codewortlänge','untere Grenze','komprimier','optimal'] }
+      },
+      difficulty: 3
+    }
+  ];
+
+  // Term-Map: Varianten → Term-ID
+  const termMap = {
+    'entropie': 'entropie',
+    'shannon-entropie': 'entropie',
+    'shannon entropie': 'entropie',
+    'h': 'entropie',
+    'mittlerer informationsgehalt': 'entropie',
+    'informationsgehalt': 'informationsgehalt',
+    'überraschungswert': 'informationsgehalt',
+    'information content': 'informationsgehalt',
+    'informationsgehalte': 'informationsgehalt',
+    'wahrscheinlichkeit': 'wahrscheinlichkeit',
+    'auftrittswahrscheinlichkeit': 'wahrscheinlichkeit',
+    'wahrscheinlichkeiten': 'wahrscheinlichkeit',
+    'logarithmus': 'logarithmus',
+    'log₂': 'logarithmus',
+    'log2': 'logarithmus',
+    'binärer logarithmus': 'logarithmus',
+    'bit': 'bit',
+    'binary digit': 'bit',
+    'bit/zeichen': 'bit',
+    'redundanz': 'redundanz',
+    'redundanz r': 'redundanz',
+    'relative redundanz': 'redundanz',
+    'gleichverteilung': 'gleichverteilung',
+    'maximale entropie': 'gleichverteilung',
+    'entscheidungsgehalt': 'gleichverteilung',
+    'h₀': 'gleichverteilung',
+    'codierung': 'codierung',
+    'quellencodierung': 'codierung',
+    'source coding': 'codierung',
+    'huffman': 'codierung',
+    'huffman-codierung': 'codierung'
+  };
+
+  // ── State Management ──
+  function loadState() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+  }
+  function saveState(state) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+  function getLevel(id) {
+    const s = loadState();
+    return (s[id] && s[id].level) || 0;
+  }
+  function setLevel(id, level) {
+    const s = loadState();
+    if (!s[id]) s[id] = {};
+    s[id].level = Math.min(3, Math.max(0, level));
+    saveState(s);
+  }
+
+  // ── Tooltip ──
+  const tooltip = document.createElement('div');
+  tooltip.className = 'glossary-tooltip';
+  tooltip.innerHTML = '<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">Klicken zum Lernen ↓</div>';
+  document.body.appendChild(tooltip);
+
+  // ── Highlight Terms in Page ──
+  function highlightTermsInPage() {
+    const selectors = ['.f-desc', '.task-sub', '.ev-sub', '.summary-card p', '.formula-card .f-en'];
+    const containers = [];
+    selectors.forEach(sel => {
+      document.querySelectorAll(sel).forEach(el => containers.push(el));
+    });
+
+    containers.forEach(container => {
+      if (container.dataset.glossaryProcessed) return;
+      container.dataset.glossaryProcessed = '1';
+
+      const sortedTerms = Object.keys(termMap).sort((a,b) => b.length - a.length);
+      let html = container.innerHTML;
+
+      sortedTerms.forEach(variant => {
+        const termId = termMap[variant];
+        const regex = new RegExp('(?<![\\w-])(' + variant.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')(?![\\w-])', 'gi');
+        html = html.replace(regex, (match) => {
+          return '<span class="glossary-term" data-glossary="' + termId + '">' + match + '</span>';
+        });
+      });
+
+      container.innerHTML = html;
+    });
+
+    // Attach tooltip events
+    document.querySelectorAll('.glossary-term').forEach(el => {
+      el.addEventListener('mouseenter', function(e) {
+        const term = glossaryTerms.find(t => t.id === this.dataset.glossary);
+        if (!term) return;
+        tooltip.querySelector('.gt-name').textContent = term.term;
+        tooltip.querySelector('.gt-short').textContent = term.short;
+        tooltip.style.display = 'block';
+        positionTooltip(e);
+      });
+      el.addEventListener('mousemove', positionTooltip);
+      el.addEventListener('mouseleave', function() {
+        tooltip.style.display = 'none';
+      });
+      el.addEventListener('click', function() {
+        tooltip.style.display = 'none';
+        openLearnPanel(this.dataset.glossary);
+        document.getElementById('glossary-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      });
+    });
+  }
+
+  function positionTooltip(e) {
+    let x = e.clientX + 16;
+    let y = e.clientY + 16;
+    if (x + 280 > window.innerWidth) x = e.clientX - 276;
+    if (y + 120 > window.innerHeight) y = e.clientY - 120;
+    tooltip.style.left = x + 'px';
+    tooltip.style.top = y + 'px';
+  }
+
+  // ── Render Grid ──
+  function renderGrid() {
+    const grid = document.getElementById('glossary-grid');
+    grid.innerHTML = '';
+    let mastered = 0;
+
+    glossaryTerms.forEach(t => {
+      const level = getLevel(t.id);
+      if (level >= 3) mastered++;
+      const card = document.createElement('div');
+      card.className = 'glossary-card';
+      card.dataset.level = level;
+      card.dataset.id = t.id;
+      card.innerHTML = `
+        <div class="gc-level"></div>
+        <div class="gc-icon">${t.icon}</div>
+        <div class="gc-term">${t.term}</div>
+        <div class="gc-short">${t.short}</div>`;
+      card.addEventListener('click', () => openLearnPanel(t.id));
+      grid.appendChild(card);
+    });
+
+    // Update progress
+    const pct = Math.round((mastered / glossaryTerms.length) * 100);
+    document.getElementById('glossary-progress-fill').style.width = pct + '%';
+    document.getElementById('glossary-progress-count').textContent = mastered + ' / ' + glossaryTerms.length + ' gemeistert';
+  }
+
+  // ── Learn Panel ──
+  let currentTermId = null;
+  let currentPhase = 0; // 0=learn, 1=fill, 2=choice, 3=explain
+  let currentHintIdx = 0;
+  const phaseNames = ['Lernen', 'Lückentext', 'Multiple Choice', 'Erklären'];
+
+  function openLearnPanel(id) {
+    currentTermId = id;
+    currentPhase = 0;
+    currentHintIdx = 0;
+
+    // Mark card active
+    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
+    const activeCard = document.querySelector('.glossary-card[data-id="'+id+'"]');
+    if (activeCard) activeCard.classList.add('active');
+
+    renderPhase();
+    const panel = document.getElementById('glossary-learn');
+    panel.classList.add('visible');
+  }
+
+  window.__goToPhase = function(idx) {
+    if (idx <= currentPhase) {
+      currentPhase = idx;
+      currentHintIdx = 0;
+      renderPhase();
+    }
+  };
+
+  function closeLearnPanel() {
+    document.getElementById('glossary-learn').classList.remove('visible');
+    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
+    currentTermId = null;
+  }
+
+  function renderPhase() {
+    const term = glossaryTerms.find(t => t.id === currentTermId);
+    if (!term) return;
+
+    const panel = document.getElementById('glossary-learn');
+    const level = getLevel(term.id);
+
+    let phasesHTML = phaseNames.map((name, i) => {
+      let cls = 'gl-phase';
+      if (i < currentPhase) cls += ' done';
+      if (i === currentPhase) cls += ' current';
+      let clickAttr = (i <= currentPhase) ? ' onclick="window.__goToPhase(' + i + ')"' : '';
+      return '<span class="' + cls + '"' + clickAttr + '>' + name + '</span>';
+    }).join('');
+
+    let contentHTML = '';
+
+    if (currentPhase === 0) {
+      // LEARN phase
+      contentHTML = `
+        <div class="gl-analogy">💡 ${term.analogy}</div>
+        <div class="gl-definition">${term.definition}</div>
+        <div class="gl-hints" id="gl-hints">
+          ${term.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💬 '+h+'</div>').join('')}
+        </div>
+        <button class="gl-hint-btn" id="gl-hint-btn" onclick="window._glossaryHint()">Hinweis anzeigen</button>
+        <div style="margin-top:8px">
+          <button class="gl-btn primary" onclick="window._glossaryNextPhase()">Verstanden → Weiter</button>
+        </div>`;
+    } else if (currentPhase === 1) {
+      // FILL phase
+      const q = term.questions.fill;
+      contentHTML = `
+        <div class="gl-question">${q.q}</div>
+        <input class="gl-input" id="gl-fill-input" type="text" placeholder="Deine Antwort..." autocomplete="off">
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="gl-btn primary" onclick="window._glossaryCheckFill()">Prüfen</button>
+          <button class="gl-hint-btn" onclick="window._glossaryShowAnswer()">Antwort zeigen</button>
+        </div>
+        <div id="gl-feedback"></div>`;
+    } else if (currentPhase === 2) {
+      // CHOICE phase
+      const q = term.questions.choice;
+      const shuffled = q.choices.map((c,i) => ({text:c, idx:i})).sort(() => Math.random()-0.5);
+      contentHTML = `
+        <div class="gl-question">${q.q}</div>
+        <div class="gl-choices" id="gl-choices">
+          ${shuffled.map(c => '<button class="gl-choice" data-idx="'+c.idx+'" onclick="window._glossaryCheckChoice(this)">'+c.text+'</button>').join('')}
+        </div>
+        <div id="gl-feedback"></div>`;
+    } else if (currentPhase === 3) {
+      // EXPLAIN phase
+      const q = term.questions.explain;
+      contentHTML = `
+        <div class="gl-question">${q.q}</div>
+        <textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten..."></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="gl-btn primary" onclick="window._glossaryCheckExplain()">Prüfen</button>
+        </div>
+        <div id="gl-feedback"></div>`;
+    }
+
+    panel.innerHTML = `
+      <div class="gl-header">
+        <h3>${term.icon} ${term.term}</h3>
+        <button class="gl-close" onclick="window._glossaryClose()">✕</button>
+      </div>
+      <div class="gl-phase-indicator">${phasesHTML}</div>
+      <div class="gl-content">${contentHTML}</div>`;
+
+    // Focus input
+    setTimeout(() => {
+      const inp = panel.querySelector('.gl-input');
+      if (inp) inp.focus();
+    }, 100);
+  }
+
+  // ── Hint Logic ──
+  window._glossaryHint = function() {
+    const term = glossaryTerms.find(t => t.id === currentTermId);
+    if (!term || currentHintIdx >= term.hints.length) return;
+    const hintEl = document.getElementById('gl-hint-' + currentHintIdx);
+    if (hintEl) hintEl.classList.add('visible');
+    currentHintIdx++;
+    if (currentHintIdx >= term.hints.length) {
+      const btn = document.getElementById('gl-hint-btn');
+      if (btn) btn.style.display = 'none';
+    }
+  };
+
+  // ── Phase Navigation ──
+  window._glossaryNextPhase = function() {
+    currentPhase++;
+    currentHintIdx = 0;
+    if (currentPhase > 3) {
+      // Completed all phases
+      const lvl = getLevel(currentTermId);
+      setLevel(currentTermId, Math.min(3, lvl + 1));
+      renderGrid();
+      closeLearnPanel();
+      return;
+    }
+    renderPhase();
+  };
+
+  window._glossaryClose = closeLearnPanel;
+
+  // ── Fill Check ──
+  window._glossaryCheckFill = function() {
+    const term = glossaryTerms.find(t => t.id === currentTermId);
+    if (!term) return;
+    const input = document.getElementById('gl-fill-input');
+    const fb = document.getElementById('gl-feedback');
+    const userText = input.value.trim().toLowerCase();
+    if (!userText) return;
+
+    const keywords = term.questions.fill.keywords;
+    const found = [];
+    const missing = [];
+    keywords.forEach(kw => {
+      if (userText.includes(kw.toLowerCase())) found.push(kw);
+      else missing.push(kw);
+    });
+
+    const ratio = found.length / keywords.length;
+    let kwHTML = keywords.map(kw => {
+      const cls = found.includes(kw) ? 'found' : 'missing';
+      return '<span class="gl-keyword '+cls+'">'+kw+'</span>';
+    }).join(' ');
+
+    if (ratio >= 0.6) {
+      fb.innerHTML = '<div class="gl-feedback success">Richtig! '+kwHTML+'</div>';
+      setTimeout(() => window._glossaryNextPhase(), 1200);
+    } else {
+      fb.innerHTML = '<div class="gl-feedback error">Nicht ganz. Erwartete Schlüsselwörter: '+kwHTML+'<br>Korrekte Antwort: <strong>'+term.questions.fill.a+'</strong></div>';
+    }
+  };
+
+  // ── Show Answer ──
+  window._glossaryShowAnswer = function() {
+    const term = glossaryTerms.find(t => t.id === currentTermId);
+    if (!term) return;
+    const fb = document.getElementById('gl-feedback');
+    fb.innerHTML = '<div class="gl-feedback info">Antwort: <strong>'+term.questions.fill.a+'</strong></div>';
+  };
+
+  // ── Choice Check ──
+  window._glossaryCheckChoice = function(btn) {
+    const term = glossaryTerms.find(t => t.id === currentTermId);
+    if (!term) return;
+    const fb = document.getElementById('gl-feedback');
+    const idx = parseInt(btn.dataset.idx);
+    const correct = term.questions.choice.correct;
+
+    // Disable all
+    document.querySelectorAll('#gl-choices .gl-choice').forEach(c => {
+      c.style.pointerEvents = 'none';
+      if (parseInt(c.dataset.idx) === correct) c.classList.add('correct');
+    });
+
+    if (idx === correct) {
+      btn.classList.add('correct');
+      fb.innerHTML = '<div class="gl-feedback success">Richtig!</div>';
+      setTimeout(() => window._glossaryNextPhase(), 1200);
+    } else {
+      btn.classList.add('wrong');
+      fb.innerHTML = '<div class="gl-feedback error">Leider falsch. Die richtige Antwort ist markiert.</div>';
+    }
+  };
+
+  // ── Explain Check ──
+  window._glossaryCheckExplain = function() {
+    const term = glossaryTerms.find(t => t.id === currentTermId);
+    if (!term) return;
+    const input = document.getElementById('gl-explain-input');
+    const fb = document.getElementById('gl-feedback');
+    const userText = input.value.trim().toLowerCase();
+    if (userText.length < 10) {
+      fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe mindestens einen kurzen Satz.</div>';
+      return;
+    }
+
+    const keywords = term.questions.explain.keywords;
+    const found = [];
+    const missing = [];
+    keywords.forEach(kw => {
+      if (userText.includes(kw.toLowerCase())) found.push(kw);
+      else missing.push(kw);
+    });
+
+    const ratio = found.length / keywords.length;
+    let kwHTML = keywords.map(kw => {
+      const cls = found.includes(kw) ? 'found' : 'missing';
+      return '<span class="gl-keyword '+cls+'">'+kw+'</span>';
+    }).join(' ');
+
+    if (ratio >= 0.4) {
+      fb.innerHTML = '<div class="gl-feedback success">Gute Erklärung! Erkannte Begriffe: '+kwHTML+'</div>';
+      setTimeout(() => window._glossaryNextPhase(), 1500);
+    } else {
+      fb.innerHTML = '<div class="gl-feedback error">Versuche folgende Begriffe einzubauen: '+kwHTML+'</div>';
+    }
+  };
+
+  // ── Init ──
+  renderGrid();
+  highlightTermsInPage();
+})();
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>

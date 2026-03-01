@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Switch, Router, STP & VLAN Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
+.noise{position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+.glow-orb{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);opacity:.06;pointer-events:none;z-index:0}
+.glow-orb.one{background:var(--cyan);top:-120px;left:-80px}
+.glow-orb.two{background:var(--pink);bottom:-160px;right:-100px}
+.container{position:relative;z-index:1;max-width:960px;margin:0 auto;padding:40px 24px 80px}
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}
+header .tag{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+header h1{font-weight:900;font-size:clamp(24px,5vw,42px);line-height:1.1;background:linear-gradient(135deg,#fff,#9ba0b5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px}
+header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margin:0 auto}
+.section-title{display:flex;align-items:center;gap:12px;margin:52px 0 18px;flex-wrap:wrap}
+.section-title .ic{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;font-size:18px;flex-shrink:0;color:#fff}
+.section-title h2{font-size:20px;font-weight:700}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;position:relative;overflow:hidden;transition:all .25s}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:14px 14px 0 0}
+.card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-2px)}
+.card h3{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.card p,.card ul{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.card ul{padding-left:16px}
+.card.c1::before{background:var(--cyan)}.card.c2::before{background:var(--green)}.card.c3::before{background:var(--pink)}.card.c4::before{background:var(--purple)}.card.c5::before{background:var(--orange)}.card.c6::before{background:var(--yellow)}
+.tabs{display:flex;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.tab{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.5px;padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.tab:hover{border-color:rgba(255,255,255,.15);color:var(--text)}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.exercise-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}
+.score-bar{display:flex;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.score-item{display:flex;align-items:center;gap:6px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+.score-dot{width:8px;height:8px;border-radius:50%}
+.task-display{font-size:18px;font-weight:700;margin:16px 0 8px;font-family:'JetBrains Mono',monospace;line-height:1.5}
+.task-sub{font-size:13px;color:var(--muted);font-weight:300;margin-bottom:16px}
+.input-row{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.input-row input{font-family:'JetBrains Mono',monospace;font-size:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:10px;padding:12px 18px;color:var(--text);outline:none;transition:border .2s;flex:1;min-width:160px}
+.input-row input:focus{border-color:var(--accent)}
+.input-row input.correct{border-color:var(--green);background:rgba(81,207,102,.06)}
+.input-row input.wrong{border-color:var(--red);background:rgba(255,107,107,.06)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-primary:hover{background:#5a52e0}
+.btn-secondary{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border)}
+.btn-secondary:hover{background:rgba(255,255,255,.1)}
+.feedback{margin-top:12px;padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;display:none}
+.feedback.correct{display:block;background:rgba(81,207,102,.1);color:var(--green)}
+.feedback.wrong{display:block;background:rgba(255,107,107,.1);color:var(--red)}
+.solution-box{margin-top:12px;padding:16px;border-radius:10px;background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);font-family:'JetBrains Mono',monospace;font-size:12px;line-height:1.8;color:var(--text);display:none;white-space:pre-wrap}
+.solution-box.show{display:block}
+.table-wrap{overflow-x:auto;margin-top:12px}
+table{width:100%;border-collapse:separate;border-spacing:0;background:var(--surface);border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:13px}
+th{padding:12px;text-align:left;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--muted);letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.02);border-bottom:1px solid var(--border)}
+td{padding:10px 12px;border-bottom:1px solid var(--border);font-weight:300;color:var(--muted)}
+td:first-child{font-weight:600;color:var(--text)}
+tr:last-child td{border-bottom:none}
+.summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}
+.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:all .25s}
+.summary-card:hover{border-color:rgba(108,99,255,.3)}
+.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
+.topo-wrap{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px}
+.topo-controls{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.topo-canvas{width:100%;height:360px;border-radius:10px;background:rgba(0,0,0,.3);border:1px solid var(--border)}
+.topo-legend{display:flex;gap:16px;margin-top:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.topo-legend span{display:flex;align-items:center;gap:6px}
+.topo-legend .dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-bottom:12px}
+.choice-btn{font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;padding:14px 18px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text);cursor:pointer;transition:all .2s;text-align:center}
+.choice-btn:hover{border-color:var(--accent);background:rgba(108,99,255,.08)}
+.choice-btn.selected{border-color:var(--accent);background:rgba(108,99,255,.15)}
+.choice-btn.correct-choice{border-color:var(--green);background:rgba(81,207,102,.12);color:var(--green)}
+.choice-btn.wrong-choice{border-color:var(--red);background:rgba(255,107,107,.12);color:var(--red)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:600px){.container{padding:24px 16px 60px}.topo-canvas{height:260px}}
+  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
+  .glossary-term:hover{color:var(--cyan)}
+  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
+  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
+  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
+  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
+  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
+  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
+  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
+  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
+  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
+  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
+  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
+  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
+  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
+  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
+  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
+  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
+  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
+  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
+  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
+  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
+  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
+  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
+  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
+  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
+  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
+  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
+  .glossary-learn.visible{display:block}
+  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .gl-header h3{font-size:17px;font-weight:700}
+  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
+  .gl-close:hover{border-color:var(--red);color:var(--red)}
+  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
+  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
+  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
+  .gl-content{min-height:120px}
+  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
+  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
+  .gl-hints{margin-bottom:16px}
+  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
+  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
+  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
+  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
+  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
+  .gl-btn:hover{transform:translateY(-1px)}
+  .gl-btn.primary{background:var(--accent);color:#fff}
+  .gl-btn.primary:hover{background:#7c74ff}
+  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
+  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
+  .gl-input:focus{border-color:var(--accent)}
+  textarea.gl-input{min-height:80px;resize:vertical}
+  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
+  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
+  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
+  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
+  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
+  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
+  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
+  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
+  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
+  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
+  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
+  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
+</style>
+</head>
+<body>
+<div class="noise"></div>
+<div class="glow-orb one"></div>
+<div class="glow-orb two"></div>
+<div class="container">
+<a href="index.html" class="back">&#8592; Zurück zur Übersicht</a>
+<header>
+<div class="tag">ITI25 &middot; Netzwerke</div>
+<h1>Switch, Router, STP & VLAN</h1>
+<p>Netzwerkgeräte, Domains, Spanning Tree und VLANs verstehen und interaktiv üben</p>
+</header>
+
+<!-- REFERENCE SECTION -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz</h2></div>
+<div class="cards">
+<div class="card c1"><h3>Hub vs Switch vs Router</h3>
+<ul>
+<li><strong>Hub</strong> (Layer 1): Repeater, leitet Signale an ALLE Ports weiter. 1 Collision Domain, 1 Broadcast Domain.</li>
+<li><strong>Switch</strong> (Layer 2): Lernt MAC-Adressen, leitet gezielt weiter. Jeder Port = eigene Collision Domain, 1 Broadcast Domain.</li>
+<li><strong>Router</strong> (Layer 3): Verbindet Netze, trennt Broadcast Domains. Routing-Entscheidungen per IP.</li>
+</ul></div>
+
+<div class="card c2"><h3>Collision &amp; Broadcast Domains</h3>
+<ul>
+<li><strong>Collision Domain</strong>: Bereich, in dem Datenkollisionen auftreten können. Hub = 1 CD für alle Ports; Switch = 1 CD pro Port.</li>
+<li><strong>Broadcast Domain</strong>: Bereich, in dem ein Broadcast alle Geräte erreicht. Nur Router (oder VLAN) trennt Broadcast Domains.</li>
+</ul></div>
+
+<div class="card c3"><h3>Switch-Funktionen</h3>
+<ul>
+<li><strong>MAC-Address-Table</strong>: Zuordnung MAC &#8594; Port, dynamisch gelernt</li>
+<li><strong>Store-and-Forward</strong>: Ganzes Frame empfangen, CRC prüfen, dann weiterleiten</li>
+<li><strong>Cut-Through</strong>: Weiterleitung nach Lesen der Ziel-MAC (schneller, keine Fehlerprüfung)</li>
+<li><strong>Learning</strong>: Quell-MAC merken | <strong>Flooding</strong>: Unbekanntes Ziel an alle | <strong>Forwarding</strong>: Bekanntes Ziel gezielt senden | <strong>Filtering</strong>: Frames im selben Segment nicht weiterleiten</li>
+</ul></div>
+
+<div class="card c4"><h3>Spanning Tree Protocol (STP)</h3>
+<ul>
+<li><strong>Zweck</strong>: Schleifen in redundanten L2-Topologien verhindern</li>
+<li><strong>Root Bridge</strong>: Switch mit niedrigster Bridge Priority (Default 32768) + niedrigster MAC</li>
+<li><strong>BPDU</strong>: Bridge Protocol Data Units zum Austausch von STP-Infos</li>
+<li><strong>Port States</strong>: Blocking &#8594; Listening &#8594; Learning &#8594; Forwarding (+ Disabled)</li>
+<li>Root Ports, Designated Ports, Non-Designated (Blocked) Ports</li>
+</ul></div>
+
+<div class="card c5"><h3>VLANs (Virtual LANs)</h3>
+<ul>
+<li>Logische Trennung auf Layer 2 &ndash; ein Switch, mehrere Broadcast Domains</li>
+<li><strong>Access Port</strong>: Gehört zu genau einem VLAN (untagged)</li>
+<li><strong>Trunk Port</strong>: Trägt mehrere VLANs (tagged, 802.1Q Header mit VLAN-ID)</li>
+<li><strong>802.1Q</strong>: Standard für VLAN-Tagging, 4 Byte Tag im Ethernet-Frame</li>
+<li><strong>Native VLAN</strong>: Frames ohne Tag auf dem Trunk gehören zum Native VLAN</li>
+</ul></div>
+
+<div class="card c6"><h3>Router &amp; Inter-VLAN-Routing</h3>
+<ul>
+<li><strong>Layer 3</strong>: Routing-Entscheidung anhand IP-Adresse und Routing-Tabelle</li>
+<li><strong>Default Gateway</strong>: Standardroute für Pakete außerhalb des lokalen Netzes</li>
+<li><strong>NAT</strong>: Network Address Translation &ndash; private IP &#8594; öffentliche IP</li>
+<li><strong>PAT</strong>: Port Address Translation &ndash; viele private IPs teilen eine öffentliche IP (Portnummern)</li>
+<li><strong>Inter-VLAN-Routing</strong>: Router-on-a-Stick (Subinterfaces) oder Layer-3-Switch</li>
+</ul></div>
+</div>
+
+<!-- TOPOLOGY VIEWER -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--green),var(--cyan))">&#128421;</div><h2>Netzwerk-Topologie Viewer</h2></div>
+<div class="topo-wrap">
+<div class="topo-controls">
+<button class="btn btn-primary" onclick="setTopo('hub')">Hub-Netz</button>
+<button class="btn btn-secondary" onclick="setTopo('switch')">Switch-Netz</button>
+<button class="btn btn-secondary" onclick="setTopo('router')">Router-Netz</button>
+<button class="btn btn-secondary" onclick="setTopo('vlan')">VLAN-Netz</button>
+</div>
+<canvas id="topo-canvas" class="topo-canvas"></canvas>
+<div id="topo-info" style="margin-top:12px;font-size:13px;color:var(--muted);line-height:1.7"></div>
+<div class="topo-legend">
+<span><div class="dot" style="background:var(--cyan)"></div>Collision Domain</span>
+<span><div class="dot" style="background:var(--pink)"></div>Broadcast Domain</span>
+<span><div class="dot" style="background:var(--green)"></div>Gerät/Host</span>
+<span><div class="dot" style="background:var(--orange)"></div>Netzwerkgerät</span>
+</div>
+</div>
+
+<!-- COMPARISON TABLE -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#128203;</div><h2>Vergleichstabelle</h2></div>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Eigenschaft</th><th>Hub</th><th>Switch</th><th>Router</th></tr></thead>
+<tbody>
+<tr><td>OSI-Layer</td><td>Layer 1 (Physical)</td><td>Layer 2 (Data Link)</td><td>Layer 3 (Network)</td></tr>
+<tr><td>Adressierung</td><td>Keine</td><td>MAC-Adressen</td><td>IP-Adressen</td></tr>
+<tr><td>Collision Domains</td><td>1 (alle Ports)</td><td>1 pro Port</td><td>1 pro Port</td></tr>
+<tr><td>Broadcast Domains</td><td>1</td><td>1 (ohne VLAN)</td><td>1 pro Interface</td></tr>
+<tr><td>Intelligenz</td><td>Keine (Repeater)</td><td>MAC-Tabelle</td><td>Routing-Tabelle</td></tr>
+<tr><td>Weiterleitung</td><td>An alle Ports</td><td>Gezielt per MAC</td><td>Gezielt per IP</td></tr>
+<tr><td>Duplex</td><td>Half-Duplex</td><td>Full-Duplex</td><td>Full-Duplex</td></tr>
+<tr><td>Typischer Einsatz</td><td>Veraltet</td><td>LAN-Segmentierung</td><td>Inter-Network</td></tr>
+</tbody>
+</table>
+</div>
+
+<!-- EXERCISE MODE -->
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#127947;</div><h2>Übungsmodus</h2></div>
+<div class="tabs">
+<div class="tab active" data-mode="devices" onclick="setMode('devices')">Geräte zuordnen</div>
+<div class="tab" data-mode="domains" onclick="setMode('domains')">Domains zaehlen</div>
+<div class="tab" data-mode="stp" onclick="setMode('stp')">STP</div>
+<div class="tab" data-mode="vlan" onclick="setMode('vlan')">VLAN</div>
+</div>
+<div class="exercise-wrap">
+<div class="score-bar">
+<div class="score-item"><div class="score-dot" style="background:var(--green)"></div>Richtig: <span id="s-correct">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--red)"></div>Falsch: <span id="s-wrong">0</span></div>
+<div class="score-item"><div class="score-dot" style="background:var(--yellow)"></div>Serie: <span id="s-streak">0</span></div>
+</div>
+<div id="exercise-area"></div>
+</div>
+
+<!-- GLOSSARY SECTION -->
+<div class="glossary-section" id="glossary-section">
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128218;</div><h2>Glossar-Trainer</h2></div>
+<div class="glossary-progress-bar">
+<div class="gp-text">Fortschritt</div>
+<div class="gp-bar"><div class="gp-fill" id="glossary-progress-fill" style="width:0%"></div></div>
+<div class="gp-count" id="glossary-progress-count">0 / 8 gemeistert</div>
+</div>
+<div class="glossary-grid" id="glossary-grid"></div>
+<div class="glossary-learn" id="glossary-learn"></div>
+</div>
+<div class="glossary-tooltip" id="glossary-tooltip">
+<div class="gt-name" id="gt-name"></div>
+<div class="gt-short" id="gt-short"></div>
+<div class="gt-link">Klicken zum Lernen &#8594;</div>
+</div>
+
+<!-- SUMMARY / EXAM TIPS -->
+<div class="summary">
+<div class="summary-card"><h4>Merke: Domains</h4><p>Hub = 1 Collision Domain für alle. Switch = 1 Collision Domain PRO Port. Router trennt Broadcast Domains. Jedes Router-Interface = eigene Broadcast Domain.</p></div>
+<div class="summary-card"><h4>Prüfungstipp: STP</h4><p>Root Bridge = niedrigste Priority + niedrigste MAC. Alle Ports der Root Bridge sind Designated Ports. Auf jedem Nicht-Root-Switch gibt es genau einen Root Port (bester Pfad zur Root Bridge).</p></div>
+<div class="summary-card"><h4>Prüfungstipp: VLAN</h4><p>Access Port = 1 VLAN (untagged). Trunk = mehrere VLANs (tagged mit 802.1Q). Ohne Router/L3-Switch können VLANs nicht miteinander kommunizieren!</p></div>
+<div class="summary-card"><h4>Eselsbrücke</h4><p>Hub = dumm (alles an alle). Switch = schlau (MAC-Tabelle). Router = am schlausten (IP-Routing, trennt Broadcasts). Merke: Je höher der Layer, desto intelligenter das Gerät.</p></div>
+</div>
+</div>
+
+<script>
+// === Progress ===
+function saveProgress(id,data){const all=JSON.parse(localStorage.getItem('trainer-progress')||'{}');all[id]={...all[id],...data,lastVisited:new Date().toISOString()};localStorage.setItem('trainer-progress',JSON.stringify(all));}
+saveProgress('switch-router-vlan',{status:'in-progress'});
+
+// === Topology Viewer ===
+let currentTopo='hub';
+function setTopo(t){
+  currentTopo=t;
+  document.querySelectorAll('.topo-controls .btn').forEach((b,i)=>{
+    const modes=['hub','switch','router','vlan'];
+    b.className=modes[i]===t?'btn btn-primary':'btn btn-secondary';
+  });
+  drawTopo();
+}
+
+function drawTopo(){
+  const canvas=document.getElementById('topo-canvas');
+  const ctx=canvas.getContext('2d');
+  canvas.width=canvas.offsetWidth*2;canvas.height=canvas.offsetHeight*2;
+  ctx.scale(2,2);
+  const W=canvas.offsetWidth,H=canvas.offsetHeight;
+  ctx.clearRect(0,0,W,H);
+
+  const colors={cyan:'#38bdf8',pink:'#f472b6',green:'#51cf66',orange:'#fb923c',purple:'#a78bfa',muted:'#6b7084',border:'#1e2230'};
+
+  function drawDevice(x,y,label,color,shape){
+    ctx.save();
+    if(shape==='rect'){
+      ctx.fillStyle=color+'22';ctx.strokeStyle=color;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.roundRect(x-28,y-16,56,32,6);ctx.fill();ctx.stroke();
+    } else {
+      ctx.fillStyle=color+'22';ctx.strokeStyle=color;ctx.lineWidth=1.5;
+      ctx.beginPath();ctx.arc(x,y,16,0,Math.PI*2);ctx.fill();ctx.stroke();
+    }
+    ctx.fillStyle='#e2e4ea';ctx.font='600 11px Outfit';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(label,x,y);
+    ctx.restore();
+  }
+  function drawLine(x1,y1,x2,y2,color){
+    ctx.strokeStyle=color||colors.muted;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  }
+  function drawDomain(x,y,w,h,color,label){
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=1;ctx.setLineDash([5,4]);
+    ctx.beginPath();ctx.roundRect(x,y,w,h,10);ctx.stroke();
+    ctx.setLineDash([]);ctx.fillStyle=color;ctx.font='600 10px JetBrains Mono';ctx.textAlign='left';
+    ctx.fillText(label,x+8,y+14);ctx.restore();
+  }
+
+  const info=document.getElementById('topo-info');
+  const cx=W/2,cy=H/2;
+
+  if(currentTopo==='hub'){
+    const hx=cx,hy=cy;
+    const pcs=[[cx-120,cy-60,'PC1'],[cx+120,cy-60,'PC2'],[cx-120,cy+60,'PC3'],[cx+120,cy+60,'PC4']];
+    drawDomain(cx-180,cy-110,360,220,colors.cyan,'1 Collision Domain');
+    drawDomain(cx-190,cy-120,380,240,colors.pink,'1 Broadcast Domain');
+    pcs.forEach(p=>{drawLine(p[0],p[1],hx,hy,colors.muted);drawDevice(p[0],p[1],p[2],colors.green,'circle');});
+    drawDevice(hx,hy,'Hub',colors.orange,'rect');
+    info.innerHTML='<strong>Hub-Netzwerk:</strong> Alle 4 PCs teilen sich 1 Collision Domain und 1 Broadcast Domain. Jedes Signal wird an alle Ports wiederholt.';
+  }
+  else if(currentTopo==='switch'){
+    const sx=cx,sy=cy;
+    const pcs=[[cx-140,cy-70,'PC1'],[cx+140,cy-70,'PC2'],[cx-140,cy+70,'PC3'],[cx+140,cy+70,'PC4']];
+    drawDomain(cx-195,cy-120,390,240,colors.pink,'1 Broadcast Domain');
+    const cdPositions=[[cx-140,cy-70],[cx+140,cy-70],[cx-140,cy+70],[cx+140,cy+70]];
+    cdPositions.forEach((pos,i)=>drawDomain(pos[0]-30,pos[1]-28,60,56,colors.cyan,'CD'+(i+1)));
+    pcs.forEach(p=>{drawLine(p[0],p[1],sx,sy,colors.muted);drawDevice(p[0],p[1],p[2],colors.green,'circle');});
+    drawDevice(sx,sy,'Switch',colors.orange,'rect');
+    info.innerHTML='<strong>Switch-Netzwerk:</strong> 4 Collision Domains (1 pro Port), aber nur 1 Broadcast Domain. Der Switch leitet Frames gezielt per MAC-Adresse weiter.';
+  }
+  else if(currentTopo==='router'){
+    const rx=cx,ry=cy;
+    const s1x=cx-130,s1y=cy,s2x=cx+130,s2y=cy;
+    const pcsL=[[cx-220,cy-50,'PC1'],[cx-220,cy+50,'PC2']];
+    const pcsR=[[cx+220,cy-50,'PC3'],[cx+220,cy+50,'PC4']];
+    drawDomain(cx-250,cy-95,165,190,colors.pink,'BD 1');
+    drawDomain(cx+85,cy-95,165,190,colors.pink,'BD 2');
+    drawLine(s1x,s1y,rx,ry,colors.muted);drawLine(s2x,s2y,rx,ry,colors.muted);
+    pcsL.forEach(p=>{drawLine(p[0],p[1],s1x,s1y,colors.muted);drawDevice(p[0],p[1],p[2],colors.green,'circle');});
+    pcsR.forEach(p=>{drawLine(p[0],p[1],s2x,s2y,colors.muted);drawDevice(p[0],p[1],p[2],colors.green,'circle');});
+    drawDevice(s1x,s1y,'SW1',colors.orange,'rect');drawDevice(s2x,s2y,'SW2',colors.orange,'rect');
+    drawDevice(rx,ry,'Router',colors.purple,'rect');
+    info.innerHTML='<strong>Router-Netzwerk:</strong> 2 Broadcast Domains (getrennt durch Router). Jedes Router-Interface bildet eine eigene Broadcast Domain. Switches segmentieren Collision Domains.';
+  }
+  else if(currentTopo==='vlan'){
+    const sx=cx,sy=cy;
+    const vlan10=[[cx-140,cy-60,'PC1'],[cx-60,cy-60,'PC2']];
+    const vlan20=[[cx+60,cy+60,'PC3'],[cx+140,cy+60,'PC4']];
+    drawDomain(cx-175,cy-105,170,90,colors.pink,'VLAN 10');
+    drawDomain(cx+5,cy+15,170,90,colors.pink,'VLAN 20');
+    vlan10.forEach(p=>{drawLine(p[0],p[1],sx,sy,colors.cyan);drawDevice(p[0],p[1],p[2],colors.green,'circle');});
+    vlan20.forEach(p=>{drawLine(p[0],p[1],sx,sy,colors.orange);drawDevice(p[0],p[1],p[2],colors.green,'circle');});
+    drawDevice(sx,sy,'Switch',colors.orange,'rect');
+    ctx.fillStyle=colors.muted;ctx.font='300 10px Outfit';ctx.textAlign='center';
+    ctx.fillText('VLAN 10 (blau)',cx-100,cy-105+85);ctx.fillText('VLAN 20 (orange)',cx+100,cy+15+85);
+    info.innerHTML='<strong>VLAN-Netzwerk:</strong> 1 physischer Switch, aber 2 Broadcast Domains durch VLANs. PC1/PC2 (VLAN 10) können ohne Router nicht mit PC3/PC4 (VLAN 20) kommunizieren.';
+  }
+}
+setTimeout(()=>drawTopo(),100);
+window.addEventListener('resize',drawTopo);
+
+// === Exercise Mode ===
+let mode='devices',score={correct:0,wrong:0,streak:0},currentTask={},answered=false;
+
+function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rand(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;}
+function setMode(m){mode=m;document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.mode===m));newTask();}
+
+const deviceQuestions=[
+  {q:'Dieses Gerät arbeitet auf Layer 1 und leitet Signale an alle Ports weiter.',a:'Hub',opts:['Hub','Switch','Router'],e:'Ein Hub ist ein einfacher Repeater auf Layer 1 (Physical Layer).'},
+  {q:'Dieses Gerät nutzt MAC-Adressen, um Frames gezielt an den richtigen Port zu senden.',a:'Switch',opts:['Hub','Switch','Router'],e:'Ein Switch arbeitet auf Layer 2 und führt eine MAC-Address-Table.'},
+  {q:'Dieses Gerät verbindet verschiedene Netzwerke und trennt Broadcast Domains.',a:'Router',opts:['Hub','Switch','Router'],e:'Ein Router arbeitet auf Layer 3 und routet anhand von IP-Adressen.'},
+  {q:'Jeder Port dieses Geräts bildet eine eigene Collision Domain.',a:'Switch',opts:['Hub','Switch','Router'],e:'Ein Switch segmentiert Collision Domains, jeder Port ist eine eigene CD.'},
+  {q:'Bei diesem Gerät teilen sich alle angeschlossenen Hosts eine Collision Domain.',a:'Hub',opts:['Hub','Switch','Router'],e:'Ein Hub kennt keine Adressen, alle Ports teilen sich eine Collision Domain.'},
+  {q:'Dieses Gerät führt NAT/PAT durch, um private IPs ins Internet zu bringen.',a:'Router',opts:['Hub','Switch','Router'],e:'NAT/PAT ist eine Router-Funktion auf Layer 3.'},
+  {q:'Dieses Gerät unterstützt nur Half-Duplex-Kommunikation.',a:'Hub',opts:['Hub','Switch','Router'],e:'Hubs unterstuetzen nur Half-Duplex, da alle Geräte das Medium teilen.'},
+  {q:'Dieses Gerät kann im Store-and-Forward oder Cut-Through Modus arbeiten.',a:'Switch',opts:['Hub','Switch','Router'],e:'Switches bieten Store-and-Forward (mit CRC-Prüfung) und Cut-Through (schneller).'},
+  {q:'Dieses Gerät nutzt eine Routing-Tabelle für Weiterleitungsentscheidungen.',a:'Router',opts:['Hub','Switch','Router'],e:'Router nutzen Routing-Tabellen mit Netzadressen und Next-Hops.'},
+  {q:'Dieses Gerät kann mit VLANs mehrere Broadcast Domains auf einem Gerät erstellen.',a:'Switch',opts:['Hub','Switch','Router'],e:'VLANs erlauben logische Trennung auf einem Switch (Layer 2).'},
+];
+
+const domainQuestions=[
+  {q:'Ein Hub mit 5 angeschlossenen PCs.\nWie viele Collision Domains?',a:'1',e:'Ein Hub bildet genau 1 Collision Domain, egal wie viele Ports.'},
+  {q:'Ein Hub mit 5 angeschlossenen PCs.\nWie viele Broadcast Domains?',a:'1',e:'Ein Hub bildet genau 1 Broadcast Domain.'},
+  {q:'Ein Switch mit 8 angeschlossenen PCs (keine VLANs).\nWie viele Collision Domains?',a:'8',e:'Jeder Switch-Port bildet eine eigene Collision Domain: 8 Ports = 8 CDs.'},
+  {q:'Ein Switch mit 8 angeschlossenen PCs (keine VLANs).\nWie viele Broadcast Domains?',a:'1',e:'Ohne VLANs bildet ein Switch genau 1 Broadcast Domain.'},
+  {q:'Zwei Switches verbunden, je 3 PCs, kein Router.\nWie viele Broadcast Domains?',a:'1',e:'Ohne Router gibt es nur 1 Broadcast Domain, auch bei mehreren Switches.'},
+  {q:'Zwei Switches verbunden, je 3 PCs, kein Router.\nWie viele Collision Domains?',a:'7',e:'6 PCs (6 CDs) + 1 Link zwischen den Switches = 7 Collision Domains.'},
+  {q:'Ein Router verbindet 2 Switches (je 4 PCs).\nWie viele Broadcast Domains?',a:'2',e:'Jedes Router-Interface trennt Broadcast Domains: 2 Interfaces = 2 BDs.'},
+  {q:'Ein Router verbindet 2 Switches (je 4 PCs).\nWie viele Collision Domains?',a:'10',e:'4+4 PC-Ports + 2 Switch-Router-Links = 10 Collision Domains.'},
+  {q:'Ein Switch mit 6 PCs, konfiguriert mit 3 VLANs (je 2 PCs).\nWie viele Broadcast Domains?',a:'3',e:'Jedes VLAN bildet eine eigene Broadcast Domain: 3 VLANs = 3 BDs.'},
+  {q:'Ein Hub mit 3 PCs, verbunden mit einem Switch-Port. Switch hat noch 2 weitere PCs.\nWie viele Collision Domains?',a:'3',e:'Hub+3 PCs = 1 CD, Switch-Port zu PC = 1 CD, Switch-Port zu PC = 1 CD. Gesamt: 3.'},
+];
+
+const stpQuestions=[
+  {q:'Welcher Switch wird Root Bridge?\nSwitch A: Priority 32768, MAC aa:aa:aa:aa:aa:aa\nSwitch B: Priority 32768, MAC bb:bb:bb:bb:bb:bb',a:'Switch A',opts:['Switch A','Switch B'],e:'Bei gleicher Priority gewinnt die niedrigere MAC-Adresse. aa < bb.'},
+  {q:'Welcher Switch wird Root Bridge?\nSwitch A: Priority 4096, MAC ff:ff:ff:ff:ff:ff\nSwitch B: Priority 32768, MAC 00:00:00:00:00:01',a:'Switch A',opts:['Switch A','Switch B'],e:'Die Priority wird zuerst verglichen. 4096 < 32768, also wird Switch A Root Bridge.'},
+  {q:'In welchem STP-Status leitet ein Port Daten weiter und lernt MAC-Adressen?',a:'Forwarding',opts:['Blocking','Listening','Learning','Forwarding'],e:'Nur im Forwarding-Status werden Daten weitergeleitet UND MACs gelernt.'},
+  {q:'In welchem STP-Status werden keine Daten gesendet, aber BPDUs empfangen?',a:'Blocking',opts:['Blocking','Listening','Learning','Forwarding'],e:'Im Blocking-Status empfängt der Port nur BPDUs, keine Nutzdaten.'},
+  {q:'Wie heißen die STP-Nachrichten, die Switches austauschen?',a:'BPDU',opts:['BPDU','ARP','ICMP','LLDP'],e:'Bridge Protocol Data Units (BPDUs) tragen STP-Informationen.'},
+  {q:'In welchem Status lernt ein Port MAC-Adressen, leitet aber noch keine Nutzdaten weiter?',a:'Learning',opts:['Blocking','Listening','Learning','Forwarding'],e:'Im Learning-Status werden MACs gelernt, aber noch keine Daten weitergeleitet.'},
+  {q:'Was ist die Standard-Bridge-Priority bei STP?',a:'32768',opts:['0','4096','32768','65535'],e:'Die Default Bridge Priority ist 32768. Sie kann in 4096er-Schritten geändert werden.'},
+  {q:'Welcher Port-Typ bietet den besten Pfad zur Root Bridge auf einem Nicht-Root-Switch?',a:'Root Port',opts:['Root Port','Designated Port','Blocked Port','Trunk Port'],e:'Der Root Port ist der Port mit dem besten (kürzesten) Pfad zur Root Bridge.'},
+  {q:'STP Port-Status Reihenfolge nach Aktivierung?',a:'Blocking, Listening, Learning, Forwarding',opts:['Blocking, Listening, Learning, Forwarding','Listening, Blocking, Learning, Forwarding','Learning, Listening, Blocking, Forwarding','Forwarding, Learning, Listening, Blocking'],e:'Die korrekte Reihenfolge ist: Blocking -> Listening -> Learning -> Forwarding.'},
+  {q:'Welcher Switch wird Root Bridge?\nSwitch A: Priority 8192, MAC cc:cc:cc:cc:cc:cc\nSwitch B: Priority 8192, MAC aa:aa:aa:aa:aa:aa',a:'Switch B',opts:['Switch A','Switch B'],e:'Gleiche Priority (8192). Die MAC wird verglichen: aa < cc, also Switch B.'},
+];
+
+const vlanQuestions=[
+  {q:'Welcher Port-Typ gehört zu genau einem VLAN und sendet Frames ohne Tag?',a:'Access Port',opts:['Access Port','Trunk Port','Hybrid Port','Root Port'],e:'Access Ports gehören zu einem VLAN und senden/empfangen untagged Frames.'},
+  {q:'Welcher Port-Typ trägt mehrere VLANs über eine Leitung (802.1Q)?',a:'Trunk Port',opts:['Access Port','Trunk Port','Hybrid Port','Root Port'],e:'Trunk Ports taggen Frames mit VLAN-IDs (802.1Q) und tragen mehrere VLANs.'},
+  {q:'Wie gross ist der 802.1Q VLAN-Tag im Ethernet-Frame?',a:'4 Byte',opts:['2 Byte','4 Byte','8 Byte','16 Byte'],e:'Der 802.1Q Tag ist 4 Byte gross und enthält u.a. die 12-Bit VLAN-ID.'},
+  {q:'Wie viele VLANs sind mit 802.1Q theoretisch möglich (12-Bit VLAN-ID)?',a:'4096',opts:['256','1024','4096','65536'],e:'12 Bit = 2^12 = 4096 mögliche VLAN-IDs (0-4095, 0 und 4095 reserviert).'},
+  {q:'Was wird benötigt, damit zwei verschiedene VLANs miteinander kommunizieren?',a:'Router oder Layer-3-Switch',opts:['Ein Trunk Port','Router oder Layer-3-Switch','Ein zusätzlicher Hub','Ein Crossover-Kabel'],e:'Inter-VLAN-Routing erfordert einen Router (Router-on-a-Stick) oder Layer-3-Switch.'},
+  {q:'Wie nennt man das VLAN, dessen Frames auf einem Trunk ohne Tag gesendet werden?',a:'Native VLAN',opts:['Default VLAN','Native VLAN','Management VLAN','Guest VLAN'],e:'Das Native VLAN ist das VLAN, dessen Frames auf dem Trunk untagged bleiben.'},
+  {q:'Welches Verfahren nutzt ein Router mit Subinterfaces für Inter-VLAN-Routing?',a:'Router-on-a-Stick',opts:['Router-on-a-Stick','HSRP','VRRP','OSPF'],e:'Router-on-a-Stick: Ein physisches Interface mit mehreren Subinterfaces (je 1 VLAN).'},
+  {q:'Auf welchem OSI-Layer arbeiten VLANs?',a:'Layer 2',opts:['Layer 1','Layer 2','Layer 3','Layer 4'],e:'VLANs sind eine logische Trennung auf Layer 2 (Data Link Layer).'},
+  {q:'PC in VLAN 10 kann nicht mit PC in VLAN 20 kommunizieren (gleicher Switch). Was fehlt?',a:'Inter-VLAN-Routing',opts:['Ein Trunk Port','Ein Hub','Inter-VLAN-Routing','STP'],e:'VLANs trennen Broadcast Domains. Für die Kommunikation zwischen VLANs braucht man einen Router oder L3-Switch.'},
+  {q:'Welches Feld im 802.1Q-Header enthält die VLAN-Nummer?',a:'VLAN-ID (VID)',opts:['TPID','PCP','DEI','VLAN-ID (VID)'],e:'Das 12-Bit VID-Feld (VLAN Identifier) im 802.1Q-Tag enthält die VLAN-Nummer.'},
+];
+
+function genTask(){
+  if(mode==='devices'){
+    const q=deviceQuestions[rand(0,deviceQuestions.length-1)];
+    return{q:q.q,answer:q.a,opts:shuffle([...q.opts]),type:'choice',e:q.e};
+  }
+  if(mode==='domains'){
+    const q=domainQuestions[rand(0,domainQuestions.length-1)];
+    return{q:q.q,answer:q.a,type:'input',e:q.e};
+  }
+  if(mode==='stp'){
+    const q=stpQuestions[rand(0,stpQuestions.length-1)];
+    return{q:q.q,answer:q.a,opts:shuffle([...q.opts]),type:'choice',e:q.e};
+  }
+  if(mode==='vlan'){
+    const q=vlanQuestions[rand(0,vlanQuestions.length-1)];
+    return{q:q.q,answer:q.a,opts:shuffle([...q.opts]),type:'choice',e:q.e};
+  }
+}
+
+function newTask(){
+  answered=false;
+  currentTask=genTask();
+  const area=document.getElementById('exercise-area');
+  const modeLabels={devices:'Welches Gerät ist beschrieben?',domains:'Zähle die Domains',stp:'STP-Wissen',vlan:'VLAN-Wissen'};
+  let html=`<div style="font-size:11px;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${modeLabels[mode]}</div>`;
+  html+=`<div class="task-display" style="white-space:pre-wrap">${currentTask.q}</div>`;
+
+  if(currentTask.type==='choice'){
+    html+=`<div class="choice-grid" id="choices">`;
+    currentTask.opts.forEach(o=>{
+      html+=`<div class="choice-btn" onclick="selectChoice(this,'${o.replace(/'/g,"\\'")}')">${o}</div>`;
+    });
+    html+=`</div>`;
+  } else {
+    html+=`<div class="task-sub">Gib die Zahl ein</div>`;
+    html+=`<div class="input-row"><input type="text" id="user-answer" placeholder="Deine Antwort..." autocomplete="off"></div>`;
+  }
+  html+=`<div class="btn-row">`;
+  if(currentTask.type==='input') html+=`<button class="btn btn-primary" onclick="checkInput()">Prüfen</button>`;
+  html+=`<button class="btn btn-secondary" onclick="showSolution()">Lösung zeigen</button>`;
+  html+=`<button class="btn btn-secondary" onclick="newTask()">Überspringen</button>`;
+  html+=`</div><div class="feedback" id="fb"></div><div class="solution-box" id="sol"></div>`;
+  area.innerHTML=html;
+
+  if(currentTask.type==='input'){
+    const inp=document.getElementById('user-answer');
+    inp.focus();
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkInput();});
+  }
+}
+
+function selectChoice(el,val){
+  if(answered) return;
+  answered=true;
+  const fb=document.getElementById('fb');
+  document.querySelectorAll('.choice-btn').forEach(b=>{
+    if(b.textContent===currentTask.answer) b.classList.add('correct-choice');
+    if(b===el && val!==currentTask.answer) b.classList.add('wrong-choice');
+  });
+  if(val===currentTask.answer){
+    fb.textContent='Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10) saveProgress('switch-router-vlan',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  } else {
+    fb.textContent='Falsch! Richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function checkInput(){
+  if(answered) return;
+  const inp=document.getElementById('user-answer');
+  const fb=document.getElementById('fb');
+  const v=inp.value.trim();
+  if(!v) return;
+  answered=true;
+  if(v===currentTask.answer){
+    inp.classList.add('correct');fb.textContent='Richtig!';fb.className='feedback correct';
+    score.correct++;score.streak++;updateScore();
+    if(score.correct>=10) saveProgress('switch-router-vlan',{status:'completed',score:score.correct});
+    setTimeout(newTask,1200);
+  } else {
+    inp.classList.add('wrong');fb.textContent='Falsch! Richtig: '+currentTask.answer;fb.className='feedback wrong';
+    score.wrong++;score.streak=0;updateScore();showSolution();
+  }
+}
+
+function showSolution(){const s=document.getElementById('sol');s.textContent=currentTask.e;s.classList.add('show');}
+function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
+newTask();
+
+// === GLOSSARY SYSTEM ===
+const GLOSSARY_KEY='glossary-switch-router-vlan';
+const glossaryTerms=[
+  {
+    id:'switch',term:'Switch',short:'Layer-2-Gerät, leitet Frames anhand von MAC-Adressen weiter',icon:'🔀',
+    definition:'Ein Switch ist ein Netzwerkgerät auf OSI-Layer 2 (Data Link Layer). Er lernt MAC-Adressen über eingehende Frames und baut eine MAC-Address-Table auf. Dadurch kann er Frames gezielt an den richtigen Port weiterleiten (Forwarding), anstatt sie wie ein Hub an alle Ports zu senden. Jeder Switch-Port bildet eine eigene Collision Domain, aber ohne VLANs gibt es nur eine Broadcast Domain.',
+    analogy:'Stell dir einen Switch wie einen intelligenten Postboten vor: Er kennt die Adressen (MAC) aller Empfänger und liefert Briefe (Frames) direkt an den richtigen Briefkasten (Port), anstatt Kopien an jeden Haushalt zu verteilen.',
+    hints:['Arbeitet auf Layer 2 mit MAC-Adressen','Erstellt eine MAC-Address-Table dynamisch durch Lernen','Jeder Port = eigene Collision Domain, aber nur 1 Broadcast Domain (ohne VLAN)'],
+    questions:[
+      {type:'fill',q:'Ein Switch arbeitet auf OSI-Layer ___ und nutzt ___-Adressen zur Weiterleitung.',keywords:['2','MAC']},
+      {type:'choice',q:'Was passiert, wenn ein Switch die Ziel-MAC-Adresse nicht in seiner Tabelle findet?',correct:'Er flutet das Frame an alle Ports (außer Quellport)',wrong:['Er verwirft das Frame','Er sendet ein ICMP-Error','Er leitet es an den Router weiter']},
+      {type:'explain',q:'Erkläre den Unterschied zwischen Store-and-Forward und Cut-Through bei Switches.',keywords:['Store-and-Forward','CRC','ganzes Frame','Cut-Through','Ziel-MAC','schneller','Fehlerprüfung']}
+    ],difficulty:1
+  },
+  {
+    id:'router',term:'Router',short:'Layer-3-Gerät, verbindet Netzwerke und routet per IP',icon:'🌐',
+    definition:'Ein Router ist ein Netzwerkgerät auf OSI-Layer 3 (Network Layer). Er verbindet verschiedene Netzwerke miteinander und trifft Routing-Entscheidungen anhand von IP-Adressen und einer Routing-Tabelle. Jedes Router-Interface bildet eine eigene Broadcast Domain. Router können NAT/PAT durchführen und ermöglichen Inter-VLAN-Routing.',
+    analogy:'Ein Router ist wie ein Verkehrspolizist an einer großen Kreuzung: Er kennt alle Straßen (Netzwerke) und leitet den Verkehr (Pakete) in die richtige Richtung, basierend auf dem Zielort (IP-Adresse). Ohne ihn bleibt der Verkehr in seiner Nachbarschaft (Broadcast Domain) gefangen.',
+    hints:['Arbeitet auf Layer 3 mit IP-Adressen','Trennt Broadcast Domains – jedes Interface ist eine eigene BD','Nutzt eine Routing-Tabelle für Weiterleitungsentscheidungen'],
+    questions:[
+      {type:'fill',q:'Ein Router arbeitet auf Layer ___ und trennt ___-Domains.',keywords:['3','Broadcast']},
+      {type:'choice',q:'Was ist die Hauptfunktion eines Routers?',correct:'Netzwerke verbinden und Broadcast Domains trennen',wrong:['MAC-Adressen lernen','Signale verstärken','VLANs erstellen']},
+      {type:'explain',q:'Warum trennt ein Router Broadcast Domains, ein Switch aber nicht?',keywords:['Layer 3','IP','Broadcast','weiterleiten','verwerfen','Netzgrenze']}
+    ],difficulty:1
+  },
+  {
+    id:'vlan',term:'VLAN',short:'Virtual LAN – logische Trennung auf Layer 2',icon:'🏷️',
+    definition:'Ein VLAN (Virtual Local Area Network) ist eine logische Segmentierung eines physischen Netzwerks auf Layer 2. Ein einzelner Switch kann durch VLANs mehrere getrennte Broadcast Domains bilden. Geräte in verschiedenen VLANs können ohne Router oder Layer-3-Switch nicht miteinander kommunizieren. VLANs werden über VLAN-IDs (12 Bit, 0–4095) identifiziert.',
+    analogy:'VLANs sind wie verschiedene Stockwerke in einem Bürogebäude: Obwohl alle im selben Gebäude (Switch) sind, können die Mitarbeiter auf verschiedenen Stockwerken (VLANs) nur über den Aufzug (Router) miteinander sprechen.',
+    hints:['Logische Trennung auf Layer 2 – ein Switch, mehrere Broadcast Domains','VLAN-ID hat 12 Bit → bis zu 4096 mögliche VLANs','Kommunikation zwischen VLANs braucht einen Router oder L3-Switch'],
+    questions:[
+      {type:'fill',q:'VLANs ermöglichen die logische Trennung von ___-Domains auf einem einzigen ___.',keywords:['Broadcast','Switch']},
+      {type:'choice',q:'Wie viele VLANs sind mit 802.1Q theoretisch möglich?',correct:'4096',wrong:['256','1024','65536']},
+      {type:'explain',q:'Warum können Geräte in verschiedenen VLANs nicht direkt kommunizieren?',keywords:['Broadcast Domain','getrennt','Layer 2','Router','Layer 3','Inter-VLAN']}
+    ],difficulty:2
+  },
+  {
+    id:'trunk',term:'Trunk',short:'Tagged Port für mehrere VLANs (802.1Q)',icon:'🔗',
+    definition:'Ein Trunk Port (auch Tagged Port) ist ein Switch-Port, der Frames mehrerer VLANs gleichzeitig transportiert. Dazu wird der 802.1Q-Standard verwendet: Ein 4-Byte-Tag wird in den Ethernet-Frame eingefügt, das die VLAN-ID enthält. So kann der empfangende Switch erkennen, zu welchem VLAN ein Frame gehört. Das Native VLAN sendet Frames ohne Tag.',
+    analogy:'Ein Trunk ist wie eine mehrspurige Autobahn zwischen zwei Städten (Switches): Jede Spur ist für bestimmte Fahrzeuge (VLANs) markiert. Ohne die Markierung (802.1Q-Tag) wüsste niemand, auf welche Spur ein Fahrzeug gehört.',
+    hints:['802.1Q fügt einen 4-Byte-Tag mit VLAN-ID in den Ethernet-Frame ein','Native VLAN: Frames ohne Tag auf dem Trunk','Access Port = 1 VLAN (untagged), Trunk = mehrere VLANs (tagged)'],
+    questions:[
+      {type:'fill',q:'Ein Trunk Port nutzt den Standard ___ und fügt einen ___-Byte-Tag ein.',keywords:['802.1Q','4']},
+      {type:'choice',q:'Was ist das Native VLAN?',correct:'Das VLAN, dessen Frames auf dem Trunk ohne Tag gesendet werden',wrong:['Das VLAN mit der höchsten Priorität','Das Standard-Management-VLAN','Das VLAN für Gäste']},
+      {type:'explain',q:'Erkläre den Unterschied zwischen einem Access Port und einem Trunk Port.',keywords:['Access','ein VLAN','untagged','Trunk','mehrere VLANs','tagged','802.1Q']}
+    ],difficulty:2
+  },
+  {
+    id:'routing-tabelle',term:'Routing-Tabelle',short:'Enthält Netzrouten für Weiterleitungsentscheidungen',icon:'📋',
+    definition:'Die Routing-Tabelle ist eine Datenstruktur im Router, die Informationen über erreichbare Netzwerke enthält. Jeder Eintrag besteht typischerweise aus Zielnetz, Subnetzmaske, Next Hop (nächster Router), ausgehendem Interface und Metrik. Routen können statisch konfiguriert oder dynamisch durch Routing-Protokolle (OSPF, RIP, BGP) gelernt werden. Der Router wählt die Route mit dem längsten Präfix-Match.',
+    analogy:'Die Routing-Tabelle ist wie ein Wegweiser an einer Kreuzung: Für jedes Ziel (Netzwerk) zeigt sie die beste Richtung (Next Hop/Interface) und die Entfernung (Metrik) an. Der Router schaut bei jedem Paket auf diesen Wegweiser.',
+    hints:['Enthält Zielnetz, Subnetzmaske, Next Hop, Interface und Metrik','Routen können statisch oder dynamisch (OSPF, RIP, BGP) sein','Longest Prefix Match bestimmt die beste Route'],
+    questions:[
+      {type:'fill',q:'Die Routing-Tabelle enthält für jede Route u.a. Zielnetz, ___ und ___.',keywords:['Next Hop','Metrik']},
+      {type:'choice',q:'Welches Prinzip nutzt der Router zur Routenauswahl?',correct:'Longest Prefix Match',wrong:['First Come First Served','Round Robin','Shortest Path Bridging']},
+      {type:'explain',q:'Was ist der Unterschied zwischen statischen und dynamischen Routen?',keywords:['statisch','manuell','konfiguriert','dynamisch','Protokoll','automatisch','OSPF','RIP']}
+    ],difficulty:2
+  },
+  {
+    id:'default-gateway',term:'Default Gateway',short:'Standardroute für Pakete außerhalb des lokalen Netzes',icon:'🚪',
+    definition:'Das Default Gateway ist die IP-Adresse des Routers, an den ein Host alle Pakete sendet, deren Ziel nicht im lokalen Netzwerk liegt. Es ist die „Tür nach draußen" für jedes Gerät im LAN. Ohne konfiguriertes Default Gateway kann ein Host nur mit Geräten im selben Subnetz kommunizieren. Das Default Gateway muss im selben Subnetz wie der Host liegen.',
+    analogy:'Das Default Gateway ist wie die Eingangstür deines Hauses: Wenn du jemanden besuchen willst, der nicht in deinem Haus (lokales Netz) wohnt, musst du durch die Tür (Gateway) gehen. Ohne Tür bist du im Haus gefangen.',
+    hints:['IP-Adresse des Routers im lokalen Subnetz','Wird für alle Pakete verwendet, deren Ziel nicht lokal ist','Muss im selben Subnetz wie der Host konfiguriert sein'],
+    questions:[
+      {type:'fill',q:'Das Default Gateway ist die ___-Adresse des ___ im lokalen Netz.',keywords:['IP','Router']},
+      {type:'choice',q:'Was passiert, wenn kein Default Gateway konfiguriert ist?',correct:'Der Host kann nur mit Geräten im selben Subnetz kommunizieren',wrong:['Der Host kann gar nicht kommunizieren','Der Host sendet Broadcasts ins Internet','Der Switch übernimmt das Routing']},
+      {type:'explain',q:'Warum muss das Default Gateway im selben Subnetz wie der Host liegen?',keywords:['direkt erreichbar','Layer 2','ARP','MAC','lokal','Subnetz']}
+    ],difficulty:1
+  },
+  {
+    id:'stp',term:'Spanning Tree Protocol',short:'Verhindert Schleifen in redundanten L2-Topologien',icon:'🌳',
+    definition:'Das Spanning Tree Protocol (STP, IEEE 802.1D) verhindert Schleifen (Loops) in redundanten Layer-2-Netzwerken. Ohne STP würden Broadcast-Frames endlos im Kreis laufen (Broadcast Storm). STP wählt eine Root Bridge (niedrigste Bridge Priority + MAC), bestimmt Root Ports und Designated Ports und blockiert redundante Pfade. Port-Zustände: Blocking → Listening → Learning → Forwarding.',
+    analogy:'STP ist wie ein Verkehrsleitsystem bei einer Straße mit mehreren parallelen Wegen: Es sperrt einige Wege (Blocking), damit niemand im Kreis fährt, hält aber Umleitungen bereit, falls der Hauptweg ausfällt.',
+    hints:['Verhindert Broadcast Storms durch Blockieren redundanter Pfade','Root Bridge = niedrigste Priority (Default 32768) + niedrigste MAC','Port-Zustände: Blocking → Listening → Learning → Forwarding'],
+    questions:[
+      {type:'fill',q:'STP verhindert ___ in redundanten Layer-2-Netzen. Die Default Bridge Priority ist ___.',keywords:['Schleifen','32768']},
+      {type:'choice',q:'Was passiert ohne STP in einem redundanten L2-Netzwerk?',correct:'Broadcast Storms durch endlos kreisende Frames',wrong:['Die Bandbreite verdoppelt sich','VLANs werden automatisch erstellt','MAC-Adressen gehen verloren']},
+      {type:'explain',q:'Wie wird die Root Bridge bei STP bestimmt?',keywords:['Priority','Bridge','niedrigste','MAC','32768','BPDU','Vergleich']}
+    ],difficulty:3
+  },
+  {
+    id:'arp',term:'ARP',short:'Auflösung von IP-Adressen zu MAC-Adressen',icon:'🔍',
+    definition:'Das Address Resolution Protocol (ARP) löst IP-Adressen in MAC-Adressen auf. Wenn ein Host ein Paket an eine IP im selben Subnetz senden will, aber die zugehörige MAC-Adresse nicht kennt, sendet er einen ARP-Request als Broadcast. Der Host mit der passenden IP antwortet mit einem ARP-Reply (Unicast), der seine MAC-Adresse enthält. Das Ergebnis wird im ARP-Cache gespeichert.',
+    analogy:'ARP ist wie ein Rufen in einem Raum: „Wer hat die IP 192.168.1.5?" (Broadcast). Die Person mit dieser IP antwortet: „Das bin ich, hier ist meine MAC-Adresse!" (Unicast). Du merkst dir die Antwort (ARP-Cache), damit du nicht jedes Mal erneut fragen musst.',
+    hints:['ARP-Request = Broadcast (an alle), ARP-Reply = Unicast (gezielt)','Löst IP → MAC auf, Ergebnis wird im ARP-Cache gespeichert','Funktioniert nur innerhalb eines Subnetzes (Layer 2)'],
+    questions:[
+      {type:'fill',q:'ARP löst ___-Adressen in ___-Adressen auf.',keywords:['IP','MAC']},
+      {type:'choice',q:'Wie wird ein ARP-Request gesendet?',correct:'Als Broadcast an alle Geräte im Subnetz',wrong:['Als Unicast an den Router','Als Multicast an eine Gruppe','Direkt an die Ziel-MAC']},
+      {type:'explain',q:'Warum ist ARP nur innerhalb eines Subnetzes relevant?',keywords:['Broadcast','Layer 2','Subnetz','Router','MAC','lokal']}
+    ],difficulty:2
+  }
+];
+
+const glossaryTermMap={};
+glossaryTerms.forEach(t=>{
+  const variants=[t.term.toLowerCase()];
+  if(t.id==='switch'){variants.push('switches','layer-2-switch','l2-switch');}
+  if(t.id==='router'){variants.push('routers','layer-3-gerät','l3-gerät','layer 3');}
+  if(t.id==='vlan'){variants.push('vlans','virtual lan','virtual local area network','vlan-id');}
+  if(t.id==='trunk'){variants.push('trunk port','trunk ports','trunks','tagged port','802.1q');}
+  if(t.id==='routing-tabelle'){variants.push('routing-tabellen','routingtabelle','routing tabelle');}
+  if(t.id==='default-gateway'){variants.push('gateway','default-gw','standardgateway');}
+  if(t.id==='stp'){variants.push('spanning tree','spanning-tree','802.1d','stp');}
+  if(t.id==='arp'){variants.push('address resolution protocol','arp-request','arp-reply','arp-cache');}
+  variants.forEach(v=>{glossaryTermMap[v]=t;});
+});
+
+let glossaryState={};
+function loadGlossaryState(){try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY)||'{}');}catch(e){glossaryState={};}}
+function saveGlossaryState(){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));}
+function getTermLevel(id){return(glossaryState[id]&&glossaryState[id].level)||0;}
+function setTermLevel(id,level){if(!glossaryState[id])glossaryState[id]={};glossaryState[id].level=Math.min(3,Math.max(0,level));saveGlossaryState();renderGlossary();}
+function getMastered(){return glossaryTerms.filter(t=>getTermLevel(t.id)>=3).length;}
+
+function renderGlossary(){
+  const grid=document.getElementById('glossary-grid');
+  const mastered=getMastered();
+  const total=glossaryTerms.length;
+  document.getElementById('glossary-progress-fill').style.width=(mastered/total*100)+'%';
+  document.getElementById('glossary-progress-count').textContent=mastered+' / '+total+' gemeistert';
+  grid.innerHTML='';
+  glossaryTerms.forEach(t=>{
+    const level=getTermLevel(t.id);
+    const card=document.createElement('div');
+    card.className='glossary-card';card.dataset.level=level;card.dataset.id=t.id;
+    card.innerHTML=`<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
+    card.addEventListener('click',()=>openGlossaryLearn(t.id));
+    grid.appendChild(card);
+  });
+}
+
+let glossaryCurrentTerm=null,glossaryPhase=0,glossaryHintIndex=0,glossaryAnswered=false;
+
+function openGlossaryLearn(id){
+  const t=glossaryTerms.find(x=>x.id===id);if(!t)return;
+  glossaryCurrentTerm=t;glossaryPhase=0;glossaryHintIndex=0;glossaryAnswered=false;
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',c.dataset.id===id));
+  const panel=document.getElementById('glossary-learn');
+  panel.className='glossary-learn visible';
+  renderGlossaryPhase();
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeGlossaryLearn(){
+  document.getElementById('glossary-learn').className='glossary-learn';
+  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
+  glossaryCurrentTerm=null;
+}
+
+function glossaryGoToPhase(idx){
+  if(idx>glossaryPhase||idx<0)return;
+  glossaryPhase=idx;glossaryHintIndex=0;glossaryAnswered=false;
+  renderGlossaryPhase();
+}
+
+function renderGlossaryPhase(){
+  const t=glossaryCurrentTerm;if(!t)return;
+  const panel=document.getElementById('glossary-learn');
+  const phases=['Verstehen','Anwenden','Prüfen'];
+  let html=`<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="closeGlossaryLearn()">✕</button></div>`;
+  html+=`<div class="gl-phase-indicator">`;
+  phases.forEach((p,i)=>{
+    let cls='gl-phase';
+    if(i<glossaryPhase)cls+=' done';
+    if(i===glossaryPhase)cls+=' current';
+    const clickable=i<=glossaryPhase;
+    html+=`<div class="${cls}"${clickable?' onclick="glossaryGoToPhase('+i+')" title="Zurück zu '+p+'"':''}>${p}</div>`;
+  });
+  html+=`</div><div class="gl-content">`;
+
+  if(glossaryPhase===0){
+    html+=`<div class="gl-analogy">💡 ${t.analogy}</div>`;
+    html+=`<div class="gl-definition">${t.definition}</div>`;
+    html+=`<div class="gl-hints" id="gl-hints">`;
+    t.hints.forEach((h,i)=>{html+=`<div class="gl-hint" id="gl-hint-${i}">💡 ${h}</div>`;});
+    html+=`</div>`;
+    html+=`<button class="gl-hint-btn" onclick="showGlossaryHint()">Hinweis anzeigen</button><br>`;
+    html+=`<button class="gl-btn primary" onclick="glossaryNextPhase()">Verstanden → weiter</button>`;
+  } else if(glossaryPhase===1){
+    const q=t.questions[0];
+    html+=`<div class="gl-question">${q.q}</div>`;
+    html+=`<input class="gl-input" id="gl-fill-input" placeholder="Begriffe eingeben..." autocomplete="off">`;
+    html+=`<button class="gl-btn primary" onclick="checkGlossaryFill()">Prüfen</button>`;
+    html+=`<div id="gl-feedback"></div>`;
+  } else if(glossaryPhase===2){
+    const q=t.questions[1];
+    html+=`<div class="gl-question">${q.q}</div>`;
+    const opts=shuffleGlossary([q.correct,...q.wrong]);
+    html+=`<div class="gl-choices" id="gl-choices">`;
+    opts.forEach(o=>{html+=`<button class="gl-choice" onclick="checkGlossaryChoice(this,'${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}')">${o}</button>`;});
+    html+=`</div><div id="gl-feedback"></div>`;
+  }
+  html+=`</div>`;
+  panel.innerHTML=html;
+  if(glossaryPhase===1){const inp=document.getElementById('gl-fill-input');if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkGlossaryFill();});}}
+}
+
+function showGlossaryHint(){
+  const t=glossaryCurrentTerm;if(!t)return;
+  if(glossaryHintIndex<t.hints.length){
+    const h=document.getElementById('gl-hint-'+glossaryHintIndex);
+    if(h)h.classList.add('visible');
+    glossaryHintIndex++;
+  }
+}
+
+function glossaryNextPhase(){
+  glossaryPhase++;glossaryAnswered=false;
+  if(glossaryPhase>2){
+    const level=getTermLevel(glossaryCurrentTerm.id);
+    setTermLevel(glossaryCurrentTerm.id,level+1);
+    closeGlossaryLearn();
+    return;
+  }
+  renderGlossaryPhase();
+}
+
+function checkGlossaryFill(){
+  if(glossaryAnswered)return;
+  const inp=document.getElementById('gl-fill-input');
+  const fb=document.getElementById('gl-feedback');
+  const val=inp.value.trim().toLowerCase();if(!val){return;}
+  glossaryAnswered=true;
+  const q=glossaryCurrentTerm.questions[0];
+  let found=0;
+  let kwHtml='';
+  q.keywords.forEach(kw=>{
+    if(val.includes(kw.toLowerCase())){found++;kwHtml+=`<span class="gl-keyword found">✓ ${kw}</span> `;}
+    else{kwHtml+=`<span class="gl-keyword missing">✗ ${kw}</span> `;}
+  });
+  if(found>=q.keywords.length){
+    fb.innerHTML=`<div class="gl-feedback success">Richtig! Alle Schlüsselbegriffe gefunden.<br>${kwHtml}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Weiter →</button>`;
+  } else if(found>0){
+    fb.innerHTML=`<div class="gl-feedback info">Teilweise richtig! ${found}/${q.keywords.length} Begriffe gefunden.<br>${kwHtml}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryAnswered=false;document.getElementById('gl-feedback').innerHTML='';">Nochmal versuchen</button> <button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Trotzdem weiter →</button>`;
+    glossaryAnswered=false;
+  } else {
+    fb.innerHTML=`<div class="gl-feedback error">Nicht ganz. Gesuchte Begriffe:<br>${kwHtml}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryAnswered=false;document.getElementById('gl-feedback').innerHTML='';">Nochmal versuchen</button> <button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Trotzdem weiter →</button>`;
+    glossaryAnswered=false;
+  }
+}
+
+function checkGlossaryChoice(el,selected,correct){
+  if(glossaryAnswered)return;
+  glossaryAnswered=true;
+  const fb=document.getElementById('gl-feedback');
+  document.querySelectorAll('#gl-choices .gl-choice').forEach(c=>{
+    if(c.textContent===correct)c.classList.add('correct');
+    if(c===el&&selected!==correct)c.classList.add('wrong');
+    c.style.pointerEvents='none';
+  });
+  if(selected===correct){
+    fb.innerHTML=`<div class="gl-feedback success">Richtig!</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Abschließen →</button>`;
+  } else {
+    fb.innerHTML=`<div class="gl-feedback error">Falsch! Richtig: ${correct}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Trotzdem weiter →</button>`;
+  }
+}
+
+function shuffleGlossary(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// Tooltip
+const tooltip=document.getElementById('glossary-tooltip');
+function initGlossaryTooltips(){
+  const selectors='.card p, .card li, .task-display, .task-sub, .summary-card p, #topo-info, td';
+  document.querySelectorAll(selectors).forEach(el=>{
+    const original=el.innerHTML;
+    let html=original;
+    const sorted=Object.keys(glossaryTermMap).sort((a,b)=>b.length-a.length);
+    sorted.forEach(variant=>{
+      const escaped=variant.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+      const regex=new RegExp(`(?<!<[^>]*)\\b(${escaped})\\b(?![^<]*>)(?![^<]*class=)`,`gi`);
+      html=html.replace(regex,(match)=>{
+        return `<span class="glossary-term" data-term="${glossaryTermMap[variant].id}">${match}</span>`;
+      });
+    });
+    if(html!==original)el.innerHTML=html;
+  });
+
+  document.querySelectorAll('.glossary-term').forEach(el=>{
+    el.addEventListener('mouseenter',e=>{
+      const t=glossaryTerms.find(x=>x.id===el.dataset.term);if(!t)return;
+      document.getElementById('gt-name').textContent=t.term;
+      document.getElementById('gt-short').textContent=t.short;
+      tooltip.style.display='block';
+      const rect=el.getBoundingClientRect();
+      let top=rect.bottom+8,left=rect.left;
+      if(top+160>window.innerHeight)top=rect.top-160;
+      if(left+260>window.innerWidth)left=window.innerWidth-270;
+      if(left<10)left=10;
+      tooltip.style.top=top+'px';tooltip.style.left=left+'px';
+    });
+    el.addEventListener('mouseleave',()=>{tooltip.style.display='none';});
+    el.addEventListener('click',e=>{
+      e.preventDefault();tooltip.style.display='none';
+      openGlossaryLearn(el.dataset.term);
+      document.getElementById('glossary-section').scrollIntoView({behavior:'smooth'});
+    });
+  });
+}
+
+// Init
+loadGlossaryState();
+renderGlossary();
+setTimeout(initGlossaryTooltips,200);
+</script>
+<script src="nav-companion.js"></script>
+</body>
+</html>
