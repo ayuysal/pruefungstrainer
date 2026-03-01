@@ -484,7 +484,7 @@
   .fe-sz{width:32px;height:28px;border-radius:6px;border:1px solid var(--border);background:none;color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:11px;cursor:pointer;transition:all .2s;font-weight:600}
   .fe-sz:hover{border-color:var(--text);color:var(--text)}
   .fe-sz.active{background:var(--accent);border-color:var(--accent);color:#fff}
-  .fe-textarea{width:100%;min-height:200px;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:18px 20px;color:var(--text);font-family:'Outfit',sans-serif;font-size:22px;font-weight:400;line-height:1.6;resize:vertical;outline:none;transition:border .25s}
+  .fe-textarea{width:100%;min-height:200px;background:var(--bg);border:2px solid var(--border);border-radius:14px;padding:18px 20px;color:var(--text);font-family:'Outfit',sans-serif;font-size:22px;font-weight:400;line-height:1.6;resize:vertical;outline:none;transition:border .25s;box-sizing:border-box;-webkit-text-size-adjust:100%}
   .fe-textarea::placeholder{color:rgba(255,255,255,.15);font-weight:300;font-style:italic}
   .fe-textarea:focus{border-color:var(--accent)}
   .fe-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
@@ -524,15 +524,16 @@
   .sc-questions select{flex:1;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;font-size:12px;padding:0 10px;outline:none;cursor:pointer;transition:border .2s}
   .sc-questions select:focus{border-color:var(--cyan)}
   .sc-wrap{position:relative}
-  .sc-ghost-layer{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:0;overflow:hidden;white-space:pre-wrap;word-wrap:break-word}
-  .sc-ghost-layer.sc-input{white-space:nowrap;overflow:hidden;display:flex;align-items:center}
+  .sc-ghost-layer,.sc-color-layer{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;overflow:auto;white-space:pre-wrap;word-wrap:break-word;box-sizing:border-box;-webkit-text-size-adjust:100%;scrollbar-width:none;-ms-overflow-style:none}
+  .sc-ghost-layer::-webkit-scrollbar,.sc-color-layer::-webkit-scrollbar{display:none}
+  .sc-ghost-layer{z-index:0}
+  .sc-ghost-layer.sc-input,.sc-color-layer.sc-input{white-space:nowrap;overflow:hidden;display:flex;align-items:center}
   .sc-typed{visibility:hidden}
   .sc-ghost{color:rgba(255,255,255,.22);font-style:italic}
-  .sc-wrap textarea,.sc-wrap input[type="text"]{position:relative;z-index:1;background:transparent!important}
+  .sc-wrap textarea,.sc-wrap input[type="text"]{position:relative;z-index:1;background:transparent!important;-webkit-text-size-adjust:100%}
   .sc-wrap.sc-active textarea::placeholder,.sc-wrap.sc-active input::placeholder{color:transparent}
   /* Ankerwörter Color Layer */
-  .sc-color-layer{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:2;overflow:hidden;white-space:pre-wrap;word-wrap:break-word}
-  .sc-color-layer.sc-input{white-space:nowrap;overflow:hidden;display:flex;align-items:center}
+  .sc-color-layer{z-index:2}
   .sc-wrap.sc-coloring textarea{color:transparent;caret-color:var(--text)}
   .sc-wrap.sc-coloring input[type="text"]{color:transparent;caret-color:var(--text)}
   .sc-anchor-term{color:var(--accent);font-weight:600}
@@ -1837,8 +1838,14 @@ function scAttach(inputId, modelAnswer, keywords) {
     var sharedStyle = {
       fontFamily: cs.fontFamily, fontSize: cs.fontSize,
       fontWeight: cs.fontWeight, lineHeight: cs.lineHeight,
-      padding: cs.padding, border: '2px solid transparent',
-      borderRadius: cs.borderRadius
+      paddingTop: cs.paddingTop, paddingRight: cs.paddingRight,
+      paddingBottom: cs.paddingBottom, paddingLeft: cs.paddingLeft,
+      borderTop: cs.borderTopWidth + ' solid transparent',
+      borderRight: cs.borderRightWidth + ' solid transparent',
+      borderBottom: cs.borderBottomWidth + ' solid transparent',
+      borderLeft: cs.borderLeftWidth + ' solid transparent',
+      borderRadius: cs.borderRadius,
+      boxSizing: cs.boxSizing || 'border-box'
     };
 
     // Create ghost layer (z-index 0 - behind)
@@ -1854,6 +1861,16 @@ function scAttach(inputId, modelAnswer, keywords) {
     color.className = 'sc-color-layer' + (input.tagName === 'INPUT' ? ' sc-input' : '');
     Object.assign(color.style, sharedStyle);
     parent.appendChild(color);
+
+    // Scroll sync: overlay layers follow textarea scroll
+    if (input.tagName === 'TEXTAREA') {
+      input._scScrollSync = function() {
+        var st = input.scrollTop, sl = input.scrollLeft;
+        ghost.scrollTop = st; ghost.scrollLeft = sl;
+        if (color) { color.scrollTop = st; color.scrollLeft = sl; }
+      };
+      input.addEventListener('scroll', input._scScrollSync);
+    }
   }
 
   scActiveInputs[inputId] = { ghost: ghost, input: input, color: color };
@@ -1877,6 +1894,10 @@ function scDetach(inputId) {
   if (info.input && info.input._scListener) {
     info.input.removeEventListener('input', info.input._scListener);
     info.input._scListener = null;
+  }
+  if (info.input && info.input._scScrollSync) {
+    info.input.removeEventListener('scroll', info.input._scScrollSync);
+    info.input._scScrollSync = null;
   }
   delete scActiveInputs[inputId];
   delete scModelAnswers[inputId];
