@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sortieralgorithmen – Interaktiver Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
   :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c;--bubble:#38bdf8;--selection:#f472b6;--insertion:#51cf66}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -78,72 +79,6 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
   @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
   .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -422,7 +357,9 @@ resetViz();
 //  GLOSSARY – Begriffe lernen
 // ══════════════════════════════════════
 
-const GLOSSARY = [
+var TRAINER_ID = 'sortier-trainer';
+
+var GLOSSARY = [
   {
     term: 'Bubble Sort',
     short: 'Nachbarn vergleichen und tauschen',
@@ -561,325 +498,106 @@ const GLOSSARY = [
   }
 ];
 
-// ── State Management ──
-const glossaryState = { levels: {}, current: null, hintIdx: 0 };
-
-function glossaryLoad() {
-  try {
-    const s = localStorage.getItem('glossary-sortier');
-    if (s) glossaryState.levels = JSON.parse(s);
-  } catch(e) {}
-  GLOSSARY.forEach(g => { if (!(g.term in glossaryState.levels)) glossaryState.levels[g.term] = 0; });
-}
-
-function glossarySave() {
-  localStorage.setItem('glossary-sortier', JSON.stringify(glossaryState.levels));
-}
-
-// ── Grid Rendering ──
-function glossaryRenderGrid() {
-  const grid = document.getElementById('glossary-grid');
-  grid.innerHTML = '';
-  const icons = ['\u2753', '\uD83D\uDCA1', '\uD83D\uDD0D', '\u2B50'];
-  GLOSSARY.forEach(g => {
-    const lv = glossaryState.levels[g.term] || 0;
-    const c = document.createElement('div');
-    c.className = 'glossary-card' + (glossaryState.current === g.term ? ' active' : '');
-    c.dataset.level = lv;
-    c.onclick = () => glossaryOpen(g.term);
-    c.innerHTML = '<div class="gc-icon">' + icons[lv] + '</div><div class="gc-term">' + g.term + '</div><div class="gc-short">' + g.short + '</div><div class="gc-level"></div>';
-    grid.appendChild(c);
-  });
-  glossaryUpdateProgress();
-}
-
-function glossaryUpdateProgress() {
-  const mastered = GLOSSARY.filter(g => glossaryState.levels[g.term] >= 3).length;
-  const total = GLOSSARY.length;
-  const pct = Math.round(mastered / total * 100);
-  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
-  document.getElementById('glossary-fill').style.width = pct + '%';
-  document.getElementById('glossary-count').textContent = pct + '%';
-}
-
-// ── Open Term ──
-function glossaryOpen(term) {
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.current = term;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-
-  document.getElementById('gl-title').textContent = g.term;
-  glossaryRenderPhases(lv);
-
-  if (lv === 0) glossaryPhase1(g);
-  else if (lv === 1) glossaryPhase2(g);
-  else if (lv === 2) glossaryPhase3(g);
-  else glossaryMastered(g);
-
-  document.getElementById('glossary-learn').classList.add('visible');
-  glossaryRenderGrid();
-  document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function glossaryRenderPhases(lv, activePhase) {
-  if (activePhase === undefined) activePhase = lv;
-  const names = ['\uD83D\uDCA1 Kennenlernen', '\uD83D\uDD0D \u00dcberpr\u00fcfen', '\u2B50 Beweisen'];
-  document.getElementById('gl-phases').innerHTML = names.map((n, i) => {
-    let cls = 'gl-phase';
-    if (i === activePhase) cls += ' current';
-    else if (i < lv || lv === 3) cls += ' done';
-    let onclick = '';
-    if (i <= lv || lv === 3) onclick = ' onclick="glossaryGoToPhase(' + i + ')"';
-    return '<div class="' + cls + '"' + onclick + '>' + n + '</div>';
-  }).join('');
-}
-
-function glossaryGoToPhase(phaseIdx) {
-  const term = glossaryState.current;
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-  glossaryRenderPhases(lv, phaseIdx);
-  if (phaseIdx === 0) glossaryPhase1(g);
-  else if (phaseIdx === 1) glossaryPhase2(g);
-  else if (phaseIdx === 2) glossaryPhase3(g);
-}
-
-// ── Phase 1: Kennenlernen ──
-function glossaryPhase1(g) {
-  const el = document.getElementById('gl-content');
-  let html = '<div class="gl-analogy">' + g.analogy + '</div>';
-  html += '<div class="gl-definition">' + g.definition + '</div>';
-  html += '<div class="gl-hints" id="gl-hints">';
-  g.hints.forEach((h, i) => {
-    html += '<div class="gl-hint' + (i === 0 ? ' visible' : '') + '" id="gh-' + i + '">' + h + '</div>';
-  });
-  html += '</div>';
-  if (g.hints.length > 1) html += '<button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">N\u00e4chster Hinweis \u2192</button>';
-  html += '<button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden! \u2713</button>';
-  el.innerHTML = html;
-}
-
-function glossaryNextHint() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  if (!g) return;
-  glossaryState.hintIdx++;
-  if (glossaryState.hintIdx < g.hints.length) {
-    document.getElementById('gh-' + glossaryState.hintIdx).classList.add('visible');
+var GP_STORIES = {
+  'Bubble Sort': {
+    route: 'Du stehst in einem Schwimmbad und beobachtest die Luftblasen',
+    scenes: [
+      {kw: 'Nachbarn', img: '🫧 Blasen-Paare', text: 'Zwei Luftblasen schweben nebeneinander – sie sind Nachbarn im Wasser und werden verglichen.'},
+      {kw: 'tauschen', img: '🔄 Platzwechsel', text: 'Die größere Blase drängelt sich vor die kleinere – sie tauschen ihre Positionen.'},
+      {kw: 'blubbern', img: '⬆️ Aufstieg', text: 'Die größte Blase blubbert unaufhaltsam nach oben ans Wasserende.'},
+      {kw: 'Durchlauf', img: '🏊 Beckenlänge', text: 'Der Bademeister schwimmt eine komplette Beckenlänge – ein Durchlauf durch die Liste.'},
+      {kw: 'O(n)', img: '😎 Ruhiges Wasser', text: 'Wenn das Wasser schon still ist (sortiert), reicht EIN Blick über die Oberfläche – Best Case O(n).'}
+    ]
+  },
+  'Selection Sort': {
+    route: 'Du bist auf einem Flohmarkt und suchst die billigsten Schätze',
+    scenes: [
+      {kw: 'Minimum', img: '🔍 Billigster Preis', text: 'Du durchsuchst den ganzen Tisch nach dem billigsten Artikel – das Minimum des unsortierten Bereichs.'},
+      {kw: 'unsortiert', img: '🗑️ Wühltisch', text: 'Der chaotische Wühltisch ist der unsortierte Teil – hier suchst du jedes Mal.'},
+      {kw: 'tauscht', img: '🤝 Handschlag-Deal', text: 'Du tauscht den gefundenen Schatz mit dem ersten Artikel auf dem Tisch – genau EIN Tausch pro Runde.'},
+      {kw: 'links', img: '🛒 Einkaufswagen', text: 'Dein Einkaufswagen füllt sich von links nach rechts – der sortierte Bereich wächst.'},
+      {kw: 'O(n²)', img: '😓 Immer suchen', text: 'Egal ob der Tisch schon sortiert ist – du musst JEDES MAL alles durchsuchen. Immer O(n²).'}
+    ]
+  },
+  'Insertion Sort': {
+    route: 'Du sitzt am Kartentisch und sortierst dein Blatt',
+    scenes: [
+      {kw: 'key', img: '🃏 Neue Karte', text: 'Du ziehst eine neue Karte (den key) vom Stapel und hältst sie in der Hand.'},
+      {kw: 'einfügen', img: '📥 Einschieben', text: 'Du schiebst die Karte zwischen die anderen an genau die richtige Stelle ein.'},
+      {kw: 'verschieben', img: '👉 Platz machen', text: 'Die anderen Karten werden nach rechts verschoben, um Platz zu machen – keine Tausche!'},
+      {kw: 'sortiert', img: '✅ Geordnetes Blatt', text: 'Der linke Teil deiner Hand ist immer perfekt sortiert – er wächst mit jeder Karte.'},
+      {kw: 'O(n)', img: '😌 Perfektes Blatt', text: 'Wenn die Karten schon sortiert ankommen, legst du jede einfach ans Ende – Best Case O(n).'}
+    ]
+  },
+  'Vergleichsbasiertes Sortieren': {
+    route: 'Du bist Schiedsrichter bei einem Kampfsport-Turnier',
+    scenes: [
+      {kw: 'Vergleiche', img: '⚔️ Zweikampf', text: 'Immer nur ZWEI Kämpfer treten gegeneinander an – paarweise Vergleiche bestimmen den Sieger.'},
+      {kw: 'paarweise', img: '👥 Duell-Arena', text: 'Die Arena erlaubt nur Duelle – nie drei auf einmal. Paarweise ist die einzige Methode.'},
+      {kw: 'O(n log n)', img: '🏆 Turnier-Baum', text: 'Der schnellste Turnierbaum hat O(n log n) Kämpfe – das ist die mathematische untere Schranke.'},
+      {kw: 'untere Schranke', img: '🧱 Boden-Mauer', text: 'Eine massive Mauer am Boden – darunter kann kein vergleichsbasiertes Verfahren jemals kommen.'},
+      {kw: 'Counting Sort', img: '📊 Zähltafel', text: 'Am Rand steht jemand mit einer Strichliste – Counting Sort braucht keine Vergleiche und durchbricht die Mauer!'}
+    ]
+  },
+  'Tauschoperation (Swap)': {
+    route: 'Zwei Freunde wollen im Kino ihre Plätze tauschen',
+    scenes: [
+      {kw: 'temp', img: '🪑 Leerer Stuhl', text: 'Person A steht auf und setzt sich auf einen leeren Stuhl daneben – das ist die temporäre Variable temp.'},
+      {kw: 'tauschen', img: '🔄 Platztausch', text: 'Person B rutscht auf A\'s Platz, dann setzt sich A auf B\'s alten Platz – Tausch komplett!'},
+      {kw: 'O(n²)', img: '😰 Viele Tausche', text: 'Bei Bubble Sort müssen im schlimmsten Fall O(n²) solcher Platztausche stattfinden.'},
+      {kw: 'O(n)', img: '🎯 Wenige Tausche', text: 'Selection Sort braucht nur O(n) Tausche – pro Durchlauf genau einen gezielten Tausch.'},
+      {kw: 'Shifts', img: '🚂 Zugwaggons', text: 'Bei Insertion Sort gibt es keine Tausche, sondern Shifts – wie Waggons, die auf dem Gleis verschoben werden.'}
+    ]
+  },
+  'Zeitkomplexität': {
+    route: 'Du bestellst Pizza für immer größere Gruppen',
+    scenes: [
+      {kw: 'O(n²)', img: '📈 Quadratischer Berg', text: 'Doppelt so viele Gäste = VIER mal so viel Chaos. Die Kurve steigt wie ein steiler Berg.'},
+      {kw: 'quadratisch', img: '🟥 Flächenexplosion', text: 'Wie ein Quadrat: Seitenlänge verdoppeln = Fläche vervierfachen. Das ist quadratisches Wachstum.'},
+      {kw: 'Eingabegröße', img: '👥 Gruppengröße', text: 'Die Anzahl der Gäste (n) ist die Eingabegröße – je mehr, desto dramatischer der Aufwand.'},
+      {kw: 'Worst Case', img: '🌧️ Regentag', text: 'Beim schlimmsten Wetter (Worst Case) dauert die Lieferung am längsten – alle drei Verfahren brauchen O(n²).'},
+      {kw: 'n', img: '🔢 Personenzahl', text: 'n ist einfach die Zahl der Elemente. Bei n=10 sind es 100 Schritte, bei n=100 schon 10.000!'}
+    ]
+  },
+  'Best Case / Worst Case': {
+    route: 'Du räumst dein Zimmer auf – mal chaotisch, mal ordentlich',
+    scenes: [
+      {kw: 'Best Case', img: '✨ Aufgeräumt', text: 'Dein Zimmer ist schon perfekt aufgeräumt – du musst nur einmal durchschauen. Best Case!'},
+      {kw: 'Worst Case', img: '🌪️ Totales Chaos', text: 'Alles steht Kopf – jedes einzelne Teil muss bewegt werden. Das ist der Worst Case.'},
+      {kw: 'sortiert', img: '📚 Ordentliches Regal', text: 'Eine bereits sortierte Liste ist wie ein aufgeräumtes Bücherregal – Bubble und Insertion erkennen das sofort.'},
+      {kw: 'Selection', img: '🔍 Blinder Sucher', text: 'Selection Sort ist wie ein Blinder, der jedes Mal ALLES abtasten muss – egal ob schon sortiert oder nicht.'},
+      {kw: 'O(n)', img: '🏃 Schneller Sprint', text: 'Bei sortierter Eingabe sprinten Bubble und Insertion in O(n) durch – nur ein einziger Durchlauf nötig.'}
+    ]
+  },
+  'Stabilität': {
+    route: 'Ein Wettbewerb mit Gleichstand – wer stand zuerst auf der Bühne?',
+    scenes: [
+      {kw: 'Reihenfolge', img: '📋 Startnummern', text: 'Bei Gleichstand zählt die Startnummer – die ursprüngliche Reihenfolge muss erhalten bleiben.'},
+      {kw: 'stabil', img: '⚖️ Faire Jury', text: 'Eine faire Jury (stabiler Algorithmus) respektiert die Anmeldereihenfolge bei gleicher Punktzahl.'},
+      {kw: 'instabil', img: '🎲 Willkür-Richter', text: 'Ein willkürlicher Richter (Selection Sort) wirft die Reihenfolge durcheinander – instabil!'},
+      {kw: 'Nachbarn', img: '🤝 Sanfter Tausch', text: 'Bubble Sort tauscht nur Nachbarn und NIE bei Gleichheit – darum bleibt die Reihenfolge erhalten.'},
+      {kw: 'Swap', img: '🏗️ Fernswap', text: 'Selection Sort macht weite Swaps über die Liste hinweg – dabei überspringt er gleiche Elemente und zerstört die Ordnung.'}
+    ]
   }
-  if (glossaryState.hintIdx >= g.hints.length - 1) {
-    const btn = document.getElementById('gl-hint-btn');
-    if (btn) btn.style.display = 'none';
-  }
-}
+};
 
-// ── Phase 2: Überprüfen ──
-function glossaryPhase2(g) {
-  const q = g.questions.find(x => x.type === 'fill') || g.questions.find(x => x.type === 'choice') || g.questions[0];
-  const el = document.getElementById('gl-content');
-  if (q.type === 'fill') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-      '<input type="text" class="gl-input" id="gl-answer" placeholder="Deine Antwort..." onkeydown="if(event.key===\'Enter\')glossaryCheckFill()">' +
-      (q.hint ? '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Tipp: ' + q.hint + '</div>' : '') +
-      '<button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-  } else if (q.type === 'choice') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div><div class="gl-choices">' +
-      q.options.map((o, i) => '<button class="gl-choice" onclick="glossaryCheckChoice(' + i + ')">' + o + '</button>').join('') +
-      '</div><div id="gl-feedback"></div>';
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'swap': 'Tauschoperation (Swap)',
+  'swaps': 'Tauschoperation (Swap)',
+  'tausche': 'Tauschoperation (Swap)',
+  'tauscht': 'Tauschoperation (Swap)',
+  'tauschoperationen': 'Tauschoperation (Swap)',
+  'stabil': 'Stabilität',
+  'instabil': 'Stabilität',
+  'o(n\u00b2)': 'Zeitkomplexität',
+  'o(n)': 'Zeitkomplexität',
+  'best case': 'Best Case / Worst Case',
+  'worst case': 'Best Case / Worst Case'
+};
 
-function glossaryCheckFill() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'fill');
-  const val = document.getElementById('gl-answer').value.trim();
-  const fb = document.getElementById('gl-feedback');
-  const ok = [q.a, ...(q.alt || [])].some(a => val.toLowerCase() === a.toLowerCase());
-  if (ok) {
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89 "' + q.a + '" ist korrekt.</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist: <strong>' + q.a + '</strong>. Versuch es nochmal!</div>';
-    document.getElementById('gl-answer').value = '';
-    document.getElementById('gl-answer').focus();
-  }
-}
-
-function glossaryCheckChoice(idx) {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'choice');
-  const btns = document.querySelectorAll('.gl-choice');
-  const fb = document.getElementById('gl-feedback');
-  btns.forEach(b => b.style.pointerEvents = 'none');
-  if (idx === q.correct) {
-    btns[idx].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    btns[idx].classList.add('wrong');
-    btns[q.correct].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist markiert.</div>';
-    setTimeout(() => {
-      btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('wrong', 'correct'); });
-      fb.innerHTML = '';
-    }, 2500);
-  }
-}
-
-// ── Phase 3: Beweisen ──
-function glossaryPhase3(g) {
-  const q = g.questions.find(x => x.type === 'explain');
-  if (!q) { glossaryLevelUp(); return; }
-  const el = document.getElementById('gl-content');
-  el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-    '<textarea class="gl-input" id="gl-answer" placeholder="Erkl\u00e4re in eigenen Worten..." rows="4"></textarea>' +
-    '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Verwende Fachbegriffe \u2013 je mehr Schl\u00fcsselw\u00f6rter du nennst, desto besser!</div>' +
-    '<button class="gl-btn primary" onclick="glossaryCheckExplain()">Antwort pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-}
-
-function glossaryCheckExplain() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'explain');
-  const val = document.getElementById('gl-answer').value.trim().toLowerCase();
-  const fb = document.getElementById('gl-feedback');
-  if (!val) { fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe eine Erkl\u00e4rung!</div>'; return; }
-
-  const found = [], missing = [];
-  q.keywords.forEach(kw => {
-    if (val.includes(kw.toLowerCase())) found.push(kw); else missing.push(kw);
-  });
-  const kwHtml = found.map(k => '<span class="gl-keyword found">\u2713 ' + k + '</span>').join('') +
-                 missing.map(k => '<span class="gl-keyword missing">\u2717 ' + k + '</span>').join('');
-
-  if (found.length >= (q.minKeywords || 3)) {
-    fb.innerHTML = '<div class="gl-feedback success">Sehr gut! \uD83C\uDF89 Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt!<br>' + kwHtml + '</div>';
-    setTimeout(() => glossaryLevelUp(), 1800);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback info">Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt (' + (q.minKeywords || 3) + ' ben\u00f6tigt):<br>' + kwHtml +
-      '<br><span style="font-size:12px;margin-top:6px;display:inline-block">Versuch es nochmal \u2013 nutze die fehlenden Begriffe!</span></div>';
-  }
-}
-
-// ── Mastered View ──
-function glossaryMastered(g) {
-  document.getElementById('gl-content').innerHTML =
-    '<div style="text-align:center;padding:20px 0">' +
-    '<div style="font-size:48px;margin-bottom:12px">\u2B50</div>' +
-    '<div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px">Gemeistert!</div>' +
-    '<div style="font-size:13px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.6">' +
-    'Du hast <strong style="color:var(--text)">' + g.term + '</strong> vollst\u00e4ndig gelernt. ' + g.short + '</div>' +
-    '<button class="gl-btn" style="margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)" onclick="glossaryReset(\'' + g.term.replace(/'/g, "\\'") + '\')">Nochmal lernen \u21BA</button></div>';
-}
-
-function glossaryLevelUp() {
-  const term = glossaryState.current;
-  let lv = (glossaryState.levels[term] || 0) + 1;
-  if (lv > 3) lv = 3;
-  glossaryState.levels[term] = lv;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryReset(term) {
-  glossaryState.levels[term] = 0;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryClose() {
-  document.getElementById('glossary-learn').classList.remove('visible');
-  glossaryState.current = null;
-  glossaryRenderGrid();
-}
-
-// ── Term Highlighting in Page Content ──
-function glossaryHighlightTerms() {
-  const termMap = {};
-  GLOSSARY.forEach(g => { termMap[g.term.toLowerCase()] = g.term; });
-  termMap['swap'] = 'Tauschoperation (Swap)';
-  termMap['swaps'] = 'Tauschoperation (Swap)';
-  termMap['tausche'] = 'Tauschoperation (Swap)';
-  termMap['tauscht'] = 'Tauschoperation (Swap)';
-  termMap['tauschoperationen'] = 'Tauschoperation (Swap)';
-  termMap['stabil'] = 'Stabilität';
-  termMap['instabil'] = 'Stabilität';
-  termMap['o(n\u00b2)'] = 'Zeitkomplexität';
-  termMap['o(n)'] = 'Zeitkomplexität';
-  termMap['best case'] = 'Best Case / Worst Case';
-  termMap['worst case'] = 'Best Case / Worst Case';
-
-  const allTerms = Object.keys(termMap).sort((a, b) => b.length - a.length);
-  const escaped = allTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
-
-  document.querySelectorAll('.algo-card .a-desc, .summary-card p, .compare-table td').forEach(el => {
-    if (el.dataset.glDone) return;
-    el.dataset.glDone = '1';
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    let n;
-    while (n = walker.nextNode()) nodes.push(n);
-
-    nodes.forEach(textNode => {
-      const txt = textNode.textContent;
-      pattern.lastIndex = 0;
-      if (!pattern.test(txt)) return;
-      pattern.lastIndex = 0;
-
-      const frag = document.createDocumentFragment();
-      let last = 0, m;
-      while (m = pattern.exec(txt)) {
-        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
-        const span = document.createElement('span');
-        span.className = 'glossary-term';
-        span.dataset.term = termMap[m[0].toLowerCase()] || m[0];
-        span.textContent = m[0];
-        frag.appendChild(span);
-        last = pattern.lastIndex;
-      }
-      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
-      textNode.parentNode.replaceChild(frag, textNode);
-    });
-  });
-}
-
-// ── Floating Tooltip ──
-const glTooltip = document.createElement('div');
-glTooltip.className = 'glossary-tooltip';
-document.body.appendChild(glTooltip);
-
-document.addEventListener('mouseover', e => {
-  const t = e.target.closest('.glossary-term');
-  if (!t) { glTooltip.style.display = 'none'; return; }
-  const g = GLOSSARY.find(x => x.term === t.dataset.term);
-  if (!g) return;
-  const lv = glossaryState.levels[g.term] || 0;
-  const labels = ['Noch nicht gelernt', 'Kennengelernt', '\u00dcberpr\u00fcft', 'Gemeistert \u2B50'];
-  glTooltip.innerHTML = '<div class="gt-name">' + g.term + '</div><div class="gt-short">' + g.short + '</div><div class="gt-link">' + labels[lv] + ' \u00b7 Klicke zum Lernen \u2192</div>';
-  const r = t.getBoundingClientRect();
-  glTooltip.style.display = 'block';
-  glTooltip.style.left = Math.max(8, r.left + r.width / 2 - 130) + 'px';
-  glTooltip.style.top = (r.top - glTooltip.offsetHeight - 8) + 'px';
-  if (parseFloat(glTooltip.style.top) < 8) glTooltip.style.top = (r.bottom + 8) + 'px';
-});
-
-document.addEventListener('mouseout', e => {
-  if (!e.target.closest('.glossary-term')) glTooltip.style.display = 'none';
-});
-
-document.addEventListener('click', e => {
-  const t = e.target.closest('.glossary-term');
-  if (t) { e.preventDefault(); glossaryOpen(t.dataset.term); }
-});
-
-// ── Initialize Glossary ──
-glossaryLoad();
-glossaryRenderGrid();
-glossaryHighlightTerms();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.algo-card .a-desc, .summary-card p, .compare-table td';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

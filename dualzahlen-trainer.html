@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dualzahlen – Interaktiver Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
   :root {
     --bg: #0c0e13;
@@ -219,72 +220,6 @@
   @keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
   @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
 
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -366,23 +301,25 @@
   <div class="glossary-section" id="glossary-section">
     <div class="section-title">
       <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--cyan));">📖</div>
-      <h2>Glossar – Fachbegriffe lernen</h2>
+      <h2>Begriffe lernen</h2>
+      <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
     </div>
 
     <div class="glossary-progress-bar">
-      <div class="gp-text">Lernfortschritt</div>
-      <div class="gp-bar"><div class="gp-fill" id="glossary-progress-fill" style="width:0%"></div></div>
-      <div class="gp-count" id="glossary-progress-count">0 / 8 gemeistert</div>
+      <span class="gp-text">Fortschritt</span>
+      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+      <span class="gp-count" id="glossary-count">0%</span>
     </div>
 
     <div class="glossary-grid" id="glossary-grid"></div>
-    <div class="glossary-learn" id="glossary-learn"></div>
-  </div>
-
-  <div class="glossary-tooltip" id="glossary-tooltip">
-    <div class="gt-name"></div>
-    <div class="gt-short"></div>
-    <div class="gt-link">Klicken zum Lernen</div>
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
   </div>
 </div>
 
@@ -628,705 +565,267 @@ function updateScore() {
 newTask();
 
 // ══════════════════════════════════════════════
-//  GLOSSAR – Interaktives Lern-System
+//  GLOSSARY DATA
 // ══════════════════════════════════════════════
 
-const GLOSSARY_KEY = 'glossary-dualzahlen';
+var TRAINER_ID = 'dualzahlen-trainer';
 
-const glossaryTerms = [
+var GLOSSARY = [
   {
-    id: 'dualsystem',
     term: 'Dualsystem',
-    icon: '🔢',
-    short: 'Zahlensystem zur Basis 2 mit den Ziffern 0 und 1.',
-    definition: 'Das Dualsystem (auch Binärsystem) ist ein Stellenwertsystem zur Basis 2. Es verwendet ausschließlich die Ziffern 0 und 1. Jede Stelle repräsentiert eine Zweierpotenz (2⁰, 2¹, 2², …). Es ist das fundamentale Zahlensystem der digitalen Datenverarbeitung, da elektronische Schaltungen zwei Zustände (an/aus, Spannung/keine Spannung) unterscheiden können.',
-    analogy: 'Stell dir einen Lichtschalter vor: Er kennt nur AN (1) und AUS (0). Wenn du 8 Schalter nebeneinander hast, kannst du mit ihren Kombinationen 256 verschiedene Zahlen darstellen – genau wie ein Byte im Computer.',
+    short: 'Zahlensystem zur Basis 2 mit den Ziffern 0 und 1',
+    definition: 'Das Dualsystem (auch Bin\u00e4rsystem) ist ein Stellenwertsystem zur Basis 2. Es verwendet ausschlie\u00dflich die Ziffern 0 und 1. Jede Stelle repr\u00e4sentiert eine Zweierpotenz (2\u2070, 2\u00b9, 2\u00b2, \u2026). Es ist das fundamentale Zahlensystem der digitalen Datenverarbeitung, da elektronische Schaltungen zwei Zust\u00e4nde (an/aus, Spannung/keine Spannung) unterscheiden k\u00f6nnen.',
+    analogy: '\ud83d\udca1 Stell dir einen Lichtschalter vor: Er kennt nur AN (1) und AUS (0). Wenn du 8 Schalter nebeneinander hast, kannst du mit ihren Kombinationen 256 verschiedene Zahlen darstellen \u2013 genau wie ein Byte im Computer.',
     hints: [
-      'Das Dualsystem wird auch Binärsystem genannt – beide Begriffe sind synonym.',
-      'Die größte Zahl mit n Bits ist 2ⁿ − 1. Mit 8 Bits: 2⁸ − 1 = 255.',
-      'Jede Stelle im Dualsystem hat den doppelten Wert der rechten Nachbarstelle: 1, 2, 4, 8, 16, 32, …'
+      'Das Dualsystem wird auch Bin\u00e4rsystem genannt \u2013 beide Begriffe sind synonym.',
+      'Die gr\u00f6\u00dfte Zahl mit n Bits ist 2\u207f \u2212 1. Mit 8 Bits: 2\u2078 \u2212 1 = 255.',
+      'Jede Stelle im Dualsystem hat den doppelten Wert der rechten Nachbarstelle: 1, 2, 4, 8, 16, 32, \u2026'
     ],
-    questions: {
-      fill: {
-        q: 'Das Dualsystem ist ein Stellenwertsystem zur Basis ___.',
-        a: '2',
-        accept: ['2', 'zwei']
-      },
-      choice: {
-        q: 'Welche Ziffern werden im Dualsystem verwendet?',
-        options: ['0 und 1', '0 bis 9', '0 bis 7', '0 bis F'],
-        correct: 0
-      },
-      explain: {
-        q: 'Erkläre, warum Computer das Dualsystem verwenden und nicht das Dezimalsystem.',
-        keywords: ['zwei', 'zustände', 'an', 'aus', 'spannung', 'schaltung', 'elektronisch', 'strom', 'bit', 'transistor']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Das Dualsystem ist ein Stellenwertsystem zur Basis ___.', a: '2', alt: ['zwei'], hint: 'Die kleinste Primzahl' },
+      { type: 'choice', q: 'Welche Ziffern werden im Dualsystem verwendet?', options: ['0 und 1', '0 bis 9', '0 bis 7', '0 bis F'], correct: 0 },
+      { type: 'explain', q: 'Erkl\u00e4re, warum Computer das Dualsystem verwenden und nicht das Dezimalsystem.', keywords: ['zwei', 'zust\u00e4nde', 'an', 'aus', 'spannung', 'schaltung', 'elektronisch', 'strom', 'bit', 'transistor'], minKeywords: 3 }
+    ],
     difficulty: 1
   },
   {
-    id: 'hexadezimalsystem',
     term: 'Hexadezimalsystem',
-    icon: '🔷',
-    short: 'Zahlensystem zur Basis 16 (Ziffern 0–9, A–F).',
-    definition: 'Das Hexadezimalsystem ist ein Stellenwertsystem zur Basis 16. Es verwendet die Ziffern 0–9 und die Buchstaben A–F (A=10, B=11, C=12, D=13, E=14, F=15). Es wird häufig in der Informatik verwendet, weil sich jeweils 4 Binärstellen exakt auf eine Hexadezimalziffer abbilden lassen. Dadurch lassen sich lange Binärzahlen kompakt darstellen.',
-    analogy: 'Hexadezimal ist wie eine Kurzschrift für Binärzahlen: Statt 8 Nullen und Einsen aufzuschreiben (z. B. 11111111₂), schreibst du einfach FF₁₆. Wie eine Abkürzung, die Platz spart, aber die gleiche Information enthält.',
+    short: 'Zahlensystem zur Basis 16 (Ziffern 0\u20139, A\u2013F)',
+    definition: 'Das Hexadezimalsystem ist ein Stellenwertsystem zur Basis 16. Es verwendet die Ziffern 0\u20139 und die Buchstaben A\u2013F (A=10, B=11, C=12, D=13, E=14, F=15). Es wird h\u00e4ufig in der Informatik verwendet, weil sich jeweils 4 Bin\u00e4rstellen exakt auf eine Hexadezimalziffer abbilden lassen. Dadurch lassen sich lange Bin\u00e4rzahlen kompakt darstellen.',
+    analogy: '\ud83d\udca1 Hexadezimal ist wie eine Kurzschrift f\u00fcr Bin\u00e4rzahlen: Statt 8 Nullen und Einsen aufzuschreiben (z. B. 11111111\u2082), schreibst du einfach FF\u2081\u2086. Wie eine Abk\u00fcrzung, die Platz spart, aber die gleiche Information enth\u00e4lt.',
     hints: [
-      'Jede Hex-Ziffer entspricht genau 4 Bits: F₁₆ = 1111₂, A₁₆ = 1010₂.',
-      'Hex wird oft mit dem Präfix 0x geschrieben, z. B. 0xFF für 255.',
-      'Farben in HTML nutzen Hex: #FF0000 = Rot (je 2 Hex-Ziffern für R, G, B).'
+      'Jede Hex-Ziffer entspricht genau 4 Bits: F\u2081\u2086 = 1111\u2082, A\u2081\u2086 = 1010\u2082.',
+      'Hex wird oft mit dem Pr\u00e4fix 0x geschrieben, z. B. 0xFF f\u00fcr 255.',
+      'Farben in HTML nutzen Hex: #FF0000 = Rot (je 2 Hex-Ziffern f\u00fcr R, G, B).'
     ],
-    questions: {
-      fill: {
-        q: 'Das Hexadezimalsystem hat die Basis ___.',
-        a: '16',
-        accept: ['16', 'sechzehn']
-      },
-      choice: {
-        q: 'Welcher Hexadezimalwert entspricht der Dezimalzahl 15?',
-        options: ['F', 'E', '10', 'FF'],
-        correct: 0
-      },
-      explain: {
-        q: 'Warum wird das Hexadezimalsystem in der Informatik bevorzugt gegenüber dem Dezimalsystem zur Darstellung von Binärdaten?',
-        keywords: ['4', 'bit', 'binär', 'kompakt', 'abbilden', 'kürzer', 'darstellung', 'stelle', 'umrechnung', 'einfach']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Das Hexadezimalsystem hat die Basis ___.', a: '16', alt: ['sechzehn'], hint: '4\u00b2 oder 2\u2074' },
+      { type: 'choice', q: 'Welcher Hexadezimalwert entspricht der Dezimalzahl 15?', options: ['F', 'E', '10', 'FF'], correct: 0 },
+      { type: 'explain', q: 'Warum wird das Hexadezimalsystem in der Informatik bevorzugt gegen\u00fcber dem Dezimalsystem zur Darstellung von Bin\u00e4rdaten?', keywords: ['4', 'bit', 'bin\u00e4r', 'kompakt', 'abbilden', 'k\u00fcrzer', 'darstellung', 'stelle', 'umrechnung', 'einfach'], minKeywords: 3 }
+    ],
     difficulty: 1
   },
   {
-    id: 'oktalsystem',
     term: 'Oktalsystem',
-    icon: '🔶',
-    short: 'Zahlensystem zur Basis 8 (Ziffern 0–7).',
-    definition: 'Das Oktalsystem ist ein Stellenwertsystem zur Basis 8. Es verwendet die Ziffern 0 bis 7. Jede Oktalziffer entspricht genau 3 Binärstellen. Das Oktalsystem wird unter anderem in Unix/Linux-Dateiberechtigungen verwendet (z. B. chmod 755). Historisch war es auch bei frühen Computern verbreitet, die Wortlängen als Vielfache von 3 Bit nutzten.',
-    analogy: 'Stell dir vor, du gruppierst immer 3 Lichtschalter zu einem Paket. Jedes Paket kann 8 verschiedene Kombinationen haben (000 bis 111), also eine Oktalziffer (0 bis 7). Das ist effizienter als jede einzelne Stelle binär aufzuschreiben.',
+    short: 'Zahlensystem zur Basis 8 (Ziffern 0\u20137)',
+    definition: 'Das Oktalsystem ist ein Stellenwertsystem zur Basis 8. Es verwendet die Ziffern 0 bis 7. Jede Oktalziffer entspricht genau 3 Bin\u00e4rstellen. Das Oktalsystem wird unter anderem in Unix/Linux-Dateiberechtigungen verwendet (z. B. chmod 755). Historisch war es auch bei fr\u00fchen Computern verbreitet, die Wortl\u00e4ngen als Vielfache von 3 Bit nutzten.',
+    analogy: '\ud83d\udca1 Stell dir vor, du gruppierst immer 3 Lichtschalter zu einem Paket. Jedes Paket kann 8 verschiedene Kombinationen haben (000 bis 111), also eine Oktalziffer (0 bis 7).',
     hints: [
-      'Jede Oktalziffer entspricht genau 3 Bits: 7₈ = 111₂, 5₈ = 101₂.',
-      'chmod 755: 7=rwx (111₂), 5=r-x (101₂) – Oktalsystem in der Praxis.',
-      'Zum Umrechnen Binär→Oktal: Von rechts 3er-Gruppen bilden und einzeln umwandeln.'
+      'Jede Oktalziffer entspricht genau 3 Bits: 7\u2088 = 111\u2082, 5\u2088 = 101\u2082.',
+      'chmod 755: 7=rwx (111\u2082), 5=r-x (101\u2082) \u2013 Oktalsystem in der Praxis.',
+      'Zum Umrechnen Bin\u00e4r\u2192Oktal: Von rechts 3er-Gruppen bilden und einzeln umwandeln.'
     ],
-    questions: {
-      fill: {
-        q: 'Jede Oktalziffer entspricht genau ___ Binärstellen.',
-        a: '3',
-        accept: ['3', 'drei']
-      },
-      choice: {
-        q: 'Welche Ziffer kommt im Oktalsystem NICHT vor?',
-        options: ['8', '7', '0', '5'],
-        correct: 0
-      },
-      explain: {
-        q: 'Erkläre den Zusammenhang zwischen Oktalziffern und Binärdarstellung.',
-        keywords: ['3', 'bit', 'gruppe', 'binär', 'stelle', '8', 'kombination', 'umrechnung', 'zuordnung']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Jede Oktalziffer entspricht genau ___ Bin\u00e4rstellen.', a: '3', alt: ['drei'], hint: 'Weniger als 4' },
+      { type: 'choice', q: 'Welche Ziffer kommt im Oktalsystem NICHT vor?', options: ['8', '7', '0', '5'], correct: 0 },
+      { type: 'explain', q: 'Erkl\u00e4re den Zusammenhang zwischen Oktalziffern und Bin\u00e4rdarstellung.', keywords: ['3', 'bit', 'gruppe', 'bin\u00e4r', 'stelle', '8', 'kombination', 'umrechnung', 'zuordnung'], minKeywords: 3 }
+    ],
     difficulty: 1
   },
   {
-    id: 'dezimalsystem',
     term: 'Dezimalsystem',
-    icon: '🔟',
-    short: 'Zahlensystem zur Basis 10 – unser Alltagssystem.',
-    definition: 'Das Dezimalsystem ist das im Alltag gebräuchliche Stellenwertsystem zur Basis 10. Es verwendet die Ziffern 0 bis 9. Jede Stelle hat den zehnfachen Wert der rechten Nachbarstelle (Einer, Zehner, Hunderter, Tausender, …). Der Wert einer Zahl ergibt sich aus der Summe aller Ziffern multipliziert mit ihrer jeweiligen Zehnerpotenz.',
-    analogy: 'Das Dezimalsystem ist wie ein Kilometerstand im Auto: Die rechte Stelle zählt Einer, die nächste Zehner, dann Hunderter. Wenn eine Stelle von 9 auf 0 springt, erhöht sich die nächste Stelle um 1 – genau wie ein Übertrag.',
+    short: 'Zahlensystem zur Basis 10 \u2013 unser Alltagssystem',
+    definition: 'Das Dezimalsystem ist das im Alltag gebr\u00e4uchliche Stellenwertsystem zur Basis 10. Es verwendet die Ziffern 0 bis 9. Jede Stelle hat den zehnfachen Wert der rechten Nachbarstelle (Einer, Zehner, Hunderter, Tausender, \u2026). Der Wert einer Zahl ergibt sich aus der Summe aller Ziffern multipliziert mit ihrer jeweiligen Zehnerpotenz.',
+    analogy: '\ud83d\udca1 Das Dezimalsystem ist wie ein Kilometerstand im Auto: Die rechte Stelle z\u00e4hlt Einer, die n\u00e4chste Zehner, dann Hunderter. Wenn eine Stelle von 9 auf 0 springt, erh\u00f6ht sich die n\u00e4chste Stelle um 1 \u2013 genau wie ein \u00dcbertrag.',
     hints: [
-      'Die Basis 10 bedeutet: jede Stelle kann 10 verschiedene Werte annehmen (0–9).',
-      'Der Stellenwert der n-ten Stelle (von rechts, bei 0 beginnend) ist 10ⁿ.',
-      'Beispiel: 347₁₀ = 3×10² + 4×10¹ + 7×10⁰ = 300 + 40 + 7.'
+      'Die Basis 10 bedeutet: jede Stelle kann 10 verschiedene Werte annehmen (0\u20139).',
+      'Der Stellenwert der n-ten Stelle (von rechts, bei 0 beginnend) ist 10\u207f.',
+      'Beispiel: 347\u2081\u2080 = 3\u00d710\u00b2 + 4\u00d710\u00b9 + 7\u00d710\u2070 = 300 + 40 + 7.'
     ],
-    questions: {
-      fill: {
-        q: 'Das Dezimalsystem verwendet ___ verschiedene Ziffern.',
-        a: '10',
-        accept: ['10', 'zehn']
-      },
-      choice: {
-        q: 'Was ist der Stellenwert der dritten Stelle von rechts im Dezimalsystem (bei 0 beginnend gezählt)?',
-        options: ['100 (10²)', '1000 (10³)', '10 (10¹)', '8 (2³)'],
-        correct: 0
-      },
-      explain: {
-        q: 'Erkläre das Prinzip des Stellenwertsystems am Beispiel des Dezimalsystems.',
-        keywords: ['stelle', 'wert', 'potenz', 'basis', '10', 'ziffer', 'position', 'multipliziert', 'summe']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Das Dezimalsystem verwendet ___ verschiedene Ziffern.', a: '10', alt: ['zehn'], hint: 'Wie viele Finger haben wir?' },
+      { type: 'choice', q: 'Was ist der Stellenwert der dritten Stelle von rechts im Dezimalsystem (bei 0 beginnend gez\u00e4hlt)?', options: ['100 (10\u00b2)', '1000 (10\u00b3)', '10 (10\u00b9)', '8 (2\u00b3)'], correct: 0 },
+      { type: 'explain', q: 'Erkl\u00e4re das Prinzip des Stellenwertsystems am Beispiel des Dezimalsystems.', keywords: ['stelle', 'wert', 'potenz', 'basis', '10', 'ziffer', 'position', 'multipliziert', 'summe'], minKeywords: 3 }
+    ],
     difficulty: 1
   },
   {
-    id: 'stellenwertsystem',
     term: 'Stellenwertsystem',
-    icon: '📐',
-    short: 'System, bei dem der Wert einer Ziffer von ihrer Position abhängt.',
-    definition: 'Ein Stellenwertsystem (auch Positionssystem) ist ein Zahlensystem, in dem der Wert einer Ziffer durch ihre Position (Stelle) innerhalb der Zahl bestimmt wird. Der Stellenwert ergibt sich aus der Basis b hoch der Stellennummer n (bⁿ). Der Gesamtwert einer Zahl ist die Summe aller Produkte aus Ziffer und zugehörigem Stellenwert. Dual-, Oktal-, Dezimal- und Hexadezimalsystem sind alles Stellenwertsysteme.',
-    analogy: 'Denk an ein Hotel: Die gleiche Zimmernummer „5" hat eine andere Bedeutung je nachdem, auf welchem Stockwerk sie steht. Im Erdgeschoss ist es Zimmer 5, im 1. Stock Zimmer 50 (5×10¹). Die Position gibt der Ziffer ihren Wert.',
+    short: 'System, bei dem der Wert einer Ziffer von ihrer Position abh\u00e4ngt',
+    definition: 'Ein Stellenwertsystem (auch Positionssystem) ist ein Zahlensystem, in dem der Wert einer Ziffer durch ihre Position (Stelle) innerhalb der Zahl bestimmt wird. Der Stellenwert ergibt sich aus der Basis b hoch der Stellennummer n (b\u207f). Der Gesamtwert einer Zahl ist die Summe aller Produkte aus Ziffer und zugeh\u00f6rigem Stellenwert. Dual-, Oktal-, Dezimal- und Hexadezimalsystem sind alles Stellenwertsysteme.',
+    analogy: '\ud83d\udca1 Denk an ein Hotel: Die gleiche Zimmernummer \u201e5\u201c hat eine andere Bedeutung je nachdem, auf welchem Stockwerk sie steht. Im Erdgeschoss ist es Zimmer 5, im 1. Stock Zimmer 50 (5\u00d710\u00b9). Die Position gibt der Ziffer ihren Wert.',
     hints: [
-      'Die allgemeine Formel: Wert = Σ (zᵢ × bⁱ), wobei zᵢ die Ziffer an Stelle i und b die Basis ist.',
-      'Im Gegensatz dazu: Römische Zahlen (I, V, X) sind KEIN Stellenwertsystem.',
+      'Die allgemeine Formel: Wert = \u03a3 (z\u1d62 \u00d7 b\u2071), wobei z\u1d62 die Ziffer an Stelle i und b die Basis ist.',
+      'Im Gegensatz dazu: R\u00f6mische Zahlen (I, V, X) sind KEIN Stellenwertsystem.',
       'Die Umrechnung zwischen Stellenwertsystemen nutzt wiederholte Division (mit Restbildung) oder die Stellenwertmethode.'
     ],
-    questions: {
-      fill: {
-        q: 'Der Stellenwert der n-ten Stelle berechnet sich als Basis hoch ___.',
-        a: 'n',
-        accept: ['n', 'position', 'stellennummer']
-      },
-      choice: {
-        q: 'Welches ist KEIN Stellenwertsystem?',
-        options: ['Römische Zahlen', 'Dualsystem', 'Oktalsystem', 'Hexadezimalsystem'],
-        correct: 0
-      },
-      explain: {
-        q: 'Erkläre, was ein Stellenwertsystem ist und wie sich der Gesamtwert einer Zahl berechnet.',
-        keywords: ['position', 'stelle', 'basis', 'potenz', 'ziffer', 'wert', 'summe', 'multipliziert']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Der Stellenwert der n-ten Stelle berechnet sich als Basis hoch ___.', a: 'n', alt: ['position', 'stellennummer'], hint: 'Der Exponent' },
+      { type: 'choice', q: 'Welches ist KEIN Stellenwertsystem?', options: ['R\u00f6mische Zahlen', 'Dualsystem', 'Oktalsystem', 'Hexadezimalsystem'], correct: 0 },
+      { type: 'explain', q: 'Erkl\u00e4re, was ein Stellenwertsystem ist und wie sich der Gesamtwert einer Zahl berechnet.', keywords: ['position', 'stelle', 'basis', 'potenz', 'ziffer', 'wert', 'summe', 'multipliziert'], minKeywords: 3 }
+    ],
     difficulty: 2
   },
   {
-    id: 'zweierkomplement',
     term: 'Zweierkomplement',
-    icon: '➖',
-    short: 'Darstellung negativer Zahlen im Binärsystem.',
-    definition: 'Das Zweierkomplement ist die in der Informatik gebräuchlichste Methode zur Darstellung negativer ganzer Zahlen im Binärsystem. Es wird gebildet, indem alle Bits invertiert werden (Einerkomplement) und anschließend 1 addiert wird. Das höchstwertige Bit (MSB) dient als Vorzeichenbit: 0 = positiv, 1 = negativ. Bei n Bits reicht der Darstellungsbereich von −2ⁿ⁻¹ bis 2ⁿ⁻¹−1. Bei 8 Bits also von −128 bis +127.',
-    analogy: 'Stell dir einen Kilometerzähler vor, der bei 999 wieder auf 000 springt. Die Zahl 999 könnte auch als „−1" interpretiert werden, 998 als „−2" usw. Das Zweierkomplement funktioniert genauso, nur im Binärsystem: Man „wickelt" die Zahlen um den Maximalwert herum.',
+    short: 'Darstellung negativer Zahlen im Bin\u00e4rsystem',
+    definition: 'Das Zweierkomplement ist die in der Informatik gebr\u00e4uchlichste Methode zur Darstellung negativer ganzer Zahlen im Bin\u00e4rsystem. Es wird gebildet, indem alle Bits invertiert werden (Einerkomplement) und anschlie\u00dfend 1 addiert wird. Das h\u00f6chstwertige Bit (MSB) dient als Vorzeichenbit: 0 = positiv, 1 = negativ. Bei n Bits reicht der Darstellungsbereich von \u22122\u207f\u207b\u00b9 bis 2\u207f\u207b\u00b9\u22121. Bei 8 Bits also von \u2212128 bis +127.',
+    analogy: '\ud83d\udca1 Stell dir einen Kilometerz\u00e4hler vor, der bei 999 wieder auf 000 springt. Die Zahl 999 k\u00f6nnte auch als \u201e\u22121\u201c interpretiert werden, 998 als \u201e\u22122\u201c usw. Das Zweierkomplement funktioniert genauso, nur im Bin\u00e4rsystem.',
     hints: [
-      'Bildung: Alle Bits invertieren (0→1, 1→0), dann +1 addieren.',
-      'Beispiel (8 Bit): +5 = 00000101₂ → invertiert: 11111010₂ → +1 = 11111011₂ = −5.',
+      'Bildung: Alle Bits invertieren (0\u21921, 1\u21920), dann +1 addieren.',
+      'Beispiel (8 Bit): +5 = 00000101\u2082 \u2192 invertiert: 11111010\u2082 \u2192 +1 = 11111011\u2082 = \u22125.',
       'Vorteil: Addition und Subtraktion funktionieren mit derselben Hardware-Schaltung.'
     ],
-    questions: {
-      fill: {
-        q: 'Zur Bildung des Zweierkomplements werden alle Bits invertiert und dann ___ addiert.',
-        a: '1',
-        accept: ['1', 'eins', 'eine 1']
-      },
-      choice: {
-        q: 'Welchen Wertebereich hat das Zweierkomplement bei 8 Bit?',
-        options: ['−128 bis +127', '−127 bis +128', '0 bis 255', '−256 bis +255'],
-        correct: 0
-      },
-      explain: {
-        q: 'Beschreibe die Schritte zur Bildung des Zweierkomplements und nenne den Hauptvorteil dieser Darstellung.',
-        keywords: ['invertier', 'bit', 'addier', '1', 'vorzeichen', 'negativ', 'addition', 'subtraktion', 'komplement', 'hardware']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Zur Bildung des Zweierkomplements werden alle Bits invertiert und dann ___ addiert.', a: '1', alt: ['eins', 'eine 1'], hint: 'Die kleinste nat\u00fcrliche Zahl' },
+      { type: 'choice', q: 'Welchen Wertebereich hat das Zweierkomplement bei 8 Bit?', options: ['\u2212128 bis +127', '\u2212127 bis +128', '0 bis 255', '\u2212256 bis +255'], correct: 0 },
+      { type: 'explain', q: 'Beschreibe die Schritte zur Bildung des Zweierkomplements und nenne den Hauptvorteil dieser Darstellung.', keywords: ['invertier', 'bit', 'addier', '1', 'vorzeichen', 'negativ', 'addition', 'subtraktion', 'komplement', 'hardware'], minKeywords: 3 }
+    ],
     difficulty: 3
   },
   {
-    id: 'bit-byte',
     term: 'Bit und Byte',
-    icon: '💾',
-    short: 'Grundlegende Einheiten der digitalen Informationsspeicherung.',
-    definition: 'Ein Bit (Binary Digit) ist die kleinste Informationseinheit in der digitalen Datenverarbeitung. Es kann genau zwei Zustände annehmen: 0 oder 1. Ein Byte besteht aus 8 Bits und kann somit 2⁸ = 256 verschiedene Werte darstellen (0 bis 255). Weitere Einheiten: 1 Kilobyte (KB) = 1024 Bytes, 1 Megabyte (MB) = 1024 KB, 1 Gigabyte (GB) = 1024 MB. In der Netzwerktechnik wird oft in Bits gemessen (z. B. Mbit/s), in der Speichertechnik in Bytes.',
-    analogy: 'Ein Bit ist wie eine einzelne Ja/Nein-Frage. Ein Byte ist wie ein Fragebogen mit 8 Ja/Nein-Fragen – damit kannst du schon 256 verschiedene Antwort-Kombinationen abbilden, z. B. einen Buchstaben (ASCII).',
+    short: 'Grundlegende Einheiten der digitalen Informationsspeicherung',
+    definition: 'Ein Bit (Binary Digit) ist die kleinste Informationseinheit in der digitalen Datenverarbeitung. Es kann genau zwei Zust\u00e4nde annehmen: 0 oder 1. Ein Byte besteht aus 8 Bits und kann somit 2\u2078 = 256 verschiedene Werte darstellen (0 bis 255). Weitere Einheiten: 1 Kilobyte (KB) = 1024 Bytes, 1 Megabyte (MB) = 1024 KB, 1 Gigabyte (GB) = 1024 MB.',
+    analogy: '\ud83d\udca1 Ein Bit ist wie eine einzelne Ja/Nein-Frage. Ein Byte ist wie ein Fragebogen mit 8 Ja/Nein-Fragen \u2013 damit kannst du schon 256 verschiedene Antwort-Kombinationen abbilden, z. B. einen Buchstaben (ASCII).',
     hints: [
-      'Bit wird mit kleinem „b" abgekürzt, Byte mit großem „B": 100 Mbit/s ≠ 100 MB/s.',
-      'Mit n Bits lassen sich 2ⁿ verschiedene Werte darstellen.',
+      'Bit wird mit kleinem \u201eb\u201c abgek\u00fcrzt, Byte mit gro\u00dfem \u201eB\u201c: 100 Mbit/s \u2260 100 MB/s.',
+      'Mit n Bits lassen sich 2\u207f verschiedene Werte darstellen.',
       'Ein Nibble (halbes Byte) = 4 Bits = eine Hexadezimalziffer.'
     ],
-    questions: {
-      fill: {
-        q: 'Ein Byte besteht aus ___ Bits.',
-        a: '8',
-        accept: ['8', 'acht']
-      },
-      choice: {
-        q: 'Wie viele verschiedene Werte kann ein Byte darstellen?',
-        options: ['256', '128', '8', '1024'],
-        correct: 0
-      },
-      explain: {
-        q: 'Erkläre den Unterschied zwischen Bit und Byte und nenne die gängigen größeren Einheiten.',
-        keywords: ['bit', 'byte', '8', 'kleinste', 'einheit', '256', 'kilobyte', 'megabyte', 'gigabyte', '1024', 'speicher']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Ein Byte besteht aus ___ Bits.', a: '8', alt: ['acht'], hint: 'Wie viele Bits im Byte?' },
+      { type: 'choice', q: 'Wie viele verschiedene Werte kann ein Byte darstellen?', options: ['256', '128', '8', '1024'], correct: 0 },
+      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen Bit und Byte und nenne die g\u00e4ngigen gr\u00f6\u00dferen Einheiten.', keywords: ['bit', 'byte', '8', 'kleinste', 'einheit', '256', 'kilobyte', 'megabyte', 'gigabyte', '1024', 'speicher'], minKeywords: 3 }
+    ],
     difficulty: 1
   },
   {
-    id: 'ueberlauf',
-    term: 'Überlauf (Overflow)',
-    icon: '⚠️',
-    short: 'Fehler bei Überschreitung des darstellbaren Zahlenbereichs.',
-    definition: 'Ein Überlauf (engl. Overflow) tritt auf, wenn das Ergebnis einer arithmetischen Operation den darstellbaren Zahlenbereich überschreitet. Bei vorzeichenlosen 8-Bit-Zahlen tritt ein Überlauf auf, wenn das Ergebnis größer als 255 ist. Bei vorzeichenbehafteten Zahlen im Zweierkomplement kann ein Überlauf z. B. auftreten, wenn zwei positive Zahlen addiert werden und das Ergebnis als negativ interpretiert wird. Der Überlauf wird in der CPU durch ein spezielles Overflow-Flag signalisiert.',
-    analogy: 'Stell dir einen dreistelligen Kilometerzähler vor: Nach 999 km springt er auf 000 zurück. Der Zähler hat einen „Überlauf" – die Information „1000 km" kann nicht mehr dargestellt werden. Genauso kann ein 8-Bit-Register nach 11111111₂ (255) nicht weiter zählen und springt auf 00000000₂ (0).',
+    term: '\u00dcberlauf (Overflow)',
+    short: 'Fehler bei \u00dcberschreitung des darstellbaren Zahlenbereichs',
+    definition: 'Ein \u00dcberlauf (engl. Overflow) tritt auf, wenn das Ergebnis einer arithmetischen Operation den darstellbaren Zahlenbereich \u00fcberschreitet. Bei vorzeichenlosen 8-Bit-Zahlen tritt ein \u00dcberlauf auf, wenn das Ergebnis gr\u00f6\u00dfer als 255 ist. Bei vorzeichenbehafteten Zahlen im Zweierkomplement kann ein \u00dcberlauf z. B. auftreten, wenn zwei positive Zahlen addiert werden und das Ergebnis als negativ interpretiert wird. Der \u00dcberlauf wird in der CPU durch ein spezielles Overflow-Flag signalisiert.',
+    analogy: '\ud83d\udca1 Stell dir einen dreistelligen Kilometerz\u00e4hler vor: Nach 999 km springt er auf 000 zur\u00fcck. Der Z\u00e4hler hat einen \u201e\u00dcberlauf\u201c \u2013 die Information \u201e1000 km\u201c kann nicht mehr dargestellt werden.',
     hints: [
-      'Bei 8 Bit unsigned: 255 + 1 = 0 (Überlauf, der Übertrag geht verloren).',
-      'Bei Zweierkomplement (8 Bit): 127 + 1 = −128 (Vorzeichenüberlauf).',
-      'Das Carry-Flag zeigt einen Übertrag an, das Overflow-Flag einen Vorzeichenüberlauf.'
+      'Bei 8 Bit unsigned: 255 + 1 = 0 (\u00dcberlauf, der \u00dcbertrag geht verloren).',
+      'Bei Zweierkomplement (8 Bit): 127 + 1 = \u2212128 (Vorzeichen\u00fcberlauf).',
+      'Das Carry-Flag zeigt einen \u00dcbertrag an, das Overflow-Flag einen Vorzeichen\u00fcberlauf.'
     ],
-    questions: {
-      fill: {
-        q: 'Bei vorzeichenlosen 8-Bit-Zahlen tritt ein Überlauf auf, wenn das Ergebnis größer als ___ ist.',
-        a: '255',
-        accept: ['255']
-      },
-      choice: {
-        q: 'Was passiert bei einem Überlauf einer vorzeichenlosen 8-Bit-Addition (255 + 1)?',
-        options: ['Das Ergebnis wird 0', 'Das Ergebnis wird 256', 'Ein Fehler wird ausgelöst', 'Das Ergebnis wird −1'],
-        correct: 0
-      },
-      explain: {
-        q: 'Erkläre, was ein Überlauf ist und wann er bei vorzeichenbehafteten Zahlen auftritt.',
-        keywords: ['ergebnis', 'bereich', 'darstellbar', 'überschreitet', 'bit', 'vorzeichen', 'positiv', 'negativ', 'overflow', 'flag']
-      }
-    },
+    questions: [
+      { type: 'fill', q: 'Bei vorzeichenlosen 8-Bit-Zahlen tritt ein \u00dcberlauf auf, wenn das Ergebnis gr\u00f6\u00dfer als ___ ist.', a: '255', alt: [], hint: '2\u2078 \u2212 1' },
+      { type: 'choice', q: 'Was passiert bei einem \u00dcberlauf einer vorzeichenlosen 8-Bit-Addition (255 + 1)?', options: ['Das Ergebnis wird 0', 'Das Ergebnis wird 256', 'Ein Fehler wird ausgel\u00f6st', 'Das Ergebnis wird \u22121'], correct: 0 },
+      { type: 'explain', q: 'Erkl\u00e4re, was ein \u00dcberlauf ist und wann er bei vorzeichenbehafteten Zahlen auftritt.', keywords: ['ergebnis', 'bereich', 'darstellbar', '\u00fcberschreitet', 'bit', 'vorzeichen', 'positiv', 'negativ', 'overflow', 'flag'], minKeywords: 3 }
+    ],
     difficulty: 2
   }
 ];
 
-// Term-Map for tooltip highlighting: maps text variants to term IDs
-const glossaryTermMap = {
-  'dualsystem': 'dualsystem',
-  'binärsystem': 'dualsystem',
-  'binär': 'dualsystem',
-  'dualzahl': 'dualsystem',
-  'dualzahlen': 'dualsystem',
-  'binärzahl': 'dualsystem',
-  'hexadezimalsystem': 'hexadezimalsystem',
-  'hexadezimal': 'hexadezimalsystem',
-  'hex': 'hexadezimalsystem',
-  'oktalsystem': 'oktalsystem',
-  'oktal': 'oktalsystem',
-  'dezimalsystem': 'dezimalsystem',
-  'dezimal': 'dezimalsystem',
-  'dezimalzahl': 'dezimalsystem',
-  'stellenwertsystem': 'stellenwertsystem',
-  'stellenwert': 'stellenwertsystem',
-  'stellenwertmethode': 'stellenwertsystem',
-  'positionssystem': 'stellenwertsystem',
-  'zweierkomplement': 'zweierkomplement',
-  'komplement': 'zweierkomplement',
-  'einerkomplement': 'zweierkomplement',
-  'bit': 'bit-byte',
-  'byte': 'bit-byte',
-  'bits': 'bit-byte',
-  'bytes': 'bit-byte',
-  'nibble': 'bit-byte',
-  'überlauf': 'ueberlauf',
-  'overflow': 'ueberlauf',
-  'übertrag': 'ueberlauf',
-  'carry': 'ueberlauf'
+var GP_STORIES = {
+  'Dualsystem': {
+    route: 'Ein Computermuseum',
+    scenes: [
+      {kw: 'Basis 2', img: '\ud83d\udd22 Zwei riesige Ziffern', text: 'Am Eingang stehen zwei mannshohe Ziffern: eine 0 und eine 1 \u2013 die Basis 2, die einzigen Ziffern im Dualsystem.'},
+      {kw: 'Lichtschalter', img: '\ud83d\udca1 Wand voller Schalter', text: 'Eine ganze Wand ist voll mit Lichtschaltern \u2013 jeder kann nur AN oder AUS sein, genau wie ein Bit.'},
+      {kw: 'Zweierpotenz', img: '\ud83c\udfb0 Verdopplungsautomat', text: 'Ein Automat verdoppelt jede M\u00fcnze die du einwirfst: 1, 2, 4, 8, 16... Jede Stelle im Dualsystem ist eine Zweierpotenz.'},
+      {kw: 'Byte', img: '\ud83d\udce6 Kasten mit 8 Schaltern', text: 'In einer Vitrine liegt ein Kasten mit genau 8 Schaltern \u2013 ein Byte, das 256 verschiedene Werte darstellen kann.'},
+      {kw: 'digital', img: '\ud83d\udda5\ufe0f Uralter Computer', text: 'Am Ende des Museums steht ein uralter Computer \u2013 er zeigt, dass ALLE digitale Technik auf dem Dualsystem basiert.'}
+    ]
+  },
+  'Hexadezimalsystem': {
+    route: 'Eine Kunstgalerie mit farbigen W\u00e4nden',
+    scenes: [
+      {kw: 'Basis 16', img: '\ud83c\udfa8 16 Farbeimer', text: 'Im Eingangsbereich stehen 16 Farbeimer in einer Reihe: 0-9 plus A-F \u2013 die Basis 16 des Hexadezimalsystems.'},
+      {kw: '4 Bits', img: '\ud83e\udde9 Vierer-Puzzle', text: 'An der Wand h\u00e4ngt ein Puzzle mit genau 4 Teilen \u2013 jede Hex-Ziffer fasst exakt 4 Bits zusammen.'},
+      {kw: 'kompakt', img: '\ud83d\udcf7 Zusammengeklappte Karte', text: 'Eine riesige Landkarte wird auf Taschengr\u00f6\u00dfe zusammengefaltet \u2013 Hex ist die kompakte Kurzform f\u00fcr Bin\u00e4rzahlen.'},
+      {kw: 'FF', img: '\ud83d\udd34 Rot leuchtende Wand', text: 'Eine Wand leuchtet feuerrot mit der Aufschrift #FF0000 \u2013 HTML-Farben nutzen Hex, und FF steht f\u00fcr 255.'},
+      {kw: '0x', img: '\ud83c\udff7\ufe0f Preisschild mit 0x', text: 'Alle Preisschilder beginnen mit "0x" \u2013 das Pr\u00e4fix zeigt an, dass es sich um eine Hexadezimalzahl handelt.'}
+    ]
+  },
+  'Oktalsystem': {
+    route: 'Ein Linux-Serverraum',
+    scenes: [
+      {kw: 'Basis 8', img: '\ud83d\udc19 Oktopus', text: 'Ein riesiger Oktopus sitzt auf dem Hauptserver \u2013 er hat 8 Arme, einen f\u00fcr jede Ziffer (0-7) des Oktalsystems.'},
+      {kw: '3 Bits', img: '\ud83d\udd17 Dreier-Kette', text: 'An jedem Arm h\u00e4ngt eine Kette aus genau 3 Gliedern \u2013 jede Oktalziffer entspricht 3 Bin\u00e4rstellen.'},
+      {kw: 'chmod', img: '\ud83d\udd10 Schloss mit 755', text: 'Am Server h\u00e4ngt ein Zahlenschloss mit der Kombination 755 \u2013 die typische chmod-Berechtigung in der Praxis.'},
+      {kw: 'rwx', img: '\ud83d\udcdd Dreier-Checkliste', text: 'Neben dem Schloss klebt eine Checkliste: r-w-x (Lesen-Schreiben-Ausf\u00fchren) \u2013 3 Rechte = 3 Bits = 1 Oktalziffer.'},
+      {kw: 'Gruppen', img: '\ud83d\udc65 Drei Personengruppen', text: 'Vor dem Server stehen drei Gruppen: Owner, Group, Others \u2013 jede bekommt eine eigene Oktalziffer f\u00fcr ihre Rechte.'}
+    ]
+  },
+  'Dezimalsystem': {
+    route: 'Ein Supermarkt',
+    scenes: [
+      {kw: 'Basis 10', img: '\u270b Zwei H\u00e4nde', text: 'An der Kasse h\u00e4lt jemand beide H\u00e4nde hoch \u2013 10 Finger, deswegen rechnen wir im Alltag zur Basis 10.'},
+      {kw: 'Ziffern 0-9', img: '\ud83d\uded2 Preisschilder', text: 'Alle Preisschilder zeigen nur Ziffern von 0 bis 9 \u2013 mehr braucht das Dezimalsystem nicht.'},
+      {kw: 'Stellenwert', img: '\ud83c\udfe2 Regalreihen', text: 'Die Regale sind beschriftet: Einer, Zehner, Hunderter \u2013 jede Regalreihe hat einen h\u00f6heren Stellenwert.'},
+      {kw: '\u00dcbertrag', img: '\ud83d\udcb0 Wechselgeld', text: 'Wenn 9 Cent + 1 Cent zusammenkommen, gibt es Wechselgeld: 0 Cent und 1 \u00dcbertrag auf den n\u00e4chsten Stellenwert.'},
+      {kw: 'Zehnerpotenz', img: '\ud83d\udcc8 Wachstumskurve', text: 'An der Wand h\u00e4ngt eine Kurve: 1, 10, 100, 1000... Jede Stelle ist eine Zehnerpotenz h\u00f6her als die vorherige.'}
+    ]
+  },
+  'Stellenwertsystem': {
+    route: 'Ein Hotel mit vielen Stockwerken',
+    scenes: [
+      {kw: 'Position', img: '\ud83c\udfe8 Zimmernummern', text: 'Im Hotel hat jede Zimmernummer eine Bedeutung je nach Position \u2013 Zimmer 5 im Erdgeschoss ist anders als 500 im 5. Stock.'},
+      {kw: 'Basis', img: '\ud83d\uded7 Aufzugsknopf', text: 'Im Aufzug steht die Basis des Systems: 2, 8, 10 oder 16 \u2013 sie bestimmt, wie viele Ziffern es gibt.'},
+      {kw: 'Potenz', img: '\ud83d\udcaa Kraftmesser', text: 'Auf jeder Etage steht ein Kraftmesser \u2013 die Potenz zeigt, wie viel eine Ziffer auf dieser Position wert ist.'},
+      {kw: 'Summe', img: '\ud83e\uddee Abakus', text: 'An der Rezeption rechnet jemand am Abakus: Der Gesamtwert ist die Summe aller Ziffern mal ihren Stellenwert.'},
+      {kw: 'R\u00f6mische Zahlen', img: '\ud83c\udfdb\ufe0f Antike S\u00e4ule', text: 'Vor dem Hotel steht eine r\u00f6mische S\u00e4ule mit "XIV" \u2013 R\u00f6mische Zahlen sind KEIN Stellenwertsystem!'}
+    ]
+  },
+  'Zweierkomplement': {
+    route: 'Eine Uhrmacherwerkstatt',
+    scenes: [
+      {kw: 'invertieren', img: '\ud83d\udd04 Umkehr-Maschine', text: 'In der Werkstatt steht eine Umkehr-Maschine: Du schiebst eine Bitfolge rein, und alle 0en werden zu 1en und umgekehrt \u2013 invertieren!'},
+      {kw: 'plus 1', img: '\u2795 Goldenes Plus-Zeichen', text: 'Neben der Maschine h\u00e4ngt ein goldenes Plus-Eins-Zeichen \u2013 nach dem Invertieren muss noch 1 addiert werden.'},
+      {kw: 'Vorzeichenbit', img: '\u2796 Flagge am MSB', text: 'Am h\u00f6chsten Bit weht eine Flagge: Rot f\u00fcr negativ (1), Gr\u00fcn f\u00fcr positiv (0) \u2013 das Vorzeichenbit.'},
+      {kw: 'Wertebereich', img: '\ud83d\udccf Messlatte', text: 'Eine Messlatte zeigt den Wertebereich: Von \u2212128 bis +127 bei 8 Bit \u2013 nicht symmetrisch!'},
+      {kw: 'Hardware-Vorteil', img: '\u2699\ufe0f Ein Rechenwerk', text: 'Es gibt nur EIN Rechenwerk f\u00fcr Addition UND Subtraktion \u2013 der gro\u00dfe Hardware-Vorteil des Zweierkomplements.'}
+    ]
+  },
+  'Bit und Byte': {
+    route: 'Eine Poststation',
+    scenes: [
+      {kw: 'Bit', img: '\u2709\ufe0f Einzelner Brief', text: 'Am Schalter liegt ein einzelner Brief mit Ja oder Nein drauf \u2013 das ist ein Bit, die kleinste Informationseinheit.'},
+      {kw: 'Byte', img: '\ud83d\udce6 Paket mit 8 Briefen', text: 'Acht Briefe werden zu einem Paket zusammengepackt \u2013 ein Byte besteht aus genau 8 Bits.'},
+      {kw: '256', img: '\ud83d\udccb Liste mit 256 Zeichen', text: 'An der Wand h\u00e4ngt eine ASCII-Liste mit 256 Zeichen \u2013 so viele verschiedene Werte kann ein Byte darstellen.'},
+      {kw: 'Kilobyte', img: '\ud83d\udce6\ud83d\udce6\ud83d\udce6 Stapel von 1024 Paketen', text: 'Im Lager stehen 1024 Pakete aufgestapelt \u2013 das ist ein Kilobyte (KB). Nicht 1000, sondern 1024!'},
+      {kw: 'Nibble', img: '\ud83c\udf6a Halber Keks', text: 'Auf dem Tisch liegt ein halbierter Keks \u2013 ein Nibble ist ein halbes Byte (4 Bits) = eine Hex-Ziffer.'}
+    ]
+  },
+  '\u00dcberlauf (Overflow)': {
+    route: 'Eine Tankstelle mit altem Kilometerz\u00e4hler',
+    scenes: [
+      {kw: 'Zahlenbereich', img: '\ud83d\udccf Begrenzte Anzeige', text: 'Der alte Kilometerz\u00e4hler hat nur 3 Stellen: 000 bis 999 \u2013 das ist der begrenzte Zahlenbereich.'},
+      {kw: '\u00dcberlauf', img: '\ud83d\udca5 Z\u00e4hler springt um', text: 'Bei 999 + 1 km springt der Z\u00e4hler auf 000 \u2013 BUMM! Ein \u00dcberlauf, die Information geht verloren.'},
+      {kw: '255', img: '\ud83d\udd22 8 leuchtende Einsen', text: 'An der Zapfs\u00e4ule blinken 8 leuchtende Einsen (11111111) \u2013 bei 8 Bit ist 255 die maximale Zahl.'},
+      {kw: 'Overflow-Flag', img: '\ud83d\udea9 Rote Warnflagge', text: 'Am Z\u00e4hler springt eine rote Warnflagge hoch \u2013 das Overflow-Flag signalisiert der CPU den \u00dcberlauf.'},
+      {kw: 'Vorzeichen', img: '\u2796 Plus wird Minus', text: 'Pl\u00f6tzlich zeigt der Z\u00e4hler eine negative Zahl: 127 + 1 = \u2212128 \u2013 beim Zweierkomplement kann ein Vorzeichen-\u00dcberlauf auftreten.'}
+    ]
+  }
 };
 
-// ── Glossary State ──
-let glossaryState = {};
+var GLOSSARY_TERM_MAP = {
+  'dualsystem': 'Dualsystem',
+  'bin\u00e4rsystem': 'Dualsystem',
+  'bin\u00e4r': 'Dualsystem',
+  'dualzahl': 'Dualsystem',
+  'dualzahlen': 'Dualsystem',
+  'bin\u00e4rzahl': 'Dualsystem',
+  'hexadezimalsystem': 'Hexadezimalsystem',
+  'hexadezimal': 'Hexadezimalsystem',
+  'hex': 'Hexadezimalsystem',
+  'oktalsystem': 'Oktalsystem',
+  'oktal': 'Oktalsystem',
+  'dezimalsystem': 'Dezimalsystem',
+  'dezimal': 'Dezimalsystem',
+  'dezimalzahl': 'Dezimalsystem',
+  'stellenwertsystem': 'Stellenwertsystem',
+  'stellenwert': 'Stellenwertsystem',
+  'stellenwertmethode': 'Stellenwertsystem',
+  'positionssystem': 'Stellenwertsystem',
+  'zweierkomplement': 'Zweierkomplement',
+  'komplement': 'Zweierkomplement',
+  'einerkomplement': 'Zweierkomplement',
+  'bit': 'Bit und Byte',
+  'byte': 'Bit und Byte',
+  'bits': 'Bit und Byte',
+  'bytes': 'Bit und Byte',
+  'nibble': 'Bit und Byte',
+  '\u00fcberlauf': '\u00dcberlauf (Overflow)',
+  'overflow': '\u00dcberlauf (Overflow)'
+};
 
-function loadGlossaryState() {
-  try {
-    const raw = localStorage.getItem(GLOSSARY_KEY);
-    if (raw) glossaryState = JSON.parse(raw);
-  } catch(e) { glossaryState = {}; }
-  // Ensure every term has an entry
-  glossaryTerms.forEach(t => {
-    if (!glossaryState[t.id]) {
-      glossaryState[t.id] = { level: 0, phase: 0, hintsUsed: 0, attempts: 0, lastSeen: null };
-    }
-  });
-}
-
-function saveGlossaryState() {
-  localStorage.setItem(GLOSSARY_KEY, JSON.stringify(glossaryState));
-}
-
-function getGlossaryMastered() {
-  return glossaryTerms.filter(t => glossaryState[t.id] && glossaryState[t.id].level >= 3).length;
-}
-
-// ── Glossary Progress ──
-function updateGlossaryProgress() {
-  const mastered = getGlossaryMastered();
-  const total = glossaryTerms.length;
-  const pct = Math.round((mastered / total) * 100);
-  const fill = document.getElementById('glossary-progress-fill');
-  const count = document.getElementById('glossary-progress-count');
-  if (fill) fill.style.width = pct + '%';
-  if (count) count.textContent = mastered + ' / ' + total + ' gemeistert';
-}
-
-// ── Render Glossary Grid ──
-function renderGlossaryGrid() {
-  const grid = document.getElementById('glossary-grid');
-  if (!grid) return;
-  grid.innerHTML = '';
-  glossaryTerms.forEach(t => {
-    const st = glossaryState[t.id] || { level: 0 };
-    const card = document.createElement('div');
-    card.className = 'glossary-card';
-    card.dataset.level = st.level;
-    card.dataset.id = t.id;
-    card.innerHTML = `
-      <div class="gc-level"></div>
-      <div class="gc-icon">${t.icon}</div>
-      <div class="gc-term">${t.term}</div>
-      <div class="gc-short">${t.short}</div>
-    `;
-    card.addEventListener('click', () => openGlossaryLearn(t.id));
-    grid.appendChild(card);
-  });
-  updateGlossaryProgress();
-}
-
-// ── Open Learning Panel ──
-let currentGlossaryTerm = null;
-let glossaryDisplayPhase = null; // temporary phase override for review (not persisted)
-let currentGlossaryHints = 0;
-
-function openGlossaryLearn(termId) {
-  const t = glossaryTerms.find(x => x.id === termId);
-  if (!t) return;
-  currentGlossaryTerm = t;
-  currentGlossaryHints = 0;
-  const st = glossaryState[t.id];
-  st.lastSeen = Date.now();
-  saveGlossaryState();
-
-  // Mark active card
-  document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
-  const activeCard = document.querySelector(`.glossary-card[data-id="${t.id}"]`);
-  if (activeCard) activeCard.classList.add('active');
-
-  const panel = document.getElementById('glossary-learn');
-  const phases = ['Verstehen', 'Lückentext', 'Auswahl', 'Erklären'];
-  const actualPhase = Math.min(st.phase, 3);
-  const displayPhase = (glossaryDisplayPhase !== null && glossaryDisplayPhase <= actualPhase) ? glossaryDisplayPhase : actualPhase;
-  glossaryDisplayPhase = null; // reset after use
-
-  let phaseHTML = phases.map((p, i) => {
-    let cls = 'gl-phase';
-    if (i < actualPhase) cls += ' done';
-    else if (i === actualPhase) cls += ' current';
-    const clickable = i <= actualPhase;
-    const onclick = clickable ? ` onclick="glossaryGoToPhase(${i})"` : '';
-    return `<div class="${cls}"${onclick}>${p}</div>`;
-  }).join('');
-
-  let contentHTML = '';
-  if (displayPhase === 0) {
-    contentHTML = buildPhase0(t);
-  } else if (displayPhase === 1) {
-    contentHTML = buildPhase1(t);
-  } else if (displayPhase === 2) {
-    contentHTML = buildPhase2(t);
-  } else {
-    contentHTML = buildPhase3(t);
-  }
-
-  panel.innerHTML = `
-    <div class="gl-header">
-      <h3>${t.icon} ${t.term}</h3>
-      <button class="gl-close" onclick="closeGlossaryLearn()">&times;</button>
-    </div>
-    <div class="gl-phase-indicator">${phaseHTML}</div>
-    <div class="gl-content" id="gl-content">${contentHTML}</div>
-  `;
-  panel.classList.add('visible');
-  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function closeGlossaryLearn() {
-  const panel = document.getElementById('glossary-learn');
-  panel.classList.remove('visible');
-  document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
-  currentGlossaryTerm = null;
-}
-
-function glossaryGoToPhase(idx) {
-  if (!currentGlossaryTerm) return;
-  const actualPhase = Math.min(glossaryState[currentGlossaryTerm.id].phase, 3);
-  if (idx > actualPhase) return; // can only go back to earlier or current phase
-  glossaryDisplayPhase = idx;
-  openGlossaryLearn(currentGlossaryTerm.id);
-}
-
-// ── Phase 0: Verstehen (read definition + analogy) ──
-function buildPhase0(t) {
-  let hintsHTML = t.hints.map((h, i) => `<div class="gl-hint" id="gl-hint-${i}">${h}</div>`).join('');
-  return `
-    <div class="gl-analogy">💡 ${t.analogy}</div>
-    <div class="gl-definition">${t.definition}</div>
-    <div class="gl-hints">${hintsHTML}</div>
-    <button class="gl-hint-btn" onclick="showGlossaryHint()">💡 Hinweis anzeigen</button>
-    <div style="margin-top:8px">
-      <button class="gl-btn primary" onclick="advanceGlossaryPhase()">Verstanden – weiter</button>
-    </div>
-  `;
-}
-
-// ── Phase 1: Lückentext (fill in the blank) ──
-function buildPhase1(t) {
-  const q = t.questions.fill;
-  return `
-    <div class="gl-question">${q.q}</div>
-    <input type="text" class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben…" autocomplete="off" onkeydown="if(event.key==='Enter')checkGlossaryFill()">
-    <div>
-      <button class="gl-btn primary" onclick="checkGlossaryFill()">Prüfen</button>
-    </div>
-    <div id="gl-feedback-area"></div>
-  `;
-}
-
-// ── Phase 2: Multiple Choice ──
-function buildPhase2(t) {
-  const q = t.questions.choice;
-  let choicesHTML = q.options.map((opt, i) =>
-    `<button class="gl-choice" data-idx="${i}" onclick="checkGlossaryChoice(this, ${i}, ${q.correct})">${opt}</button>`
-  ).join('');
-  return `
-    <div class="gl-question">${q.q}</div>
-    <div class="gl-choices">${choicesHTML}</div>
-    <div id="gl-feedback-area"></div>
-  `;
-}
-
-// ── Phase 3: Erklären (free text with keyword matching) ──
-function buildPhase3(t) {
-  const q = t.questions.explain;
-  return `
-    <div class="gl-question">${q.q}</div>
-    <textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten…"></textarea>
-    <div>
-      <button class="gl-btn primary" onclick="checkGlossaryExplain()">Antwort prüfen</button>
-    </div>
-    <div id="gl-feedback-area"></div>
-  `;
-}
-
-// ── Show Hint ──
-function showGlossaryHint() {
-  if (!currentGlossaryTerm) return;
-  const hint = document.getElementById('gl-hint-' + currentGlossaryHints);
-  if (hint) {
-    hint.classList.add('visible');
-    currentGlossaryHints++;
-    if (glossaryState[currentGlossaryTerm.id]) {
-      glossaryState[currentGlossaryTerm.id].hintsUsed++;
-      saveGlossaryState();
-    }
-  }
-}
-
-// ── Advance Phase ──
-function advanceGlossaryPhase() {
-  if (!currentGlossaryTerm) return;
-  const st = glossaryState[currentGlossaryTerm.id];
-  if (st.phase < 3) {
-    st.phase++;
-    // Update level based on phase progress
-    if (st.phase >= 1 && st.level < 1) st.level = 1;
-    saveGlossaryState();
-    renderGlossaryGrid();
-    openGlossaryLearn(currentGlossaryTerm.id);
-  } else {
-    // Completed all phases
-    st.level = 3;
-    saveGlossaryState();
-    renderGlossaryGrid();
-    closeGlossaryLearn();
-  }
-}
-
-// ── Check Fill Answer ──
-function checkGlossaryFill() {
-  if (!currentGlossaryTerm) return;
-  const input = document.getElementById('gl-fill-input');
-  const fb = document.getElementById('gl-feedback-area');
-  const userAnswer = input.value.trim().toLowerCase();
-  const q = currentGlossaryTerm.questions.fill;
-  const isCorrect = q.accept.some(a => a.toLowerCase() === userAnswer);
-
-  glossaryState[currentGlossaryTerm.id].attempts++;
-
-  if (isCorrect) {
-    fb.innerHTML = `<div class="gl-feedback success">Richtig! Die Antwort ist <strong>${q.a}</strong>.</div>
-      <div style="margin-top:12px"><button class="gl-btn primary" onclick="advanceGlossaryPhase()">Weiter</button></div>`;
-    input.style.borderColor = 'var(--green)';
-  } else {
-    fb.innerHTML = `<div class="gl-feedback error">Nicht ganz. Die richtige Antwort ist: <strong>${q.a}</strong>. Versuche es dir zu merken!</div>
-      <div style="margin-top:12px"><button class="gl-btn primary" onclick="openGlossaryLearn('${currentGlossaryTerm.id}')">Nochmal lernen</button></div>`;
-    input.style.borderColor = 'var(--red)';
-    // Reset phase to re-read
-    glossaryState[currentGlossaryTerm.id].phase = 0;
-  }
-  saveGlossaryState();
-}
-
-// ── Check Choice Answer ──
-function checkGlossaryChoice(btn, idx, correctIdx) {
-  if (!currentGlossaryTerm) return;
-  const fb = document.getElementById('gl-feedback-area');
-  const allBtns = document.querySelectorAll('.gl-choice');
-
-  glossaryState[currentGlossaryTerm.id].attempts++;
-
-  // Disable all buttons
-  allBtns.forEach(b => {
-    b.style.pointerEvents = 'none';
-    if (parseInt(b.dataset.idx) === correctIdx) b.classList.add('correct');
-  });
-
-  if (idx === correctIdx) {
-    btn.classList.add('correct');
-    fb.innerHTML = `<div class="gl-feedback success">Richtig!</div>
-      <div style="margin-top:12px"><button class="gl-btn primary" onclick="advanceGlossaryPhase()">Weiter</button></div>`;
-  } else {
-    btn.classList.add('wrong');
-    fb.innerHTML = `<div class="gl-feedback error">Leider falsch. Die richtige Antwort ist markiert.</div>
-      <div style="margin-top:12px"><button class="gl-btn primary" onclick="openGlossaryLearn('${currentGlossaryTerm.id}')">Nochmal lernen</button></div>`;
-    glossaryState[currentGlossaryTerm.id].phase = 0;
-  }
-  saveGlossaryState();
-}
-
-// ── Check Explain Answer ──
-function checkGlossaryExplain() {
-  if (!currentGlossaryTerm) return;
-  const input = document.getElementById('gl-explain-input');
-  const fb = document.getElementById('gl-feedback-area');
-  const userText = input.value.trim().toLowerCase();
-  const q = currentGlossaryTerm.questions.explain;
-
-  glossaryState[currentGlossaryTerm.id].attempts++;
-
-  if (userText.length < 10) {
-    fb.innerHTML = `<div class="gl-feedback info">Bitte schreibe eine ausführlichere Erklärung (mindestens ein paar Wörter).</div>`;
-    return;
-  }
-
-  const found = [];
-  const missing = [];
-  q.keywords.forEach(kw => {
-    if (userText.includes(kw.toLowerCase())) {
-      found.push(kw);
-    } else {
-      missing.push(kw);
-    }
-  });
-
-  const ratio = found.length / q.keywords.length;
-  let keywordsHTML = found.map(k => `<span class="gl-keyword found">${k}</span>`).join('') +
-                     missing.map(k => `<span class="gl-keyword missing">${k}</span>`).join('');
-
-  if (ratio >= 0.5) {
-    const st = glossaryState[currentGlossaryTerm.id];
-    if (ratio >= 0.7) st.level = 3;
-    else if (st.level < 2) st.level = 2;
-    fb.innerHTML = `<div class="gl-feedback success">Gut erklärt! ${found.length} von ${q.keywords.length} Schlüsselbegriffen erkannt.</div>
-      <div style="margin-top:8px">${keywordsHTML}</div>
-      <div style="margin-top:12px"><button class="gl-btn primary" onclick="advanceGlossaryPhase()">Abschließen</button></div>`;
-  } else {
-    fb.innerHTML = `<div class="gl-feedback error">Noch nicht ganz vollständig. Nur ${found.length} von ${q.keywords.length} Schlüsselbegriffen erkannt. Versuche mehr Details einzubeziehen.</div>
-      <div style="margin-top:8px">${keywordsHTML}</div>
-      <div style="margin-top:12px">
-        <button class="gl-btn primary" onclick="openGlossaryLearn('${currentGlossaryTerm.id}')">Nochmal lernen</button>
-      </div>`;
-    glossaryState[currentGlossaryTerm.id].phase = 0;
-  }
-  saveGlossaryState();
-  renderGlossaryGrid();
-}
-
-// ── Tooltip System ──
-const glossaryTooltip = document.getElementById('glossary-tooltip');
-
-function initGlossaryTooltips() {
-  // Highlight glossary terms in method-card paragraphs and method-card headings
-  const containers = document.querySelectorAll('.method-card p, .task-sub, .exercise-label, header p');
-  containers.forEach(container => {
-    highlightGlossaryTermsInElement(container);
-  });
-}
-
-function highlightGlossaryTermsInElement(el) {
-  if (!el || !el.innerHTML) return;
-  // Build regex from termMap keys (longest first to avoid partial matches)
-  const keys = Object.keys(glossaryTermMap).sort((a, b) => b.length - a.length);
-  if (keys.length === 0) return;
-  const pattern = new RegExp('\\b(' + keys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'gi');
-
-  // Only process text nodes to avoid breaking HTML
-  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-  const textNodes = [];
-  while (walker.nextNode()) textNodes.push(walker.currentNode);
-
-  textNodes.forEach(node => {
-    const text = node.textContent;
-    if (!pattern.test(text)) return;
-    pattern.lastIndex = 0;
-
-    const span = document.createElement('span');
-    let lastIdx = 0;
-    let match;
-    pattern.lastIndex = 0;
-    while ((match = pattern.exec(text)) !== null) {
-      // Add text before match
-      if (match.index > lastIdx) {
-        span.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
-      }
-      // Create glossary term element
-      const termSpan = document.createElement('span');
-      termSpan.className = 'glossary-term';
-      termSpan.textContent = match[0];
-      termSpan.dataset.glossaryId = glossaryTermMap[match[0].toLowerCase()];
-      termSpan.addEventListener('mouseenter', showGlossaryTooltip);
-      termSpan.addEventListener('mouseleave', hideGlossaryTooltip);
-      termSpan.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        const id = e.target.dataset.glossaryId;
-        if (id) {
-          openGlossaryLearn(id);
-          document.getElementById('glossary-section').scrollIntoView({ behavior: 'smooth' });
-        }
-      });
-      span.appendChild(termSpan);
-      lastIdx = match.index + match[0].length;
-    }
-    // Add remaining text
-    if (lastIdx < text.length) {
-      span.appendChild(document.createTextNode(text.slice(lastIdx)));
-    }
-    node.parentNode.replaceChild(span, node);
-  });
-}
-
-function showGlossaryTooltip(e) {
-  const id = e.target.dataset.glossaryId;
-  const t = glossaryTerms.find(x => x.id === id);
-  if (!t || !glossaryTooltip) return;
-
-  glossaryTooltip.querySelector('.gt-name').textContent = t.term;
-  glossaryTooltip.querySelector('.gt-short').textContent = t.short;
-  glossaryTooltip.style.display = 'block';
-
-  const rect = e.target.getBoundingClientRect();
-  let top = rect.bottom + 8;
-  let left = rect.left;
-  // Keep tooltip in viewport
-  if (left + 260 > window.innerWidth) left = window.innerWidth - 270;
-  if (left < 10) left = 10;
-  if (top + 120 > window.innerHeight) top = rect.top - 120;
-
-  glossaryTooltip.style.top = top + 'px';
-  glossaryTooltip.style.left = left + 'px';
-}
-
-function hideGlossaryTooltip() {
-  if (glossaryTooltip) glossaryTooltip.style.display = 'none';
-}
-
-// ── Initialize Glossary ──
-function initGlossary() {
-  loadGlossaryState();
-  renderGlossaryGrid();
-  updateGlossaryProgress();
-  // Delay tooltip init so DOM is ready
-  setTimeout(initGlossaryTooltips, 300);
-}
-
-initGlossary();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.method-card p, .task-sub, .exercise-label, header p';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

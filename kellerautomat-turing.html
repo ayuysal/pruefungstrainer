@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kellerautomaten & Turingmaschinen Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -93,72 +94,6 @@ header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margi
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.tape-cell{width:32px;height:36px;font-size:13px}}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -274,33 +209,30 @@ header p{font-weight:300;color:var(--muted);font-size:15px;max-width:600px;margi
 <div id="exercise-area"></div>
 </div>
 
-<!-- ═══════════════════════════════
-       BEGRIFFE LERNEN
-       ═══════════════════════════════ -->
-  <div class="glossary-section">
-    <div class="section-title">
-      <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">&#129504;</div>
-      <h2>Begriffe lernen</h2>
-      <span style="font-size:13px;color:var(--muted);font-weight:300;margin-left:auto" id="glossary-sub">0 / 8 gemeistert</span>
-    </div>
-
-    <div class="glossary-progress-bar">
-      <span class="gp-text">Fortschritt</span>
-      <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
-      <span class="gp-count" id="glossary-count">0%</span>
-    </div>
-
-    <div class="glossary-grid" id="glossary-grid"></div>
-
-    <div class="glossary-learn" id="glossary-learn">
-      <div class="gl-header">
-        <h3 id="gl-title"></h3>
-        <button class="gl-close" onclick="glossaryClose()">&#10005;</button>
-      </div>
-      <div class="gl-phase-indicator" id="gl-phases"></div>
-      <div class="gl-content" id="gl-content"></div>
-    </div>
+<div class="glossary-section">
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">&#129504;</div>
+    <h2>Begriffe lernen</h2>
+    <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
   </div>
+
+  <div class="glossary-progress-bar">
+    <span class="gp-text">Fortschritt</span>
+    <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+    <span class="gp-count" id="glossary-count">0%</span>
+  </div>
+
+  <div class="glossary-grid" id="glossary-grid"></div>
+
+  <div class="glossary-learn" id="glossary-learn">
+    <div class="gl-header">
+      <h3 id="gl-title"></h3>
+      <button class="gl-close" onclick="glossaryClose()">&#10005;</button>
+    </div>
+    <div class="gl-phase-indicator" id="gl-phases"></div>
+    <div class="gl-content" id="gl-content"></div>
+  </div>
+</div>
 
 <!-- SUMMARY -->
 <div class="summary">
@@ -652,30 +584,27 @@ function showSolution(){const s=document.getElementById('sol');s.textContent=cur
 function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
 newTask();
 
-// ════════════════════════════════════
-//  GLOSSARY LEARNING SYSTEM
-// ════════════════════════════════════
-const GLOSSARY = [
+var TRAINER_ID = 'kellerautomat-turing';
+var GLOSSARY = [
   {
     term: 'Kellerautomat',
-    short: 'PDA – Automat mit Stack, erkennt kontextfreie Sprachen (Typ 2)',
+    short: 'PDA \u2013 Automat mit Stack, erkennt kontextfreie Sprachen (Typ 2)',
     definition: 'Ein Kellerautomat (Pushdown Automaton, PDA) ist ein 7-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F). Er erweitert einen endlichen Automaten um einen Stack (Keller) und kann dadurch kontextfreie Sprachen (Typ 2) erkennen. Akzeptanz erfolgt per Endzustand oder leerem Keller.',
-    analogy: '\uD83D\uDCA1 Wie ein Cafeteria-Tablettstapel: Du kannst immer nur das oberste Tablett nehmen oder ein neues oben drauflegen (LIFO). Der Automat merkt sich so z.B. wie viele Klammern offen sind – aber er kann nie in die Mitte schauen!',
+    analogy: '\u2699\uFE0F Wie ein Cafeteria-Tablettstapel: Du kannst immer nur das oberste Tablett nehmen oder ein neues oben drauflegen (LIFO). Der Automat merkt sich so z.B. wie viele Klammern offen sind \u2013 aber er kann nie in die Mitte schauen!',
     hints: [
-      '7-Tupel: (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F) – Q=Zust\u00e4nde, \u03A3=Eingabe, \u0393=Kelleralphabet, \u03B4=\u00dcbergangsfunktion',
-      'DPDA \u2282 NPDA: Der nichtdeterministische PDA ist m\u00e4chtiger (erkennt z.B. Palindrome)',
+      '7-Tupel: (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F) \u2013 Q=Zustaende, \u03A3=Eingabe, \u0393=Kelleralphabet, \u03B4=Uebergangsfunktion',
+      'DPDA \u2282 NPDA: Der nichtdeterministische PDA ist maechtiger (erkennt z.B. Palindrome)',
       'Typische kontextfreie Sprachen: a\u207fb\u207f, korrekte Klammerung, Palindrome mit Mittesymbol'
     ],
     questions: [
-      { type: 'fill', q: 'Ein Kellerautomat ist ein ___-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F).', a: '7', alt: ['sieben'], hint: 'Z\u00e4hle die Komponenten in der Klammer' },
-      { type: 'choice', q: 'Welchen Sprachtyp erkennt ein Kellerautomat?', options: ['Typ 0 \u2013 rekursiv aufz\u00e4hlbar', 'Typ 1 \u2013 kontextsensitiv', 'Typ 2 \u2013 kontextfrei', 'Typ 3 \u2013 regul\u00e4r'], correct: 2 },
-      { type: 'explain', q: 'Erkl\u00e4re den Kellerautomaten und seine Bestandteile. Warum ist er m\u00e4chtiger als ein DEA?', keywords: ['Stack', 'Keller', 'kontextfrei', 'Typ 2', '\u00dcbergangsfunktion', 'LIFO', 'Endzustand', 'PDA'], minKeywords: 3 }
-    ],
-    difficulty: 1
+      { type: 'fill', q: 'Ein Kellerautomat ist ein ___-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F).', a: '7', keywords: ['7','sieben'] },
+      { type: 'choice', q: 'Welchen Sprachtyp erkennt ein Kellerautomat?', options: ['Typ 0 \u2013 rekursiv aufzaehlbar', 'Typ 1 \u2013 kontextsensitiv', 'Typ 2 \u2013 kontextfrei', 'Typ 3 \u2013 regulaer'], correct: 2 },
+      { type: 'explain', q: 'Erklaere den Kellerautomaten und seine Bestandteile. Warum ist er maechtiger als ein DEA?', keywords: ['Stack', 'Keller', 'kontextfrei', 'Typ 2', 'Uebergangsfunktion', 'LIFO', 'Endzustand', 'PDA'], minKeywords: 3 }
+    ]
   },
   {
     term: 'Keller',
-    short: 'Stack des PDA \u2013 LIFO-Speicher f\u00fcr unbegrenzte Information',
+    short: 'Stack des PDA \u2013 LIFO-Speicher fuer unbegrenzte Information',
     definition: 'Der Keller (Stack) ist der zentrale Speicher des Kellerautomaten. Er arbeitet nach dem LIFO-Prinzip (Last In, First Out): Es kann nur das oberste Element gelesen, entfernt (pop) oder ein neues Element oben abgelegt (push) werden. Das Startkellersymbol Z\u2080 liegt zu Beginn als einziges Element auf dem Stack.',
     analogy: '\uD83D\uDCA1 Wie ein Stapel Teller: Du kannst nur den obersten Teller nehmen oder einen neuen oben drauflegen. An den untersten Teller kommst du erst, wenn alle dar\u00fcber weg sind \u2013 genau das ist LIFO!',
     hints: [
@@ -684,451 +613,225 @@ const GLOSSARY = [
       'Z\u2080 ist das Startkellersymbol \u2013 liegt zu Beginn als einziges auf dem Stack'
     ],
     questions: [
-      { type: 'fill', q: 'Der Keller arbeitet nach dem ___-Prinzip (Last In, First Out).', a: 'LIFO', hint: 'Abk\u00fcrzung f\u00fcr Last In, First Out' },
-      { type: 'choice', q: 'Was passiert bei einer pop-Operation auf dem Keller?', options: ['Ein Element wird unten eingef\u00fcgt', 'Das oberste Element wird entfernt', 'Der gesamte Stack wird geleert', 'Ein Element wird in der Mitte eingef\u00fcgt'], correct: 1 },
-      { type: 'explain', q: 'Erkl\u00e4re das LIFO-Prinzip des Kellers und warum es die M\u00e4chtigkeit des PDA begrenzt.', keywords: ['LIFO', 'push', 'pop', 'oberstes Element', 'Startkellersymbol', 'Z\u2080', 'kein wahlfreier Zugriff'], minKeywords: 3 }
-    ],
-    difficulty: 1
+      { type: 'fill', q: 'Der Keller arbeitet nach dem ___-Prinzip (Last In, First Out).', a: 'LIFO', keywords: ['LIFO','lifo'], hint: 'Abkuerzung fuer Last In, First Out' },
+      { type: 'choice', q: 'Was passiert bei einer pop-Operation auf dem Keller?', options: ['Ein Element wird unten eingefuegt', 'Das oberste Element wird entfernt', 'Der gesamte Stack wird geleert', 'Ein Element wird in der Mitte eingefuegt'], correct: 1 },
+      { type: 'explain', q: 'Erklaere das LIFO-Prinzip des Kellers und warum es die Maechtigkeit des PDA begrenzt.', keywords: ['LIFO', 'push', 'pop', 'oberstes Element', 'Startkellersymbol', 'Z\u2080', 'kein wahlfreier Zugriff'], minKeywords: 3 }
+    ]
   },
   {
     term: 'Kontextfreie Sprache',
     short: 'Typ 2 \u2013 von Kellerautomaten erkannt, links nur ein Nichtterminal',
     definition: 'Eine kontextfreie Sprache (Typ 2 in der Chomsky-Hierarchie) wird von einer kontextfreien Grammatik erzeugt und von einem Kellerautomaten (PDA) erkannt. Ihre Grammatikregeln haben die Form A \u2192 \u03B3, wobei links genau ein Nichtterminal steht. Typische Beispiele sind a\u207fb\u207f, korrekte Klammerung und Palindrome.',
-    analogy: '\uD83D\uDCA1 Wie verschachtelte Schachteln: Jede Schachtel (Nichtterminal) kann unabh\u00e4ngig vom Kontext ge\u00f6ffnet werden und enth\u00e4lt immer das Gleiche. Perfekt f\u00fcr Klammerstrukturen in Programmiersprachen!',
+    analogy: '\uD83D\uDCE6 Wie verschachtelte Schachteln: Jede Schachtel (Nichtterminal) kann unabhaengig vom Kontext geoeffnet werden und enthaelt immer das Gleiche. Perfekt fuer Klammerstrukturen in Programmiersprachen!',
     hints: [
       'Grammatikregel: A \u2192 \u03B3 \u2013 links steht immer genau EIN Nichtterminal',
-      'Pumping-Lemma f\u00fcr kontextfreie Sprachen: Nachweis, dass eine Sprache NICHT kontextfrei ist',
+      'Pumping-Lemma fuer kontextfreie Sprachen: Nachweis, dass eine Sprache NICHT kontextfrei ist',
       'DPDA-Sprachen \u2282 NPDA-Sprachen \u2013 nicht jede kontextfreie Sprache ist deterministisch erkennbar'
     ],
     questions: [
-      { type: 'fill', q: 'Bei einer kontextfreien Grammatik steht auf der linken Seite immer genau ein ___.', a: 'Nichtterminal', alt: ['NT', 'Variable'], hint: 'Ein einzelner gro\u00dfer Buchstabe wie A, B oder S' },
+      { type: 'fill', q: 'Bei einer kontextfreien Grammatik steht auf der linken Seite immer genau ein ___.', a: 'Nichtterminal', alt: ['NT', 'Variable'], keywords: ['Nichtterminal','NT','Variable'], hint: 'Ein einzelner grosser Buchstabe wie A, B oder S' },
       { type: 'choice', q: 'Welche Sprache ist kontextfrei?', options: ['a\u207fb\u207fc\u207f', 'a\u207fb\u207f', '{ww | w \u2208 {a,b}*}', 'a^(2^n)'], correct: 1 },
-      { type: 'explain', q: 'Erkl\u00e4re kontextfreie Sprachen und nenne Beispiele, die kontextfrei bzw. nicht kontextfrei sind.', keywords: ['Typ 2', 'Kellerautomat', 'Nichtterminal', 'a\u207fb\u207f', 'Klammerung', 'Pumping-Lemma', 'Grammatik'], minKeywords: 3 }
-    ],
-    difficulty: 2
+      { type: 'explain', q: 'Erklaere kontextfreie Sprachen und nenne Beispiele, die kontextfrei bzw. nicht kontextfrei sind.', keywords: ['Typ 2', 'Kellerautomat', 'Nichtterminal', 'a\u207fb\u207f', 'Klammerung', 'Pumping-Lemma', 'Grammatik'], minKeywords: 3 }
+    ]
   },
   {
     term: 'Turingmaschine',
     short: 'TM \u2013 universelles Berechnungsmodell mit unendlichem Band',
-    definition: 'Eine Turingmaschine (TM) ist ein 7-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) mit einem beidseitig unendlichen Band, einem Lese-/Schreibkopf und einer \u00dcbergangsfunktion. Sie kann lesen, schreiben und den Kopf in beide Richtungen bewegen. Die TM erkennt rekursiv aufz\u00e4hlbare Sprachen (Typ 0) und gilt als universelles Berechnungsmodell.',
-    analogy: '\uD83D\uDCA1 Wie ein Mensch mit einem unendlich langen Notizzettel und einem Stift: Du kannst jede Stelle lesen, \u00fcberschreiben und dich frei hin- und herbewegen. Damit kannst du ALLES berechnen, was \u00fcberhaupt berechenbar ist!',
+    definition: 'Eine Turingmaschine (TM) ist ein 7-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) mit einem beidseitig unendlichen Band, einem Lese-/Schreibkopf und einer Uebergangsfunktion. Sie kann lesen, schreiben und den Kopf in beide Richtungen bewegen. Die TM erkennt rekursiv aufzaehlbare Sprachen (Typ 0) und gilt als universelles Berechnungsmodell.',
+    analogy: '\uD83D\uDCDD Wie ein Mensch mit einem unendlich langen Notizzettel und einem Stift: Du kannst jede Stelle lesen, ueberschreiben und dich frei hin- und herbewegen. Damit kannst du ALLES berechnen, was ueberhaupt berechenbar ist!',
     hints: [
       '7-Tupel: (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) \u2013 \u25A1 ist das Blank-Symbol',
       'Kopfbewegung: L (links), R (rechts), N (stehen bleiben) \u2013 wahlfreier Zugriff aufs Band',
-      'DTM = NTM in der M\u00e4chtigkeit \u2013 anders als bei PDA (DPDA < NPDA)!'
+      'DTM = NTM in der Maechtigkeit \u2013 anders als bei PDA (DPDA < NPDA)!'
     ],
     questions: [
-      { type: 'fill', q: 'Das Blank-Symbol der Turingmaschine wird als ___ geschrieben.', a: '\u25A1', alt: ['B', 'blank', 'Blank'], hint: 'Ein leeres Quadrat oder B f\u00fcr Blank' },
-      { type: 'choice', q: 'Was kann eine Turingmaschine, was ein PDA nicht kann?', options: ['Eingabe lesen', 'Zust\u00e4nde wechseln', 'Kopf nach links UND rechts bewegen', 'Symbole speichern'], correct: 2 },
-      { type: 'explain', q: 'Erkl\u00e4re die Turingmaschine und warum sie m\u00e4chtiger ist als ein Kellerautomat.', keywords: ['Band', 'unendlich', 'Lese-/Schreibkopf', 'Typ 0', 'wahlfreier Zugriff', 'universell', 'Kopfbewegung', 'DTM'], minKeywords: 3 }
-    ],
-    difficulty: 2
+      { type: 'fill', q: 'Das Blank-Symbol der Turingmaschine wird als ___ geschrieben.', a: '\u25A1', alt: ['B', 'blank', 'Blank'], keywords: ['\u25A1','B','blank','Blank'], hint: 'Ein leeres Quadrat oder B fuer Blank' },
+      { type: 'choice', q: 'Was kann eine Turingmaschine, was ein PDA nicht kann?', options: ['Eingabe lesen', 'Zustaende wechseln', 'Kopf nach links UND rechts bewegen', 'Symbole speichern'], correct: 2 },
+      { type: 'explain', q: 'Erklaere die Turingmaschine und warum sie maechtiger ist als ein Kellerautomat.', keywords: ['Band', 'unendlich', 'Lese-/Schreibkopf', 'Typ 0', 'wahlfreier Zugriff', 'universell', 'Kopfbewegung', 'DTM'], minKeywords: 3 }
+    ]
   },
   {
     term: 'Band',
     short: 'Unendliches Speichermedium der Turingmaschine',
-    definition: 'Das Band (Turing-Band) ist ein beidseitig unendliches Speichermedium, das in Zellen unterteilt ist. Jede Zelle enth\u00e4lt genau ein Symbol aus dem Bandalphabet \u0393 oder das Blank-Symbol \u25A1. Der Lese-/Schreibkopf kann jede Zelle lesen, \u00fcberschreiben und sich nach links oder rechts bewegen \u2013 im Gegensatz zum Stack des PDA bietet das Band wahlfreien Zugriff.',
-    analogy: '\uD83D\uDCA1 Wie ein unendlich langes Klebeband mit K\u00e4stchen: In jedes K\u00e4stchen passt genau ein Buchstabe. Du kannst dich frei hin- und herbewegen und jedes K\u00e4stchen lesen oder \u00fcberschreiben. Der Stack ist dagegen wie ein Turm \u2013 du siehst nur die Spitze!',
+    definition: 'Das Band (Turing-Band) ist ein beidseitig unendliches Speichermedium, das in Zellen unterteilt ist. Jede Zelle enthaelt genau ein Symbol aus dem Bandalphabet \u0393 oder das Blank-Symbol \u25A1. Der Lese-/Schreibkopf kann jede Zelle lesen, ueberschreiben und sich nach links oder rechts bewegen \u2013 im Gegensatz zum Stack des PDA bietet das Band wahlfreien Zugriff.',
+    analogy: '\uD83D\uDCFC Wie ein unendlich langes Klebeband mit Kaestchen: In jedes Kaestchen passt genau ein Buchstabe. Du kannst dich frei hin- und herbewegen und jedes Kaestchen lesen oder ueberschreiben. Der Stack ist dagegen wie ein Turm \u2013 du siehst nur die Spitze!',
     hints: [
       'Beidseitig unendlich: Es gibt immer noch eine Zelle weiter links und weiter rechts',
-      'Jede Zelle enth\u00e4lt ein Symbol aus \u0393 oder \u25A1 (Blank = leere Zelle)',
-      'Wahlfreier Zugriff (vs. LIFO beim Stack) \u2013 deshalb ist die TM m\u00e4chtiger als der PDA'
+      'Jede Zelle enthaelt ein Symbol aus \u0393 oder \u25A1 (Blank = leere Zelle)',
+      'Wahlfreier Zugriff (vs. LIFO beim Stack) \u2013 deshalb ist die TM maechtiger als der PDA'
     ],
     questions: [
-      { type: 'fill', q: 'Das Band der Turingmaschine ist beidseitig ___ lang.', a: 'unendlich', alt: ['infinit', 'unbegrenzt'], hint: 'Es gibt kein Ende in beide Richtungen' },
+      { type: 'fill', q: 'Das Band der Turingmaschine ist beidseitig ___ lang.', a: 'unendlich', alt: ['infinit', 'unbegrenzt'], keywords: ['unendlich','infinit','unbegrenzt'], hint: 'Es gibt kein Ende in beide Richtungen' },
       { type: 'choice', q: 'Was steht in einer leeren Zelle des Turing-Bands?', options: ['Nichts (null)', 'Das Blank-Symbol \u25A1', 'Das Startsymbol', 'Eine 0'], correct: 1 },
-      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen dem Band der TM und dem Stack des PDA.', keywords: ['Band', 'Stack', 'wahlfreier Zugriff', 'LIFO', 'unendlich', 'Zelle', 'Blank', 'Lese-/Schreibkopf'], minKeywords: 3 }
-    ],
-    difficulty: 1
+      { type: 'explain', q: 'Erklaere den Unterschied zwischen dem Band der TM und dem Stack des PDA.', keywords: ['Band', 'Stack', 'wahlfreier Zugriff', 'LIFO', 'unendlich', 'Zelle', 'Blank', 'Lese-/Schreibkopf'], minKeywords: 3 }
+    ]
   },
   {
     term: 'Halteproblem',
-    short: 'Nicht entscheidbar \u2013 keine TM kann f\u00fcr jede TM+Eingabe sagen, ob sie h\u00e4lt',
-    definition: 'Das Halteproblem fragt: Gibt es eine Turingmaschine H, die f\u00fcr jede beliebige TM M und Eingabe w entscheidet, ob M bei Eingabe w anh\u00e4lt? Alan Turing bewies 1936 durch Diagonalisierung, dass dies NICHT m\u00f6glich ist. Das Halteproblem ist semi-entscheidbar (rekursiv aufz\u00e4hlbar), aber nicht entscheidbar.',
-    analogy: '\uD83D\uDCA1 Wie ein allwissender Wahrsager, den es nicht geben kann: Stell dir vor, jemand behauptet, er k\u00f6nne f\u00fcr jedes Programm vorhersagen, ob es fertig wird. Dann baust du ein Programm, das genau das Gegenteil tut \u2013 Widerspruch! (Diagonalisierung)',
+    short: 'Nicht entscheidbar \u2013 keine TM kann fuer jede TM+Eingabe sagen, ob sie haelt',
+    definition: 'Das Halteproblem fragt: Gibt es eine Turingmaschine H, die fuer jede beliebige TM M und Eingabe w entscheidet, ob M bei Eingabe w anhaelt? Alan Turing bewies 1936 durch Diagonalisierung, dass dies NICHT moeglich ist. Das Halteproblem ist semi-entscheidbar (rekursiv aufzaehlbar), aber nicht entscheidbar.',
+    analogy: '\uD83D\uDD2E Wie ein allwissender Wahrsager, den es nicht geben kann: Stell dir vor, jemand behauptet, er koenne fuer jedes Programm vorhersagen, ob es fertig wird. Dann baust du ein Programm, das genau das Gegenteil tut \u2013 Widerspruch! (Diagonalisierung)',
     hints: [
-      'Beweis durch Diagonalisierung: Annahme einer L\u00f6sungs-TM H f\u00fchrt zum Widerspruch',
-      'Semi-entscheidbar: Wenn M h\u00e4lt, kann man das erkennen. Wenn nicht, wartet man ewig.',
-      'Standardfrage in der Pr\u00fcfung: Unterschied zwischen entscheidbar und semi-entscheidbar!'
+      'Beweis durch Diagonalisierung: Annahme einer Loesungs-TM H fuehrt zum Widerspruch',
+      'Semi-entscheidbar: Wenn M haelt, kann man das erkennen. Wenn nicht, wartet man ewig.',
+      'Standardfrage in der Pruefung: Unterschied zwischen entscheidbar und semi-entscheidbar!'
     ],
     questions: [
-      { type: 'fill', q: 'Das Halteproblem wurde durch ___ als nicht entscheidbar bewiesen.', a: 'Diagonalisierung', alt: ['Widerspruch', 'Diagonalargument'], hint: 'Eine Beweismethode, die einen Widerspruch konstruiert' },
+      { type: 'fill', q: 'Das Halteproblem wurde durch ___ als nicht entscheidbar bewiesen.', a: 'Diagonalisierung', alt: ['Widerspruch', 'Diagonalargument'], keywords: ['Diagonalisierung','Widerspruch','Diagonalargument'], hint: 'Eine Beweismethode, die einen Widerspruch konstruiert' },
       { type: 'choice', q: 'Welche Aussage zum Halteproblem ist korrekt?', options: ['Es ist entscheidbar', 'Es ist nicht entscheidbar, aber semi-entscheidbar', 'Es ist weder entscheidbar noch semi-entscheidbar', 'Es wurde noch nicht bewiesen'], correct: 1 },
-      { type: 'explain', q: 'Erkl\u00e4re das Halteproblem und warum es nicht entscheidbar ist.', keywords: ['Turingmaschine', 'Eingabe', 'h\u00e4lt', 'Diagonalisierung', 'Widerspruch', 'nicht entscheidbar', 'semi-entscheidbar', 'Turing'], minKeywords: 3 }
-    ],
-    difficulty: 3
+      { type: 'explain', q: 'Erklaere das Halteproblem und warum es nicht entscheidbar ist.', keywords: ['Turingmaschine', 'Eingabe', 'haelt', 'Diagonalisierung', 'Widerspruch', 'nicht entscheidbar', 'semi-entscheidbar', 'Turing'], minKeywords: 3 }
+    ]
   },
   {
     term: 'Berechenbarkeit',
-    short: 'Was kann (und was kann nicht) algorithmisch gel\u00f6st werden?',
-    definition: 'Berechenbarkeit befasst sich mit der Frage, welche Probleme durch einen Algorithmus (= Turingmaschine) gel\u00f6st werden k\u00f6nnen. Eine Funktion ist berechenbar (Turing-berechenbar), wenn es eine TM gibt, die sie f\u00fcr jede g\u00fcltige Eingabe korrekt berechnet und h\u00e4lt. Nicht alle Probleme sind berechenbar \u2013 das Halteproblem ist das bekannteste Beispiel.',
-    analogy: '\uD83D\uDCA1 Wie die Grenzen eines Taschenrechners \u2013 aber fundamental: Nicht alles, was man sich als mathematische Frage vorstellen kann, l\u00e4sst sich durch einen Computer beantworten. Es gibt prinzipielle Grenzen, nicht nur praktische!',
+    short: 'Was kann (und was kann nicht) algorithmisch geloest werden?',
+    definition: 'Berechenbarkeit befasst sich mit der Frage, welche Probleme durch einen Algorithmus (= Turingmaschine) geloest werden koennen. Eine Funktion ist berechenbar (Turing-berechenbar), wenn es eine TM gibt, die sie fuer jede gueltige Eingabe korrekt berechnet und haelt. Nicht alle Probleme sind berechenbar \u2013 das Halteproblem ist das bekannteste Beispiel.',
+    analogy: '\uD83D\uDEA7 Wie die Grenzen eines Taschenrechners \u2013 aber fundamental: Nicht alles, was man sich als mathematische Frage vorstellen kann, laesst sich durch einen Computer beantworten. Es gibt prinzipielle Grenzen, nicht nur praktische!',
     hints: [
-      'Berechenbar = es existiert eine TM, die f\u00fcr jede Eingabe h\u00e4lt und die richtige Antwort gibt',
-      'Entscheidbar: TM h\u00e4lt immer (Ja oder Nein). Semi-entscheidbar: TM h\u00e4lt nur bei Ja.',
-      'Das Halteproblem zeigt: Es gibt Probleme, die kein Algorithmus l\u00f6sen kann!'
+      'Berechenbar = es existiert eine TM, die fuer jede Eingabe haelt und die richtige Antwort gibt',
+      'Entscheidbar: TM haelt immer (Ja oder Nein). Semi-entscheidbar: TM haelt nur bei Ja.',
+      'Das Halteproblem zeigt: Es gibt Probleme, die kein Algorithmus loesen kann!'
     ],
     questions: [
-      { type: 'fill', q: 'Eine Funktion ist ___, wenn eine Turingmaschine sie f\u00fcr jede Eingabe korrekt berechnet.', a: 'berechenbar', alt: ['Turing-berechenbar', 'turing-berechenbar'], hint: 'Der zentrale Begriff dieses Themas' },
-      { type: 'choice', q: 'Was ist der Unterschied zwischen entscheidbar und semi-entscheidbar?', options: ['Kein Unterschied', 'Entscheidbar = TM h\u00e4lt immer; semi-entscheidbar = h\u00e4lt nur bei Ja', 'Semi-entscheidbar = TM h\u00e4lt immer; entscheidbar = h\u00e4lt nur bei Ja', 'Entscheidbar = kein Algorithmus m\u00f6glich'], correct: 1 },
-      { type: 'explain', q: 'Erkl\u00e4re den Begriff Berechenbarkeit und nenne ein nicht berechenbares Problem.', keywords: ['Turingmaschine', 'Algorithmus', 'berechenbar', 'entscheidbar', 'semi-entscheidbar', 'Halteproblem', 'h\u00e4lt'], minKeywords: 3 }
-    ],
-    difficulty: 2
+      { type: 'fill', q: 'Eine Funktion ist ___, wenn eine Turingmaschine sie fuer jede Eingabe korrekt berechnet.', a: 'berechenbar', alt: ['Turing-berechenbar', 'turing-berechenbar'], keywords: ['berechenbar','Turing-berechenbar'], hint: 'Der zentrale Begriff dieses Themas' },
+      { type: 'choice', q: 'Was ist der Unterschied zwischen entscheidbar und semi-entscheidbar?', options: ['Kein Unterschied', 'Entscheidbar = TM haelt immer; semi-entscheidbar = haelt nur bei Ja', 'Semi-entscheidbar = TM haelt immer; entscheidbar = haelt nur bei Ja', 'Entscheidbar = kein Algorithmus moeglich'], correct: 1 },
+      { type: 'explain', q: 'Erklaere den Begriff Berechenbarkeit und nenne ein nicht berechenbares Problem.', keywords: ['Turingmaschine', 'Algorithmus', 'berechenbar', 'entscheidbar', 'semi-entscheidbar', 'Halteproblem', 'haelt'], minKeywords: 3 }
+    ]
   },
   {
     term: 'Church-Turing-These',
     short: 'Alles intuitiv Berechenbare ist Turing-berechenbar',
     definition: 'Die Church-Turing-These (1936) besagt, dass die Klasse der intuitiv berechenbaren Funktionen genau der Klasse der Turing-berechenbaren Funktionen entspricht. Jeder denkbare Algorithmus kann durch eine Turingmaschine simuliert werden. Dies ist keine bewiesene Aussage, sondern eine allgemein akzeptierte These, die bisher nie widerlegt wurde.',
-    analogy: '\uD83D\uDCA1 Wie ein Naturgesetz der Informatik: So wie die Physik annimmt, dass Energie erhalten bleibt, nimmt die Informatik an, dass alles Berechenbare auch von einer TM berechnet werden kann. Nie bewiesen \u2013 aber auch nie widerlegt!',
+    analogy: '\u2696\uFE0F Wie ein Naturgesetz der Informatik: So wie die Physik annimmt, dass Energie erhalten bleibt, nimmt die Informatik an, dass alles Berechenbare auch von einer TM berechnet werden kann. Nie bewiesen \u2013 aber auch nie widerlegt!',
     hints: [
-      'Aufgestellt von Alonzo Church und Alan Turing unabh\u00e4ngig voneinander (1936)',
-      'Keine mathematische Aussage (kein Beweis m\u00f6glich), sondern eine These/Hypothese',
-      '\u00c4quivalente Modelle: Turingmaschine = Lambda-Kalk\u00fcl = rekursive Funktionen = alle gleich m\u00e4chtig'
+      'Aufgestellt von Alonzo Church und Alan Turing unabhaengig voneinander (1936)',
+      'Keine mathematische Aussage (kein Beweis moeglich), sondern eine These/Hypothese',
+      'Aequivalente Modelle: Turingmaschine = Lambda-Kalkuel = rekursive Funktionen = alle gleich maechtig'
     ],
     questions: [
-      { type: 'fill', q: 'Die Church-Turing-These ist keine bewiesene Aussage, sondern eine ___.', a: 'These', alt: ['Hypothese', 'Annahme'], hint: 'Ein anderes Wort f\u00fcr eine unbewiesene, aber akzeptierte Annahme' },
-      { type: 'choice', q: 'Was besagt die Church-Turing-These?', options: ['Turingmaschinen sind das schw\u00e4chste Berechnungsmodell', 'Alles intuitiv Berechenbare ist Turing-berechenbar', 'Es gibt m\u00e4chtigere Modelle als die TM', 'Jedes Problem ist entscheidbar'], correct: 1 },
-      { type: 'explain', q: 'Erkl\u00e4re die Church-Turing-These und warum sie keine mathematisch bewiesene Aussage ist.', keywords: ['Church', 'Turing', 'berechenbar', 'These', 'intuitiv', 'nicht bewiesen', 'Algorithmus', 'universell'], minKeywords: 3 }
-    ],
-    difficulty: 2
+      { type: 'fill', q: 'Die Church-Turing-These ist keine bewiesene Aussage, sondern eine ___.', a: 'These', alt: ['Hypothese', 'Annahme'], keywords: ['These','Hypothese','Annahme'], hint: 'Ein anderes Wort fuer eine unbewiesene, aber akzeptierte Annahme' },
+      { type: 'choice', q: 'Was besagt die Church-Turing-These?', options: ['Turingmaschinen sind das schwaechste Berechnungsmodell', 'Alles intuitiv Berechenbare ist Turing-berechenbar', 'Es gibt maechtigere Modelle als die TM', 'Jedes Problem ist entscheidbar'], correct: 1 },
+      { type: 'explain', q: 'Erklaere die Church-Turing-These und warum sie keine mathematisch bewiesene Aussage ist.', keywords: ['Church', 'Turing', 'berechenbar', 'These', 'intuitiv', 'nicht bewiesen', 'Algorithmus', 'universell'], minKeywords: 3 }
+    ]
   }
 ];
 
-// ── State Management ──
-const glossaryState = { levels: {}, current: null, hintIdx: 0 };
-
-function glossaryLoad() {
-  try {
-    const s = localStorage.getItem('glossary-kellerautomat-turing');
-    if (s) glossaryState.levels = JSON.parse(s);
-  } catch(e) {}
-  GLOSSARY.forEach(g => { if (!(g.term in glossaryState.levels)) glossaryState.levels[g.term] = 0; });
-}
-
-function glossarySave() {
-  localStorage.setItem('glossary-kellerautomat-turing', JSON.stringify(glossaryState.levels));
-}
-
-// ── Grid Rendering ──
-function glossaryRenderGrid() {
-  const grid = document.getElementById('glossary-grid');
-  grid.innerHTML = '';
-  const icons = ['\u2753', '\uD83D\uDCA1', '\uD83D\uDD0D', '\u2B50'];
-  GLOSSARY.forEach(g => {
-    const lv = glossaryState.levels[g.term] || 0;
-    const c = document.createElement('div');
-    c.className = 'glossary-card' + (glossaryState.current === g.term ? ' active' : '');
-    c.dataset.level = lv;
-    c.onclick = () => glossaryOpen(g.term);
-    c.innerHTML = '<div class="gc-icon">' + icons[lv] + '</div><div class="gc-term">' + g.term + '</div><div class="gc-short">' + g.short + '</div><div class="gc-level"></div>';
-    grid.appendChild(c);
-  });
-  glossaryUpdateProgress();
-}
-
-function glossaryUpdateProgress() {
-  const mastered = GLOSSARY.filter(g => glossaryState.levels[g.term] >= 3).length;
-  const total = GLOSSARY.length;
-  const pct = Math.round(mastered / total * 100);
-  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
-  document.getElementById('glossary-fill').style.width = pct + '%';
-  document.getElementById('glossary-count').textContent = pct + '%';
-}
-
-// ── Open Term ──
-function glossaryOpen(term) {
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.current = term;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-
-  document.getElementById('gl-title').textContent = g.term;
-  glossaryRenderPhases(lv);
-
-  if (lv === 0) glossaryPhase1(g);
-  else if (lv === 1) glossaryPhase2(g);
-  else if (lv === 2) glossaryPhase3(g);
-  else glossaryMastered(g);
-
-  document.getElementById('glossary-learn').classList.add('visible');
-  glossaryRenderGrid();
-  document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function glossaryRenderPhases(lv, activePhase) {
-  if (activePhase === undefined) activePhase = lv;
-  const names = ['\uD83D\uDCA1 Kennenlernen', '\uD83D\uDD0D \u00dcberpr\u00fcfen', '\u2B50 Beweisen'];
-  document.getElementById('gl-phases').innerHTML = names.map((n, i) => {
-    let cls = 'gl-phase';
-    if (i === activePhase) cls += ' current';
-    else if (lv > i || lv === 3) cls += ' done';
-    const clickable = (i <= lv || lv === 3);
-    const onclick = clickable ? ' onclick="glossaryGoToPhase(' + i + ')"' : '';
-    return '<div class="' + cls + '"' + onclick + '>' + n + '</div>';
-  }).join('');
-}
-
-function glossaryGoToPhase(phaseIdx) {
-  const term = glossaryState.current;
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-  glossaryRenderPhases(lv, phaseIdx);
-  if (phaseIdx === 0) glossaryPhase1(g);
-  else if (phaseIdx === 1) glossaryPhase2(g);
-  else if (phaseIdx === 2) glossaryPhase3(g);
-}
-
-// ── Phase 1: Kennenlernen ──
-function glossaryPhase1(g) {
-  const el = document.getElementById('gl-content');
-  let html = '<div class="gl-analogy">' + g.analogy + '</div>';
-  html += '<div class="gl-definition">' + g.definition + '</div>';
-  html += '<div class="gl-hints" id="gl-hints">';
-  g.hints.forEach((h, i) => {
-    html += '<div class="gl-hint' + (i === 0 ? ' visible' : '') + '" id="gh-' + i + '">' + h + '</div>';
-  });
-  html += '</div>';
-  if (g.hints.length > 1) html += '<button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">N\u00e4chster Hinweis \u2192</button>';
-  html += '<button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden! \u2713</button>';
-  el.innerHTML = html;
-}
-
-function glossaryNextHint() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  if (!g) return;
-  glossaryState.hintIdx++;
-  if (glossaryState.hintIdx < g.hints.length) {
-    document.getElementById('gh-' + glossaryState.hintIdx).classList.add('visible');
+var GP_STORIES = {
+  'Kellerautomat': {
+    route: 'Du betrittst eine magische Cafeteria, in der ein riesiger Tablettstapel bis zur Decke reicht und ein Roboter-Kellner die Bestellungen verarbeitet.',
+    scenes: [
+      { kw: 'PDA', img: '\u2699\uFE0F', text: 'Am Eingang haengt ein Schild: "PDA \u2013 Pushdown Automaton". Der Roboter-Kellner traegt eine Schuerze mit der Aufschrift "7-Tupel".' },
+      { kw: 'Stack', img: '\uD83D\uDCDA', text: 'In der Mitte steht der riesige Tablettstapel \u2013 der Stack. Oben liegt ein goldenes Tablett mit "Z\u2080" graviert: das Startkellersymbol.' },
+      { kw: 'LIFO', img: '\u2B06\uFE0F', text: 'Ein Schild warnt: "LIFO \u2013 Last In, First Out! Nur das oberste Tablett anfassen!" Der Kellner legt (push) und nimmt (pop) immer nur oben.' },
+      { kw: 'kontextfrei', img: '\uD83D\uDCE6', text: 'Auf jedem Tablett steht eine kontextfreie Sprache: a\u207fb\u207f auf dem obersten, korrekte Klammerung darunter \u2013 alles Typ 2!' },
+      { kw: 'NPDA', img: '\uD83D\uDD00', text: 'Ploetzlich teilt sich der Kellner in mehrere Kopien \u2013 der nichtdeterministische PDA! Er erkennt sogar Palindrome, was ein einzelner DPDA nicht schafft.' }
+    ]
+  },
+  'Keller': {
+    route: 'Du stehst vor einem tiefen Brunnen (Keller/Schacht), in dem Teller uebereinander gestapelt sind.',
+    scenes: [
+      { kw: 'LIFO', img: '\uD83E\uDD3F', text: 'Du schaust in den Brunnen: Nur der oberste Teller ist sichtbar \u2013 LIFO-Prinzip. Last In, First Out!' },
+      { kw: 'push', img: '\u2B07\uFE0F', text: 'Du legst einen neuen Teller oben drauf (push). Er gleitet sanft auf den Stapel.' },
+      { kw: 'pop', img: '\u2B06\uFE0F', text: 'Du greifst den obersten Teller und hebst ihn heraus (pop). Der darunter wird sichtbar.' },
+      { kw: 'Z\u2080', img: '\u2B50', text: 'Ganz unten im Brunnen leuchtet ein goldener Teller: Z\u2080, das Startkellersymbol. Er lag dort von Anfang an.' },
+      { kw: 'kein wahlfreier Zugriff', img: '\uD83D\uDEAB', text: 'Ein Warnschild: "Kein Hineingreifen in die Mitte!" \u2013 kein wahlfreier Zugriff, nur die Spitze ist erreichbar.' }
+    ]
+  },
+  'Kontextfreie Sprache': {
+    route: 'Du betrittst eine Werkstatt voller ineinander verschachtelter Schachteln, jede mit einem Buchstaben beschriftet.',
+    scenes: [
+      { kw: 'Typ 2', img: '\uD83C\uDFE0', text: 'Ueber der Werkstatt steht: "Typ 2 \u2013 Kontextfreie Sprachen". Ein grosses Schild in der Chomsky-Hierarchie.' },
+      { kw: 'Nichtterminal', img: '\uD83D\uDCE6', text: 'Jede Schachtel hat einen Grossbuchstaben: A, B, S \u2013 die Nichtterminale. Die Regel A \u2192 \u03B3 oeffnet jede Schachtel kontextfrei.' },
+      { kw: 'Kellerautomat', img: '\u2699\uFE0F', text: 'In der Ecke rattert ein Kellerautomat und sortiert Schachteln \u2013 er erkennt alle kontextfreien Sprachen!' },
+      { kw: 'a\u207fb\u207f', img: '\uD83D\uDD22', text: 'Auf dem Tisch liegen Karten: aabb, aaabbb \u2013 die Sprache a\u207fb\u207f, ein Paradebeispiel fuer kontextfrei.' },
+      { kw: 'Pumping-Lemma', img: '\uD83D\uDCA8', text: 'An der Wand haengt eine Pumpe mit dem Schild "Pumping-Lemma": Damit beweist man, dass eine Sprache NICHT kontextfrei ist.' }
+    ]
+  },
+  'Turingmaschine': {
+    route: 'Du betrittst Alan Turings geheimes Labor \u2013 ein riesiger Raum mit einem endlosen Band, das durch eine Maschine laeuft.',
+    scenes: [
+      { kw: 'Band', img: '\uD83D\uDCDC', text: 'Ein endloses Papierband zieht sich durch den Raum \u2013 beidseitig unendlich, in Zellen unterteilt, jede mit einem Symbol oder \u25A1 (Blank).' },
+      { kw: 'Lese-/Schreibkopf', img: '\u270D\uFE0F', text: 'Ueber dem Band schwebt ein leuchtender Kopf: Er liest, schreibt und bewegt sich frei nach links (L), rechts (R) oder bleibt stehen (N).' },
+      { kw: '7-Tupel', img: '\uD83D\uDD27', text: 'An der Wand haengt die Bauanleitung: (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) \u2013 das 7-Tupel der Turingmaschine.' },
+      { kw: 'Typ 0', img: '\uD83C\uDFC6', text: 'Eine Trophae leuchtet: "Typ 0 \u2013 Rekursiv aufzaehlbar". Die TM ist das maechtigste Automatenmodell der Chomsky-Hierarchie!' },
+      { kw: 'DTM = NTM', img: '\u2696\uFE0F', text: 'Zwei identische Maschinen stehen nebeneinander: DTM und NTM \u2013 gleich maechtig! Anders als DPDA vs. NPDA.' }
+    ]
+  },
+  'Band': {
+    route: 'Du wanderst auf einem unendlich langen Klebeband, das sich in beide Richtungen bis zum Horizont erstreckt.',
+    scenes: [
+      { kw: 'beidseitig unendlich', img: '\u267E\uFE0F', text: 'Du blickst nach links, dann nach rechts: Das Band hat kein Ende in beide Richtungen \u2013 beidseitig unendlich!' },
+      { kw: 'Zelle', img: '\u2B1C', text: 'Unter deinen Fuessen ist ein Kaestchen (Zelle). Jede Zelle enthaelt genau ein Symbol aus dem Bandalphabet \u0393.' },
+      { kw: 'Blank', img: '\u25A1', text: 'Die meisten Zellen sind leer \u2013 sie enthalten das Blank-Symbol \u25A1. Nur die beschriebenen Zellen tragen andere Symbole.' },
+      { kw: 'wahlfreier Zugriff', img: '\uD83D\uDD04', text: 'Du kannst dich frei bewegen: jede Zelle lesen, ueberschreiben, hin und her laufen \u2013 wahlfreier Zugriff!' },
+      { kw: 'vs. Stack', img: '\u2194\uFE0F', text: 'Neben dem Band steht ein enger Turm (Stack) zum Vergleich: Dort siehst du nur die Spitze. Das Band ist viel maechtiger \u2013 deshalb TM > PDA.' }
+    ]
+  },
+  'Halteproblem': {
+    route: 'Du stehst in einem Gerichtssaal, wo ein Wahrsager vor dem Richter behauptet, jede Berechnung vorhersagen zu koennen.',
+    scenes: [
+      { kw: 'Turingmaschine M', img: '\u2699\uFE0F', text: 'Auf der Anklagebank sitzt eine Turingmaschine M mit Eingabe w. Die Frage: "Haelt M bei Eingabe w?"' },
+      { kw: 'Diagonalisierung', img: '\u274C', text: 'Der Richter konstruiert einen Widerspruch: Eine TM, die das Gegenteil tut \u2013 Diagonalisierung! Der Wahrsager wird als Luegner entlarvt.' },
+      { kw: 'nicht entscheidbar', img: '\uD83D\uDEAB', text: 'Urteil: "NICHT ENTSCHEIDBAR!" \u2013 Es gibt keine TM H, die fuer JEDE TM+Eingabe korrekt entscheidet, ob sie haelt.' },
+      { kw: 'semi-entscheidbar', img: '\u23F3', text: 'Ein Trostpreis: Das Problem ist semi-entscheidbar. Wenn M haelt, erkennt man es. Wenn nicht, wartet man ewig...' },
+      { kw: 'Turing 1936', img: '\uD83D\uDCC5', text: 'An der Wand haengt ein historisches Dokument: "Alan Turing, 1936" \u2013 das Jahr des Beweises, der die Informatik fuer immer veraenderte.' }
+    ]
+  },
+  'Berechenbarkeit': {
+    route: 'Du stehst an einer Kreuzung im Land der Algorithmen. Ein Wegweiser zeigt: "Berechenbar \u2192" und "Nicht berechenbar \u2190".',
+    scenes: [
+      { kw: 'Turingmaschine', img: '\u2699\uFE0F', text: 'Rechts steht eine Turingmaschine: "Alles was ICH berechnen kann, ist berechenbar!" Sie haelt fuer jede gueltige Eingabe mit der richtigen Antwort.' },
+      { kw: 'entscheidbar', img: '\u2705', text: 'Ein gruenes Schild: "Entscheidbar \u2013 TM haelt IMMER". Egal ob Ja oder Nein \u2013 die TM gibt eine Antwort und stoppt.' },
+      { kw: 'semi-entscheidbar', img: '\uD83D\uDFE1', text: 'Ein gelbes Schild: "Semi-entscheidbar \u2013 TM haelt nur bei Ja". Bei Nein laeuft sie moeglicherweise endlos weiter.' },
+      { kw: 'Halteproblem', img: '\uD83D\uDEAB', text: 'Links im dunklen Wald steht ein Warnschild: "Halteproblem \u2013 NICHT berechenbar!" Kein Algorithmus kann es loesen.' },
+      { kw: 'Grenzen', img: '\uD83E\uDDF1', text: 'Eine hohe Mauer markiert die Grenze: "Es gibt prinzipielle Grenzen der Berechenbarkeit \u2013 nicht nur praktische!"' }
+    ]
+  },
+  'Church-Turing-These': {
+    route: 'Du betrittst eine Akademie der Informatik, wo zwei Gelehrte debattieren: Alonzo Church und Alan Turing.',
+    scenes: [
+      { kw: 'Church und Turing', img: '\uD83D\uDC68\u200D\uD83C\uDFEB', text: 'Zwei Gelehrte sitzen sich gegenueber: Church mit seinem Lambda-Kalkuel, Turing mit seiner Maschine. Beide kamen 1936 unabhaengig zum gleichen Schluss!' },
+      { kw: 'intuitiv berechenbar', img: '\uD83D\uDCA1', text: 'An der Tafel steht: "Alles, was wir intuitiv als berechenbar betrachten, kann von einer TM berechnet werden."' },
+      { kw: 'These', img: '\uD83D\uDCDC', text: 'Achtung: An der Wand haengt kein Beweis, sondern eine These! Sie ist nicht mathematisch beweisbar, aber auch nie widerlegt worden.' },
+      { kw: 'aequivalente Modelle', img: '\uD83D\uDD17', text: 'Drei Tueren fuehren zum gleichen Raum: Turingmaschine, Lambda-Kalkuel, rekursive Funktionen \u2013 alle gleich maechtig!' },
+      { kw: 'universell', img: '\uD83C\uDF0D', text: 'Eine Weltkugel leuchtet: Die TM ist das universelle Berechnungsmodell. Alles Berechenbare \u2013 egal in welcher Sprache \u2013 kann sie ausfuehren.' }
+    ]
   }
-  if (glossaryState.hintIdx >= g.hints.length - 1) {
-    const btn = document.getElementById('gl-hint-btn');
-    if (btn) btn.style.display = 'none';
-  }
-}
+};
 
-// ── Phase 2: \u00dcberpr\u00fcfen ──
-function glossaryPhase2(g) {
-  const q = g.questions.find(x => x.type === 'fill') || g.questions.find(x => x.type === 'choice') || g.questions[0];
-  const el = document.getElementById('gl-content');
-  if (q.type === 'fill') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-      '<input type="text" class="gl-input" id="gl-answer" placeholder="Deine Antwort..." onkeydown="if(event.key===\'Enter\')glossaryCheckFill()">' +
-      (q.hint ? '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Tipp: ' + q.hint + '</div>' : '') +
-      '<button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-  } else if (q.type === 'choice') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div><div class="gl-choices">' +
-      q.options.map((o, i) => '<button class="gl-choice" onclick="glossaryCheckChoice(' + i + ')">' + o + '</button>').join('') +
-      '</div><div id="gl-feedback"></div>';
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'pda': 'Kellerautomat',
+  'pushdown automaton': 'Kellerautomat',
+  'kellerautomaten': 'Kellerautomat',
+  'stack': 'Keller',
+  'kellerspeicher': 'Keller',
+  'stapel': 'Keller',
+  'kontextfreie sprachen': 'Kontextfreie Sprache',
+  'kontextfrei': 'Kontextfreie Sprache',
+  'kontextfreie': 'Kontextfreie Sprache',
+  'typ 2': 'Kontextfreie Sprache',
+  'turingmaschinen': 'Turingmaschine',
+  'tm': 'Turingmaschine',
+  'turing-maschine': 'Turingmaschine',
+  'turing': 'Turingmaschine',
+  'dtm': 'Turingmaschine',
+  'ntm': 'Turingmaschine',
+  'turing-band': 'Band',
+  'bandes': 'Band',
+  'halteproblems': 'Halteproblem',
+  'nicht entscheidbar': 'Halteproblem',
+  'berechenbar': 'Berechenbarkeit',
+  'turing-berechenbar': 'Berechenbarkeit',
+  'entscheidbar': 'Berechenbarkeit',
+  'semi-entscheidbar': 'Berechenbarkeit',
+  'church-turing': 'Church-Turing-These',
+  'church': 'Church-Turing-These'
+};
 
-function glossaryCheckFill() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'fill');
-  const val = document.getElementById('gl-answer').value.trim();
-  const fb = document.getElementById('gl-feedback');
-  const ok = [q.a, ...(q.alt || [])].some(a => val.toLowerCase() === a.toLowerCase());
-  if (ok) {
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89 "' + q.a + '" ist korrekt.</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist: <strong>' + q.a + '</strong>. Versuch es nochmal!</div>';
-    document.getElementById('gl-answer').value = '';
-    document.getElementById('gl-answer').focus();
-  }
-}
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card li, .summary-card p, .sim-state, .task-display, .task-sub';
 
-function glossaryCheckChoice(idx) {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'choice');
-  const btns = document.querySelectorAll('.gl-choice');
-  const fb = document.getElementById('gl-feedback');
-  btns.forEach(b => b.style.pointerEvents = 'none');
-  if (idx === q.correct) {
-    btns[idx].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    btns[idx].classList.add('wrong');
-    btns[q.correct].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist markiert.</div>';
-    setTimeout(() => {
-      btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('wrong', 'correct'); });
-      fb.innerHTML = '';
-    }, 2500);
-  }
-}
-
-// ── Phase 3: Beweisen ──
-function glossaryPhase3(g) {
-  const q = g.questions.find(x => x.type === 'explain');
-  if (!q) { glossaryLevelUp(); return; }
-  const el = document.getElementById('gl-content');
-  el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-    '<textarea class="gl-input" id="gl-answer" placeholder="Erkl\u00e4re in eigenen Worten..." rows="4"></textarea>' +
-    '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Verwende Fachbegriffe \u2013 je mehr Schl\u00fcsselw\u00f6rter du nennst, desto besser!</div>' +
-    '<button class="gl-btn primary" onclick="glossaryCheckExplain()">Antwort pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-}
-
-function glossaryCheckExplain() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'explain');
-  const val = document.getElementById('gl-answer').value.trim().toLowerCase();
-  const fb = document.getElementById('gl-feedback');
-  if (!val) { fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe eine Erkl\u00e4rung!</div>'; return; }
-
-  const found = [], missing = [];
-  q.keywords.forEach(kw => {
-    if (val.includes(kw.toLowerCase())) found.push(kw); else missing.push(kw);
-  });
-  const kwHtml = found.map(k => '<span class="gl-keyword found">\u2713 ' + k + '</span>').join('') +
-                 missing.map(k => '<span class="gl-keyword missing">\u2717 ' + k + '</span>').join('');
-
-  if (found.length >= (q.minKeywords || 3)) {
-    fb.innerHTML = '<div class="gl-feedback success">Sehr gut! \uD83C\uDF89 Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt!<br>' + kwHtml + '</div>';
-    setTimeout(() => glossaryLevelUp(), 1800);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback info">Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt (' + (q.minKeywords || 3) + ' ben\u00f6tigt):<br>' + kwHtml +
-      '<br><span style="font-size:12px;margin-top:6px;display:inline-block">Versuch es nochmal \u2013 nutze die fehlenden Begriffe!</span></div>';
-  }
-}
-
-// ── Mastered View ──
-function glossaryMastered(g) {
-  document.getElementById('gl-content').innerHTML =
-    '<div style="text-align:center;padding:20px 0">' +
-    '<div style="font-size:48px;margin-bottom:12px">\u2B50</div>' +
-    '<div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px">Gemeistert!</div>' +
-    '<div style="font-size:13px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.6">' +
-    'Du hast <strong style="color:var(--text)">' + g.term + '</strong> vollst\u00e4ndig gelernt. ' + g.short + '</div>' +
-    '<button class="gl-btn" style="margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)" onclick="glossaryReset(\'' + g.term.replace(/'/g, "\\'") + '\')">Nochmal lernen \u21BA</button></div>';
-}
-
-function glossaryLevelUp() {
-  const term = glossaryState.current;
-  let lv = (glossaryState.levels[term] || 0) + 1;
-  if (lv > 3) lv = 3;
-  glossaryState.levels[term] = lv;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryReset(term) {
-  glossaryState.levels[term] = 0;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryClose() {
-  document.getElementById('glossary-learn').classList.remove('visible');
-  glossaryState.current = null;
-  glossaryRenderGrid();
-}
-
-// ── Term Highlighting in Content ──
-function glossaryHighlightTerms() {
-  const termMap = {};
-  GLOSSARY.forEach(g => { termMap[g.term.toLowerCase()] = g.term; });
-  // German variants, plurals, and alternate forms
-  termMap['pda'] = 'Kellerautomat';
-  termMap['pushdown automaton'] = 'Kellerautomat';
-  termMap['kellerautomaten'] = 'Kellerautomat';
-  termMap['stack'] = 'Keller';
-  termMap['kellerspeicher'] = 'Keller';
-  termMap['stapel'] = 'Keller';
-  termMap['kontextfreie sprachen'] = 'Kontextfreie Sprache';
-  termMap['kontextfrei'] = 'Kontextfreie Sprache';
-  termMap['kontextfreie'] = 'Kontextfreie Sprache';
-  termMap['typ 2'] = 'Kontextfreie Sprache';
-  termMap['turingmaschinen'] = 'Turingmaschine';
-  termMap['tm'] = 'Turingmaschine';
-  termMap['turing-maschine'] = 'Turingmaschine';
-  termMap['turing'] = 'Turingmaschine';
-  termMap['dtm'] = 'Turingmaschine';
-  termMap['ntm'] = 'Turingmaschine';
-  termMap['turing-band'] = 'Band';
-  termMap['bandes'] = 'Band';
-  termMap['halteproblems'] = 'Halteproblem';
-  termMap['nicht entscheidbar'] = 'Halteproblem';
-  termMap['berechenbar'] = 'Berechenbarkeit';
-  termMap['turing-berechenbar'] = 'Berechenbarkeit';
-  termMap['entscheidbar'] = 'Berechenbarkeit';
-  termMap['semi-entscheidbar'] = 'Berechenbarkeit';
-  termMap['church-turing'] = 'Church-Turing-These';
-  termMap['church'] = 'Church-Turing-These';
-
-  const allTerms = Object.keys(termMap).sort((a, b) => b.length - a.length);
-  const escaped = allTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
-
-  document.querySelectorAll('.card p, .card li, .summary-card p, .sim-state').forEach(el => {
-    if (el.dataset.glDone) return;
-    el.dataset.glDone = '1';
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    let n;
-    while (n = walker.nextNode()) nodes.push(n);
-
-    nodes.forEach(textNode => {
-      const txt = textNode.textContent;
-      pattern.lastIndex = 0;
-      if (!pattern.test(txt)) return;
-      pattern.lastIndex = 0;
-
-      const frag = document.createDocumentFragment();
-      let last = 0, m;
-      while (m = pattern.exec(txt)) {
-        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
-        const span = document.createElement('span');
-        span.className = 'glossary-term';
-        span.dataset.term = termMap[m[0].toLowerCase()] || m[0];
-        span.textContent = m[0];
-        frag.appendChild(span);
-        last = pattern.lastIndex;
-      }
-      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
-      textNode.parentNode.replaceChild(frag, textNode);
-    });
-  });
-}
-
-// ── Floating Tooltip ──
-const glTooltip = document.createElement('div');
-glTooltip.className = 'glossary-tooltip';
-document.body.appendChild(glTooltip);
-
-document.addEventListener('mouseover', e => {
-  const t = e.target.closest('.glossary-term');
-  if (!t) { glTooltip.style.display = 'none'; return; }
-  const g = GLOSSARY.find(x => x.term === t.dataset.term);
-  if (!g) return;
-  const lv = glossaryState.levels[g.term] || 0;
-  const labels = ['Noch nicht gelernt', 'Kennengelernt', '\u00dcberpr\u00fcft', 'Gemeistert \u2B50'];
-  glTooltip.innerHTML = '<div class="gt-name">' + g.term + '</div><div class="gt-short">' + g.short + '</div><div class="gt-link">' + labels[lv] + ' \u00b7 Klicke zum Lernen \u2192</div>';
-  const r = t.getBoundingClientRect();
-  glTooltip.style.display = 'block';
-  glTooltip.style.left = Math.max(8, r.left + r.width / 2 - 130) + 'px';
-  glTooltip.style.top = (r.top - glTooltip.offsetHeight - 8) + 'px';
-  if (parseFloat(glTooltip.style.top) < 8) glTooltip.style.top = (r.bottom + 8) + 'px';
-});
-
-document.addEventListener('mouseout', e => {
-  if (!e.target.closest('.glossary-term')) glTooltip.style.display = 'none';
-});
-
-document.addEventListener('click', e => {
-  const t = e.target.closest('.glossary-term');
-  if (t) { e.preventDefault(); glossaryOpen(t.dataset.term); }
-});
-
-// ── Initialize Glossary ──
-glossaryLoad();
-glossaryRenderGrid();
-glossaryHighlightTerms();
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

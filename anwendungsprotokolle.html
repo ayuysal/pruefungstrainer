@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Anwendungsprotokolle Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -200,6 +201,24 @@ tr:last-child td{border-bottom:none}
 <div class="summary-card"><h4>&#128161; Merke</h4><p>Well-Known Ports liegen im Bereich 0&ndash;1023. Pr&uuml;fungsfragen betreffen fast immer diese Ports. HTTPS = HTTP + TLS auf Port 443.</p></div>
 <div class="summary-card"><h4>&#127919; Pr&uuml;fungstipp</h4><p>DHCP DORA-Reihenfolge wird h&auml;ufig abgefragt! Merkhilfe: &laquo;Darf Olaf Rosinen Anbieten?&raquo; &ndash; Discover, Offer, Request, Acknowledge.</p></div>
 <div class="summary-card"><h4>&#129513; POP3 vs IMAP</h4><p>POP3 l&auml;dt herunter und l&ouml;scht vom Server &ndash; ideal f&uuml;r ein Ger&auml;t. IMAP synchronisiert &ndash; ideal f&uuml;r mehrere Ger&auml;te. Beide nur zum Empfang, Versand immer per SMTP.</p></div>
+</div>
+<!-- ═══ GLOSSAR-LERNSYSTEM ═══ -->
+<div class="glossary-section" id="glossary-section">
+  <div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128214;</div><h2>Glossar-Trainer</h2></div>
+  <div class="glossary-progress-bar">
+    <div class="gp-text">Fortschritt</div>
+    <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+    <div class="gp-count" id="glossary-count">0 / 0 gemeistert</div>
+  </div>
+  <div class="glossary-grid" id="glossary-grid"></div>
+  <div class="glossary-learn" id="glossary-learn">
+    <div class="gl-header">
+      <h3 id="gl-title"></h3>
+      <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+    </div>
+    <div class="gl-phase-indicator" id="gl-phases"></div>
+    <div class="gl-content" id="gl-content"></div>
+  </div>
 </div>
 </div>
 
@@ -509,5 +528,249 @@ function showDoraSolution(){
 // Init
 newTask();
 </script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// ── GLOSSAR-DATEN ──
+// ═══════════════════════════════════════════════════════════
+
+var TRAINER_ID = 'anwendungsprotokolle';
+
+var GLOSSARY = [
+  {
+    term: 'HTTP',
+    short: 'Hypertext Transfer Protocol \u2013 Webseiten laden',
+    definition: 'HTTP (Hypertext Transfer Protocol) ist das Standardprotokoll f\u00fcr die \u00dcbertragung von Webseiten im Internet. Es arbeitet auf Port 80 (unverschl\u00fcsselt) und nutzt TCP als Transportprotokoll. Wichtige Methoden sind GET (Daten abfragen), POST (Daten senden), PUT (ersetzen) und DELETE (l\u00f6schen). Jede Anfrage besteht aus Request-Line, Headern und optionalem Body.',
+    analogy: '\uD83D\uDCA1 Wie ein Kellner im Restaurant: Du sagst "Ich h\u00e4tte gern die Speisekarte" (GET) und der Kellner bringt sie dir. Du bestellst (POST) und bekommst dein Essen. Die Bestellung ist immer strukturiert: Tischnummer (URL), Wunsch (Methode), Details (Header).',
+    hints: [
+      'HTTP verwendet Port 80 (unverschl\u00fcsselt), HTTPS Port 443 (mit TLS)',
+      'Die wichtigsten Methoden: GET (lesen), POST (senden), PUT (ersetzen), DELETE (l\u00f6schen)',
+      'HTTP-Statuscodes: 2xx = Erfolg, 3xx = Umleitung, 4xx = Client-Fehler, 5xx = Server-Fehler'
+    ],
+    questions: [
+      { type: 'fill', q: 'HTTP verwendet Port ___ f\u00fcr unverschl\u00fcsselte \u00dcbertragung.', a: '80', keywords: ['Port', '80', 'unverschl\u00fcsselt'] },
+      { type: 'choice', q: 'Welche HTTP-Methode wird zum Abrufen von Daten verwendet?', options: ['POST', 'GET', 'DELETE', 'PATCH'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re, was HTTP ist und nenne wichtige Merkmale.', keywords: ['Port 80', 'Webseiten', 'GET', 'POST', 'Statuscode', 'TCP', 'Request', 'Response'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'DNS',
+    short: 'Domain Name System \u2013 Namensaufl\u00f6sung',
+    definition: 'DNS (Domain Name System) \u00fcbersetzt Dom\u00e4nennamen (z.B. www.google.de) in IP-Adressen. Es verwendet Port 53 mit UDP (kurze Anfragen) und TCP (Zonentransfers). Die DNS-Hierarchie: Root (.) \u2192 TLD (.de, .com) \u2192 Autoritativer Nameserver. Wichtige Record-Typen sind A (IPv4), AAAA (IPv6), MX (Mail), CNAME (Alias) und NS (Nameserver).',
+    analogy: '\uD83D\uDCA1 Wie ein Telefonbuch: Du kennst den Namen (www.google.de), brauchst aber die Nummer (IP-Adresse). Der DNS-Resolver ist wie die Auskunft \u2013 er schl\u00e4gt f\u00fcr dich nach und gibt dir die richtige Nummer.',
+    hints: [
+      'DNS nutzt Port 53 \u2013 sowohl UDP (f\u00fcr Anfragen) als auch TCP (f\u00fcr Zonentransfers)',
+      'Rekursive Aufl\u00f6sung: Der Resolver erledigt alles; Iterativ: schrittweise Verweise',
+      'A-Record = IPv4, AAAA = IPv6, MX = Mailserver, CNAME = Alias'
+    ],
+    questions: [
+      { type: 'fill', q: 'DNS verwendet Port ___.', a: '53', keywords: ['Port', '53'] },
+      { type: 'choice', q: 'Welcher DNS-Record-Typ verweist auf einen Mailserver?', options: ['A', 'CNAME', 'MX', 'NS'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re die Aufgabe von DNS und den Ablauf einer Namensaufl\u00f6sung.', keywords: ['Namensaufl\u00f6sung', 'IP-Adresse', 'Port 53', 'Root', 'TLD', 'Resolver', 'Hierarchie', 'Record'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'DHCP',
+    short: 'Dynamic Host Configuration Protocol \u2013 IP-Vergabe',
+    definition: 'DHCP (Dynamic Host Configuration Protocol) vergibt automatisch IP-Adressen an Ger\u00e4te im Netzwerk. Es nutzt die Ports 67 (Server) und 68 (Client) mit UDP. Der DORA-Prozess beschreibt den Ablauf: Discover (Client sucht per Broadcast) \u2192 Offer (Server bietet IP an) \u2192 Request (Client akzeptiert) \u2192 Acknowledge (Server best\u00e4tigt). Die vergebene IP hat eine zeitlich begrenzte Lease.',
+    analogy: '\uD83D\uDCA1 Wie ein Hotel: Du kommst an (Discover) und fragst nach einem Zimmer. Die Rezeption schl\u00e4gt eines vor (Offer), du sagst "Ja, das nehme ich" (Request), und du bekommst den Schl\u00fcssel (Acknowledge) \u2013 aber nur f\u00fcr eine bestimmte Zeit (Lease).',
+    hints: [
+      'DORA = Discover, Offer, Request, Acknowledge \u2013 Merkhilfe: "Darf Olaf Rosinen Anbieten?"',
+      'Port 67 = Server, Port 68 = Client \u2013 beide \u00fcber UDP',
+      'Die IP-Adresse wird als Lease zeitlich begrenzt vergeben'
+    ],
+    questions: [
+      { type: 'fill', q: 'Der DHCP-Prozess folgt dem ____-Schema.', a: 'DORA', keywords: ['DORA', 'Discover', 'Offer', 'Request', 'Acknowledge'] },
+      { type: 'choice', q: 'Welchen Port nutzt der DHCP-Server?', options: ['53', '67', '68', '80'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re den DHCP-DORA-Prozess und seine Bedeutung.', keywords: ['Discover', 'Offer', 'Request', 'Acknowledge', 'Broadcast', 'IP-Adresse', 'Lease', 'automatisch'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'SMTP',
+    short: 'Simple Mail Transfer Protocol \u2013 E-Mail-Versand',
+    definition: 'SMTP (Simple Mail Transfer Protocol) ist das Standardprotokoll zum Versenden von E-Mails. Es verwendet Port 25 (Server-zu-Server) bzw. Port 587 (Submission, Client-zu-Server). Der Ablauf: HELO/EHLO (Anmeldung) \u2192 MAIL FROM (Absender) \u2192 RCPT TO (Empf\u00e4nger) \u2192 DATA (Nachricht) \u2192 QUIT. SMTP dient nur zum Versand, nicht zum Abruf von E-Mails.',
+    analogy: '\uD83D\uDCA1 Wie ein Postbote: Du gibst einen Brief ab (MAIL FROM), sagst wohin (RCPT TO), der Postbote nimmt ihn mit (DATA) und best\u00e4tigt (250 OK). Der Postbote liefert aber nie zur\u00fcck \u2013 das ist ein anderer Dienst (POP3/IMAP)!',
+    hints: [
+      'SMTP = nur Versand! Empfang l\u00e4uft \u00fcber POP3 oder IMAP',
+      'Port 25 f\u00fcr Server-zu-Server, Port 587 f\u00fcr Client-zu-Server (Submission)',
+      'Befehle: HELO/EHLO, MAIL FROM, RCPT TO, DATA, QUIT'
+    ],
+    questions: [
+      { type: 'fill', q: 'SMTP verwendet Port ___ f\u00fcr den E-Mail-Versand (Server-zu-Server).', a: '25', keywords: ['Port', '25', 'Versand'] },
+      { type: 'choice', q: 'Wof\u00fcr wird SMTP verwendet?', options: ['E-Mail abrufen', 'E-Mail versenden', 'E-Mail synchronisieren', 'E-Mail verschl\u00fcsseln'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re SMTP und seinen Ablauf.', keywords: ['Versand', 'Port 25', '587', 'HELO', 'MAIL FROM', 'RCPT TO', 'DATA'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'POP3 vs IMAP',
+    short: 'E-Mail-Abruf: Herunterladen vs. Synchronisieren',
+    definition: 'POP3 (Port 110) l\u00e4dt E-Mails herunter und l\u00f6scht sie standardm\u00e4\u00dfig vom Server \u2013 ideal f\u00fcr ein einzelnes Ger\u00e4t und Offline-Nutzung. IMAP (Port 143) synchronisiert E-Mails zwischen Server und mehreren Ger\u00e4ten \u2013 Nachrichten bleiben auf dem Server. Beide Protokolle dienen nur zum Empfang; der Versand erfolgt immer per SMTP.',
+    analogy: '\uD83D\uDCA1 POP3 ist wie ein Briefkasten: Du holst die Post raus, dann ist der Kasten leer. IMAP ist wie ein Online-Postfach: Du kannst von jedem Ger\u00e4t drauf zugreifen, und die Nachrichten bleiben immer da.',
+    hints: [
+      'POP3 = Port 110, l\u00e4dt herunter, l\u00f6scht vom Server \u2013 ein Ger\u00e4t',
+      'IMAP = Port 143, synchronisiert, bleibt auf Server \u2013 mehrere Ger\u00e4te',
+      'Versand immer per SMTP \u2013 POP3 und IMAP sind nur f\u00fcr den Empfang'
+    ],
+    questions: [
+      { type: 'fill', q: 'IMAP verwendet Port ___.', a: '143', keywords: ['Port', '143', 'IMAP'] },
+      { type: 'choice', q: 'Welches Protokoll l\u00e4sst E-Mails auf dem Server?', options: ['POP3', 'IMAP', 'SMTP', 'FTP'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen POP3 und IMAP.', keywords: ['POP3', 'IMAP', 'herunterladen', 'synchronisieren', 'Server', 'Ger\u00e4t', 'Port 110', 'Port 143'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'FTP',
+    short: 'File Transfer Protocol \u2013 Datei\u00fcbertragung',
+    definition: 'FTP (File Transfer Protocol) dient zur Datei\u00fcbertragung und nutzt zwei getrennte Kan\u00e4le: Port 21 f\u00fcr Steuerungsbefehle und Port 20 f\u00fcr den Datentransfer. Im aktiven Modus baut der Server die Datenverbindung zum Client auf, im passiven Modus baut der Client beide Verbindungen auf (Firewall-freundlich).',
+    analogy: '\uD83D\uDCA1 Wie ein Lager mit zwei Toren: Am ersten Tor (Port 21) sagst du dem Lageristen, welche Kiste du willst. Durch das zweite Tor (Port 20) wird die Kiste dann rausgeschoben. Zwei separate Wege f\u00fcr Befehle und Daten!',
+    hints: [
+      'Port 21 = Steuerungskanal (Befehle), Port 20 = Datenkanal',
+      'Aktiver Modus: Server \u2192 Client (Datenverbindung); Passiver Modus: Client \u2192 Server (beide Verbindungen)',
+      'Passiver Modus ist Firewall-freundlich, da der Client alle Verbindungen aufbaut'
+    ],
+    questions: [
+      { type: 'fill', q: 'FTP nutzt Port ___ f\u00fcr den Steuerungskanal.', a: '21', keywords: ['Port', '21', 'Steuerung'] },
+      { type: 'choice', q: 'In welchem FTP-Modus baut der Client beide Verbindungen auf?', options: ['Aktiver Modus', 'Passiver Modus', 'Bin\u00e4rmodus', 'ASCII-Modus'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re FTP mit seinen zwei Kan\u00e4len und Modi.', keywords: ['Port 21', 'Port 20', 'Steuerungskanal', 'Datenkanal', 'aktiv', 'passiv', 'Firewall'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'SSH',
+    short: 'Secure Shell \u2013 verschl\u00fcsselter Fernzugriff',
+    definition: 'SSH (Secure Shell) erm\u00f6glicht einen verschl\u00fcsselten Fernzugriff auf Systeme \u00fcber Port 22 mit TCP. Im Gegensatz zu Telnet (Port 23, Klartext) sind bei SSH alle Daten verschl\u00fcsselt. Die Authentifizierung erfolgt per Passwort oder Public-Key-Verfahren. SSH ersetzt das unsichere Telnet als Standard f\u00fcr Remote-Administration.',
+    analogy: '\uD83D\uDCA1 Telnet ist wie ein Gespr\u00e4ch in der vollen U-Bahn \u2013 jeder h\u00f6rt mit (Klartext). SSH ist wie ein Telefonat mit Ende-zu-Ende-Verschl\u00fcsselung \u2013 niemand kann mith\u00f6ren, selbst wenn er die Leitung anzapft.',
+    hints: [
+      'SSH = Port 22, verschl\u00fcsselt; Telnet = Port 23, Klartext (veraltet!)',
+      'SSH unterst\u00fctzt Passwort- und Public-Key-Authentifizierung',
+      'SSH hat Telnet als Standard f\u00fcr Remote-Zugriff ersetzt'
+    ],
+    questions: [
+      { type: 'fill', q: 'SSH verwendet Port ___.', a: '22', keywords: ['Port', '22', 'SSH'] },
+      { type: 'choice', q: 'Was ist der Hauptvorteil von SSH gegen\u00fcber Telnet?', options: ['Schnellere Verbindung', 'Verschl\u00fcsselung', 'Mehr Befehle', 'Grafische Oberfl\u00e4che'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen SSH und Telnet.', keywords: ['SSH', 'Telnet', 'Port 22', 'Port 23', 'verschl\u00fcsselt', 'Klartext', 'sicher', 'Fernzugriff'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'HTTP-Statuscodes',
+    short: 'Antwortcodes des Webservers (1xx\u20135xx)',
+    definition: 'HTTP-Statuscodes sind dreistellige Zahlen, die der Webserver als Antwort sendet. 1xx = Information, 2xx = Erfolg (z.B. 200 OK), 3xx = Umleitung (z.B. 301 Moved), 4xx = Client-Fehler (z.B. 404 Not Found, 403 Forbidden), 5xx = Server-Fehler (z.B. 500 Internal Server Error). Sie signalisieren, ob eine Anfrage erfolgreich war oder warum sie fehlgeschlagen ist.',
+    analogy: '\uD83D\uDCA1 Wie Ampelfarben im Stra\u00dfenverkehr: Gr\u00fcn (2xx) = Alles ok, weiterfahren. Gelb (3xx) = Umleitung, anderer Weg. Rot (4xx/5xx) = Stopp, es gibt ein Problem \u2013 entweder bei dir (4xx) oder bei der Stra\u00dfe (5xx).',
+    hints: [
+      '2xx = Erfolg (200 OK, 201 Created), 3xx = Umleitung (301, 302)',
+      '4xx = Client-Fehler: 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found',
+      '5xx = Server-Fehler: 500 Internal Server Error, 502 Bad Gateway, 503 Service Unavailable'
+    ],
+    questions: [
+      { type: 'fill', q: 'Der Statuscode f\u00fcr "Seite nicht gefunden" ist ___.', a: '404', keywords: ['404', 'Not Found'] },
+      { type: 'choice', q: 'Was bedeutet der Statuscode 301?', options: ['OK', 'Dauerhaft umgezogen', 'Nicht gefunden', 'Serverfehler'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re die HTTP-Statuscode-Kategorien und nenne Beispiele.', keywords: ['2xx', '3xx', '4xx', '5xx', '200', '404', '500', 'Erfolg', 'Fehler'], minKeywords: 3 }
+    ]
+  }
+];
+
+var GP_STORIES = {
+  'HTTP': {
+    route: 'Dein Lieblings-Caf\u00e9',
+    scenes: [
+      { kw: 'Port 80', img: '\uD83D\uDEAA T\u00fcr mit "80" drauf', text: 'Du betrittst das Caf\u00e9 durch eine breite Eingangst\u00fcr mit einer riesigen "80" drauf gemalt \u2013 das ist Port 80, der Standardeingang f\u00fcr unverschl\u00fcsseltes HTTP.' },
+      { kw: 'GET', img: '\uD83D\uDCCB Kellner mit Bestellblock', text: 'Ein Kellner kommt mit seinem Block und fragt "Was darf ich holen?" \u2013 das ist ein GET-Request: Du fragst nach Daten, der Server liefert.' },
+      { kw: 'POST', img: '\uD83D\uDCE6 Paket an die Theke schieben', text: 'Du schiebst ein verpacktes Paket \u00fcber die Theke zum Barista \u2013 ein POST: Du sendest Daten an den Server, z.B. ein ausgef\u00fclltes Formular.' },
+      { kw: 'Statuscode', img: '\uD83D\uDEA6 Ampel \u00fcber der Theke', text: '\u00dcber der Theke h\u00e4ngt eine Ampel: Gr\u00fcn (200 OK), Gelb (301 Umleitung), Rot (404 Nicht gefunden). Der Statuscode zeigt dir sofort, ob alles geklappt hat.' },
+      { kw: 'TCP', img: '\uD83E\uDD1D H\u00e4ndedruck am Eingang', text: 'Bevor du bestellen darfst, musst du dem T\u00fcrsteher die Hand sch\u00fctteln \u2013 der TCP-Handshake. Erst danach ist die Verbindung hergestellt.' }
+    ]
+  },
+  'DNS': {
+    route: 'Eine riesige Bibliothek',
+    scenes: [
+      { kw: 'Namensaufl\u00f6sung', img: '\uD83D\uDCD6 Katalog am Eingang', text: 'Du betrittst eine riesige Bibliothek und stehst vor einem gewaltigen Kartenkatalog. Du kennst den Buchtitel (Domainname), aber brauchst die Regalnummer (IP-Adresse) \u2013 das ist Namensaufl\u00f6sung.' },
+      { kw: 'Port 53', img: '\uD83D\uDD22 Schild "Auskunft 53"', text: 'An der Auskunftstheke h\u00e4ngt ein Schild mit der Nummer 53 \u2013 Port 53, der Standard f\u00fcr alle DNS-Anfragen.' },
+      { kw: 'Root', img: '\uD83C\uDF33 Riesiger Stammbaum an der Wand', text: 'An der Wand h\u00e4ngt ein riesiger Stammbaum. Ganz oben ist ein einzelner Punkt \u2013 der Root. Von dort verzweigt sich alles in TLDs und Dom\u00e4nen.' },
+      { kw: 'Resolver', img: '\uD83D\uDD0E Bibliothekar mit Lupe', text: 'Der Bibliothekar nimmt deine Anfrage, setzt seine Lupe auf und l\u00e4uft durch die Regalreihen \u2013 er ist der Resolver, der die gesamte Suche f\u00fcr dich erledigt.' },
+      { kw: 'A-Record', img: '\uD83C\uDFF7\uFE0F Regalbeschriftung mit Nummer', text: 'Am Regal klebt ein Etikett mit einer vierstelligen Nummer (z.B. 93.184.216.34) \u2013 der A-Record, der den Dom\u00e4nennamen auf eine IPv4-Adresse abbildet.' }
+    ]
+  },
+  'DHCP': {
+    route: 'Ein Campingplatz',
+    scenes: [
+      { kw: 'Discover', img: '\uD83D\uDCE2 Lautsprecher am Eingang', text: 'Du f\u00e4hrst auf einen Campingplatz und rufst laut durch einen Lautsprecher: "Hallo, gibt es hier einen Platzwart?" \u2013 das ist der Discover-Broadcast, eine Suche ins Unbekannte.' },
+      { kw: 'Offer', img: '\uD83C\uDFD5\uFE0F Platzwart zeigt auf Stellplatz', text: 'Der Platzwart kommt angerannt und zeigt auf einen freien Stellplatz: "Nummer 42 ist frei!" \u2013 das ist das Offer, ein Angebot einer IP-Adresse.' },
+      { kw: 'Request', img: '\u270D\uFE0F Unterschrift auf Formular', text: 'Du unterschreibst das Anmeldeformular: "Ja, Platz 42 nehme ich!" \u2013 der Request, du akzeptierst das Angebot offiziell.' },
+      { kw: 'Acknowledge', img: '\uD83D\uDD11 Schl\u00fcssel \u00fcberreicht', text: 'Der Platzwart \u00fcberreicht dir feierlich einen Schl\u00fcssel f\u00fcr die Dusche und sagt "Best\u00e4tigt!" \u2013 das Acknowledge, die IP-Zuweisung ist abgeschlossen.' },
+      { kw: 'Lease', img: '\u23F0 Wecker auf dem Nachttisch', text: 'Neben deinem Bett steht ein Wecker mit Countdown \u2013 die Lease-Zeit. Wenn sie abl\u00e4uft, musst du verl\u00e4ngern oder den Platz r\u00e4umen.' }
+    ]
+  },
+  'SMTP': {
+    route: 'Eine alte Poststelle',
+    scenes: [
+      { kw: 'Versand', img: '\uD83D\uDCEE Briefkasten mit "NUR VERSAND"', text: 'Vor der Poststelle steht ein riesiger gelber Briefkasten mit dem Schild "NUR VERSAND" \u2013 SMTP kann nur senden, niemals empfangen!' },
+      { kw: 'Port 25', img: '\uD83D\uDD22 Hausnummer 25', text: 'Die Poststelle hat die Hausnummer 25 \u2013 der klassische SMTP-Port f\u00fcr Server-zu-Server-Kommunikation.' },
+      { kw: 'HELO', img: '\uD83D\uDC4B Postbeamter gr\u00fc\u00dft', text: 'Am Schalter ruft der Beamte laut "HELO!" und sch\u00fcttelt dir die Hand \u2013 die Anmeldung beim SMTP-Server.' },
+      { kw: 'MAIL FROM', img: '\uD83C\uDFF7\uFE0F Absender-Aufkleber', text: 'Du klebst einen gro\u00dfen Absender-Aufkleber auf den Brief \u2013 MAIL FROM: Wer schickt diese Nachricht?' },
+      { kw: 'RCPT TO', img: '\uD83D\uDCCD Empf\u00e4nger-Nadel auf Karte', text: 'Der Beamte steckt eine rote Nadel auf eine Weltkarte \u2013 RCPT TO: Wohin soll der Brief gehen?' }
+    ]
+  },
+  'POP3 vs IMAP': {
+    route: 'Zwei verschiedene Postfilialen',
+    scenes: [
+      { kw: 'POP3', img: '\uD83D\uDCEB Briefkasten wird geleert', text: 'In der ersten Filiale holst du alle Briefe aus dem Kasten und steckst sie in deine Tasche. Der Kasten ist danach leer \u2013 POP3 l\u00e4dt herunter und l\u00f6scht vom Server.' },
+      { kw: 'IMAP', img: '\uD83D\uDCF1 Digitale Anzeige in Filiale', text: 'In der zweiten Filiale gibt es eine digitale Anzeigetafel. Du liest die Briefe dort, aber sie bleiben immer in der Vitrine \u2013 IMAP synchronisiert, l\u00f6scht nichts.' },
+      { kw: 'Port 110', img: '\uD83D\uDD22 T\u00fcrnummer 110', text: 'Die POP3-Filiale hat die T\u00fcrnummer 110 \u2013 merk dir: POP3 = Port 110.' },
+      { kw: 'Port 143', img: '\uD83D\uDD22 T\u00fcrnummer 143', text: 'Die IMAP-Filiale hat die T\u00fcrnummer 143 \u2013 IMAP = Port 143.' },
+      { kw: 'Server', img: '\uD83D\uDCE6 Tresor im Hinterzimmer', text: 'Im Hinterzimmer steht ein Tresor. Bei POP3 wird er geleert, bei IMAP bleibt alles sicher darin \u2013 die E-Mails bleiben auf dem Server.' }
+    ]
+  },
+  'FTP': {
+    route: 'Ein Lagerhaus mit zwei Toren',
+    scenes: [
+      { kw: 'Port 21', img: '\uD83D\uDEAA Tor 21 "Befehle"', text: 'Das Lagerhaus hat zwei gro\u00dfe Rolltore. Am ersten Tor steht "21 \u2013 Befehle" \u2013 hier gibst du deine Anweisungen: "Zeig mir die Dateiliste", "Lade Datei X hoch".' },
+      { kw: 'Port 20', img: '\uD83D\uDE9A LKW f\u00e4hrt durch Tor 20', text: 'Durch Tor 20 f\u00e4hrt ein riesiger LKW mit deiner Datei heraus \u2013 der Datenkanal, \u00fcber den die eigentliche \u00dcbertragung l\u00e4uft.' },
+      { kw: 'aktiv', img: '\uD83C\uDFC3 Lagerarbeiter rennt zum Kunden', text: 'Im aktiven Modus rennt der Lagerarbeiter (Server) zum Kunden raus und bringt die Ware pers\u00f6nlich \u2013 der Server baut die Datenverbindung zum Client auf.' },
+      { kw: 'passiv', img: '\uD83E\uDDD1\u200D\uD83D\uDCBB Kunde kommt selbst rein', text: 'Im passiven Modus l\u00e4uft der Kunde (Client) selbst ins Lager und holt alles \u2013 der Client baut beide Verbindungen auf. Firewalls m\u00f6gen das lieber!' },
+      { kw: 'Steuerungskanal', img: '\uD83C\uDF99\uFE0F Walkie-Talkie', text: 'Der Lagerverwalter hat ein Walkie-Talkie in der Hand \u2013 der Steuerungskanal. Hier werden nur Befehle gesendet, keine Daten.' }
+    ]
+  },
+  'SSH': {
+    route: 'Zwei T\u00fcren in einem Geb\u00e4ude',
+    scenes: [
+      { kw: 'Port 22', img: '\uD83D\uDD10 Panzert\u00fcr mit "22"', text: 'Links ist eine massive Panzert\u00fcr mit der Nummer 22 und einem High-Tech-Schloss \u2013 SSH, Port 22. Alles dahinter ist komplett verschl\u00fcsselt.' },
+      { kw: 'Port 23', img: '\uD83D\uDEAA Offene Glast\u00fcr mit "23"', text: 'Rechts ist eine offene Glast\u00fcr mit "23" \u2013 Telnet. Jeder Passant kann durchschauen und mitlesen. V\u00f6llig ungesch\u00fctzt!' },
+      { kw: 'verschl\u00fcsselt', img: '\uD83D\uDD12 Geheimschrift auf Papier', text: 'Hinter der Panzert\u00fcr sind alle Dokumente in Geheimschrift geschrieben \u2013 verschl\u00fcsselt. Selbst wenn jemand einbricht, kann er nichts lesen.' },
+      { kw: 'Klartext', img: '\uD83D\uDCF0 Zeitung offen auf dem Tisch', text: 'Hinter der Glast\u00fcr liegt alles offen auf dem Tisch \u2013 im Klartext. Passw\u00f6rter, Befehle, alles lesbar f\u00fcr jeden.' },
+      { kw: 'Public Key', img: '\uD83D\uDD11 Zwei passende Schl\u00fcssel', text: 'Am Schl\u00fcsselbrett h\u00e4ngen zwei Schl\u00fcssel, die zusammenpassen: ein \u00f6ffentlicher und ein privater \u2013 das Public-Key-Verfahren f\u00fcr sichere Authentifizierung.' }
+    ]
+  },
+  'HTTP-Statuscodes': {
+    route: 'Ein Einkaufszentrum',
+    scenes: [
+      { kw: '200', img: '\u2705 Gr\u00fcnes Schild "Willkommen"', text: 'Am Eingang des Einkaufszentrums leuchtet ein riesiges gr\u00fcnes Schild: "200 OK \u2013 Willkommen!" Alles hat funktioniert, der Laden ist ge\u00f6ffnet.' },
+      { kw: '301', img: '\u27A1\uFE0F Umzugsschild am alten Laden', text: 'Dein Lieblingsladen hat ein Schild: "Wir sind umgezogen \u2192 2. Etage" \u2013 301 Moved Permanently. Die URL hat sich dauerhaft ge\u00e4ndert.' },
+      { kw: '404', img: '\u274C Leerer Raum mit Spinnweben', text: 'Du \u00f6ffnest eine T\u00fcr und findest einen leeren, verstaubten Raum mit Spinnweben \u2013 404 Not Found. Was du suchst, existiert hier nicht.' },
+      { kw: '403', img: '\uD83D\uDEAB Security-Guard blockiert', text: 'Ein m\u00e4chtiger Security-Guard steht vor einem VIP-Bereich und verschr\u00e4nkt die Arme: "403 Forbidden \u2013 Kein Zutritt!" Du bist nicht autorisiert.' },
+      { kw: '500', img: '\uD83D\uDCA5 Stromausfall im Geb\u00e4ude', text: 'Pl\u00f6tzlich gehen alle Lichter aus und die Rolltreppen stehen still \u2013 500 Internal Server Error. Das Problem liegt beim Geb\u00e4ude selbst, nicht bei dir.' }
+    ]
+  }
+};
+
+var GLOSSARY_TERM_MAP = {
+  'http': 'HTTP',
+  'https': 'HTTP',
+  'dns': 'DNS',
+  'dhcp': 'DHCP',
+  'dora': 'DHCP',
+  'smtp': 'SMTP',
+  'pop3': 'POP3 vs IMAP',
+  'imap': 'POP3 vs IMAP',
+  'ftp': 'FTP',
+  'ssh': 'SSH',
+  'telnet': 'SSH',
+  'statuscodes': 'HTTP-Statuscodes',
+  'statuscode': 'HTTP-Statuscodes',
+  '404': 'HTTP-Statuscodes',
+  '200': 'HTTP-Statuscodes'
+};
+
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card ul, .summary-card p, .seq-desc';
+</script>
+<script src="shared/glossary.js"></script>
+<script src="nav-companion.js"></script>
 </body>
 </html>

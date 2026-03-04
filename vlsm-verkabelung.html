@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VLSM & Strukturierte Verkabelung Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -180,6 +181,24 @@ tr:last-child td{border-bottom:none}
 <div class="summary-card"><h4>&#127919; Pr&uuml;fungstipp</h4><p>VLSM-Aufgaben: Zuerst die passende Blockgr&ouml;&szlig;e (2er-Potenz) bestimmen, die den Hostbedarf + 2 deckt. Dann schrittweise von der Startadresse aus zuweisen.</p></div>
 <div class="summary-card"><h4>&#128268; Verkabelung merken</h4><p>Prim&auml;r = Campus (zwischen Geb&auml;uden), Sekund&auml;r = Geb&auml;ude (zwischen Etagen), Terti&auml;r = Etage (zum Arbeitsplatz). Patchpanel ist fest, Patchkabel ist flexibel.</p></div>
 <div class="summary-card"><h4>&#129513; Standards-Tipp</h4><p>EN 50173 ist der europ&auml;ische Verkabelungsstandard. TIA/EIA 568 definiert die RJ45-Belegung (T568A/B). Bei Cat 6a beginnt 10 Gbit/s auf voller 100m-L&auml;nge.</p></div>
+</div>
+<!-- ═══ GLOSSAR-LERNSYSTEM ═══ -->
+<div class="glossary-section" id="glossary-section">
+  <div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128214;</div><h2>Glossar-Trainer</h2></div>
+  <div class="glossary-progress-bar">
+    <div class="gp-text">Fortschritt</div>
+    <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+    <div class="gp-count" id="glossary-count">0 / 0 gemeistert</div>
+  </div>
+  <div class="glossary-grid" id="glossary-grid"></div>
+  <div class="glossary-learn" id="glossary-learn">
+    <div class="gl-header">
+      <h3 id="gl-title"></h3>
+      <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+    </div>
+    <div class="gl-phase-indicator" id="gl-phases"></div>
+    <div class="gl-content" id="gl-content"></div>
+  </div>
 </div>
 </div>
 
@@ -476,6 +495,254 @@ function showSolution(){const s=document.getElementById('sol');s.textContent=cur
 
 newTask();
 </script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// ── GLOSSAR-DATEN ──
+// ═══════════════════════════════════════════════════════════
+
+var TRAINER_ID = 'vlsm-verkabelung';
+
+var GLOSSARY = [
+  {
+    term: 'VLSM',
+    short: 'Variable Length Subnet Masking \u2013 flexible Subnetzgr\u00f6\u00dfen',
+    definition: 'VLSM (Variable Length Subnet Masking) erlaubt es, innerhalb eines Netzwerks Subnetze mit unterschiedlichen Pr\u00e4fixl\u00e4ngen zu erstellen. Im Gegensatz zu Fixed-Length Subnetting bekommt jedes Subnetz nur so viele Adressen wie tats\u00e4chlich ben\u00f6tigt. Vorgehensweise: Subnetze nach Hostbedarf absteigend sortieren, gr\u00f6\u00dfstes zuerst zuweisen, n\u00e4chste Netzadresse = vorherige Broadcast + 1. Voraussetzung: Routing-Protokoll muss VLSM unterst\u00fctzen (z.B. OSPF, EIGRP).',
+    analogy: '\uD83D\uDCA1 Wie ein Parkplatz mit verschieden gro\u00dfen Parkbuchten: Statt alle Buchten gleich gro\u00df zu machen (Fixed-Length), bekommt der LKW eine gro\u00dfe Bucht und der Smart eine kleine. Kein Platz wird verschwendet!',
+    hints: [
+      'VLSM = Variable Length Subnet Masking \u2013 verschiedene Pr\u00e4fixl\u00e4ngen im selben Netz',
+      'Immer das gr\u00f6\u00dfte Subnetz zuerst zuweisen (absteigend sortieren)',
+      'N\u00e4chste Netzadresse = Broadcastadresse des vorherigen Subnetzes + 1'
+    ],
+    questions: [
+      { type: 'fill', q: 'VLSM steht f\u00fcr Variable Length ___ Masking.', a: 'Subnet', alt: ['Subnetz'], keywords: ['Variable', 'Length', 'Subnet', 'Masking'] },
+      { type: 'choice', q: 'Was ist der Hauptvorteil von VLSM?', options: ['Schnellere \u00dcbertragung', 'IP-Adress-Sparsamkeit', 'Bessere Verschl\u00fcsselung', 'Einfachere Konfiguration'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re VLSM und warum es besser ist als Fixed-Length Subnetting.', keywords: ['Variable', 'Pr\u00e4fixl\u00e4nge', 'Subnetz', 'IP-Sparsamkeit', 'absteigend', 'sortieren', 'Hostbedarf', 'Broadcast'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Pr\u00e4fixl\u00e4nge',
+    short: 'Anzahl der Netzwerk-Bits in der Subnetzmaske',
+    definition: 'Die Pr\u00e4fixl\u00e4nge (z.B. /24, /26, /28) gibt an, wie viele Bits der IP-Adresse zum Netzwerkteil geh\u00f6ren. Je l\u00e4nger der Pr\u00e4fix, desto weniger Hosts passen ins Subnetz. Formel: Hosts = 2^(32 - Pr\u00e4fix) - 2 (abzgl. Netzadresse und Broadcast). Beispiel: /26 = 64 Adressen, davon 62 nutzbar.',
+    analogy: '\uD83D\uDCA1 Wie eine Hausnummer: Je mehr Ziffern zur Stra\u00dfe geh\u00f6ren, desto weniger H\u00e4user passen in die Stra\u00dfe. /24 = gro\u00dfe Stra\u00dfe (254 H\u00e4user), /30 = winzige Sackgasse (2 H\u00e4user).',
+    hints: [
+      '/25 \u2192 126 Hosts, /26 \u2192 62 Hosts, /27 \u2192 30 Hosts, /28 \u2192 14 Hosts, /29 \u2192 6 Hosts, /30 \u2192 2 Hosts',
+      'Formel: Nutzbare Hosts = 2^(32 - Pr\u00e4fix) - 2',
+      '2 Adressen pro Subnetz sind immer reserviert: Netzadresse und Broadcastadresse'
+    ],
+    questions: [
+      { type: 'fill', q: 'Bei einem /26-Pr\u00e4fix sind ___ Hosts nutzbar.', a: '62', keywords: ['/26', '62', 'Hosts'] },
+      { type: 'choice', q: 'Wie viele nutzbare Hosts hat ein /28-Subnetz?', options: ['6', '14', '30', '62'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re, was die Pr\u00e4fixl\u00e4nge bestimmt und wie man die Hostanzahl berechnet.', keywords: ['Netzwerk-Bits', 'Hosts', 'Formel', '2 hoch', 'Netzadresse', 'Broadcast', 'Subnetzmaske'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Prim\u00e4rverkabelung',
+    short: 'Campus-Backbone \u2013 verbindet Geb\u00e4ude',
+    definition: 'Die Prim\u00e4rverkabelung (Campusverkabelung) bildet das Backbone eines Campus und verbindet einzelne Geb\u00e4ude miteinander. Sie wird typischerweise mit Glasfaser (LWL) realisiert, da gro\u00dfe Distanzen \u00fcberbr\u00fcckt werden m\u00fcssen. Die Kabel verlaufen au\u00dfen zwischen den Geb\u00e4udekellern oder \u00fcber Kabelkan\u00e4le.',
+    analogy: '\uD83D\uDCA1 Wie die Autobahn zwischen St\u00e4dten: Die Prim\u00e4rverkabelung ist die Hauptschlagader, die alle Geb\u00e4ude auf einem Campus miteinander verbindet \u2013 schnell, mit hoher Kapazit\u00e4t und \u00fcber weite Strecken.',
+    hints: [
+      'Prim\u00e4r = Campus-Ebene \u2013 verbindet Geb\u00e4ude untereinander',
+      'Fast immer Glasfaser (LWL) wegen der gro\u00dfen Entfernungen',
+      'Verl\u00e4uft au\u00dfen, z.B. in Erdkan\u00e4len zwischen den Geb\u00e4uden'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die ___ verbindet Geb\u00e4ude auf einem Campus.', a: 'Prim\u00e4rverkabelung', alt: ['Primaerverkabelung'], keywords: ['Prim\u00e4rverkabelung', 'Campus', 'Geb\u00e4ude'] },
+      { type: 'choice', q: 'Welches Medium wird typischerweise f\u00fcr die Prim\u00e4rverkabelung verwendet?', options: ['Kupfer Cat 5e', 'Koaxialkabel', 'Glasfaser', 'WLAN'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re die Prim\u00e4rverkabelung und ihre Rolle im Netzwerk.', keywords: ['Campus', 'Geb\u00e4ude', 'Backbone', 'Glasfaser', 'Distanz', 'au\u00dfen', 'LWL'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Sekund\u00e4rverkabelung',
+    short: 'Geb\u00e4ude-Backbone \u2013 verbindet Etagen',
+    definition: 'Die Sekund\u00e4rverkabelung (Steigleitung, Geb\u00e4udeverkabelung) verbindet die einzelnen Etagen innerhalb eines Geb\u00e4udes. Sie verl\u00e4uft vertikal als Steigleitung und nutzt meistens Glasfaser. Sie verbindet den Geb\u00e4udeverteiler mit den Etagenverteilern.',
+    analogy: '\uD83D\uDCA1 Wie der Aufzugschacht in einem Hochhaus: Die Sekund\u00e4rverkabelung geht senkrecht durch alle Stockwerke und verbindet jede Etage mit dem Keller (Hauptverteiler). Alles, was zwischen Etagen flie\u00dft, nutzt diesen Weg.',
+    hints: [
+      'Sekund\u00e4r = innerhalb eines Geb\u00e4udes, zwischen den Etagen',
+      'Verl\u00e4uft vertikal als Steigleitung \u2013 meist Glasfaser',
+      'Verbindet Geb\u00e4udeverteiler mit Etagenverteilern'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die Sekund\u00e4rverkabelung verbindet die ___ innerhalb eines Geb\u00e4udes.', a: 'Etagen', alt: ['Stockwerke'], keywords: ['Etagen', 'Geb\u00e4ude', 'Steigleitung'] },
+      { type: 'choice', q: 'Wie verl\u00e4uft die Sekund\u00e4rverkabelung?', options: ['Horizontal zwischen R\u00e4umen', 'Vertikal als Steigleitung', 'Au\u00dfen zwischen Geb\u00e4uden', '\u00dcber Funk'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re die Sekund\u00e4rverkabelung und ihren Zweck.', keywords: ['Etagen', 'vertikal', 'Steigleitung', 'Glasfaser', 'Geb\u00e4ude', 'Etagenverteiler', 'Geb\u00e4udeverteiler'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Terti\u00e4rverkabelung',
+    short: 'Etagenverkabelung \u2013 zum Arbeitsplatz',
+    definition: 'Die Terti\u00e4rverkabelung (Etagenverkabelung, Horizontalverkabelung) f\u00fchrt vom Etagenverteiler zur Netzwerkdose am Arbeitsplatz. Sie verwendet typischerweise Kupferkabel (Twisted Pair, z.B. Cat 6a) und verl\u00e4uft horizontal in Decken oder B\u00f6den. Die maximale L\u00e4nge betr\u00e4gt 90m Verlegekabel + 10m Patchkabel.',
+    analogy: '\uD83D\uDCA1 Wie die Flure in einem Stockwerk: Von der zentralen Etagen-Schaltzentrale gehen Kabel durch die Decke zu jedem einzelnen Arbeitsplatz \u2013 wie Wasserleitungen, die vom Hauptrohr zu jedem Waschbecken f\u00fchren.',
+    hints: [
+      'Terti\u00e4r = vom Etagenverteiler zur Netzwerkdose (horizontal)',
+      'Typisch: Kupfer/Twisted Pair (Cat 5e, 6, 6a)',
+      'Max. 90m Verlegekabel + 10m Patchkabel = 100m Gesamtl\u00e4nge'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die Terti\u00e4rverkabelung f\u00fchrt vom Etagenverteiler zur ___.', a: 'Netzwerkdose', keywords: ['Netzwerkdose', 'Arbeitsplatz', 'Etagenverteiler'] },
+      { type: 'choice', q: 'Welches Medium wird f\u00fcr die Terti\u00e4rverkabelung eingesetzt?', options: ['Glasfaser', 'Koaxialkabel', 'Kupfer/Twisted Pair', 'Richtfunk'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re die Terti\u00e4rverkabelung und ihre Merkmale.', keywords: ['Etagenverteiler', 'Netzwerkdose', 'horizontal', 'Kupfer', 'Twisted Pair', 'Arbeitsplatz', '90m'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Patchpanel',
+    short: 'Festes Anschlussfeld im Rack f\u00fcr Verlegekabel',
+    definition: 'Ein Patchpanel ist ein fest installiertes Anschlussfeld im 19-Zoll-Rack. Hier enden die Verlegekabel, die aus den W\u00e4nden kommen, fest aufgelegt. Mit flexiblen Patchkabeln werden die Ports des Patchpanels mit den Switch-Ports verbunden. So k\u00f6nnen Verbindungen einfach umgesteckt werden, ohne die feste Verkabelung zu \u00e4ndern.',
+    analogy: '\uD83D\uDCA1 Wie eine Telefonzentrale im alten Stil: Die festen Leitungen enden alle an einer gro\u00dfen Stecktafel (Patchpanel). Mit kurzen Kabeln (Patchkabeln) verbindet die Telefonistin die Leitungen nach Bedarf \u2013 flexibel und ohne die Wand aufrei\u00dfen zu m\u00fcssen.',
+    hints: [
+      'Patchpanel = fest, im Rack montiert \u2013 Verlegekabel enden hier',
+      'Patchkabel = flexibel, zum Umstecken \u2013 verbinden Patchpanel mit Switch',
+      'Erm\u00f6glicht schnelles Umpatchen ohne Eingriff in die feste Verkabelung'
+    ],
+    questions: [
+      { type: 'fill', q: 'Am Patchpanel enden die ___ fest aufgelegt.', a: 'Verlegekabel', keywords: ['Verlegekabel', 'fest', 'aufgelegt'] },
+      { type: 'choice', q: 'Was verbindet ein Patchkabel?', options: ['Geb\u00e4ude miteinander', 'Patchpanel mit Switch', 'Router mit Internet', 'Glasfaser mit Kupfer'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen Patchpanel, Patchkabel und Verlegekabel.', keywords: ['Patchpanel', 'fest', 'Rack', 'Verlegekabel', 'Patchkabel', 'flexibel', 'Switch', 'umstecken'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Kabelkategorien',
+    short: 'Cat 5e bis Cat 8 \u2013 Leistungsklassen',
+    definition: 'Kabelkategorien (Cat 5e, 6, 6a, 7, 8) definieren die Leistungsf\u00e4higkeit von Twisted-Pair-Kabeln. Wichtige Parameter: Frequenz (MHz) und maximale Datenrate. Cat 5e: 100 MHz, 1 Gbit/s. Cat 6: 250 MHz, 1 Gbit/s (10G auf 55m). Cat 6a: 500 MHz, 10 Gbit/s auf 100m. Cat 7: 600 MHz, 10 Gbit/s, S/FTP. Cat 8: 2000 MHz, 25/40 Gbit/s.',
+    analogy: '\uD83D\uDCA1 Wie Wasserrohre in verschiedenen Durchmessern: Cat 5e ist ein d\u00fcnnes Rohr \u2013 reicht f\u00fcr den Haushalt. Cat 6a ist ein dickes Rohr f\u00fcr industrielle Nutzung. Je h\u00f6her die Kategorie, desto mehr Wasser (Daten) flie\u00dft durch.',
+    hints: [
+      'Cat 6a ist der Wendepunkt: Erste Kategorie mit 10 Gbit/s auf voller 100m-Strecke',
+      'H\u00f6here Kategorie = h\u00f6here Frequenz = mehr Bandbreite',
+      'Cat 7+ verwendet S/FTP-Schirmung f\u00fcr weniger St\u00f6rungen'
+    ],
+    questions: [
+      { type: 'fill', q: 'Cat 6a unterst\u00fctzt ___ Gbit/s auf 100m.', a: '10', keywords: ['Cat 6a', '10 Gbit', '100m'] },
+      { type: 'choice', q: 'Ab welcher Kategorie ist 10 Gbit/s auf 100m m\u00f6glich?', options: ['Cat 5e', 'Cat 6', 'Cat 6a', 'Cat 8'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re die wichtigsten Kabelkategorien und ihre Unterschiede.', keywords: ['Cat 5e', 'Cat 6', 'Cat 6a', 'Frequenz', 'MHz', 'Gbit', 'Schirmung', 'S/FTP'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'EN 50173',
+    short: 'Europ\u00e4ischer Standard f\u00fcr strukturierte Verkabelung',
+    definition: 'EN 50173 ist der europ\u00e4ische Standard f\u00fcr anwendungsneutrale Kommunikationskabelanlagen (strukturierte Verkabelung). Er definiert die drei Verkabelungsebenen (Prim\u00e4r, Sekund\u00e4r, Terti\u00e4r) und die Anforderungen an die Verkabelungsinfrastruktur. Der US-amerikanische Gegenpart ist TIA/EIA 568, der u.a. die RJ45-Belegung (T568A/T568B) definiert.',
+    analogy: '\uD83D\uDCA1 Wie die Bauvorschrift f\u00fcr H\u00e4user: EN 50173 sagt, wie ein Geb\u00e4ude verkabelt werden MUSS \u2013 welche Ebenen, welche Mindestanforderungen. TIA/EIA 568 sagt zus\u00e4tzlich, wie die Stecker belegt werden m\u00fcssen.',
+    hints: [
+      'EN 50173 = europ\u00e4ischer Standard, TIA/EIA 568 = US-Standard',
+      'EN 50173 definiert Prim\u00e4r-, Sekund\u00e4r- und Terti\u00e4rverkabelung',
+      'TIA/EIA 568 definiert RJ45-Pinbelegung: T568A und T568B'
+    ],
+    questions: [
+      { type: 'fill', q: 'Der europ\u00e4ische Verkabelungsstandard hei\u00dft EN ___.', a: '50173', keywords: ['EN 50173', 'europ\u00e4isch', 'Verkabelung'] },
+      { type: 'choice', q: 'Welcher Standard definiert die RJ45-Belegung T568A/T568B?', options: ['EN 50173', 'IEEE 802.11', 'TIA/EIA 568', 'ISO 27001'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re EN 50173 und TIA/EIA 568 und ihre Bedeutung.', keywords: ['EN 50173', 'europ\u00e4isch', 'Verkabelung', 'TIA/EIA 568', 'RJ45', 'T568A', 'T568B', 'Standard'], minKeywords: 3 }
+    ]
+  }
+];
+
+var GP_STORIES = {
+  'VLSM': {
+    route: 'Ein Schrebergarten-Verein',
+    scenes: [
+      { kw: 'Variable', img: '\uD83C\uDF31 Beete in verschiedenen Gr\u00f6\u00dfen', text: 'Du betrittst einen Schrebergarten und siehst sofort: Jedes Beet hat eine andere Gr\u00f6\u00dfe! Ein riesiges f\u00fcr K\u00fcrbisse, ein winziges f\u00fcr Kr\u00e4uter \u2013 alles variabel angepasst.' },
+      { kw: 'Subnetz', img: '\uD83E\uDDF1 Z\u00e4une trennen Bereiche', text: 'Kleine Z\u00e4une trennen die einzelnen Gartenabschnitte \u2013 das sind die Subnetze. Jeder Zaun definiert einen eigenen Bereich mit eigener Gr\u00f6\u00dfe.' },
+      { kw: 'absteigend', img: '\uD83C\uDFC6 Treppenpodest 1-2-3', text: 'Am Eingang steht ein Siegertreppchen: Zuerst der Gr\u00f6\u00dfte (Gold), dann Mittel (Silber), dann Klein (Bronze) \u2013 bei VLSM sortierst du absteigend nach Hostbedarf.' },
+      { kw: 'Broadcast', img: '\uD83D\uDCE2 Lautsprecher am Zaunende', text: 'Am Ende jedes Gartenabschnitts steht ein Lautsprecher \u2013 die Broadcastadresse. Sie markiert das Ende des Subnetzes.' },
+      { kw: 'IP-Sparsamkeit', img: '\uD83D\uDCA7 Bew\u00e4sserung ohne Verschwendung', text: 'Jedes Beet bekommt exakt so viel Wasser wie es braucht, kein Tropfen wird verschwendet \u2013 das ist IP-Sparsamkeit durch VLSM.' }
+    ]
+  },
+  'Pr\u00e4fixl\u00e4nge': {
+    route: 'Eine Strasse mit Wohnh\u00e4usern',
+    scenes: [
+      { kw: 'Netzwerk-Bits', img: '\uD83C\uDFE0 Strassenname auf dem Schild', text: 'Am Anfang der Strasse steht ein grosses Schild mit dem Strassennamen \u2013 das sind die Netzwerk-Bits. Sie identifizieren die Strasse (das Netzwerk).' },
+      { kw: 'Hosts', img: '\uD83D\uDEAA Haust\u00fcren an der Strasse', text: 'Die Haust\u00fcren entlang der Strasse sind die einzelnen Hosts. Je k\u00fcrzer die Strasse (/28), desto weniger T\u00fcren (14 Hosts). Je l\u00e4nger (/24), desto mehr T\u00fcren (254).' },
+      { kw: '2 hoch', img: '\uD83D\uDCC8 Exponentialkurve an der Wand', text: 'An einer Mauer ist eine Exponentialkurve aufgemalt: 2\u00b2=4, 2\u00b3=8, 2\u2074=16... Die Formel 2^(32-Pr\u00e4fix) bestimmt die Blockgr\u00f6\u00dfe.' },
+      { kw: 'Netzadresse', img: '\uD83C\uDFE2 Erstes Haus = B\u00fcrgermeisteramt', text: 'Das allererste Haus ist immer das B\u00fcrgermeisteramt \u2013 die Netzadresse. Hier wohnt niemand, sie identifiziert nur die Strasse.' },
+      { kw: 'Broadcast', img: '\uD83D\uDCEF Letztes Haus = Feuerwache', text: 'Das allerletzte Haus ist die Feuerwache mit Sirene \u2013 die Broadcastadresse. Sie ruft alle Bewohner gleichzeitig. Auch hier wohnt niemand.' }
+    ]
+  },
+  'Prim\u00e4rverkabelung': {
+    route: 'Ein Universit\u00e4ts-Campus',
+    scenes: [
+      { kw: 'Campus', img: '\uD83C\uDFEB Mehrere Geb\u00e4ude auf dem Gel\u00e4nde', text: 'Du stehst auf einem weitl\u00e4ufigen Universit\u00e4tsgel\u00e4nde mit Bibliothek, H\u00f6rs\u00e4len und Mensa \u2013 der Campus. Alle Geb\u00e4ude m\u00fcssen verbunden werden.' },
+      { kw: 'Glasfaser', img: '\uD83D\uDCA0 Leuchtende Lichtleitungen im Boden', text: 'Im Boden zwischen den Geb\u00e4uden leuchten neonblaue Lichtwege \u2013 Glasfaserkabel, die Daten mit Lichtgeschwindigkeit \u00fcber das Gel\u00e4nde schicken.' },
+      { kw: 'Backbone', img: '\uD83E\uDDB4 Riesige Wirbels\u00e4ule als Skulptur', text: 'In der Campusmitte steht eine riesige Wirbels\u00e4ulen-Skulptur \u2013 der Backbone. Die Prim\u00e4rverkabelung ist das R\u00fcckgrat des gesamten Netzwerks.' },
+      { kw: 'Geb\u00e4ude', img: '\uD83C\uDFD7\uFE0F Br\u00fccken zwischen H\u00e4usern', text: 'Zwischen den Geb\u00e4uden spannen sich gl\u00e4serne Br\u00fccken \u2013 die physische Verbindung. Die Prim\u00e4rverkabelung verbindet Geb\u00e4ude miteinander.' },
+      { kw: 'au\u00dfen', img: '\u26CF\uFE0F Tiefbauarbeiter graben Kanal', text: 'Tiefbauarbeiter graben drau\u00dfen einen Kabelkanal \u2013 die Prim\u00e4rverkabelung verl\u00e4uft au\u00dfen zwischen den Geb\u00e4uden.' }
+    ]
+  },
+  'Sekund\u00e4rverkabelung': {
+    route: 'Ein Hochhaus von innen',
+    scenes: [
+      { kw: 'Etagen', img: '\uD83C\uDFE2 Aufzug-Anzeige 1-2-3-4', text: 'Du stehst im Aufzug eines Hochhauses und die Anzeige z\u00e4hlt die Etagen hoch: 1... 2... 3... 4. Die Sekund\u00e4rverkabelung verbindet jede Etage.' },
+      { kw: 'vertikal', img: '\u2B06\uFE0F Kabelschacht neben dem Aufzug', text: 'Neben dem Aufzug l\u00e4uft ein offener Kabelschacht vertikal durch alle Stockwerke \u2013 die Steigleitung, senkrecht von oben nach unten.' },
+      { kw: 'Steigleitung', img: '\uD83E\uDDF5 Dickes Kabelb\u00fcndel im Schacht', text: 'Im Schacht siehst du ein dickes B\u00fcndel leuchtender Kabel nach oben steigen \u2013 die Steigleitung, die alle Etagen mit dem Keller verbindet.' },
+      { kw: 'Etagenverteiler', img: '\uD83D\uDCE6 Metallschrank auf jeder Etage', text: 'Auf jeder Etage steht ein grauer Metallschrank neben dem Aufzug \u2013 der Etagenverteiler, wo die Steigleitung endet und die Etagenverkabelung beginnt.' },
+      { kw: 'Glasfaser', img: '\uD83D\uDCA1 Lichtwellenleiter im Schacht', text: 'Die Kabel im Schacht funkeln wie Glasperlen \u2013 es sind Glasfasern (LWL), die gro\u00dfe Datenmengen zwischen den Etagen transportieren.' }
+    ]
+  },
+  'Terti\u00e4rverkabelung': {
+    route: 'Ein B\u00fcrostockwerk',
+    scenes: [
+      { kw: 'Etagenverteiler', img: '\uD83D\uDCE1 Serverschrank im Flur', text: 'Im Flur des B\u00fcrostockwerks steht ein summender Serverschrank mit blinkenden LEDs \u2013 der Etagenverteiler, der Startpunkt der Terti\u00e4rverkabelung.' },
+      { kw: 'horizontal', img: '\u27A1\uFE0F Kabel in der Decke', text: '\u00dcber den Deckenplatten siehst du Kabel horizontal durch den gesamten Flur verlaufen \u2013 die Etagenverkabelung geht waagerecht zu jedem B\u00fcro.' },
+      { kw: 'Netzwerkdose', img: '\uD83D\uDD0C Wanddose neben dem Schreibtisch', text: 'An der Wand neben jedem Schreibtisch sitzt eine wei\u00dfe Netzwerkdose mit RJ45-Buchse \u2013 hier endet die Terti\u00e4rverkabelung.' },
+      { kw: 'Kupfer', img: '\uD83E\uDEA8 Orangefarbenes Kabel', text: 'Das Kabel, das zur Dose f\u00fchrt, ist orangefarben und aus Kupfer \u2013 Twisted Pair, der Standard f\u00fcr die letzte Meile zum Arbeitsplatz.' },
+      { kw: '90m', img: '\uD83D\uDCCF Massband an der Wand', text: 'An der Wand klebt ein Massband: maximal 90 Meter Verlegekabel + 10 Meter Patchkabel = 100 Meter Gesamtl\u00e4nge. Mehr geht nicht!' }
+    ]
+  },
+  'Patchpanel': {
+    route: 'Ein Serverraum',
+    scenes: [
+      { kw: 'Rack', img: '\uD83D\uDDC4\uFE0F 19-Zoll-Schrank', text: 'Du betrittst den Serverraum und siehst einen mannshohen 19-Zoll-Schrank (Rack) mit dutzenden blinkenden Ports \u2013 hier lebt das Patchpanel.' },
+      { kw: 'Verlegekabel', img: '\uD83E\uDDF1 Kabel fest in der Wand', text: 'Von hinten kommen dicke Kabel aus der Wand, die fest eingemauert sind \u2013 die Verlegekabel. Sie sind starr und d\u00fcrfen nie bewegt werden.' },
+      { kw: 'Patchkabel', img: '\uD83C\uDF08 Bunte flexible Kabel vorne', text: 'Vorne h\u00e4ngen kurze, bunte, flexible Kabel in allen Farben \u2013 die Patchkabel. Sie verbinden die Patchpanel-Ports mit den Switch-Ports.' },
+      { kw: 'Switch', img: '\uD83D\uDCE1 Blinkender Kasten im Rack', text: 'Direkt unter dem Patchpanel sitzt ein Kasten mit wild blinkenden gr\u00fcnen LEDs \u2013 der Switch, an dem die Patchkabel enden.' },
+      { kw: 'umstecken', img: '\uD83D\uDD0C Kabel von Port A nach Port B', text: 'Ein Admin zieht ein Patchkabel aus Port A und steckt es in Port B \u2013 so einfach ist Umpatchen! Keine Wand aufrei\u00dfen n\u00f6tig.' }
+    ]
+  },
+  'Kabelkategorien': {
+    route: 'Ein Technik-Museum',
+    scenes: [
+      { kw: 'Cat 5e', img: '\uD83E\uDDCA Verstaubtes Kabel im Glaskasten', text: 'Im Eingang des Museums liegt ein verstaubtes Cat 5e-Kabel im Glaskasten \u2013 "Historisch! 100 MHz, 1 Gbit/s. Fr\u00fcher Standard, heute veraltet."' },
+      { kw: 'Cat 6a', img: '\uD83C\uDF1F Leuchtendes Kabel auf Podest', text: 'In der Haupthalle steht ein leuchtendes Cat 6a-Kabel auf einem Podest: "Der Durchbruch! 500 MHz, 10 Gbit/s auf voller 100m-Strecke!"' },
+      { kw: 'Frequenz', img: '\uD83C\uDF0A Schwingende Wellen-Animation', text: 'An der Wand l\u00e4uft eine Animation mit Wellen in verschiedenen Frequenzen \u2013 100, 250, 500, 600 MHz. Je h\u00f6her die Frequenz, desto mehr Daten passen durch.' },
+      { kw: 'Schirmung', img: '\uD83D\uDEE1\uFE0F Kabel mit Metallmantel', text: 'Im n\u00e4chsten Raum ist ein aufgeschnittenes Kabel zu sehen: Unter dem Mantel liegt ein Metallschild \u2013 die Schirmung (S/FTP), die vor Interferenzen sch\u00fctzt.' },
+      { kw: 'Cat 7', img: '\uD83D\uDE80 Futuristisches Hochleistungskabel', text: 'Ganz hinten im Museum: Ein futuristisches Cat 7-Kabel mit 600 MHz und voller S/FTP-Schirmung \u2013 Hochleistung f\u00fcr anspruchsvolle Umgebungen.' }
+    ]
+  },
+  'EN 50173': {
+    route: 'Ein B\u00fccherregal mit Normen',
+    scenes: [
+      { kw: 'europ\u00e4isch', img: '\uD83C\uDDEA\uD83C\uDDFA EU-Flagge am Regal', text: 'Am B\u00fccherregal h\u00e4ngt eine grosse EU-Flagge \u2013 EN 50173 ist der europ\u00e4ische Standard f\u00fcr strukturierte Verkabelung.' },
+      { kw: 'Verkabelung', img: '\uD83D\uDCD0 Bauplan mit Kabelwegen', text: 'Im Buch liegt ein detaillierter Bauplan mit eingezeichneten Kabelwegen: Prim\u00e4r, Sekund\u00e4r, Terti\u00e4r \u2013 alle drei Ebenen definiert.' },
+      { kw: 'TIA/EIA 568', img: '\uD83C\uDDFA\uD83C\uDDF8 Amerikanisches Buch daneben', text: 'Direkt daneben steht ein Buch mit US-Flagge: TIA/EIA 568 \u2013 der amerikanische Standard, der zus\u00e4tzlich die Steckerbelegung definiert.' },
+      { kw: 'RJ45', img: '\uD83D\uDD0C Transparenter Stecker in Grossaufnahme', text: 'Auf dem Buchcover ist ein riesiger transparenter RJ45-Stecker abgebildet \u2013 mit farbigen Adern, die nach T568A oder T568B belegt sind.' },
+      { kw: 'Standard', img: '\uD83D\uDCDC Offizielle Urkunde mit Stempel', text: 'Aus dem Buch f\u00e4llt eine Urkunde mit offiziellem Stempel: "Genormt!" \u2013 Standards sorgen daf\u00fcr, dass Produkte verschiedener Hersteller kompatibel sind.' }
+    ]
+  }
+};
+
+var GLOSSARY_TERM_MAP = {
+  'vlsm': 'VLSM',
+  'variable length subnet masking': 'VLSM',
+  'pr\u00e4fix': 'Pr\u00e4fixl\u00e4nge',
+  'prefix': 'Pr\u00e4fixl\u00e4nge',
+  'subnetzmaske': 'Pr\u00e4fixl\u00e4nge',
+  'prim\u00e4rverkabelung': 'Prim\u00e4rverkabelung',
+  'campus': 'Prim\u00e4rverkabelung',
+  'sekund\u00e4rverkabelung': 'Sekund\u00e4rverkabelung',
+  'steigleitung': 'Sekund\u00e4rverkabelung',
+  'terti\u00e4rverkabelung': 'Terti\u00e4rverkabelung',
+  'etagenverkabelung': 'Terti\u00e4rverkabelung',
+  'patchpanel': 'Patchpanel',
+  'patchkabel': 'Patchpanel',
+  'verlegekabel': 'Patchpanel',
+  'cat 5e': 'Kabelkategorien',
+  'cat 6': 'Kabelkategorien',
+  'cat 6a': 'Kabelkategorien',
+  'cat 7': 'Kabelkategorien',
+  'en 50173': 'EN 50173',
+  'tia/eia 568': 'EN 50173'
+};
+
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card ul, .summary-card p, .vlsm-step .step-detail';
+</script>
+<script src="shared/glossary.js"></script>
+<script src="nav-companion.js"></script>
 </body>
-</html>
 </html>

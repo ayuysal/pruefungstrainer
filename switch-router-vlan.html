@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Switch, Router, STP & VLAN Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -83,72 +84,6 @@ tr:last-child td{border-bottom:none}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.topo-canvas{height:260px}}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -269,21 +204,29 @@ tr:last-child td{border-bottom:none}
 <div id="exercise-area"></div>
 </div>
 
-<!-- GLOSSARY SECTION -->
-<div class="glossary-section" id="glossary-section">
-<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128218;</div><h2>Glossar-Trainer</h2></div>
-<div class="glossary-progress-bar">
-<div class="gp-text">Fortschritt</div>
-<div class="gp-bar"><div class="gp-fill" id="glossary-progress-fill" style="width:0%"></div></div>
-<div class="gp-count" id="glossary-progress-count">0 / 8 gemeistert</div>
-</div>
-<div class="glossary-grid" id="glossary-grid"></div>
-<div class="glossary-learn" id="glossary-learn"></div>
-</div>
-<div class="glossary-tooltip" id="glossary-tooltip">
-<div class="gt-name" id="gt-name"></div>
-<div class="gt-short" id="gt-short"></div>
-<div class="gt-link">Klicken zum Lernen &#8594;</div>
+<div class="glossary-section">
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">&#129504;</div>
+    <h2>Begriffe lernen</h2>
+    <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
+  </div>
+
+  <div class="glossary-progress-bar">
+    <span class="gp-text">Fortschritt</span>
+    <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+    <span class="gp-count" id="glossary-count">0%</span>
+  </div>
+
+  <div class="glossary-grid" id="glossary-grid"></div>
+
+  <div class="glossary-learn" id="glossary-learn">
+    <div class="gl-header">
+      <h3 id="gl-title"></h3>
+      <button class="gl-close" onclick="glossaryClose()">&#10005;</button>
+    </div>
+    <div class="gl-phase-indicator" id="gl-phases"></div>
+    <div class="gl-content" id="gl-content"></div>
+  </div>
 </div>
 
 <!-- SUMMARY / EXAM TIPS -->
@@ -548,310 +491,225 @@ function showSolution(){const s=document.getElementById('sol');s.textContent=cur
 function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
 newTask();
 
-// === GLOSSARY SYSTEM ===
-const GLOSSARY_KEY='glossary-switch-router-vlan';
-const glossaryTerms=[
+var TRAINER_ID = 'switch-router-vlan';
+var GLOSSARY = [
   {
-    id:'switch',term:'Switch',short:'Layer-2-Gerät, leitet Frames anhand von MAC-Adressen weiter',icon:'🔀',
-    definition:'Ein Switch ist ein Netzwerkgerät auf OSI-Layer 2 (Data Link Layer). Er lernt MAC-Adressen über eingehende Frames und baut eine MAC-Address-Table auf. Dadurch kann er Frames gezielt an den richtigen Port weiterleiten (Forwarding), anstatt sie wie ein Hub an alle Ports zu senden. Jeder Switch-Port bildet eine eigene Collision Domain, aber ohne VLANs gibt es nur eine Broadcast Domain.',
-    analogy:'Stell dir einen Switch wie einen intelligenten Postboten vor: Er kennt die Adressen (MAC) aller Empfänger und liefert Briefe (Frames) direkt an den richtigen Briefkasten (Port), anstatt Kopien an jeden Haushalt zu verteilen.',
-    hints:['Arbeitet auf Layer 2 mit MAC-Adressen','Erstellt eine MAC-Address-Table dynamisch durch Lernen','Jeder Port = eigene Collision Domain, aber nur 1 Broadcast Domain (ohne VLAN)'],
-    questions:[
-      {type:'fill',q:'Ein Switch arbeitet auf OSI-Layer ___ und nutzt ___-Adressen zur Weiterleitung.',keywords:['2','MAC']},
-      {type:'choice',q:'Was passiert, wenn ein Switch die Ziel-MAC-Adresse nicht in seiner Tabelle findet?',correct:'Er flutet das Frame an alle Ports (außer Quellport)',wrong:['Er verwirft das Frame','Er sendet ein ICMP-Error','Er leitet es an den Router weiter']},
-      {type:'explain',q:'Erkläre den Unterschied zwischen Store-and-Forward und Cut-Through bei Switches.',keywords:['Store-and-Forward','CRC','ganzes Frame','Cut-Through','Ziel-MAC','schneller','Fehlerprüfung']}
-    ],difficulty:1
+    term: 'Switch',
+    short: 'Layer-2-Geraet, leitet Frames anhand von MAC-Adressen weiter',
+    definition: 'Ein Switch ist ein Netzwerkgeraet auf OSI-Layer 2 (Data Link Layer). Er lernt MAC-Adressen ueber eingehende Frames und baut eine MAC-Address-Table auf. Dadurch kann er Frames gezielt an den richtigen Port weiterleiten (Forwarding), anstatt sie wie ein Hub an alle Ports zu senden. Jeder Switch-Port bildet eine eigene Collision Domain, aber ohne VLANs gibt es nur eine Broadcast Domain.',
+    analogy: '\uD83D\uDD00 Stell dir einen Switch wie einen intelligenten Postboten vor: Er kennt die Adressen (MAC) aller Empfaenger und liefert Briefe (Frames) direkt an den richtigen Briefkasten (Port), anstatt Kopien an jeden Haushalt zu verteilen.',
+    hints: ['Arbeitet auf Layer 2 mit MAC-Adressen','Erstellt eine MAC-Address-Table dynamisch durch Lernen','Jeder Port = eigene Collision Domain, aber nur 1 Broadcast Domain (ohne VLAN)'],
+    questions: [
+      { type: 'fill', q: 'Ein Switch arbeitet auf OSI-Layer ___ und nutzt ___-Adressen zur Weiterleitung.', a: '2, MAC', keywords: ['2','MAC'] },
+      { type: 'choice', q: 'Was passiert, wenn ein Switch die Ziel-MAC-Adresse nicht in seiner Tabelle findet?', options: ['Er flutet das Frame an alle Ports (ausser Quellport)','Er verwirft das Frame','Er sendet ein ICMP-Error','Er leitet es an den Router weiter'], correct: 0 },
+      { type: 'explain', q: 'Erklaere den Unterschied zwischen Store-and-Forward und Cut-Through bei Switches.', keywords: ['Store-and-Forward','CRC','ganzes Frame','Cut-Through','Ziel-MAC','schneller','Fehlerpruefung'], minKeywords: 3 }
+    ]
   },
   {
-    id:'router',term:'Router',short:'Layer-3-Gerät, verbindet Netzwerke und routet per IP',icon:'🌐',
-    definition:'Ein Router ist ein Netzwerkgerät auf OSI-Layer 3 (Network Layer). Er verbindet verschiedene Netzwerke miteinander und trifft Routing-Entscheidungen anhand von IP-Adressen und einer Routing-Tabelle. Jedes Router-Interface bildet eine eigene Broadcast Domain. Router können NAT/PAT durchführen und ermöglichen Inter-VLAN-Routing.',
-    analogy:'Ein Router ist wie ein Verkehrspolizist an einer großen Kreuzung: Er kennt alle Straßen (Netzwerke) und leitet den Verkehr (Pakete) in die richtige Richtung, basierend auf dem Zielort (IP-Adresse). Ohne ihn bleibt der Verkehr in seiner Nachbarschaft (Broadcast Domain) gefangen.',
-    hints:['Arbeitet auf Layer 3 mit IP-Adressen','Trennt Broadcast Domains – jedes Interface ist eine eigene BD','Nutzt eine Routing-Tabelle für Weiterleitungsentscheidungen'],
-    questions:[
-      {type:'fill',q:'Ein Router arbeitet auf Layer ___ und trennt ___-Domains.',keywords:['3','Broadcast']},
-      {type:'choice',q:'Was ist die Hauptfunktion eines Routers?',correct:'Netzwerke verbinden und Broadcast Domains trennen',wrong:['MAC-Adressen lernen','Signale verstärken','VLANs erstellen']},
-      {type:'explain',q:'Warum trennt ein Router Broadcast Domains, ein Switch aber nicht?',keywords:['Layer 3','IP','Broadcast','weiterleiten','verwerfen','Netzgrenze']}
-    ],difficulty:1
+    term: 'Router',
+    short: 'Layer-3-Geraet, verbindet Netzwerke und routet per IP',
+    definition: 'Ein Router ist ein Netzwerkgeraet auf OSI-Layer 3 (Network Layer). Er verbindet verschiedene Netzwerke miteinander und trifft Routing-Entscheidungen anhand von IP-Adressen und einer Routing-Tabelle. Jedes Router-Interface bildet eine eigene Broadcast Domain. Router koennen NAT/PAT durchfuehren und ermoeglichen Inter-VLAN-Routing.',
+    analogy: '\uD83C\uDF10 Ein Router ist wie ein Verkehrspolizist an einer grossen Kreuzung: Er kennt alle Strassen (Netzwerke) und leitet den Verkehr (Pakete) in die richtige Richtung, basierend auf dem Zielort (IP-Adresse). Ohne ihn bleibt der Verkehr in seiner Nachbarschaft (Broadcast Domain) gefangen.',
+    hints: ['Arbeitet auf Layer 3 mit IP-Adressen','Trennt Broadcast Domains \u2013 jedes Interface ist eine eigene BD','Nutzt eine Routing-Tabelle fuer Weiterleitungsentscheidungen'],
+    questions: [
+      { type: 'fill', q: 'Ein Router arbeitet auf Layer ___ und trennt ___-Domains.', a: '3, Broadcast', keywords: ['3','Broadcast'] },
+      { type: 'choice', q: 'Was ist die Hauptfunktion eines Routers?', options: ['Netzwerke verbinden und Broadcast Domains trennen','MAC-Adressen lernen','Signale verstaerken','VLANs erstellen'], correct: 0 },
+      { type: 'explain', q: 'Warum trennt ein Router Broadcast Domains, ein Switch aber nicht?', keywords: ['Layer 3','IP','Broadcast','weiterleiten','verwerfen','Netzgrenze'], minKeywords: 3 }
+    ]
   },
   {
-    id:'vlan',term:'VLAN',short:'Virtual LAN – logische Trennung auf Layer 2',icon:'🏷️',
-    definition:'Ein VLAN (Virtual Local Area Network) ist eine logische Segmentierung eines physischen Netzwerks auf Layer 2. Ein einzelner Switch kann durch VLANs mehrere getrennte Broadcast Domains bilden. Geräte in verschiedenen VLANs können ohne Router oder Layer-3-Switch nicht miteinander kommunizieren. VLANs werden über VLAN-IDs (12 Bit, 0–4095) identifiziert.',
-    analogy:'VLANs sind wie verschiedene Stockwerke in einem Bürogebäude: Obwohl alle im selben Gebäude (Switch) sind, können die Mitarbeiter auf verschiedenen Stockwerken (VLANs) nur über den Aufzug (Router) miteinander sprechen.',
-    hints:['Logische Trennung auf Layer 2 – ein Switch, mehrere Broadcast Domains','VLAN-ID hat 12 Bit → bis zu 4096 mögliche VLANs','Kommunikation zwischen VLANs braucht einen Router oder L3-Switch'],
-    questions:[
-      {type:'fill',q:'VLANs ermöglichen die logische Trennung von ___-Domains auf einem einzigen ___.',keywords:['Broadcast','Switch']},
-      {type:'choice',q:'Wie viele VLANs sind mit 802.1Q theoretisch möglich?',correct:'4096',wrong:['256','1024','65536']},
-      {type:'explain',q:'Warum können Geräte in verschiedenen VLANs nicht direkt kommunizieren?',keywords:['Broadcast Domain','getrennt','Layer 2','Router','Layer 3','Inter-VLAN']}
-    ],difficulty:2
+    term: 'VLAN',
+    short: 'Virtual LAN \u2013 logische Trennung auf Layer 2',
+    definition: 'Ein VLAN (Virtual Local Area Network) ist eine logische Segmentierung eines physischen Netzwerks auf Layer 2. Ein einzelner Switch kann durch VLANs mehrere getrennte Broadcast Domains bilden. Geraete in verschiedenen VLANs koennen ohne Router oder Layer-3-Switch nicht miteinander kommunizieren. VLANs werden ueber VLAN-IDs (12 Bit, 0\u20134095) identifiziert.',
+    analogy: '\uD83C\uDFF7\uFE0F VLANs sind wie verschiedene Stockwerke in einem Buerogebaeude: Obwohl alle im selben Gebaeude (Switch) sind, koennen die Mitarbeiter auf verschiedenen Stockwerken (VLANs) nur ueber den Aufzug (Router) miteinander sprechen.',
+    hints: ['Logische Trennung auf Layer 2 \u2013 ein Switch, mehrere Broadcast Domains','VLAN-ID hat 12 Bit \u2192 bis zu 4096 moegliche VLANs','Kommunikation zwischen VLANs braucht einen Router oder L3-Switch'],
+    questions: [
+      { type: 'fill', q: 'VLANs ermoeglichen die logische Trennung von ___-Domains auf einem einzigen ___.', a: 'Broadcast, Switch', keywords: ['Broadcast','Switch'] },
+      { type: 'choice', q: 'Wie viele VLANs sind mit 802.1Q theoretisch moeglich?', options: ['4096','256','1024','65536'], correct: 0 },
+      { type: 'explain', q: 'Warum koennen Geraete in verschiedenen VLANs nicht direkt kommunizieren?', keywords: ['Broadcast Domain','getrennt','Layer 2','Router','Layer 3','Inter-VLAN'], minKeywords: 3 }
+    ]
   },
   {
-    id:'trunk',term:'Trunk',short:'Tagged Port für mehrere VLANs (802.1Q)',icon:'🔗',
-    definition:'Ein Trunk Port (auch Tagged Port) ist ein Switch-Port, der Frames mehrerer VLANs gleichzeitig transportiert. Dazu wird der 802.1Q-Standard verwendet: Ein 4-Byte-Tag wird in den Ethernet-Frame eingefügt, das die VLAN-ID enthält. So kann der empfangende Switch erkennen, zu welchem VLAN ein Frame gehört. Das Native VLAN sendet Frames ohne Tag.',
-    analogy:'Ein Trunk ist wie eine mehrspurige Autobahn zwischen zwei Städten (Switches): Jede Spur ist für bestimmte Fahrzeuge (VLANs) markiert. Ohne die Markierung (802.1Q-Tag) wüsste niemand, auf welche Spur ein Fahrzeug gehört.',
-    hints:['802.1Q fügt einen 4-Byte-Tag mit VLAN-ID in den Ethernet-Frame ein','Native VLAN: Frames ohne Tag auf dem Trunk','Access Port = 1 VLAN (untagged), Trunk = mehrere VLANs (tagged)'],
-    questions:[
-      {type:'fill',q:'Ein Trunk Port nutzt den Standard ___ und fügt einen ___-Byte-Tag ein.',keywords:['802.1Q','4']},
-      {type:'choice',q:'Was ist das Native VLAN?',correct:'Das VLAN, dessen Frames auf dem Trunk ohne Tag gesendet werden',wrong:['Das VLAN mit der höchsten Priorität','Das Standard-Management-VLAN','Das VLAN für Gäste']},
-      {type:'explain',q:'Erkläre den Unterschied zwischen einem Access Port und einem Trunk Port.',keywords:['Access','ein VLAN','untagged','Trunk','mehrere VLANs','tagged','802.1Q']}
-    ],difficulty:2
+    term: 'Trunk',
+    short: 'Tagged Port fuer mehrere VLANs (802.1Q)',
+    definition: 'Ein Trunk Port (auch Tagged Port) ist ein Switch-Port, der Frames mehrerer VLANs gleichzeitig transportiert. Dazu wird der 802.1Q-Standard verwendet: Ein 4-Byte-Tag wird in den Ethernet-Frame eingefuegt, das die VLAN-ID enthaelt. So kann der empfangende Switch erkennen, zu welchem VLAN ein Frame gehoert. Das Native VLAN sendet Frames ohne Tag.',
+    analogy: '\uD83D\uDD17 Ein Trunk ist wie eine mehrspurige Autobahn zwischen zwei Staedten (Switches): Jede Spur ist fuer bestimmte Fahrzeuge (VLANs) markiert. Ohne die Markierung (802.1Q-Tag) wuesste niemand, auf welche Spur ein Fahrzeug gehoert.',
+    hints: ['802.1Q fuegt einen 4-Byte-Tag mit VLAN-ID in den Ethernet-Frame ein','Native VLAN: Frames ohne Tag auf dem Trunk','Access Port = 1 VLAN (untagged), Trunk = mehrere VLANs (tagged)'],
+    questions: [
+      { type: 'fill', q: 'Ein Trunk Port nutzt den Standard ___ und fuegt einen ___-Byte-Tag ein.', a: '802.1Q, 4', keywords: ['802.1Q','4'] },
+      { type: 'choice', q: 'Was ist das Native VLAN?', options: ['Das VLAN, dessen Frames auf dem Trunk ohne Tag gesendet werden','Das VLAN mit der hoechsten Prioritaet','Das Standard-Management-VLAN','Das VLAN fuer Gaeste'], correct: 0 },
+      { type: 'explain', q: 'Erklaere den Unterschied zwischen einem Access Port und einem Trunk Port.', keywords: ['Access','ein VLAN','untagged','Trunk','mehrere VLANs','tagged','802.1Q'], minKeywords: 3 }
+    ]
   },
   {
-    id:'routing-tabelle',term:'Routing-Tabelle',short:'Enthält Netzrouten für Weiterleitungsentscheidungen',icon:'📋',
-    definition:'Die Routing-Tabelle ist eine Datenstruktur im Router, die Informationen über erreichbare Netzwerke enthält. Jeder Eintrag besteht typischerweise aus Zielnetz, Subnetzmaske, Next Hop (nächster Router), ausgehendem Interface und Metrik. Routen können statisch konfiguriert oder dynamisch durch Routing-Protokolle (OSPF, RIP, BGP) gelernt werden. Der Router wählt die Route mit dem längsten Präfix-Match.',
-    analogy:'Die Routing-Tabelle ist wie ein Wegweiser an einer Kreuzung: Für jedes Ziel (Netzwerk) zeigt sie die beste Richtung (Next Hop/Interface) und die Entfernung (Metrik) an. Der Router schaut bei jedem Paket auf diesen Wegweiser.',
-    hints:['Enthält Zielnetz, Subnetzmaske, Next Hop, Interface und Metrik','Routen können statisch oder dynamisch (OSPF, RIP, BGP) sein','Longest Prefix Match bestimmt die beste Route'],
-    questions:[
-      {type:'fill',q:'Die Routing-Tabelle enthält für jede Route u.a. Zielnetz, ___ und ___.',keywords:['Next Hop','Metrik']},
-      {type:'choice',q:'Welches Prinzip nutzt der Router zur Routenauswahl?',correct:'Longest Prefix Match',wrong:['First Come First Served','Round Robin','Shortest Path Bridging']},
-      {type:'explain',q:'Was ist der Unterschied zwischen statischen und dynamischen Routen?',keywords:['statisch','manuell','konfiguriert','dynamisch','Protokoll','automatisch','OSPF','RIP']}
-    ],difficulty:2
+    term: 'Routing-Tabelle',
+    short: 'Enthaelt Netzrouten fuer Weiterleitungsentscheidungen',
+    definition: 'Die Routing-Tabelle ist eine Datenstruktur im Router, die Informationen ueber erreichbare Netzwerke enthaelt. Jeder Eintrag besteht typischerweise aus Zielnetz, Subnetzmaske, Next Hop (naechster Router), ausgehendem Interface und Metrik. Routen koennen statisch konfiguriert oder dynamisch durch Routing-Protokolle (OSPF, RIP, BGP) gelernt werden. Der Router waehlt die Route mit dem laengsten Praefix-Match.',
+    analogy: '\uD83D\uDCCB Die Routing-Tabelle ist wie ein Wegweiser an einer Kreuzung: Fuer jedes Ziel (Netzwerk) zeigt sie die beste Richtung (Next Hop/Interface) und die Entfernung (Metrik) an. Der Router schaut bei jedem Paket auf diesen Wegweiser.',
+    hints: ['Enthaelt Zielnetz, Subnetzmaske, Next Hop, Interface und Metrik','Routen koennen statisch oder dynamisch (OSPF, RIP, BGP) sein','Longest Prefix Match bestimmt die beste Route'],
+    questions: [
+      { type: 'fill', q: 'Die Routing-Tabelle enthaelt fuer jede Route u.a. Zielnetz, ___ und ___.', a: 'Next Hop, Metrik', keywords: ['Next Hop','Metrik'] },
+      { type: 'choice', q: 'Welches Prinzip nutzt der Router zur Routenauswahl?', options: ['Longest Prefix Match','First Come First Served','Round Robin','Shortest Path Bridging'], correct: 0 },
+      { type: 'explain', q: 'Was ist der Unterschied zwischen statischen und dynamischen Routen?', keywords: ['statisch','manuell','konfiguriert','dynamisch','Protokoll','automatisch','OSPF','RIP'], minKeywords: 3 }
+    ]
   },
   {
-    id:'default-gateway',term:'Default Gateway',short:'Standardroute für Pakete außerhalb des lokalen Netzes',icon:'🚪',
-    definition:'Das Default Gateway ist die IP-Adresse des Routers, an den ein Host alle Pakete sendet, deren Ziel nicht im lokalen Netzwerk liegt. Es ist die „Tür nach draußen" für jedes Gerät im LAN. Ohne konfiguriertes Default Gateway kann ein Host nur mit Geräten im selben Subnetz kommunizieren. Das Default Gateway muss im selben Subnetz wie der Host liegen.',
-    analogy:'Das Default Gateway ist wie die Eingangstür deines Hauses: Wenn du jemanden besuchen willst, der nicht in deinem Haus (lokales Netz) wohnt, musst du durch die Tür (Gateway) gehen. Ohne Tür bist du im Haus gefangen.',
-    hints:['IP-Adresse des Routers im lokalen Subnetz','Wird für alle Pakete verwendet, deren Ziel nicht lokal ist','Muss im selben Subnetz wie der Host konfiguriert sein'],
-    questions:[
-      {type:'fill',q:'Das Default Gateway ist die ___-Adresse des ___ im lokalen Netz.',keywords:['IP','Router']},
-      {type:'choice',q:'Was passiert, wenn kein Default Gateway konfiguriert ist?',correct:'Der Host kann nur mit Geräten im selben Subnetz kommunizieren',wrong:['Der Host kann gar nicht kommunizieren','Der Host sendet Broadcasts ins Internet','Der Switch übernimmt das Routing']},
-      {type:'explain',q:'Warum muss das Default Gateway im selben Subnetz wie der Host liegen?',keywords:['direkt erreichbar','Layer 2','ARP','MAC','lokal','Subnetz']}
-    ],difficulty:1
+    term: 'Default Gateway',
+    short: 'Standardroute fuer Pakete ausserhalb des lokalen Netzes',
+    definition: 'Das Default Gateway ist die IP-Adresse des Routers, an den ein Host alle Pakete sendet, deren Ziel nicht im lokalen Netzwerk liegt. Es ist die \u201eTuer nach draussen\u201c fuer jedes Geraet im LAN. Ohne konfiguriertes Default Gateway kann ein Host nur mit Geraeten im selben Subnetz kommunizieren. Das Default Gateway muss im selben Subnetz wie der Host liegen.',
+    analogy: '\uD83D\uDEAA Das Default Gateway ist wie die Eingangstuer deines Hauses: Wenn du jemanden besuchen willst, der nicht in deinem Haus (lokales Netz) wohnt, musst du durch die Tuer (Gateway) gehen. Ohne Tuer bist du im Haus gefangen.',
+    hints: ['IP-Adresse des Routers im lokalen Subnetz','Wird fuer alle Pakete verwendet, deren Ziel nicht lokal ist','Muss im selben Subnetz wie der Host konfiguriert sein'],
+    questions: [
+      { type: 'fill', q: 'Das Default Gateway ist die ___-Adresse des ___ im lokalen Netz.', a: 'IP, Router', keywords: ['IP','Router'] },
+      { type: 'choice', q: 'Was passiert, wenn kein Default Gateway konfiguriert ist?', options: ['Der Host kann nur mit Geraeten im selben Subnetz kommunizieren','Der Host kann gar nicht kommunizieren','Der Host sendet Broadcasts ins Internet','Der Switch uebernimmt das Routing'], correct: 0 },
+      { type: 'explain', q: 'Warum muss das Default Gateway im selben Subnetz wie der Host liegen?', keywords: ['direkt erreichbar','Layer 2','ARP','MAC','lokal','Subnetz'], minKeywords: 3 }
+    ]
   },
   {
-    id:'stp',term:'Spanning Tree Protocol',short:'Verhindert Schleifen in redundanten L2-Topologien',icon:'🌳',
-    definition:'Das Spanning Tree Protocol (STP, IEEE 802.1D) verhindert Schleifen (Loops) in redundanten Layer-2-Netzwerken. Ohne STP würden Broadcast-Frames endlos im Kreis laufen (Broadcast Storm). STP wählt eine Root Bridge (niedrigste Bridge Priority + MAC), bestimmt Root Ports und Designated Ports und blockiert redundante Pfade. Port-Zustände: Blocking → Listening → Learning → Forwarding.',
-    analogy:'STP ist wie ein Verkehrsleitsystem bei einer Straße mit mehreren parallelen Wegen: Es sperrt einige Wege (Blocking), damit niemand im Kreis fährt, hält aber Umleitungen bereit, falls der Hauptweg ausfällt.',
-    hints:['Verhindert Broadcast Storms durch Blockieren redundanter Pfade','Root Bridge = niedrigste Priority (Default 32768) + niedrigste MAC','Port-Zustände: Blocking → Listening → Learning → Forwarding'],
-    questions:[
-      {type:'fill',q:'STP verhindert ___ in redundanten Layer-2-Netzen. Die Default Bridge Priority ist ___.',keywords:['Schleifen','32768']},
-      {type:'choice',q:'Was passiert ohne STP in einem redundanten L2-Netzwerk?',correct:'Broadcast Storms durch endlos kreisende Frames',wrong:['Die Bandbreite verdoppelt sich','VLANs werden automatisch erstellt','MAC-Adressen gehen verloren']},
-      {type:'explain',q:'Wie wird die Root Bridge bei STP bestimmt?',keywords:['Priority','Bridge','niedrigste','MAC','32768','BPDU','Vergleich']}
-    ],difficulty:3
+    term: 'Spanning Tree Protocol',
+    short: 'Verhindert Schleifen in redundanten L2-Topologien',
+    definition: 'Das Spanning Tree Protocol (STP, IEEE 802.1D) verhindert Schleifen (Loops) in redundanten Layer-2-Netzwerken. Ohne STP wuerden Broadcast-Frames endlos im Kreis laufen (Broadcast Storm). STP waehlt eine Root Bridge (niedrigste Bridge Priority + MAC), bestimmt Root Ports und Designated Ports und blockiert redundante Pfade. Port-Zustaende: Blocking \u2192 Listening \u2192 Learning \u2192 Forwarding.',
+    analogy: '\uD83C\uDF33 STP ist wie ein Verkehrsleitsystem bei einer Strasse mit mehreren parallelen Wegen: Es sperrt einige Wege (Blocking), damit niemand im Kreis faehrt, haelt aber Umleitungen bereit, falls der Hauptweg ausfaellt.',
+    hints: ['Verhindert Broadcast Storms durch Blockieren redundanter Pfade','Root Bridge = niedrigste Priority (Default 32768) + niedrigste MAC','Port-Zustaende: Blocking \u2192 Listening \u2192 Learning \u2192 Forwarding'],
+    questions: [
+      { type: 'fill', q: 'STP verhindert ___ in redundanten Layer-2-Netzen. Die Default Bridge Priority ist ___.', a: 'Schleifen, 32768', keywords: ['Schleifen','32768'] },
+      { type: 'choice', q: 'Was passiert ohne STP in einem redundanten L2-Netzwerk?', options: ['Broadcast Storms durch endlos kreisende Frames','Die Bandbreite verdoppelt sich','VLANs werden automatisch erstellt','MAC-Adressen gehen verloren'], correct: 0 },
+      { type: 'explain', q: 'Wie wird die Root Bridge bei STP bestimmt?', keywords: ['Priority','Bridge','niedrigste','MAC','32768','BPDU','Vergleich'], minKeywords: 3 }
+    ]
   },
   {
-    id:'arp',term:'ARP',short:'Auflösung von IP-Adressen zu MAC-Adressen',icon:'🔍',
-    definition:'Das Address Resolution Protocol (ARP) löst IP-Adressen in MAC-Adressen auf. Wenn ein Host ein Paket an eine IP im selben Subnetz senden will, aber die zugehörige MAC-Adresse nicht kennt, sendet er einen ARP-Request als Broadcast. Der Host mit der passenden IP antwortet mit einem ARP-Reply (Unicast), der seine MAC-Adresse enthält. Das Ergebnis wird im ARP-Cache gespeichert.',
-    analogy:'ARP ist wie ein Rufen in einem Raum: „Wer hat die IP 192.168.1.5?" (Broadcast). Die Person mit dieser IP antwortet: „Das bin ich, hier ist meine MAC-Adresse!" (Unicast). Du merkst dir die Antwort (ARP-Cache), damit du nicht jedes Mal erneut fragen musst.',
-    hints:['ARP-Request = Broadcast (an alle), ARP-Reply = Unicast (gezielt)','Löst IP → MAC auf, Ergebnis wird im ARP-Cache gespeichert','Funktioniert nur innerhalb eines Subnetzes (Layer 2)'],
-    questions:[
-      {type:'fill',q:'ARP löst ___-Adressen in ___-Adressen auf.',keywords:['IP','MAC']},
-      {type:'choice',q:'Wie wird ein ARP-Request gesendet?',correct:'Als Broadcast an alle Geräte im Subnetz',wrong:['Als Unicast an den Router','Als Multicast an eine Gruppe','Direkt an die Ziel-MAC']},
-      {type:'explain',q:'Warum ist ARP nur innerhalb eines Subnetzes relevant?',keywords:['Broadcast','Layer 2','Subnetz','Router','MAC','lokal']}
-    ],difficulty:2
+    term: 'ARP',
+    short: 'Aufloesung von IP-Adressen zu MAC-Adressen',
+    definition: 'Das Address Resolution Protocol (ARP) loest IP-Adressen in MAC-Adressen auf. Wenn ein Host ein Paket an eine IP im selben Subnetz senden will, aber die zugehoerige MAC-Adresse nicht kennt, sendet er einen ARP-Request als Broadcast. Der Host mit der passenden IP antwortet mit einem ARP-Reply (Unicast), der seine MAC-Adresse enthaelt. Das Ergebnis wird im ARP-Cache gespeichert.',
+    analogy: '\uD83D\uDD0D ARP ist wie ein Rufen in einem Raum: \u201eWer hat die IP 192.168.1.5?\u201c (Broadcast). Die Person mit dieser IP antwortet: \u201eDas bin ich, hier ist meine MAC-Adresse!\u201c (Unicast). Du merkst dir die Antwort (ARP-Cache), damit du nicht jedes Mal erneut fragen musst.',
+    hints: ['ARP-Request = Broadcast (an alle), ARP-Reply = Unicast (gezielt)','Loest IP \u2192 MAC auf, Ergebnis wird im ARP-Cache gespeichert','Funktioniert nur innerhalb eines Subnetzes (Layer 2)'],
+    questions: [
+      { type: 'fill', q: 'ARP loest ___-Adressen in ___-Adressen auf.', a: 'IP, MAC', keywords: ['IP','MAC'] },
+      { type: 'choice', q: 'Wie wird ein ARP-Request gesendet?', options: ['Als Broadcast an alle Geraete im Subnetz','Als Unicast an den Router','Als Multicast an eine Gruppe','Direkt an die Ziel-MAC'], correct: 0 },
+      { type: 'explain', q: 'Warum ist ARP nur innerhalb eines Subnetzes relevant?', keywords: ['Broadcast','Layer 2','Subnetz','Router','MAC','lokal'], minKeywords: 3 }
+    ]
   }
 ];
 
-const glossaryTermMap={};
-glossaryTerms.forEach(t=>{
-  const variants=[t.term.toLowerCase()];
-  if(t.id==='switch'){variants.push('switches','layer-2-switch','l2-switch');}
-  if(t.id==='router'){variants.push('routers','layer-3-gerät','l3-gerät','layer 3');}
-  if(t.id==='vlan'){variants.push('vlans','virtual lan','virtual local area network','vlan-id');}
-  if(t.id==='trunk'){variants.push('trunk port','trunk ports','trunks','tagged port','802.1q');}
-  if(t.id==='routing-tabelle'){variants.push('routing-tabellen','routingtabelle','routing tabelle');}
-  if(t.id==='default-gateway'){variants.push('gateway','default-gw','standardgateway');}
-  if(t.id==='stp'){variants.push('spanning tree','spanning-tree','802.1d','stp');}
-  if(t.id==='arp'){variants.push('address resolution protocol','arp-request','arp-reply','arp-cache');}
-  variants.forEach(v=>{glossaryTermMap[v]=t;});
-});
-
-let glossaryState={};
-function loadGlossaryState(){try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY)||'{}');}catch(e){glossaryState={};}}
-function saveGlossaryState(){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));}
-function getTermLevel(id){return(glossaryState[id]&&glossaryState[id].level)||0;}
-function setTermLevel(id,level){if(!glossaryState[id])glossaryState[id]={};glossaryState[id].level=Math.min(3,Math.max(0,level));saveGlossaryState();renderGlossary();}
-function getMastered(){return glossaryTerms.filter(t=>getTermLevel(t.id)>=3).length;}
-
-function renderGlossary(){
-  const grid=document.getElementById('glossary-grid');
-  const mastered=getMastered();
-  const total=glossaryTerms.length;
-  document.getElementById('glossary-progress-fill').style.width=(mastered/total*100)+'%';
-  document.getElementById('glossary-progress-count').textContent=mastered+' / '+total+' gemeistert';
-  grid.innerHTML='';
-  glossaryTerms.forEach(t=>{
-    const level=getTermLevel(t.id);
-    const card=document.createElement('div');
-    card.className='glossary-card';card.dataset.level=level;card.dataset.id=t.id;
-    card.innerHTML=`<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
-    card.addEventListener('click',()=>openGlossaryLearn(t.id));
-    grid.appendChild(card);
-  });
-}
-
-let glossaryCurrentTerm=null,glossaryPhase=0,glossaryHintIndex=0,glossaryAnswered=false;
-
-function openGlossaryLearn(id){
-  const t=glossaryTerms.find(x=>x.id===id);if(!t)return;
-  glossaryCurrentTerm=t;glossaryPhase=0;glossaryHintIndex=0;glossaryAnswered=false;
-  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',c.dataset.id===id));
-  const panel=document.getElementById('glossary-learn');
-  panel.className='glossary-learn visible';
-  renderGlossaryPhase();
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function closeGlossaryLearn(){
-  document.getElementById('glossary-learn').className='glossary-learn';
-  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
-  glossaryCurrentTerm=null;
-}
-
-function glossaryGoToPhase(idx){
-  if(idx>glossaryPhase||idx<0)return;
-  glossaryPhase=idx;glossaryHintIndex=0;glossaryAnswered=false;
-  renderGlossaryPhase();
-}
-
-function renderGlossaryPhase(){
-  const t=glossaryCurrentTerm;if(!t)return;
-  const panel=document.getElementById('glossary-learn');
-  const phases=['Verstehen','Anwenden','Prüfen'];
-  let html=`<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="closeGlossaryLearn()">✕</button></div>`;
-  html+=`<div class="gl-phase-indicator">`;
-  phases.forEach((p,i)=>{
-    let cls='gl-phase';
-    if(i<glossaryPhase)cls+=' done';
-    if(i===glossaryPhase)cls+=' current';
-    const clickable=i<=glossaryPhase;
-    html+=`<div class="${cls}"${clickable?' onclick="glossaryGoToPhase('+i+')" title="Zurück zu '+p+'"':''}>${p}</div>`;
-  });
-  html+=`</div><div class="gl-content">`;
-
-  if(glossaryPhase===0){
-    html+=`<div class="gl-analogy">💡 ${t.analogy}</div>`;
-    html+=`<div class="gl-definition">${t.definition}</div>`;
-    html+=`<div class="gl-hints" id="gl-hints">`;
-    t.hints.forEach((h,i)=>{html+=`<div class="gl-hint" id="gl-hint-${i}">💡 ${h}</div>`;});
-    html+=`</div>`;
-    html+=`<button class="gl-hint-btn" onclick="showGlossaryHint()">Hinweis anzeigen</button><br>`;
-    html+=`<button class="gl-btn primary" onclick="glossaryNextPhase()">Verstanden → weiter</button>`;
-  } else if(glossaryPhase===1){
-    const q=t.questions[0];
-    html+=`<div class="gl-question">${q.q}</div>`;
-    html+=`<input class="gl-input" id="gl-fill-input" placeholder="Begriffe eingeben..." autocomplete="off">`;
-    html+=`<button class="gl-btn primary" onclick="checkGlossaryFill()">Prüfen</button>`;
-    html+=`<div id="gl-feedback"></div>`;
-  } else if(glossaryPhase===2){
-    const q=t.questions[1];
-    html+=`<div class="gl-question">${q.q}</div>`;
-    const opts=shuffleGlossary([q.correct,...q.wrong]);
-    html+=`<div class="gl-choices" id="gl-choices">`;
-    opts.forEach(o=>{html+=`<button class="gl-choice" onclick="checkGlossaryChoice(this,'${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}')">${o}</button>`;});
-    html+=`</div><div id="gl-feedback"></div>`;
+var GP_STORIES = {
+  'Switch': {
+    route: 'Ein Postamt',
+    scenes: [
+      { kw: 'Layer 2', img: '\uD83C\uDFE4 Postamt mit 2 Stockwerken', text: 'Du betrittst ein zweistoeckiges Postamt. Ueber dem Eingang steht gross "Layer 2". Der Switch arbeitet auf der zweiten Etage des OSI-Modells!' },
+      { kw: 'MAC-Adresse', img: '\uD83D\uDCEB Briefkaesten mit Namensschildern', text: 'An der Wand haengen Briefkaesten mit individuellen Namensschildern \u2013 das sind die MAC-Adressen. Der Postbote (Switch) schaut auf das Schild und weiss genau, wohin der Brief gehoert.' },
+      { kw: 'MAC-Address-Table', img: '\uD83D\uDCD6 Grosses Adressbuch', text: 'Hinter dem Schalter liegt ein dickes Adressbuch aufgeschlagen \u2013 die MAC-Address-Table. Jeder neue Absender wird automatisch eingetragen: MAC-Adresse \u2192 Port.' },
+      { kw: 'Collision Domain', img: '\uD83D\uDEAA Einzelne Schalter-Kabinen', text: 'Jeder Schalter hat seine eigene Kabine mit Tuer \u2013 jeder Port ist eine eigene Collision Domain. Keine Draengelei mehr wie beim Hub!' },
+      { kw: 'Flooding', img: '\uD83C\uDF0A Wasser fliesst ueberall hin', text: 'Ein Brief ohne bekannte Adresse? Der Postbote kopiert ihn und wirft ihn in ALLE Briefkaesten \u2013 das ist Flooding. Nur der richtige Empfaenger antwortet.' }
+    ]
+  },
+  'Router': {
+    route: 'Eine Grenzstation',
+    scenes: [
+      { kw: 'Layer 3', img: '\uD83C\uDFD7\uFE0F Dreistoeckiger Grenzturm', text: 'An der Landesgrenze steht ein dreistoeckiger Wachturm \u2013 Layer 3. Der Router arbeitet auf der dritten Ebene und prueft IP-Paesse statt MAC-Ausweise.' },
+      { kw: 'IP-Adresse', img: '\uD83D\uDCDB Reisepass mit IP-Nummer', text: 'Jeder Reisende zeigt seinen Pass mit einer IP-Adresse. Der Grenzbeamte (Router) liest die IP und entscheidet: "Ab nach Netzwerk B!"' },
+      { kw: 'Broadcast Domain', img: '\uD83D\uDEA7 Schranke zwischen Laendern', text: 'Die Schranke trennt zwei Laender \u2013 zwei Broadcast Domains. Broadcasts koennen die Grenze nicht passieren. Jedes Router-Interface ist ein eigenes Land.' },
+      { kw: 'Routing-Tabelle', img: '\uD83D\uDDFA\uFE0F Landkarte an der Wand', text: 'An der Wand haengt eine riesige Landkarte mit Pfeilen \u2013 die Routing-Tabelle. Fuer jedes Zielland steht der beste Weg und die naechste Station (Next Hop).' },
+      { kw: 'NAT', img: '\uD83C\uDFAD Verkleidungskabine', text: 'Neben dem Grenzposten steht eine Verkleidungskabine \u2013 NAT! Private IP-Adressen ziehen sich eine oeffentliche Jacke an, bevor sie die Grenze ueberqueren.' }
+    ]
+  },
+  'VLAN': {
+    route: 'Ein Buerogebaeude',
+    scenes: [
+      { kw: 'logische Trennung', img: '\uD83C\uDFE2 Farbige Stockwerke', text: 'Du betrittst ein Buerogebaeude. Obwohl es nur einen Aufzugschacht hat, sind die Stockwerke mit verschiedenen Farben markiert \u2013 logisch getrennte VLANs auf einem physischen Switch!' },
+      { kw: 'Broadcast Domain', img: '\uD83D\uDCE2 Lautsprecher pro Stockwerk', text: 'Jedes Stockwerk hat seinen eigenen Lautsprecher. Eine Durchsage im 2. Stock (VLAN 20) hoert man im 1. Stock (VLAN 10) nicht \u2013 separate Broadcast Domains!' },
+      { kw: 'VLAN-ID', img: '\uD83C\uDFF7\uFE0F Farbige Zugangsausweise', text: 'Jeder Mitarbeiter traegt einen farbigen Ausweis mit einer Nummer \u2013 die VLAN-ID (12 Bit, bis 4096). Nur gleiche Farben koennen miteinander reden.' },
+      { kw: 'Router', img: '\uD83D\uDEBB Aufzug zwischen Stockwerken', text: 'Der einzige Weg zwischen den Stockwerken ist der Aufzug \u2013 ein Router oder L3-Switch. Ohne ihn bleibt jedes VLAN isoliert.' },
+      { kw: 'Access Port', img: '\uD83D\uDEAA Einzelne Buerotuer', text: 'Jede Buerotuer (Access Port) gehoert zu genau einem Stockwerk (VLAN). Der Mitarbeiter dahinter sieht nur sein eigenes VLAN \u2013 untagged, einfach und klar.' }
+    ]
+  },
+  'Trunk': {
+    route: 'Eine Autobahn',
+    scenes: [
+      { kw: '802.1Q', img: '\uD83D\uDEE3\uFE0F Autobahnschild: 802.1Q', text: 'Du faehrst auf die Autobahn. Am Eingang steht ein grosses Schild: "802.1Q \u2013 Standard fuer VLAN-Tagging". Hier fahren Frames aus vielen VLANs gemeinsam!' },
+      { kw: 'Tag', img: '\uD83C\uDFF7\uFE0F Aufkleber auf jedem Auto', text: 'Jedes Auto (Frame) auf der Autobahn hat einen Aufkleber (4-Byte-Tag) mit der VLAN-Nummer. So weiss die Ausfahrt (empfangender Switch), wohin jedes Auto gehoert.' },
+      { kw: 'mehrere VLANs', img: '\uD83D\uDEE4\uFE0F Mehrspurige Fahrbahn', text: 'Die Autobahn hat viele Spuren \u2013 eine fuer jedes VLAN. Alle fahren auf demselben Kabel, aber dank der Tags bleiben sie getrennt.' },
+      { kw: 'Native VLAN', img: '\uD83D\uDE97 Auto ohne Aufkleber', text: 'Ein Auto faehrt ohne Aufkleber \u2013 es gehoert zum Native VLAN! Frames ohne Tag werden automatisch dem Native VLAN zugeordnet.' },
+      { kw: 'Access Port', img: '\u26FD Tankstelle als Endpunkt', text: 'An der Tankstelle (Access Port) gibt es nur eine Spur und keine Aufkleber noetig \u2013 hier gehoert alles zu einem einzigen VLAN. Der Trunk dagegen ist die grosse Autobahn dazwischen.' }
+    ]
+  },
+  'Routing-Tabelle': {
+    route: 'Ein Strassenatlas',
+    scenes: [
+      { kw: 'Zielnetz', img: '\uD83D\uDDFA\uFE0F Stadtnamen auf der Karte', text: 'Du oeffnest einen Strassenatlas. Jede Stadt ist ein Zielnetz. Der Router schlaegt hier nach, wohin jedes Paket muss.' },
+      { kw: 'Next Hop', img: '\u27A1\uFE0F Naechste Kreuzung', text: 'Bei jeder Stadt steht ein Pfeil zur naechsten Kreuzung \u2013 der Next Hop. Der Router muss nicht den ganzen Weg kennen, nur den naechsten Schritt!' },
+      { kw: 'Metrik', img: '\u2696\uFE0F Entfernungsangabe', text: 'Neben jedem Weg steht eine Zahl \u2013 die Metrik. Niedrigere Zahl = besserer Weg. Der Router waehlt immer die Route mit der kleinsten Metrik.' },
+      { kw: 'Longest Prefix Match', img: '\uD83D\uDD0D Lupe auf die genauste Adresse', text: 'Mit einer Lupe schaut der Router auf die genauste Adresse: /28 passt besser als /24! Das ist der Longest Prefix Match \u2013 je spezifischer, desto besser.' },
+      { kw: 'dynamisch', img: '\uD83D\uDD04 Karte aktualisiert sich selbst', text: 'Manche Karten aktualisieren sich automatisch \u2013 dynamische Routen via OSPF oder RIP. Statische Routen sind dagegen handgeschrieben und aendern sich nie von allein.' }
+    ]
+  },
+  'Default Gateway': {
+    route: 'Eine Haustuer',
+    scenes: [
+      { kw: 'IP-Adresse', img: '\uD83D\uDEAA Tuer mit Nummer', text: 'An deiner Haustuer steht eine IP-Adresse \u2013 das ist das Default Gateway. Es ist die Adresse des Routers, der dich nach draussen bringt.' },
+      { kw: 'lokales Netz', img: '\uD83C\uDFE0 Dein Haus = dein Subnetz', text: 'Alles innerhalb deines Hauses ist dein lokales Netz. Du kannst von Zimmer zu Zimmer gehen (lokale Kommunikation) ohne die Tuer zu oeffnen.' },
+      { kw: 'Router', img: '\uD83D\uDE8C Bus vor der Tuer', text: 'Vor der Tuer steht ein Bus (Router). Willst du ins Nachbarviertel (anderes Netz)? Dann MUSST du durch die Tuer und den Bus nehmen!' },
+      { kw: 'Subnetz', img: '\uD83C\uDFD8\uFE0F Nachbarschaft', text: 'Das Gateway muss in deiner Nachbarschaft (gleiches Subnetz) liegen. Ein Gateway in einer anderen Stadt wuerde nicht funktionieren \u2013 du koenntest es per Layer 2 nicht erreichen.' },
+      { kw: 'ohne Gateway', img: '\uD83D\uDD12 Eingesperrt ohne Tuer', text: 'Ohne Tuer (kein Default Gateway) bist du eingesperrt! Du kannst nur mit Nachbarn im selben Subnetz reden, aber nie nach draussen.' }
+    ]
+  },
+  'Spanning Tree Protocol': {
+    route: 'Ein Labyrinth',
+    scenes: [
+      { kw: 'Schleifen', img: '\uD83C\uDF00 Endlos-Kreisverkehr', text: 'Du betrittst ein Labyrinth mit Kreisverkehren. Ohne STP wuerden Nachrichten ewig im Kreis laufen \u2013 ein Broadcast Storm! Alles steht still vor lauter Drehen.' },
+      { kw: 'Root Bridge', img: '\uD83C\uDFE1 Zentrales Baumhaus', text: 'In der Mitte des Labyrinths steht ein Baumhaus \u2013 die Root Bridge. Sie hat die niedrigste Nummer (Priority 32768 + niedrigste MAC) und ist der Referenzpunkt fuer alle.' },
+      { kw: 'Blocking', img: '\uD83D\uDEA7 Gesperrte Wege', text: 'Einige Wege sind mit Absperrbaken blockiert \u2013 STP sperrt redundante Pfade (Blocking). Dadurch entsteht ein schleifenfreier Baum.' },
+      { kw: 'BPDU', img: '\uD83D\uDCEC Brieftauben zwischen Switches', text: 'Brieftauben (BPDUs) fliegen zwischen den Kreuzungen und teilen mit: "Ich kenne den Weg zur Root Bridge!" So finden alle den besten Pfad.' },
+      { kw: 'Forwarding', img: '\u2705 Offener Hauptweg', text: 'Nach dem Aufbau sind die Hauptwege offen (Forwarding). Faellt ein Weg aus, oeffnet STP automatisch einen gesperrten Alternativweg \u2013 Redundanz ohne Schleifen!' }
+    ]
+  },
+  'ARP': {
+    route: 'Ein voller Hoersaal',
+    scenes: [
+      { kw: 'IP zu MAC', img: '\uD83D\uDCDB Namensliste und Sitzplaetze', text: 'Du stehst im Hoersaal und hast eine Namensliste (IP-Adressen), aber keine Sitzplatznummern (MAC-Adressen). ARP hilft dir, die Zuordnung zu finden!' },
+      { kw: 'Broadcast', img: '\uD83D\uDCE2 Laut in den Saal rufen', text: 'Du rufst laut: "Wer hat die IP 192.168.1.5?" \u2013 das ist der ARP-Request als Broadcast. Alle im Saal hoeren die Frage!' },
+      { kw: 'Unicast', img: '\u270B Eine Hand geht hoch', text: 'Eine Person hebt die Hand und antwortet leise zurueck: "Das bin ich, meine MAC ist AA:BB:CC..." \u2013 der ARP-Reply als Unicast, nur an dich gerichtet.' },
+      { kw: 'ARP-Cache', img: '\uD83D\uDCDD Notizblock', text: 'Du schreibst dir die Antwort auf deinen Notizblock \u2013 den ARP-Cache. Naechstes Mal musst du nicht mehr rufen, du schaust einfach nach!' },
+      { kw: 'Subnetz', img: '\uD83C\uDFDB\uFE0F Nur im eigenen Hoersaal', text: 'Dein Rufen reicht nur bis zu den Waenden des Hoersaals \u2013 ARP funktioniert nur im eigenen Subnetz. Fuer andere Netze fragst du den Router (Default Gateway).' }
+    ]
   }
-  html+=`</div>`;
-  panel.innerHTML=html;
-  if(glossaryPhase===1){const inp=document.getElementById('gl-fill-input');if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkGlossaryFill();});}}
-}
+};
 
-function showGlossaryHint(){
-  const t=glossaryCurrentTerm;if(!t)return;
-  if(glossaryHintIndex<t.hints.length){
-    const h=document.getElementById('gl-hint-'+glossaryHintIndex);
-    if(h)h.classList.add('visible');
-    glossaryHintIndex++;
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'switches': 'Switch',
+  'layer-2-switch': 'Switch',
+  'l2-switch': 'Switch',
+  'routers': 'Router',
+  'layer-3-geraet': 'Router',
+  'l3-geraet': 'Router',
+  'vlans': 'VLAN',
+  'virtual lan': 'VLAN',
+  'virtual local area network': 'VLAN',
+  'vlan-id': 'VLAN',
+  'trunk port': 'Trunk',
+  'trunk ports': 'Trunk',
+  'trunks': 'Trunk',
+  'tagged port': 'Trunk',
+  '802.1q': 'Trunk',
+  'routing-tabellen': 'Routing-Tabelle',
+  'routingtabelle': 'Routing-Tabelle',
+  'routing tabelle': 'Routing-Tabelle',
+  'gateway': 'Default Gateway',
+  'default-gw': 'Default Gateway',
+  'standardgateway': 'Default Gateway',
+  'spanning tree': 'Spanning Tree Protocol',
+  'spanning-tree': 'Spanning Tree Protocol',
+  '802.1d': 'Spanning Tree Protocol',
+  'stp': 'Spanning Tree Protocol',
+  'address resolution protocol': 'ARP',
+  'arp-request': 'ARP',
+  'arp-reply': 'ARP',
+  'arp-cache': 'ARP'
+};
 
-function glossaryNextPhase(){
-  glossaryPhase++;glossaryAnswered=false;
-  if(glossaryPhase>2){
-    const level=getTermLevel(glossaryCurrentTerm.id);
-    setTermLevel(glossaryCurrentTerm.id,level+1);
-    closeGlossaryLearn();
-    return;
-  }
-  renderGlossaryPhase();
-}
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card li, .task-display, .task-sub, .summary-card p, #topo-info, td';
 
-function checkGlossaryFill(){
-  if(glossaryAnswered)return;
-  const inp=document.getElementById('gl-fill-input');
-  const fb=document.getElementById('gl-feedback');
-  const val=inp.value.trim().toLowerCase();if(!val){return;}
-  glossaryAnswered=true;
-  const q=glossaryCurrentTerm.questions[0];
-  let found=0;
-  let kwHtml='';
-  q.keywords.forEach(kw=>{
-    if(val.includes(kw.toLowerCase())){found++;kwHtml+=`<span class="gl-keyword found">✓ ${kw}</span> `;}
-    else{kwHtml+=`<span class="gl-keyword missing">✗ ${kw}</span> `;}
-  });
-  if(found>=q.keywords.length){
-    fb.innerHTML=`<div class="gl-feedback success">Richtig! Alle Schlüsselbegriffe gefunden.<br>${kwHtml}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Weiter →</button>`;
-  } else if(found>0){
-    fb.innerHTML=`<div class="gl-feedback info">Teilweise richtig! ${found}/${q.keywords.length} Begriffe gefunden.<br>${kwHtml}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryAnswered=false;document.getElementById('gl-feedback').innerHTML='';">Nochmal versuchen</button> <button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Trotzdem weiter →</button>`;
-    glossaryAnswered=false;
-  } else {
-    fb.innerHTML=`<div class="gl-feedback error">Nicht ganz. Gesuchte Begriffe:<br>${kwHtml}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryAnswered=false;document.getElementById('gl-feedback').innerHTML='';">Nochmal versuchen</button> <button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Trotzdem weiter →</button>`;
-    glossaryAnswered=false;
-  }
-}
-
-function checkGlossaryChoice(el,selected,correct){
-  if(glossaryAnswered)return;
-  glossaryAnswered=true;
-  const fb=document.getElementById('gl-feedback');
-  document.querySelectorAll('#gl-choices .gl-choice').forEach(c=>{
-    if(c.textContent===correct)c.classList.add('correct');
-    if(c===el&&selected!==correct)c.classList.add('wrong');
-    c.style.pointerEvents='none';
-  });
-  if(selected===correct){
-    fb.innerHTML=`<div class="gl-feedback success">Richtig!</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Abschließen →</button>`;
-  } else {
-    fb.innerHTML=`<div class="gl-feedback error">Falsch! Richtig: ${correct}</div><button class="gl-btn primary" style="margin-top:12px" onclick="glossaryNextPhase()">Trotzdem weiter →</button>`;
-  }
-}
-
-function shuffleGlossary(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-// Tooltip
-const tooltip=document.getElementById('glossary-tooltip');
-function initGlossaryTooltips(){
-  const selectors='.card p, .card li, .task-display, .task-sub, .summary-card p, #topo-info, td';
-  document.querySelectorAll(selectors).forEach(el=>{
-    const original=el.innerHTML;
-    let html=original;
-    const sorted=Object.keys(glossaryTermMap).sort((a,b)=>b.length-a.length);
-    sorted.forEach(variant=>{
-      const escaped=variant.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-      const regex=new RegExp(`(?<!<[^>]*)\\b(${escaped})\\b(?![^<]*>)(?![^<]*class=)`,`gi`);
-      html=html.replace(regex,(match)=>{
-        return `<span class="glossary-term" data-term="${glossaryTermMap[variant].id}">${match}</span>`;
-      });
-    });
-    if(html!==original)el.innerHTML=html;
-  });
-
-  document.querySelectorAll('.glossary-term').forEach(el=>{
-    el.addEventListener('mouseenter',e=>{
-      const t=glossaryTerms.find(x=>x.id===el.dataset.term);if(!t)return;
-      document.getElementById('gt-name').textContent=t.term;
-      document.getElementById('gt-short').textContent=t.short;
-      tooltip.style.display='block';
-      const rect=el.getBoundingClientRect();
-      let top=rect.bottom+8,left=rect.left;
-      if(top+160>window.innerHeight)top=rect.top-160;
-      if(left+260>window.innerWidth)left=window.innerWidth-270;
-      if(left<10)left=10;
-      tooltip.style.top=top+'px';tooltip.style.left=left+'px';
-    });
-    el.addEventListener('mouseleave',()=>{tooltip.style.display='none';});
-    el.addEventListener('click',e=>{
-      e.preventDefault();tooltip.style.display='none';
-      openGlossaryLearn(el.dataset.term);
-      document.getElementById('glossary-section').scrollIntoView({behavior:'smooth'});
-    });
-  });
-}
-
-// Init
-loadGlossaryState();
-renderGlossary();
-setTimeout(initGlossaryTooltips,200);
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

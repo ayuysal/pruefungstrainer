@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>QuickSort, MergeSort & HeapSort</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
@@ -41,72 +42,6 @@ header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}hea
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.bars{height:150px}}
   .section-title .sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);margin-left:auto;letter-spacing:1px}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -327,394 +262,237 @@ renderBars();randomize();
 /* ═══════════════════════════════════════════
    GLOSSAR – Begriffe-Lernsystem
    ═══════════════════════════════════════════ */
-const GLOSSARY_KEY='glossary-quickmergeheap';
-const glossaryTerms=[
+var TRAINER_ID = 'quickmergeheap';
+
+var GLOSSARY = [
   {
-    id:'pivot',term:'Pivot',icon:'🎯',short:'Vergleichselement beim Partitionieren',
-    definition:'Das Pivot-Element ist das Referenzelement, anhand dessen beim QuickSort das Array partitioniert wird. Alle Elemente kleiner oder gleich dem Pivot kommen in die linke Teilfolge, alle größeren in die rechte. Die Wahl des Pivots beeinflusst die Effizienz des Algorithmus erheblich.',
-    analogy:'Stell dir vor, du sortierst einen Stapel Prüfungen nach Note. Du nimmst eine Prüfung heraus (das Pivot) und legst alle besseren Noten nach links, alle schlechteren nach rechts. Je repräsentativer deine gewählte Prüfung, desto gleichmäßiger die beiden Stapel.',
-    hints:['Das Pivot wird oft als letztes, erstes oder mittleres Element gewählt.','Die Median-of-Three-Strategie wählt den Median aus erstem, mittlerem und letztem Element.','Ein ungünstig gewähltes Pivot (z. B. stets das Minimum) führt zum Worst-Case O(n²).'],
-    questions:[
-      {type:'fill',q:'Beim QuickSort wird das Array anhand des ____-Elements in zwei Teilfolgen aufgeteilt.',a:'pivot',hint:'Das Referenzelement zum Partitionieren'},
-      {type:'choice',q:'Was passiert bei QuickSort, wenn stets das kleinste Element als Pivot gewählt wird?',options:['Der Algorithmus wird schneller','Es entsteht der Worst-Case O(n²)','Das Array wird nicht sortiert','Der Speicherverbrauch sinkt auf O(1)'],correct:1},
-      {type:'explain',q:'Erkläre, warum die Pivotwahl die Laufzeit von QuickSort beeinflusst.',keywords:['Pivot','Partition','Teilfolgen','gleichmäßig','Worst-Case','O(n²)'],minKeywords:3}
-    ],difficulty:1
+    term: 'Pivot',
+    short: 'Vergleichselement beim Partitionieren',
+    definition: 'Das Pivot-Element ist das Referenzelement, anhand dessen beim QuickSort das Array partitioniert wird. Alle Elemente kleiner oder gleich dem Pivot kommen in die linke Teilfolge, alle gr\u00f6\u00dferen in die rechte. Die Wahl des Pivots beeinflusst die Effizienz des Algorithmus erheblich.',
+    analogy: 'Stell dir vor, du sortierst einen Stapel Pr\u00fcfungen nach Note. Du nimmst eine Pr\u00fcfung heraus (das Pivot) und legst alle besseren Noten nach links, alle schlechteren nach rechts. Je repr\u00e4sentativer deine gew\u00e4hlte Pr\u00fcfung, desto gleichm\u00e4\u00dfiger die beiden Stapel.',
+    hints: ['Das Pivot wird oft als letztes, erstes oder mittleres Element gew\u00e4hlt.', 'Die Median-of-Three-Strategie w\u00e4hlt den Median aus erstem, mittlerem und letztem Element.', 'Ein ung\u00fcnstig gew\u00e4hltes Pivot (z. B. stets das Minimum) f\u00fchrt zum Worst-Case O(n\u00b2).'],
+    questions: [
+      {type: 'fill', q: 'Beim QuickSort wird das Array anhand des ____-Elements in zwei Teilfolgen aufgeteilt.', a: 'pivot', hint: 'Das Referenzelement zum Partitionieren'},
+      {type: 'choice', q: 'Was passiert bei QuickSort, wenn stets das kleinste Element als Pivot gew\u00e4hlt wird?', options: ['Der Algorithmus wird schneller', 'Es entsteht der Worst-Case O(n\u00b2)', 'Das Array wird nicht sortiert', 'Der Speicherverbrauch sinkt auf O(1)'], correct: 1},
+      {type: 'explain', q: 'Erkl\u00e4re, warum die Pivotwahl die Laufzeit von QuickSort beeinflusst.', keywords: ['Pivot', 'Partition', 'Teilfolgen', 'gleichm\u00e4\u00dfig', 'Worst-Case', 'O(n\u00b2)'], minKeywords: 3}
+    ],
+    difficulty: 1
   },
   {
-    id:'divideconquer',term:'Divide & Conquer',icon:'✂️',short:'Teile-und-Herrsche-Prinzip',
-    definition:'Divide and Conquer (Teile und Herrsche) ist ein algorithmisches Paradigma, bei dem ein Problem rekursiv in kleinere Teilprobleme zerlegt wird, diese unabhängig gelöst und die Teillösungen zu einer Gesamtlösung kombiniert werden. Alle drei Algorithmen (QuickSort, MergeSort, HeapSort) nutzen dieses Prinzip.',
-    analogy:'Wie beim Aufräumen eines großen Zimmers: Statt alles auf einmal zu ordnen, teilst du das Zimmer in Bereiche, räumst jeden einzeln auf und am Ende ist alles sauber. Die Teilbereiche kannst du wiederum aufteilen – bis jeder Bereich nur noch ein Objekt enthält.',
-    hints:['Drei Schritte: Divide (Teilen), Conquer (Lösen), Combine (Zusammenführen).','Bei MergeSort liegt die Hauptarbeit im Combine-Schritt (Merge).','Bei QuickSort liegt die Hauptarbeit im Divide-Schritt (Partition).'],
-    questions:[
-      {type:'fill',q:'Das Divide-and-Conquer-Prinzip besteht aus drei Schritten: Teilen, Lösen und ____.',a:'kombinieren',hint:'Die Teillösungen werden zu einer Gesamtlösung ...'},
-      {type:'choice',q:'Bei welchem Algorithmus liegt die Hauptarbeit im Divide-Schritt?',options:['MergeSort','HeapSort','QuickSort','BubbleSort'],correct:2},
-      {type:'explain',q:'Beschreibe das Divide-and-Conquer-Prinzip und wie es bei MergeSort angewendet wird.',keywords:['Teilen','Teilprobleme','rekursiv','Merge','Hälften','kombinieren'],minKeywords:3}
-    ],difficulty:1
+    term: 'Divide & Conquer',
+    short: 'Teile-und-Herrsche-Prinzip',
+    definition: 'Divide and Conquer (Teile und Herrsche) ist ein algorithmisches Paradigma, bei dem ein Problem rekursiv in kleinere Teilprobleme zerlegt wird, diese unabh\u00e4ngig gel\u00f6st und die Teill\u00f6sungen zu einer Gesamtl\u00f6sung kombiniert werden. Alle drei Algorithmen (QuickSort, MergeSort, HeapSort) nutzen dieses Prinzip.',
+    analogy: 'Wie beim Aufr\u00e4umen eines gro\u00dfen Zimmers: Statt alles auf einmal zu ordnen, teilst du das Zimmer in Bereiche, r\u00e4umst jeden einzeln auf und am Ende ist alles sauber. Die Teilbereiche kannst du wiederum aufteilen \u2013 bis jeder Bereich nur noch ein Objekt enth\u00e4lt.',
+    hints: ['Drei Schritte: Divide (Teilen), Conquer (L\u00f6sen), Combine (Zusammenf\u00fchren).', 'Bei MergeSort liegt die Hauptarbeit im Combine-Schritt (Merge).', 'Bei QuickSort liegt die Hauptarbeit im Divide-Schritt (Partition).'],
+    questions: [
+      {type: 'fill', q: 'Das Divide-and-Conquer-Prinzip besteht aus drei Schritten: Teilen, L\u00f6sen und ____.', a: 'kombinieren', hint: 'Die Teill\u00f6sungen werden zu einer Gesamtl\u00f6sung ...'},
+      {type: 'choice', q: 'Bei welchem Algorithmus liegt die Hauptarbeit im Divide-Schritt?', options: ['MergeSort', 'HeapSort', 'QuickSort', 'BubbleSort'], correct: 2},
+      {type: 'explain', q: 'Beschreibe das Divide-and-Conquer-Prinzip und wie es bei MergeSort angewendet wird.', keywords: ['Teilen', 'Teilprobleme', 'rekursiv', 'Merge', 'H\u00e4lften', 'kombinieren'], minKeywords: 3}
+    ],
+    difficulty: 1
   },
   {
-    id:'quicksort',term:'QuickSort',icon:'⚡',short:'Schnelles Sortieren durch Partitionierung',
-    definition:'QuickSort ist ein vergleichsbasierter Sortieralgorithmus, der das Divide-and-Conquer-Prinzip nutzt. Er wählt ein Pivot-Element, partitioniert das Array so, dass kleinere Elemente links und größere rechts stehen, und sortiert die Teilarrays rekursiv. Durchschnittlich O(n log n), im Worst-Case O(n²). In-Place, aber nicht stabil.',
-    analogy:'Wie ein Bibliothekar, der Bücher sortiert: Er wählt ein Referenzbuch (Pivot), legt alle Bücher mit früheren Titeln nach links, alle späteren nach rechts, und wiederholt das für jeden Stapel – bis alle Bücher in Ordnung stehen.',
-    hints:['QuickSort ist in der Praxis oft schneller als MergeSort wegen guter Cache-Lokalität.','Der Worst-Case tritt bei bereits sortierten Arrays mit ungünstiger Pivotwahl auf.','Randomisierte Pivotwahl macht den Worst-Case extrem unwahrscheinlich.'],
-    questions:[
-      {type:'fill',q:'QuickSort hat im Worst-Case eine Laufzeit von O(____).',a:'n²',hint:'Quadratisch – wenn die Partition stets maximal ungleich ist'},
-      {type:'choice',q:'Welche Eigenschaft hat QuickSort NICHT?',options:['In-Place','Durchschnittlich O(n log n)','Stabil','Vergleichsbasiert'],correct:2},
-      {type:'explain',q:'Erkläre den Ablauf von QuickSort und warum er in der Praxis oft bevorzugt wird.',keywords:['Pivot','Partition','rekursiv','In-Place','Cache','O(n log n)'],minKeywords:3}
-    ],difficulty:2
+    term: 'QuickSort',
+    short: 'Schnelles Sortieren durch Partitionierung',
+    definition: 'QuickSort ist ein vergleichsbasierter Sortieralgorithmus, der das Divide-and-Conquer-Prinzip nutzt. Er w\u00e4hlt ein Pivot-Element, partitioniert das Array so, dass kleinere Elemente links und gr\u00f6\u00dfere rechts stehen, und sortiert die Teilarrays rekursiv. Durchschnittlich O(n log n), im Worst-Case O(n\u00b2). In-Place, aber nicht stabil.',
+    analogy: 'Wie ein Bibliothekar, der B\u00fccher sortiert: Er w\u00e4hlt ein Referenzbuch (Pivot), legt alle B\u00fccher mit fr\u00fcheren Titeln nach links, alle sp\u00e4teren nach rechts, und wiederholt das f\u00fcr jeden Stapel \u2013 bis alle B\u00fccher in Ordnung stehen.',
+    hints: ['QuickSort ist in der Praxis oft schneller als MergeSort wegen guter Cache-Lokalit\u00e4t.', 'Der Worst-Case tritt bei bereits sortierten Arrays mit ung\u00fcnstiger Pivotwahl auf.', 'Randomisierte Pivotwahl macht den Worst-Case extrem unwahrscheinlich.'],
+    questions: [
+      {type: 'fill', q: 'QuickSort hat im Worst-Case eine Laufzeit von O(____).',a: 'n\u00b2', hint: 'Quadratisch \u2013 wenn die Partition stets maximal ungleich ist'},
+      {type: 'choice', q: 'Welche Eigenschaft hat QuickSort NICHT?', options: ['In-Place', 'Durchschnittlich O(n log n)', 'Stabil', 'Vergleichsbasiert'], correct: 2},
+      {type: 'explain', q: 'Erkl\u00e4re den Ablauf von QuickSort und warum er in der Praxis oft bevorzugt wird.', keywords: ['Pivot', 'Partition', 'rekursiv', 'In-Place', 'Cache', 'O(n log n)'], minKeywords: 3}
+    ],
+    difficulty: 2
   },
   {
-    id:'mergesort',term:'MergeSort',icon:'🔀',short:'Stabiles Sortieren durch Verschmelzen',
-    definition:'MergeSort ist ein stabiler Sortieralgorithmus nach dem Divide-and-Conquer-Prinzip. Das Array wird rekursiv halbiert, bis Einzelelemente vorliegen, und dann werden sortierte Teilfolgen paarweise verschmolzen (merge). Laufzeit immer O(n log n), benötigt aber O(n) zusätzlichen Speicher.',
-    analogy:'Wie das Mischen zweier sortierter Kartendecks: Du hast zwei sortierte Stapel und legst immer die kleinere der beiden oberen Karten auf einen neuen Stapel. So entsteht ein sortierter Gesamtstapel – und genau das macht der Merge-Schritt.',
-    hints:['MergeSort garantiert O(n log n) auch im Worst-Case – anders als QuickSort.','Der Merge-Schritt vergleicht die jeweils ersten Elemente beider Teilfolgen.','Ideal für verkettete Listen, da dort kein zusätzlicher Speicher nötig ist.'],
-    questions:[
-      {type:'fill',q:'MergeSort benötigt O(____) zusätzlichen Speicher für den Merge-Schritt.',a:'n',hint:'Proportional zur Eingabegröße'},
-      {type:'choice',q:'Warum ist MergeSort besonders gut für verkettete Listen geeignet?',options:['Weil er schneller ist als QuickSort','Weil kein zusätzlicher Speicher für das Mergen nötig ist','Weil er instabil ist','Weil er nur O(1) Speicher braucht'],correct:1},
-      {type:'explain',q:'Erkläre, warum MergeSort stabil ist und was das für die Praxis bedeutet.',keywords:['stabil','Reihenfolge','gleiche Schlüssel','Merge','Teilfolgen','beibehalten'],minKeywords:2}
-    ],difficulty:2
+    term: 'MergeSort',
+    short: 'Stabiles Sortieren durch Verschmelzen',
+    definition: 'MergeSort ist ein stabiler Sortieralgorithmus nach dem Divide-and-Conquer-Prinzip. Das Array wird rekursiv halbiert, bis Einzelelemente vorliegen, und dann werden sortierte Teilfolgen paarweise verschmolzen (merge). Laufzeit immer O(n log n), ben\u00f6tigt aber O(n) zus\u00e4tzlichen Speicher.',
+    analogy: 'Wie das Mischen zweier sortierter Kartendecks: Du hast zwei sortierte Stapel und legst immer die kleinere der beiden oberen Karten auf einen neuen Stapel. So entsteht ein sortierter Gesamtstapel \u2013 und genau das macht der Merge-Schritt.',
+    hints: ['MergeSort garantiert O(n log n) auch im Worst-Case \u2013 anders als QuickSort.', 'Der Merge-Schritt vergleicht die jeweils ersten Elemente beider Teilfolgen.', 'Ideal f\u00fcr verkettete Listen, da dort kein zus\u00e4tzlicher Speicher n\u00f6tig ist.'],
+    questions: [
+      {type: 'fill', q: 'MergeSort ben\u00f6tigt O(____) zus\u00e4tzlichen Speicher f\u00fcr den Merge-Schritt.', a: 'n', hint: 'Proportional zur Eingabegr\u00f6\u00dfe'},
+      {type: 'choice', q: 'Warum ist MergeSort besonders gut f\u00fcr verkettete Listen geeignet?', options: ['Weil er schneller ist als QuickSort', 'Weil kein zus\u00e4tzlicher Speicher f\u00fcr das Mergen n\u00f6tig ist', 'Weil er instabil ist', 'Weil er nur O(1) Speicher braucht'], correct: 1},
+      {type: 'explain', q: 'Erkl\u00e4re, warum MergeSort stabil ist und was das f\u00fcr die Praxis bedeutet.', keywords: ['stabil', 'Reihenfolge', 'gleiche Schl\u00fcssel', 'Merge', 'Teilfolgen', 'beibehalten'], minKeywords: 2}
+    ],
+    difficulty: 2
   },
   {
-    id:'heapsort',term:'HeapSort',icon:'🏔️',short:'Sortieren mit Heap-Datenstruktur',
-    definition:'HeapSort nutzt die Heap-Datenstruktur zum Sortieren. Zunächst wird ein Max-Heap aufgebaut (buildMaxHeap). Dann wird wiederholt das Maximum (Wurzel) mit dem letzten Element getauscht und der Heap verkleinert. Laufzeit stets O(n log n), In-Place mit O(1) Zusatzspeicher, aber nicht stabil.',
-    analogy:'Wie ein Turnier: Der Gewinner (Maximum) steht ganz oben. Nach jedem Finale wird der Sieger entnommen und auf die Ergebnisliste gesetzt. Ein neues Turnier unter den verbliebenen Teilnehmern bestimmt den nächsten Platz.',
-    hints:['BuildMaxHeap hat eine Laufzeit von O(n), nicht O(n log n).','Heapify stellt die Heap-Eigenschaft für einen Knoten in O(log n) wieder her.','HeapSort hat schlechtere Cache-Lokalität als QuickSort, daher in der Praxis oft langsamer.'],
-    questions:[
-      {type:'fill',q:'HeapSort benötigt O(____) zusätzlichen Speicher und sortiert damit In-Place.',a:'1',hint:'Konstanter Speicherverbrauch'},
-      {type:'choice',q:'Was ist der erste Schritt bei HeapSort?',options:['Das Array wird halbiert','Ein Max-Heap wird aufgebaut','Das Minimum wird gesucht','Zwei Teilarrays werden verschmolzen'],correct:1},
-      {type:'explain',q:'Beschreibe, wie HeapSort das Maximum nutzt, um das Array zu sortieren.',keywords:['Max-Heap','Wurzel','Maximum','tauschen','Heapify','verkleinern'],minKeywords:3}
-    ],difficulty:2
+    term: 'HeapSort',
+    short: 'Sortieren mit Heap-Datenstruktur',
+    definition: 'HeapSort nutzt die Heap-Datenstruktur zum Sortieren. Zun\u00e4chst wird ein Max-Heap aufgebaut (buildMaxHeap). Dann wird wiederholt das Maximum (Wurzel) mit dem letzten Element getauscht und der Heap verkleinert. Laufzeit stets O(n log n), In-Place mit O(1) Zusatzspeicher, aber nicht stabil.',
+    analogy: 'Wie ein Turnier: Der Gewinner (Maximum) steht ganz oben. Nach jedem Finale wird der Sieger entnommen und auf die Ergebnisliste gesetzt. Ein neues Turnier unter den verbliebenen Teilnehmern bestimmt den n\u00e4chsten Platz.',
+    hints: ['BuildMaxHeap hat eine Laufzeit von O(n), nicht O(n log n).', 'Heapify stellt die Heap-Eigenschaft f\u00fcr einen Knoten in O(log n) wieder her.', 'HeapSort hat schlechtere Cache-Lokalit\u00e4t als QuickSort, daher in der Praxis oft langsamer.'],
+    questions: [
+      {type: 'fill', q: 'HeapSort ben\u00f6tigt O(____) zus\u00e4tzlichen Speicher und sortiert damit In-Place.', a: '1', hint: 'Konstanter Speicherverbrauch'},
+      {type: 'choice', q: 'Was ist der erste Schritt bei HeapSort?', options: ['Das Array wird halbiert', 'Ein Max-Heap wird aufgebaut', 'Das Minimum wird gesucht', 'Zwei Teilarrays werden verschmolzen'], correct: 1},
+      {type: 'explain', q: 'Beschreibe, wie HeapSort das Maximum nutzt, um das Array zu sortieren.', keywords: ['Max-Heap', 'Wurzel', 'Maximum', 'tauschen', 'Heapify', 'verkleinern'], minKeywords: 3}
+    ],
+    difficulty: 2
   },
   {
-    id:'heap',term:'Heap',icon:'🌳',short:'Baumbasierte Datenstruktur mit Ordnung',
-    definition:'Ein Heap ist ein vollständiger Binärbaum, der als Array dargestellt wird. Im Max-Heap gilt: Jeder Knoten ist größer oder gleich seinen Kindern (Heap-Eigenschaft). Im Min-Heap umgekehrt. Kinder von Index i liegen bei 2i+1 und 2i+2, der Elternknoten bei ⌊(i-1)/2⌋.',
-    analogy:'Wie eine Firmenhierarchie: Der Chef (Wurzel) hat das höchste Gehalt. Jeder Vorgesetzte verdient mindestens so viel wie seine direkten Untergebenen. Diese Struktur lässt sich effizient in einer Namensliste (Array) abbilden.',
-    hints:['Ein Heap ist kein vollständig sortierter Baum – nur die Eltern-Kind-Beziehung ist geordnet.','Die Wurzel eines Max-Heaps enthält stets das größte Element.','Einfügen und Entfernen kosten jeweils O(log n).'],
-    questions:[
-      {type:'fill',q:'Im Max-Heap ist jeder Knoten ____ oder gleich seinen Kindern.',a:'größer',hint:'Die Heap-Eigenschaft besagt, dass Eltern dominieren'},
-      {type:'choice',q:'Wo liegen die Kinder eines Knotens mit Index i im Array?',options:['i+1 und i+2','2i und 2i+1','2i+1 und 2i+2','i/2 und i/2+1'],correct:2},
-      {type:'explain',q:'Erkläre, warum ein Heap als Array dargestellt werden kann und welche Vorteile das hat.',keywords:['vollständig','Binärbaum','Array','Index','Kinder','Elternknoten'],minKeywords:3}
-    ],difficulty:2
+    term: 'Heap',
+    short: 'Baumbasierte Datenstruktur mit Ordnung',
+    definition: 'Ein Heap ist ein vollst\u00e4ndiger Bin\u00e4rbaum, der als Array dargestellt wird. Im Max-Heap gilt: Jeder Knoten ist gr\u00f6\u00dfer oder gleich seinen Kindern (Heap-Eigenschaft). Im Min-Heap umgekehrt. Kinder von Index i liegen bei 2i+1 und 2i+2, der Elternknoten bei \u230a(i-1)/2\u230b.',
+    analogy: 'Wie eine Firmenhierarchie: Der Chef (Wurzel) hat das h\u00f6chste Gehalt. Jeder Vorgesetzte verdient mindestens so viel wie seine direkten Untergebenen. Diese Struktur l\u00e4sst sich effizient in einer Namensliste (Array) abbilden.',
+    hints: ['Ein Heap ist kein vollst\u00e4ndig sortierter Baum \u2013 nur die Eltern-Kind-Beziehung ist geordnet.', 'Die Wurzel eines Max-Heaps enth\u00e4lt stets das gr\u00f6\u00dfte Element.', 'Einf\u00fcgen und Entfernen kosten jeweils O(log n).'],
+    questions: [
+      {type: 'fill', q: 'Im Max-Heap ist jeder Knoten ____ oder gleich seinen Kindern.', a: 'gr\u00f6\u00dfer', hint: 'Die Heap-Eigenschaft besagt, dass Eltern dominieren'},
+      {type: 'choice', q: 'Wo liegen die Kinder eines Knotens mit Index i im Array?', options: ['i+1 und i+2', '2i und 2i+1', '2i+1 und 2i+2', 'i/2 und i/2+1'], correct: 2},
+      {type: 'explain', q: 'Erkl\u00e4re, warum ein Heap als Array dargestellt werden kann und welche Vorteile das hat.', keywords: ['vollst\u00e4ndig', 'Bin\u00e4rbaum', 'Array', 'Index', 'Kinder', 'Elternknoten'], minKeywords: 3}
+    ],
+    difficulty: 2
   },
   {
-    id:'inplace',term:'In-Place',icon:'📦',short:'Sortierung ohne zusätzlichen Speicher',
-    definition:'Ein Sortieralgorithmus arbeitet In-Place, wenn er nur O(1) oder O(log n) zusätzlichen Speicher benötigt – also kein zweites Array gleicher Größe anlegt. QuickSort und HeapSort sind In-Place, MergeSort hingegen nicht, da es O(n) Zusatzspeicher für den Merge-Schritt benötigt.',
-    analogy:'Wie das Umordnen von Büchern in einem einzigen Regal: Du tauschst Bücher innerhalb des Regals, ohne ein zweites Regal zu benötigen. MergeSort hingegen braucht ein Hilfsregal, um die Bücher zwischenzulagern.',
-    hints:['In-Place bedeutet nicht, dass gar kein Zusatzspeicher verwendet wird – der Rekursionsstack zählt mit.','QuickSort braucht O(log n) Speicher für den Rekursionsstack.','HeapSort ist der speichereffizienteste der drei Algorithmen mit O(1).'],
-    questions:[
-      {type:'fill',q:'MergeSort ist ____ In-Place, da es O(n) zusätzlichen Speicher benötigt.',a:'nicht',hint:'MergeSort braucht ein Hilfsarray'},
-      {type:'choice',q:'Welcher Algorithmus hat den geringsten Speicherverbrauch?',options:['QuickSort – O(log n)','MergeSort – O(n)','HeapSort – O(1)','InsertionSort – O(n)'],correct:2},
-      {type:'explain',q:'Erkläre den Unterschied im Speicherverbrauch von QuickSort, MergeSort und HeapSort.',keywords:['In-Place','Zusatzspeicher','O(1)','O(n)','O(log n)','Rekursionsstack'],minKeywords:3}
-    ],difficulty:1
+    term: 'In-Place',
+    short: 'Sortierung ohne zus\u00e4tzlichen Speicher',
+    definition: 'Ein Sortieralgorithmus arbeitet In-Place, wenn er nur O(1) oder O(log n) zus\u00e4tzlichen Speicher ben\u00f6tigt \u2013 also kein zweites Array gleicher Gr\u00f6\u00dfe anlegt. QuickSort und HeapSort sind In-Place, MergeSort hingegen nicht, da es O(n) Zusatzspeicher f\u00fcr den Merge-Schritt ben\u00f6tigt.',
+    analogy: 'Wie das Umordnen von B\u00fcchern in einem einzigen Regal: Du tauschst B\u00fccher innerhalb des Regals, ohne ein zweites Regal zu ben\u00f6tigen. MergeSort hingegen braucht ein Hilfsregal, um die B\u00fccher zwischenzulagern.',
+    hints: ['In-Place bedeutet nicht, dass gar kein Zusatzspeicher verwendet wird \u2013 der Rekursionsstack z\u00e4hlt mit.', 'QuickSort braucht O(log n) Speicher f\u00fcr den Rekursionsstack.', 'HeapSort ist der speichereffizienteste der drei Algorithmen mit O(1).'],
+    questions: [
+      {type: 'fill', q: 'MergeSort ist ____ In-Place, da es O(n) zus\u00e4tzlichen Speicher ben\u00f6tigt.', a: 'nicht', hint: 'MergeSort braucht ein Hilfsarray'},
+      {type: 'choice', q: 'Welcher Algorithmus hat den geringsten Speicherverbrauch?', options: ['QuickSort \u2013 O(log n)', 'MergeSort \u2013 O(n)', 'HeapSort \u2013 O(1)', 'InsertionSort \u2013 O(n)'], correct: 2},
+      {type: 'explain', q: 'Erkl\u00e4re den Unterschied im Speicherverbrauch von QuickSort, MergeSort und HeapSort.', keywords: ['In-Place', 'Zusatzspeicher', 'O(1)', 'O(n)', 'O(log n)', 'Rekursionsstack'], minKeywords: 3}
+    ],
+    difficulty: 1
   },
   {
-    id:'stabilitaet',term:'Stabilität',icon:'⚖️',short:'Erhalt der relativen Reihenfolge',
-    definition:'Ein Sortierverfahren ist stabil, wenn Elemente mit gleichem Schlüsselwert nach dem Sortieren in derselben relativen Reihenfolge stehen wie vorher. MergeSort ist stabil, QuickSort und HeapSort sind es nicht. Stabilität ist wichtig beim Sortieren nach mehreren Kriterien.',
-    analogy:'Stell dir vor, du sortierst Schüler nach Nachname. Zwei Schüler heißen "Müller" – Anna und Ben. Bei einem stabilen Verfahren bleibt Anna vor Ben, wenn sie vorher schon so standen. Bei einem instabilen könnte sich ihre Reihenfolge ändern.',
-    hints:['Stabilität ist relevant, wenn nach mehreren Schlüsseln sortiert wird (z. B. erst nach Name, dann nach Note).','MergeSort ist stabil, weil beim Merge gleiche Elemente aus der linken Teilfolge bevorzugt werden.','QuickSort kann durch das Vertauschen über weite Distanzen die relative Reihenfolge zerstören.'],
-    questions:[
-      {type:'fill',q:'Ein stabiles Sortierverfahren erhält die relative ____ gleicher Elemente.',a:'reihenfolge',hint:'Die Anordnung gleicher Schlüssel bleibt bestehen'},
-      {type:'choice',q:'Welcher der drei Algorithmen ist stabil?',options:['QuickSort','HeapSort','MergeSort','Keiner von ihnen'],correct:2},
-      {type:'explain',q:'Erkläre, warum Stabilität beim Sortieren nach mehreren Kriterien wichtig ist.',keywords:['stabil','Reihenfolge','gleiche Schlüssel','Kriterien','beibehalten','MergeSort'],minKeywords:2}
-    ],difficulty:1
+    term: 'Stabilit\u00e4t',
+    short: 'Erhalt der relativen Reihenfolge',
+    definition: 'Ein Sortierverfahren ist stabil, wenn Elemente mit gleichem Schl\u00fcsselwert nach dem Sortieren in derselben relativen Reihenfolge stehen wie vorher. MergeSort ist stabil, QuickSort und HeapSort sind es nicht. Stabilit\u00e4t ist wichtig beim Sortieren nach mehreren Kriterien.',
+    analogy: 'Stell dir vor, du sortierst Sch\u00fcler nach Nachname. Zwei Sch\u00fcler hei\u00dfen "M\u00fcller" \u2013 Anna und Ben. Bei einem stabilen Verfahren bleibt Anna vor Ben, wenn sie vorher schon so standen. Bei einem instabilen k\u00f6nnte sich ihre Reihenfolge \u00e4ndern.',
+    hints: ['Stabilit\u00e4t ist relevant, wenn nach mehreren Schl\u00fcsseln sortiert wird (z. B. erst nach Name, dann nach Note).', 'MergeSort ist stabil, weil beim Merge gleiche Elemente aus der linken Teilfolge bevorzugt werden.', 'QuickSort kann durch das Vertauschen \u00fcber weite Distanzen die relative Reihenfolge zerst\u00f6ren.'],
+    questions: [
+      {type: 'fill', q: 'Ein stabiles Sortierverfahren erh\u00e4lt die relative ____ gleicher Elemente.', a: 'reihenfolge', hint: 'Die Anordnung gleicher Schl\u00fcssel bleibt bestehen'},
+      {type: 'choice', q: 'Welcher der drei Algorithmen ist stabil?', options: ['QuickSort', 'HeapSort', 'MergeSort', 'Keiner von ihnen'], correct: 2},
+      {type: 'explain', q: 'Erkl\u00e4re, warum Stabilit\u00e4t beim Sortieren nach mehreren Kriterien wichtig ist.', keywords: ['stabil', 'Reihenfolge', 'gleiche Schl\u00fcssel', 'Kriterien', 'beibehalten', 'MergeSort'], minKeywords: 2}
+    ],
+    difficulty: 1
   }
 ];
 
-/* ── Term-Map für Highlighting ── */
-const glossaryTermMap={};
-glossaryTerms.forEach(t=>{
-  const variants=[t.term.toLowerCase()];
-  if(t.id==='pivot')variants.push('pivot','pivotelement','pivot-element','pivotwahl');
-  if(t.id==='divideconquer')variants.push('divide and conquer','divide-and-conquer','teile und herrsche','divide & conquer','divide&conquer');
-  if(t.id==='quicksort')variants.push('quicksort','quick sort','quick-sort');
-  if(t.id==='mergesort')variants.push('mergesort','merge sort','merge-sort','verschmelzen','merge');
-  if(t.id==='heapsort')variants.push('heapsort','heap sort','heap-sort');
-  if(t.id==='heap')variants.push('heap','max-heap','min-heap','maxheap','heapify','heap-eigenschaft');
-  if(t.id==='inplace')variants.push('in-place','in place','inplace','zusatzspeicher');
-  if(t.id==='stabilitaet')variants.push('stabilität','stabil','instabil','stabiles','stabilen');
-  variants.forEach(v=>{glossaryTermMap[v]=t.id;});
-});
-
-/* ── State ── */
-let glossaryState={};
-let glossaryActiveTerm=null;
-let glossaryPhase=0;
-let glossaryHintIdx=0;
-
-function glossaryLoadState(){
-  try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){glossaryState={};}
-}
-function glossarySaveState(){
-  localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));
-}
-function glossaryGetLevel(id){return(glossaryState[id]&&glossaryState[id].level)||0;}
-function glossarySetLevel(id,lvl){
-  if(!glossaryState[id])glossaryState[id]={level:0,phases:[]};
-  glossaryState[id].level=Math.min(3,Math.max(0,lvl));
-  glossarySaveState();glossaryUpdateProgress();glossaryRenderGrid();
-}
-function glossaryCompletePhase(id,phase){
-  if(!glossaryState[id])glossaryState[id]={level:0,phases:[]};
-  if(!glossaryState[id].phases.includes(phase))glossaryState[id].phases.push(phase);
-  const done=glossaryState[id].phases.length;
-  if(done>=4)glossaryState[id].level=3;
-  else if(done>=3)glossaryState[id].level=2;
-  else if(done>=1)glossaryState[id].level=1;
-  glossarySaveState();glossaryUpdateProgress();glossaryRenderGrid();
-}
-
-/* ── Progress ── */
-function glossaryUpdateProgress(){
-  const total=glossaryTerms.length;
-  const mastered=glossaryTerms.filter(t=>glossaryGetLevel(t.id)>=3).length;
-  const pct=Math.round(mastered/total*100);
-  document.getElementById('glossary-sub').textContent=`${mastered} / ${total} gemeistert`;
-  document.getElementById('glossary-fill').style.width=pct+'%';
-  document.getElementById('glossary-count').textContent=pct+'%';
-}
-
-/* ── Grid ── */
-function glossaryRenderGrid(){
-  const grid=document.getElementById('glossary-grid');grid.innerHTML='';
-  glossaryTerms.forEach(t=>{
-    const lvl=glossaryGetLevel(t.id);
-    const card=document.createElement('div');
-    card.className='glossary-card'+(glossaryActiveTerm===t.id?' active':'');
-    card.dataset.level=lvl;
-    card.innerHTML=`<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
-    card.onclick=()=>glossaryOpen(t.id);
-    grid.appendChild(card);
-  });
-}
-
-/* ── Open / Close ── */
-function glossaryOpen(id){
-  glossaryActiveTerm=id;glossaryPhase=0;glossaryHintIdx=0;
-  glossaryRenderGrid();
-  const panel=document.getElementById('glossary-learn');
-  panel.classList.add('visible');
-  const term=glossaryTerms.find(t=>t.id===id);
-  document.getElementById('gl-title').textContent=term.icon+' '+term.term;
-  glossaryRenderPhases();glossaryRenderContent();
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function glossaryClose(){
-  glossaryActiveTerm=null;glossaryPhase=0;
-  document.getElementById('glossary-learn').classList.remove('visible');
-  glossaryRenderGrid();
-}
-
-/* ── Phases ── */
-const PHASES=['Analogie','Definition','Lückentext','Multiple Choice','Erklärung'];
-function glossaryGoToPhase(idx){
-  if(idx>glossaryPhase)return;
-  glossaryPhase=idx;glossaryHintIdx=0;
-  glossaryRenderPhases();glossaryRenderContent();
-}
-function glossaryRenderPhases(){
-  const cont=document.getElementById('gl-phases');cont.innerHTML='';
-  const termState=glossaryState[glossaryActiveTerm]||{phases:[]};
-  PHASES.forEach((p,i)=>{
-    const el=document.createElement('span');
-    el.className='gl-phase'+(i===glossaryPhase?' current':'')+(termState.phases&&termState.phases.includes(i)?' done':'');
-    el.textContent=p;
-    if(i<=glossaryPhase){el.onclick=()=>glossaryGoToPhase(i);}
-    cont.appendChild(el);
-  });
-}
-
-/* ── Content Rendering ── */
-function glossaryRenderContent(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const cont=document.getElementById('gl-content');cont.innerHTML='';
-  glossaryHintIdx=0;
-
-  if(glossaryPhase===0){
-    cont.innerHTML=`<div class="gl-analogy">💡 ${term.analogy}</div><button class="gl-btn primary" onclick="glossaryNext()">Verstanden → weiter</button>`;
-  }else if(glossaryPhase===1){
-    let hintsHTML='<div class="gl-hints" id="gl-hints">';
-    term.hints.forEach((h,i)=>{hintsHTML+=`<div class="gl-hint" id="gl-hint-${i}">💡 ${h}</div>`;});
-    hintsHTML+='</div>';
-    cont.innerHTML=`<div class="gl-definition">${term.definition}</div>${hintsHTML}<button class="gl-hint-btn" onclick="glossaryShowHint()">💡 Hinweis anzeigen</button><br><button class="gl-btn primary" onclick="glossaryNext()">Verstanden → weiter</button>`;
-  }else if(glossaryPhase===2){
-    glossaryRenderFill(term);
-  }else if(glossaryPhase===3){
-    glossaryRenderChoice(term);
-  }else if(glossaryPhase===4){
-    glossaryRenderExplain(term);
+var GP_STORIES = {
+  'Pivot': {
+    route: 'Du bist Lehrer und sortierst Klassenarbeiten auf deinem Schreibtisch',
+    scenes: [
+      {kw: 'Pivot', img: '\uD83C\uDFAF Referenzarbeit', text: 'Du greifst blind in den Stapel und ziehst eine Klassenarbeit heraus \u2013 das ist dein Pivot, die Referenz f\u00fcr alle anderen.'},
+      {kw: 'Partition', img: '\u2194\uFE0F Zwei Stapel', text: 'Du legst alle besseren Noten nach links, alle schlechteren nach rechts. Diese Aufteilung ist die Partition.'},
+      {kw: 'Teilfolgen', img: '\uD83D\uDCDA Zwei H\u00e4lften', text: 'Jetzt hast du zwei Teilfolgen \u2013 zwei kleinere Stapel, die du jeweils wieder genauso sortieren kannst.'},
+      {kw: 'Worst-Case', img: '\uD83D\uDCA5 Pech gehabt', text: 'Du hast ausgerechnet die schlechteste Note gezogen \u2013 alle 29 Arbeiten landen auf einer Seite. Das ist der Worst-Case!'},
+      {kw: 'O(n\u00b2)', img: '\uD83D\uDCC8 Quadratisch', text: 'Im Worst-Case musst du n-mal durch n Arbeiten gehen: O(n\u00b2). Die Sortierung dauert ewig!'}
+    ]
+  },
+  'Divide & Conquer': {
+    route: 'Du r\u00e4umst ein riesiges, chaotisches Kinderzimmer auf',
+    scenes: [
+      {kw: 'Teilen', img: '\u2702\uFE0F Bereiche markieren', text: 'Du teilst das Zimmer mit Klebeband in vier Bereiche \u2013 Divide! Jeder Bereich wird einzeln aufger\u00e4umt.'},
+      {kw: 'Teilprobleme', img: '\uD83E\uDDE9 Kleine Aufgaben', text: 'Jeder Bereich ist ein Teilproblem. Ein Bereich hat nur 3 Spielzeuge \u2013 das ist schnell erledigt!'},
+      {kw: 'rekursiv', img: '\uD83D\uDD04 Immer kleiner', text: 'Ein Bereich ist noch zu chaotisch? Teile ihn nochmal! Rekursiv, bis jeder Bereich nur noch ein Objekt hat.'},
+      {kw: 'Merge', img: '\uD83E\uDD1D Zusammenf\u00fchren', text: 'Am Ende f\u00fcgst du die aufger\u00e4umten Bereiche zusammen (Merge) \u2013 und das ganze Zimmer ist sauber!'},
+      {kw: 'kombinieren', img: '\u2705 Fertig!', text: 'Die Teill\u00f6sungen werden kombiniert: Jeder saubere Bereich ergibt zusammen das perfekt aufger\u00e4umte Zimmer.'}
+    ]
+  },
+  'QuickSort': {
+    route: 'Du bist Bibliothekar und sortierst einen Wagen voller B\u00fccher',
+    scenes: [
+      {kw: 'Pivot', img: '\uD83D\uDCD6 Referenzbuch', text: 'Du greifst ein Buch aus der Mitte \u2013 das Pivot. Alle B\u00fccher mit fr\u00fcheren Titeln kommen links, sp\u00e4tere rechts.'},
+      {kw: 'Partition', img: '\u2194\uFE0F Aufteilen', text: 'Du schiebst die B\u00fccher auf dem Wagen hin und her \u2013 die Partition passiert direkt auf dem Wagen (In-Place!).'},
+      {kw: 'rekursiv', img: '\uD83D\uDD04 Wiederholen', text: 'F\u00fcr jeden der beiden Stapel wiederholst du das Ganze rekursiv \u2013 neues Pivot, neue Partition.'},
+      {kw: 'In-Place', img: '\uD83D\uDCE6 Kein Extraplatz', text: 'Du brauchst keinen zweiten Wagen (In-Place) \u2013 alles passiert auf dem einen Wagen!'},
+      {kw: 'Cache', img: '\u26A1 Schnell!', text: 'Weil die B\u00fccher nah beieinander liegen, greifst du schnell zu \u2013 gute Cache-Lokalit\u00e4t macht QuickSort in der Praxis oft schneller.'}
+    ]
+  },
+  'MergeSort': {
+    route: 'Du mischst zwei sortierte Kartendecks auf einem Pokertisch',
+    scenes: [
+      {kw: 'stabil', img: '\u2696\uFE0F Gerecht', text: 'Zwei Karten mit gleichem Wert? Die aus dem linken Deck kommt zuerst \u2013 MergeSort ist stabil!'},
+      {kw: 'Merge', img: '\uD83C\uDCCF Zusammenmischen', text: 'Du nimmst immer die kleinere obere Karte beider Stapel und legst sie auf den Ergebnisstapel \u2013 das ist der Merge.'},
+      {kw: 'Teilfolgen', img: '\u2702\uFE0F Halbieren', text: 'Vorher hast du das gro\u00dfe Deck immer weiter halbiert in Teilfolgen \u2013 bis nur noch einzelne Karten \u00fcbrig waren.'},
+      {kw: 'O(n)', img: '\uD83D\uDCB0 Speicherpreis', text: 'Der Nachteil: Du brauchst einen freien Platz auf dem Tisch f\u00fcr den Ergebnisstapel \u2013 O(n) zus\u00e4tzlicher Speicher.'},
+      {kw: 'O(n log n)', img: '\uD83C\uDFC6 Garantie', text: 'Egal wie chaotisch die Karten sind: MergeSort schafft es immer in O(n log n). Garantiert!'}
+    ]
+  },
+  'HeapSort': {
+    route: 'Du organisierst ein Turnier in einer Arena',
+    scenes: [
+      {kw: 'Max-Heap', img: '\uD83C\uDFDF\uFE0F Arena', text: 'Die Arena ist als Max-Heap aufgebaut: Der St\u00e4rkste steht ganz oben auf dem Siegerpodest (Wurzel).'},
+      {kw: 'Wurzel', img: '\uD83E\uDD47 Sieger', text: 'Der Sieger (Wurzel) ist immer das Maximum. Er wird herausgenommen und auf die Ergebnisliste gesetzt.'},
+      {kw: 'Heapify', img: '\uD83D\uDD04 Neues Turnier', text: 'Nach der Entnahme des Siegers muss die Arena neu geordnet werden \u2013 Heapify stellt die Heap-Eigenschaft in O(log n) wieder her.'},
+      {kw: 'tauschen', img: '\u21C4 Platztausch', text: 'Der letzte Teilnehmer tauscht mit dem Sieger den Platz, dann heapifyt er sich nach unten durch.'},
+      {kw: 'O(1)', img: '\uD83D\uDCE6 Kein Hilfsplatz', text: 'Das Turnier braucht keine Extra-Arena \u2013 alles passiert In-Place mit nur O(1) Zusatzspeicher!'}
+    ]
+  },
+  'Heap': {
+    route: 'Du besuchst eine Firmenzentrale mit strenger Hierarchie',
+    scenes: [
+      {kw: 'Bin\u00e4rbaum', img: '\uD83C\uDF33 Organigramm', text: 'Das Organigramm an der Wand sieht aus wie ein Bin\u00e4rbaum: Jeder Chef hat maximal zwei direkte Untergebene.'},
+      {kw: 'Array', img: '\uD83D\uDCCB Namensliste', text: 'Die Personalabteilung f\u00fchrt alle Mitarbeiter in einer flachen Namensliste (Array) \u2013 der Baum l\u00e4sst sich direkt als Array abbilden.'},
+      {kw: 'Kinder', img: '\uD83D\uDC68\u200D\uD83D\uDC67\u200D\uD83D\uDC66 Untergebene', text: 'Die Kinder (Untergebenen) von Position i findest du bei 2i+1 und 2i+2 in der Liste.'},
+      {kw: 'Elternknoten', img: '\uD83D\uDC68\u200D\uD83D\uDCBC Chef', text: 'Umgekehrt: Der Elternknoten (Chef) eines Mitarbeiters bei i steht bei \u230a(i-1)/2\u230b.'},
+      {kw: 'vollst\u00e4ndig', img: '\uD83C\uDFE2 Alle Pl\u00e4tze besetzt', text: 'Die Firma ist vollst\u00e4ndig besetzt \u2013 alle Ebenen sind voll (bis auf die letzte, die von links aufgef\u00fcllt wird).'}
+    ]
+  },
+  'In-Place': {
+    route: 'Du r\u00e4umst dein B\u00fccherregal um, ohne ein zweites Regal',
+    scenes: [
+      {kw: 'In-Place', img: '\uD83D\uDCDA Ein Regal', text: 'Du hast nur EIN Regal (In-Place). Alle B\u00fccher m\u00fcssen innerhalb dieses Regals umsortiert werden.'},
+      {kw: 'Zusatzspeicher', img: '\uD83D\uDEAB Kein Platz', text: 'F\u00fcr ein zweites Regal (Zusatzspeicher) ist kein Platz in deinem Zimmer!'},
+      {kw: 'O(1)', img: '\u261D\uFE0F Ein Buch', text: 'HeapSort braucht nur eine Hand (O(1) Zusatzspeicher) \u2013 ein Buch gleichzeitig halten reicht.'},
+      {kw: 'O(log n)', img: '\uD83E\uDDE0 Merkliste', text: 'QuickSort braucht eine kurze Merkliste (O(log n) f\u00fcr den Rekursionsstack), um sich die Regalabschnitte zu merken.'},
+      {kw: 'Rekursionsstack', img: '\uD83D\uDCDD Notizzettel', text: 'Der Rekursionsstack ist wie ein Stapel Notizzettel: F\u00fcr jeden offenen Regalabschnitt ein Zettel.'}
+    ]
+  },
+  'Stabilit\u00e4t': {
+    route: 'Du sortierst Sch\u00fclerlisten im Sekretariat',
+    scenes: [
+      {kw: 'stabil', img: '\u2696\uFE0F Fair', text: 'Ein stabiles Verfahren ist fair: Wenn Anna M\u00fcller vor Ben M\u00fcller stand, bleibt das auch nach dem Sortieren so.'},
+      {kw: 'Reihenfolge', img: '\uD83D\uDD22 Platzierung', text: 'Die relative Reihenfolge gleicher Elemente bleibt erhalten \u2013 niemand \u00fcberholt jemanden mit gleichem Schl\u00fcssel.'},
+      {kw: 'gleiche Schl\u00fcssel', img: '\uD83D\uDC6F Zwillinge', text: 'Zwei Sch\u00fcler mit gleichem Nachnamen (gleiche Schl\u00fcssel) sind wie Zwillinge \u2013 ihre Reihenfolge muss stabil bleiben.'},
+      {kw: 'Kriterien', img: '\uD83D\uDCCA Mehrfachsortierung', text: 'Erst nach Note, dann nach Name sortiert: Nur ein stabiles Verfahren erh\u00e4lt die Notensortierung bei Namensgleichheit.'},
+      {kw: 'MergeSort', img: '\u2705 Der Stabile', text: 'MergeSort ist der Held: Er bevorzugt beim Merge stets das linke Element \u2013 daher stabil!'}
+    ]
   }
-  glossaryRenderPhases();
-}
+};
 
-function glossaryShowHint(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  if(glossaryHintIdx<term.hints.length){
-    document.getElementById('gl-hint-'+glossaryHintIdx).classList.add('visible');
-    glossaryHintIdx++;
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'pivot': 'Pivot',
+  'pivotelement': 'Pivot',
+  'pivot-element': 'Pivot',
+  'pivotwahl': 'Pivot',
+  'divide and conquer': 'Divide & Conquer',
+  'divide-and-conquer': 'Divide & Conquer',
+  'divide & conquer': 'Divide & Conquer',
+  'teile und herrsche': 'Divide & Conquer',
+  'quicksort': 'QuickSort',
+  'quick sort': 'QuickSort',
+  'quick-sort': 'QuickSort',
+  'mergesort': 'MergeSort',
+  'merge sort': 'MergeSort',
+  'merge-sort': 'MergeSort',
+  'merge': 'MergeSort',
+  'verschmelzen': 'MergeSort',
+  'heapsort': 'HeapSort',
+  'heap sort': 'HeapSort',
+  'heap-sort': 'HeapSort',
+  'heap': 'Heap',
+  'max-heap': 'Heap',
+  'min-heap': 'Heap',
+  'heapify': 'Heap',
+  'heap-eigenschaft': 'Heap',
+  'in-place': 'In-Place',
+  'in place': 'In-Place',
+  'inplace': 'In-Place',
+  'zusatzspeicher': 'In-Place',
+  'stabilit\u00e4t': 'Stabilit\u00e4t',
+  'stabil': 'Stabilit\u00e4t',
+  'instabil': 'Stabilit\u00e4t',
+  'stabiles': 'Stabilit\u00e4t',
+  'stabilen': 'Stabilit\u00e4t'
+};
 
-function glossaryNext(){
-  glossaryCompletePhase(glossaryActiveTerm,glossaryPhase);
-  glossaryPhase++;
-  if(glossaryPhase>=PHASES.length){
-    glossaryClose();return;
-  }
-  glossaryRenderContent();
-}
-
-/* ── Fill (Lückentext) ── */
-function glossaryRenderFill(term){
-  const q=term.questions.find(x=>x.type==='fill');
-  const cont=document.getElementById('gl-content');
-  cont.innerHTML=`<div class="gl-question">${q.q}</div><input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben…" autocomplete="off"><div style="display:flex;gap:8px;align-items:center"><button class="gl-btn primary" onclick="glossaryCheckFill()">Prüfen</button><button class="gl-hint-btn" onclick="glossaryFillHint()">💡 Hinweis</button></div><div id="gl-fill-feedback"></div>`;
-  document.getElementById('gl-fill-input').addEventListener('keydown',e=>{if(e.key==='Enter')glossaryCheckFill();});
-}
-function glossaryFillHint(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const q=term.questions.find(x=>x.type==='fill');
-  document.getElementById('gl-fill-feedback').innerHTML=`<div class="gl-feedback info">💡 ${q.hint}</div>`;
-}
-function glossaryCheckFill(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const q=term.questions.find(x=>x.type==='fill');
-  const input=document.getElementById('gl-fill-input').value.trim().toLowerCase();
-  const correct=q.a.toLowerCase();
-  const fb=document.getElementById('gl-fill-feedback');
-  if(input===correct){
-    fb.innerHTML=`<div class="gl-feedback success">✓ Richtig! Die Antwort ist "${q.a}".</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Weiter →</button>`;
-  }else{
-    fb.innerHTML=`<div class="gl-feedback error">✗ Leider falsch. Versuche es nochmal oder schau dir den Hinweis an.</div>`;
-  }
-}
-
-/* ── Choice (Multiple Choice) ── */
-function glossaryRenderChoice(term){
-  const q=term.questions.find(x=>x.type==='choice');
-  const cont=document.getElementById('gl-content');
-  let choicesHTML='<div class="gl-choices">';
-  q.options.forEach((opt,i)=>{
-    choicesHTML+=`<button class="gl-choice" data-idx="${i}" onclick="glossaryCheckChoice(this,${i},${q.correct})">${opt}</button>`;
-  });
-  choicesHTML+='</div>';
-  cont.innerHTML=`<div class="gl-question">${q.q}</div>${choicesHTML}<div id="gl-choice-feedback"></div>`;
-}
-function glossaryCheckChoice(btn,idx,correct){
-  const buttons=document.querySelectorAll('.gl-choice');
-  const already=document.querySelector('.gl-choice.correct,.gl-choice.wrong');
-  if(already)return;
-  buttons.forEach((b,i)=>{
-    if(i===correct)b.classList.add('correct');
-    else if(i===idx)b.classList.add('wrong');
-    b.style.pointerEvents='none';
-  });
-  const fb=document.getElementById('gl-choice-feedback');
-  if(idx===correct){
-    fb.innerHTML=`<div class="gl-feedback success">✓ Richtig!</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Weiter →</button>`;
-  }else{
-    fb.innerHTML=`<div class="gl-feedback error">✗ Falsch. Die richtige Antwort ist markiert.</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Trotzdem weiter →</button>`;
-  }
-}
-
-/* ── Explain (Erklärung) ── */
-function glossaryRenderExplain(term){
-  const q=term.questions.find(x=>x.type==='explain');
-  const cont=document.getElementById('gl-content');
-  cont.innerHTML=`<div class="gl-question">${q.q}</div><textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten…"></textarea><button class="gl-btn primary" onclick="glossaryCheckExplain()">Prüfen</button><div id="gl-explain-feedback"></div>`;
-}
-function glossaryCheckExplain(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const q=term.questions.find(x=>x.type==='explain');
-  const input=document.getElementById('gl-explain-input').value.trim().toLowerCase();
-  const fb=document.getElementById('gl-explain-feedback');
-  if(input.length<10){
-    fb.innerHTML=`<div class="gl-feedback error">Bitte schreibe eine ausführlichere Erklärung (mindestens ein paar Wörter).</div>`;
-    return;
-  }
-  const found=[];const missing=[];
-  q.keywords.forEach(kw=>{
-    if(input.includes(kw.toLowerCase()))found.push(kw);else missing.push(kw);
-  });
-  let kwHTML='<div style="margin-top:8px">';
-  found.forEach(k=>{kwHTML+=`<span class="gl-keyword found">✓ ${k}</span>`;});
-  missing.forEach(k=>{kwHTML+=`<span class="gl-keyword missing">✗ ${k}</span>`;});
-  kwHTML+='</div>';
-  if(found.length>=q.minKeywords){
-    fb.innerHTML=`<div class="gl-feedback success">✓ Gute Erklärung! ${found.length}/${q.keywords.length} Schlüsselbegriffe erkannt.${kwHTML}</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Abschließen ✓</button>`;
-  }else{
-    fb.innerHTML=`<div class="gl-feedback error">Versuche, mehr Fachbegriffe einzubauen (${found.length}/${q.minKeywords} benötigt).${kwHTML}</div>`;
-  }
-}
-
-/* ── Tooltip ── */
-let glossaryTooltipEl=null;
-function glossaryInitTooltip(){
-  glossaryTooltipEl=document.createElement('div');
-  glossaryTooltipEl.className='glossary-tooltip';
-  glossaryTooltipEl.innerHTML='<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">▸ Klicken zum Lernen</div>';
-  document.body.appendChild(glossaryTooltipEl);
-}
-function glossaryShowTooltip(e,termId){
-  const term=glossaryTerms.find(t=>t.id===termId);if(!term)return;
-  glossaryTooltipEl.querySelector('.gt-name').textContent=term.term;
-  glossaryTooltipEl.querySelector('.gt-short').textContent=term.short;
-  glossaryTooltipEl.style.display='block';
-  const rect=e.target.getBoundingClientRect();
-  let left=rect.left;let top=rect.bottom+8;
-  if(left+270>window.innerWidth)left=window.innerWidth-280;
-  if(top+100>window.innerHeight)top=rect.top-110;
-  glossaryTooltipEl.style.left=left+'px';glossaryTooltipEl.style.top=top+'px';
-}
-function glossaryHideTooltip(){if(glossaryTooltipEl)glossaryTooltipEl.style.display='none';}
-
-/* ── Highlighting ── */
-function glossaryHighlightTerms(){
-  const selectors='.card p, .card h3, .summary-card p, .summary-card h4, .info-panel, td';
-  const elements=document.querySelectorAll(selectors);
-  elements.forEach(el=>{
-    if(el.querySelector('.glossary-term'))return;
-    if(el.closest('.glossary-section'))return;
-    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
-    const textNodes=[];
-    while(walker.nextNode())textNodes.push(walker.currentNode);
-    textNodes.forEach(node=>{
-      const text=node.textContent;
-      const sortedKeys=Object.keys(glossaryTermMap).sort((a,b)=>b.length-a.length);
-      const regex=new RegExp('\\b('+sortedKeys.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','gi');
-      if(!regex.test(text))return;
-      const frag=document.createDocumentFragment();
-      let last=0;
-      text.replace(regex,(match,_,offset)=>{
-        if(offset>last)frag.appendChild(document.createTextNode(text.slice(last,offset)));
-        const termId=glossaryTermMap[match.toLowerCase()];
-        if(termId){
-          const span=document.createElement('span');
-          span.className='glossary-term';span.textContent=match;
-          span.dataset.termId=termId;
-          span.addEventListener('mouseenter',e=>glossaryShowTooltip(e,termId));
-          span.addEventListener('mouseleave',glossaryHideTooltip);
-          span.addEventListener('click',()=>{glossaryHideTooltip();glossaryOpen(termId);});
-          frag.appendChild(span);
-        }else{
-          frag.appendChild(document.createTextNode(match));
-        }
-        last=offset+match.length;
-      });
-      if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
-      if(frag.childNodes.length>0)node.parentNode.replaceChild(frag,node);
-    });
-  });
-}
-
-/* ── Init ── */
-function glossaryInit(){
-  glossaryLoadState();
-  glossaryInitTooltip();
-  glossaryRenderGrid();
-  glossaryUpdateProgress();
-  setTimeout(glossaryHighlightTerms,200);
-}
-glossaryInit();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card h3, .summary-card p, .summary-card h4, .info-panel, td';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Subnetting & CIDR Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -103,73 +104,6 @@ tr:last-child td{border-bottom:none}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.bit-cell{width:24px;height:28px;font-size:11px}.octet-label{font-size:11px}}
 
-/* ── Glossary Learning System ── */
-.glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-.glossary-term:hover{color:var(--cyan)}
-.glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-.glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-.glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-.glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-.glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-.glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-.glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-.glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-.glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-.glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-.glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-.glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-.glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-.glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-.glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-.glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-.glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-.glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-.glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-.glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-.glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-.glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-.glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-.glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-.glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-.glossary-card[data-level="3"] .gc-level{background:var(--green)}
-.glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-.glossary-learn.visible{display:block}
-.gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-.gl-header h3{font-size:17px;font-weight:700}
-.gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-.gl-close:hover{border-color:var(--red);color:var(--red)}
-.gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-.gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-.gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-.gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-.gl-content{min-height:120px}
-.gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-.gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-.gl-hints{margin-bottom:16px}
-.gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-.gl-hint.visible{display:block;animation:fadeUp .2s ease}
-.gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-.gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-.gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-.gl-btn:hover{transform:translateY(-1px)}
-.gl-btn.primary{background:var(--accent);color:#fff}
-.gl-btn.primary:hover{background:#7c74ff}
-.gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-.gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-.gl-input:focus{border-color:var(--accent)}
-textarea.gl-input{min-height:80px;resize:vertical}
-.gl-choices{display:grid;gap:6px;margin-bottom:14px}
-.gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-.gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-.gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-.gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-.gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-.gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-.gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-.gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-.gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-.gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-.gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -411,7 +345,8 @@ newTask();
 // ════════════════════════════════════
 //  GLOSSARY LEARNING SYSTEM
 // ════════════════════════════════════
-const GLOSSARY = [
+var TRAINER_ID = 'subnetting';
+var GLOSSARY = [
   {
     term: 'Subnetzmaske',
     short: 'Trennt Netz- von Hostanteil einer IP',
@@ -550,322 +485,118 @@ const GLOSSARY = [
   }
 ];
 
-// ── State Management ──
-const glossaryState = { levels: {}, current: null, hintIdx: 0 };
-
-function glossaryLoad() {
-  try {
-    const s = localStorage.getItem('glossary-subnetting');
-    if (s) glossaryState.levels = JSON.parse(s);
-  } catch(e) {}
-  GLOSSARY.forEach(g => { if (!(g.term in glossaryState.levels)) glossaryState.levels[g.term] = 0; });
-}
-
-function glossarySave() {
-  localStorage.setItem('glossary-subnetting', JSON.stringify(glossaryState.levels));
-}
-
-// ── Grid Rendering ──
-function glossaryRenderGrid() {
-  const grid = document.getElementById('glossary-grid');
-  grid.innerHTML = '';
-  const icons = ['\u2753', '\uD83D\uDCA1', '\uD83D\uDD0D', '\u2B50'];
-  GLOSSARY.forEach(g => {
-    const lv = glossaryState.levels[g.term] || 0;
-    const c = document.createElement('div');
-    c.className = 'glossary-card' + (glossaryState.current === g.term ? ' active' : '');
-    c.dataset.level = lv;
-    c.onclick = () => glossaryOpen(g.term);
-    c.innerHTML = '<div class="gc-icon">' + icons[lv] + '</div><div class="gc-term">' + g.term + '</div><div class="gc-short">' + g.short + '</div><div class="gc-level"></div>';
-    grid.appendChild(c);
-  });
-  glossaryUpdateProgress();
-}
-
-function glossaryUpdateProgress() {
-  const mastered = GLOSSARY.filter(g => glossaryState.levels[g.term] >= 3).length;
-  const total = GLOSSARY.length;
-  const pct = Math.round(mastered / total * 100);
-  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
-  document.getElementById('glossary-fill').style.width = pct + '%';
-  document.getElementById('glossary-count').textContent = pct + '%';
-}
-
-// ── Open Term ──
-function glossaryOpen(term) {
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.current = term;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-
-  document.getElementById('gl-title').textContent = g.term;
-  glossaryRenderPhases(lv);
-
-  if (lv === 0) glossaryPhase1(g);
-  else if (lv === 1) glossaryPhase2(g);
-  else if (lv === 2) glossaryPhase3(g);
-  else glossaryMastered(g);
-
-  document.getElementById('glossary-learn').classList.add('visible');
-  glossaryRenderGrid();
-  document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function glossaryRenderPhases(lv, activePhase) {
-  if (activePhase === undefined) activePhase = lv;
-  const names = ['\uD83D\uDCA1 Kennenlernen', '\uD83D\uDD0D \u00dcberpr\u00fcfen', '\u2B50 Beweisen'];
-  document.getElementById('gl-phases').innerHTML = names.map((n, i) => {
-    let cls = 'gl-phase';
-    if (i === activePhase) cls += ' current';
-    else if (i < lv || lv === 3) cls += ' done';
-    else if (i === lv && i !== activePhase) cls += ' current';
-    const clickable = i <= lv || lv === 3;
-    const onclick = clickable ? ' onclick="glossaryGoToPhase(' + i + ')"' : '';
-    return '<div class="' + cls + '"' + onclick + '>' + n + '</div>';
-  }).join('');
-}
-
-function glossaryGoToPhase(phaseIdx) {
-  const term = glossaryState.current;
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-  glossaryRenderPhases(lv, phaseIdx);
-  if (phaseIdx === 0) glossaryPhase1(g);
-  else if (phaseIdx === 1) glossaryPhase2(g);
-  else if (phaseIdx === 2) glossaryPhase3(g);
-}
-
-// ── Phase 1: Kennenlernen ──
-function glossaryPhase1(g) {
-  const el = document.getElementById('gl-content');
-  let html = '<div class="gl-analogy">' + g.analogy + '</div>';
-  html += '<div class="gl-definition">' + g.definition + '</div>';
-  html += '<div class="gl-hints" id="gl-hints">';
-  g.hints.forEach((h, i) => {
-    html += '<div class="gl-hint' + (i === 0 ? ' visible' : '') + '" id="gh-' + i + '">' + h + '</div>';
-  });
-  html += '</div>';
-  if (g.hints.length > 1) html += '<button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">N\u00e4chster Hinweis \u2192</button>';
-  html += '<button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden! \u2713</button>';
-  el.innerHTML = html;
-}
-
-function glossaryNextHint() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  if (!g) return;
-  glossaryState.hintIdx++;
-  if (glossaryState.hintIdx < g.hints.length) {
-    document.getElementById('gh-' + glossaryState.hintIdx).classList.add('visible');
+var GP_STORIES = {
+  'Subnetzmaske': {
+    route: 'Ein Maskenladen',
+    scenes: [
+      { kw: 'Netzanteil', img: '🎭 Linke Maskenhälfte', text: 'Du betrittst einen Maskenladen. Die linke Hälfte jeder Maske ist golden bemalt – das ist der Netzanteil. Alle goldenen Bits sind Einsen, sie zeigen: "Das ist das Netzwerk!"' },
+      { kw: 'Hostanteil', img: '👤 Rechte Maskenhälfte', text: 'Die rechte Hälfte ist durchsichtig – der Hostanteil. Durch die Nullen hindurch sieht man das individuelle Gesicht jedes Hosts.' },
+      { kw: '32-Bit', img: '📏 Maske mit 32 Perlen', text: 'Jede Maske hat genau 32 Perlen aufgenäht – 32 Bits. Die goldenen (1) links, die durchsichtigen (0) rechts. Nie gemischt!' },
+      { kw: '255.255.255.0', img: '🔢 Preisschild an der Maske', text: 'Am Preisschild steht 255.255.255.0 – die bekannteste Maske. Drei Oktette voll gold (255), eines komplett durchsichtig (0).' },
+      { kw: 'Netzadresse', img: '🏠 Schild am Eingang', text: 'Am Ladeneingang hängt ein Schild mit der Netzadresse – die bekommt man, wenn man IP AND Maske rechnet. Hostbits werden zu Null.' },
+      { kw: 'AND-Verknüpfung', img: '✂️ Schere schneidet', text: 'Die Verkäuferin nimmt eine Schere und legt die Maske auf die IP-Adresse. Nur wo Gold ist (1), bleibt die IP sichtbar – das ist die AND-Verknüpfung!' }
+    ]
+  },
+  'CIDR': {
+    route: 'Eine Autobahn-Ausfahrt',
+    scenes: [
+      { kw: 'Classless', img: '🚫 Durchgestrichenes Klassenschild', text: 'An der Autobahnauffahrt ist ein Schild "Klasse A/B/C" rot durchgestrichen – CIDR ist classless! Keine starren Netzklassen mehr.' },
+      { kw: 'Prefix', img: '🔢 Große Zahl auf Schild: /24', text: 'Stattdessen steht auf dem Autobahnschild eine Zahl mit Schrägstrich: /24. Der Prefix sagt direkt, wie viele Bits zum Netzwerk gehören.' },
+      { kw: 'Notation', img: '📝 Adressschild: 192.168.1.0/24', text: 'Das vollständige Ausfahrtsschild liest sich wie eine Adresse: 192.168.1.0/24 – IP-Adresse plus Schrägstrich plus Prefixlänge. Das ist die CIDR-Notation.' },
+      { kw: 'flexibel', img: '🧘 Dehnbare Fahrbahnmarkierung', text: 'Die Fahrbahnmarkierung ist aus Gummi – sie kann sich dehnen und zusammenziehen. CIDR ist flexibel: /26, /28, /30 – jede Grenze ist möglich!' },
+      { kw: 'Routing', img: '🗺️ GPS mit Routentabelle', text: 'Im Auto leuchtet das GPS mit einer kompakten Routentabelle – CIDR ermöglicht effizientes Routing durch Zusammenfassung (Supernetting).' },
+      { kw: 'Subnetzmaske', img: '🎭 Maske im Handschuhfach', text: 'Im Handschuhfach liegt eine Subnetzmaske – der Prefix /24 ist nur eine andere Schreibweise für 255.255.255.0!' }
+    ]
+  },
+  'Netzadresse': {
+    route: 'Ein Wohnblock',
+    scenes: [
+      { kw: 'erste Adresse', img: '🏢 Hausnummer 0 am Eingang', text: 'Du stehst vor einem Wohnblock. Die allererste Adresse – Hausnummer 0 – ist kein Bewohner, sondern das Schild des gesamten Blocks. Das ist die Netzadresse!' },
+      { kw: 'Hostbits', img: '0️⃣ Alle Klingelschilder leer', text: 'Im Erdgeschoss sind alle Klingelschilder leer – alle Hostbits sind 0. Kein einzelner Host wohnt hier, nur das Netzwerk selbst.' },
+      { kw: 'identifiziert', img: '📍 Großer Wegweiser', text: 'Ein riesiger Wegweiser am Eingang identifiziert den ganzen Block: "Dies ist Netzwerk 192.168.1.0" – Router nutzen diese Adresse zum Finden des Netzes.' },
+      { kw: 'AND-Operation', img: '🔧 Werkzeugkasten', text: 'Der Hausmeister hat einen Werkzeugkasten mit der AND-Operation: IP-Adresse AND Subnetzmaske = Netzadresse. So berechnet er, zu welchem Block eine Adresse gehört.' },
+      { kw: 'nicht nutzbar', img: '🚫 Gesperrte Wohnung', text: 'Die Wohnung mit Hausnummer 0 ist abgesperrt – die Netzadresse ist nicht als Host nutzbar! Sie gehört dem Netzwerk.' },
+      { kw: 'Subnetz', img: '🏘️ Kleiner Block im großen Viertel', text: 'Der Wohnblock ist ein Subnetz innerhalb des großen Stadtviertels. Jedes Subnetz hat seine eigene Netzadresse als Identifikation.' }
+    ]
+  },
+  'Broadcast': {
+    route: 'Ein Marktplatz mit Lautsprecher',
+    scenes: [
+      { kw: 'letzte Adresse', img: '📢 Lautsprecher am Ende der Straße', text: 'Am Ende der Straße steht ein riesiger Lautsprecher – die letzte Adresse im Subnetz. Das ist die Broadcast-Adresse!' },
+      { kw: 'Hostbits', img: '1️⃣ Alle Lichter an', text: 'Alle Lichter am Lautsprecher leuchten – alle Hostbits sind auf 1 gesetzt. Maximum! Jeder einzelne Bit strahlt.' },
+      { kw: 'alle Hosts', img: '👥 Menschenmenge hört zu', text: 'Wenn der Lautsprecher spricht, hören ALLE Hosts im Subnetz gleichzeitig zu. Eine Nachricht an alle – das ist Broadcast!' },
+      { kw: 'nicht nutzbar', img: '🚷 Kein Bewohner', text: 'Wie die Netzadresse ist auch die Broadcast-Adresse nicht für einen einzelnen Host nutzbar – sie gehört allen gemeinsam.' },
+      { kw: '.255', img: '📋 Tafel zeigt 192.168.1.255', text: 'Auf einer großen Tafel steht 192.168.1.255 – bei einem /24-Netz ist das letzte Oktett 255, weil alle 8 Hostbits = 1.' },
+      { kw: 'ARP', img: '🔍 Detektiv ruft in die Menge', text: 'Ein Detektiv (ARP) ruft über den Lautsprecher: "Wer hat die IP 192.168.1.50?" – ARP nutzt Broadcast, um MAC-Adressen zu finden.' }
+    ]
+  },
+  'Prefix': {
+    route: 'Ein Lineal-Geschäft',
+    scenes: [
+      { kw: 'Anzahl', img: '📏 Lineal mit Markierung', text: 'Im Lineal-Geschäft liegt ein 32cm-Lineal. Eine rote Markierung bei 24cm teilt es: Links davon sind die Netzwerk-Bits. Der Prefix gibt die Anzahl an!' },
+      { kw: 'Netzwerk-Bits', img: '🔴 Rote Perlen links', text: 'Links der Markierung hängen rote Perlen – das sind die Netzwerk-Bits. Bei /24 sind es 24 rote Perlen.' },
+      { kw: 'Host-Bits', img: '⚪ Weiße Perlen rechts', text: 'Rechts hängen weiße Perlen – die Host-Bits. Bei /24 bleiben 8 weiße Perlen = 256 mögliche Adressen (minus 2).' },
+      { kw: '/24', img: '✏️ Schrägstrich-Notation', text: 'An der Kasse schreibt die Verkäuferin /24 auf die Rechnung – der Schrägstrich gefolgt von der Zahl. Kurz und knapp!' },
+      { kw: 'Subnetzmaske', img: '🎭 Äquivalente Maske daneben', text: 'Neben dem Lineal liegt eine Subnetzmaske: /24 = 255.255.255.0, /25 = 255.255.255.128, /26 = 255.255.255.192. Gleiche Info, andere Darstellung.' },
+      { kw: 'Hosts', img: '🧮 Taschenrechner: 2^(32-Prefix) - 2', text: 'Ein Taschenrechner zeigt: 2^(32-Prefix) - 2 = nutzbare Hosts. Bei /24: 2^8 - 2 = 254 Hosts.' }
+    ]
+  },
+  'Oktett': {
+    route: 'Eine Bäckerei',
+    scenes: [
+      { kw: '8 Bit', img: '🥨 Brezel mit 8 Knoten', text: 'In der Bäckerei liegt eine Brezel mit genau 8 Knoten – ein Oktett besteht aus 8 Bits. Nicht mehr, nicht weniger!' },
+      { kw: 'IP-Adresse', img: '🍞 Brot in 4 Scheiben', text: 'Ein langes Brot wird in 4 gleiche Scheiben geschnitten – eine IP-Adresse besteht aus 4 Oktetten, getrennt durch Punkte.' },
+      { kw: '0-255', img: '🔢 Preisschilder 0 bis 255', text: 'Die Preisschilder reichen von 0 bis 255 – das ist der Wertebereich eines Oktetts (8 Bits = 2^8 = 256 Werte).' },
+      { kw: 'Punkt', img: '🫓 Sesampunkte zwischen Scheiben', text: 'Zwischen den Brotscheiben liegen Sesampunkte – die Punkte in der IP-Adresse (192.168.1.0) trennen die vier Oktette.' },
+      { kw: 'binär', img: '🧁 Cupcake: 11000000 = 192', text: 'Auf einem Cupcake steht in Zuckerguss: 11000000. Die Bäckerin rechnet: "Das ist binär für 192!" Jedes Oktett lässt sich binär darstellen.' }
+    ]
+  },
+  'Hostanteil': {
+    route: 'Ein Apartment-Gebäude',
+    scenes: [
+      { kw: 'einzelnen Host', img: '🚪 Individuelle Türnummer', text: 'Im Apartment-Gebäude hat jede Wohnung eine eigene Türnummer – der Hostanteil identifiziert den einzelnen Host im Netzwerk.' },
+      { kw: 'rechter Teil', img: '➡️ Rechte Seite des Briefkastens', text: 'Der Briefkasten ist zweigeteilt: Links steht die Straße (Netzanteil), rechts die Hausnummer (Hostanteil). Der Hostanteil ist der rechte Teil der IP.' },
+      { kw: 'Subnetzmaske', img: '🎭 Maske zeigt die Grenze', text: 'An der Wand hängt eine Maske mit einem Strich: Alles links vom Strich ist Netz, alles rechts ist Host. Die Subnetzmaske definiert die Grenze!' },
+      { kw: 'variabel', img: '📐 Verschiebbare Wand', text: 'Die Trennwand zwischen den Apartments ist verschiebbar – je nach Prefix kann der Hostanteil größer oder kleiner sein. /24 = 8 Hostbits, /26 = 6 Hostbits.' },
+      { kw: 'Netzanteil', img: '🏢 Gebäudenummer', text: 'Über dem Eingang steht die Gebäudenummer – der Netzanteil. Er bleibt für alle Bewohner gleich. Nur der Hostanteil unterscheidet die Wohnungen.' },
+      { kw: '2^n - 2', img: '🧮 Bewohnertafel', text: 'An der Infotafel: "Dieses Gebäude hat 2^n - 2 Bewohner" (n = Hostbits). Minus 2, weil Netzadresse und Broadcast keine Bewohner sind!' }
+    ]
+  },
+  'AND-Operation': {
+    route: 'Ein Sieb-Labor',
+    scenes: [
+      { kw: 'bitweise', img: '🔬 Mikroskop über Bits', text: 'Im Sieb-Labor schaust du durchs Mikroskop auf einzelne Bits. Die AND-Operation vergleicht bitweise: Bit für Bit, Stelle für Stelle.' },
+      { kw: '1 AND 1', img: '✅ Zwei grüne Lampen = AN', text: 'Zwei grüne Lampen leuchten nebeneinander: 1 AND 1 = 1. Nur wenn BEIDE leuchten, ist das Ergebnis 1!' },
+      { kw: '0', img: '❌ Eine Lampe aus = 0', text: 'Sobald auch nur eine Lampe aus ist, zeigt das Ergebnis 0. 1 AND 0 = 0, 0 AND 1 = 0, 0 AND 0 = 0.' },
+      { kw: 'Netzadresse', img: '🧪 Ergebnis im Reagenzglas', text: 'Das Ergebnis der AND-Operation tropft in ein Reagenzglas – heraus kommt die Netzadresse! IP AND Subnetzmaske = Netzadresse.' },
+      { kw: 'Subnetzmaske', img: '🕳️ Sieb filtert', text: 'Die Subnetzmaske ist wie ein Sieb: Wo eine 1 steht, lässt sie die IP-Bits durch. Wo eine 0 steht, blockiert sie – und setzt das Ergebnis auf 0.' },
+      { kw: 'gleichen Netz', img: '🏠 Zwei Häuser vergleichen', text: 'Zwei Computer prüfen: "Sind wir im gleichen Netz?" Jeder rechnet IP AND Maske. Gleiches Ergebnis = gleiches Netz = direkte Kommunikation!' }
+    ]
   }
-  if (glossaryState.hintIdx >= g.hints.length - 1) {
-    const btn = document.getElementById('gl-hint-btn');
-    if (btn) btn.style.display = 'none';
-  }
-}
+};
 
-// ── Phase 2: Überprüfen ──
-function glossaryPhase2(g) {
-  const q = g.questions.find(x => x.type === 'fill') || g.questions.find(x => x.type === 'choice') || g.questions[0];
-  const el = document.getElementById('gl-content');
-  if (q.type === 'fill') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-      '<input type="text" class="gl-input" id="gl-answer" placeholder="Deine Antwort..." onkeydown="if(event.key===\'Enter\')glossaryCheckFill()">' +
-      (q.hint ? '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Tipp: ' + q.hint + '</div>' : '') +
-      '<button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-  } else if (q.type === 'choice') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div><div class="gl-choices">' +
-      q.options.map((o, i) => '<button class="gl-choice" onclick="glossaryCheckChoice(' + i + ')">' + o + '</button>').join('') +
-      '</div><div id="gl-feedback"></div>';
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'subnet mask': 'Subnetzmaske',
+  'subnetz': 'Subnetzmaske',
+  'netzmaske': 'Subnetzmaske',
+  'classless': 'CIDR',
+  'netzwerkadresse': 'Netzadresse',
+  'network address': 'Netzadresse',
+  'broadcastadresse': 'Broadcast',
+  'präfix': 'Prefix',
+  'prefixlänge': 'Prefix',
+  'octet': 'Oktett',
+  'byte': 'Oktett',
+  'host portion': 'Hostanteil',
+  'hostbits': 'Hostanteil',
+  'bitweise and': 'AND-Operation',
+  'und-verknüpfung': 'AND-Operation'
+};
 
-function glossaryCheckFill() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'fill');
-  const val = document.getElementById('gl-answer').value.trim();
-  const fb = document.getElementById('gl-feedback');
-  const ok = [q.a, ...(q.alt || [])].some(a => val.toLowerCase() === a.toLowerCase());
-  if (ok) {
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89 "' + q.a + '" ist korrekt.</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist: <strong>' + q.a + '</strong>. Versuch es nochmal!</div>';
-    document.getElementById('gl-answer').value = '';
-    document.getElementById('gl-answer').focus();
-  }
-}
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.summary-card, .result-item .rl, .result-item .rv, .section-title h2';
 
-function glossaryCheckChoice(idx) {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'choice');
-  const btns = document.querySelectorAll('.gl-choice');
-  const fb = document.getElementById('gl-feedback');
-  btns.forEach(b => b.style.pointerEvents = 'none');
-  if (idx === q.correct) {
-    btns[idx].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    btns[idx].classList.add('wrong');
-    btns[q.correct].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist markiert.</div>';
-    setTimeout(() => {
-      btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('wrong', 'correct'); });
-      fb.innerHTML = '';
-    }, 2500);
-  }
-}
-
-// ── Phase 3: Beweisen ──
-function glossaryPhase3(g) {
-  const q = g.questions.find(x => x.type === 'explain');
-  if (!q) { glossaryLevelUp(); return; }
-  const el = document.getElementById('gl-content');
-  el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-    '<textarea class="gl-input" id="gl-answer" placeholder="Erkl\u00e4re in eigenen Worten..." rows="4"></textarea>' +
-    '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Verwende Fachbegriffe \u2013 je mehr Schl\u00fcsselw\u00f6rter du nennst, desto besser!</div>' +
-    '<button class="gl-btn primary" onclick="glossaryCheckExplain()">Antwort pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-}
-
-function glossaryCheckExplain() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'explain');
-  const val = document.getElementById('gl-answer').value.trim().toLowerCase();
-  const fb = document.getElementById('gl-feedback');
-  if (!val) { fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe eine Erkl\u00e4rung!</div>'; return; }
-
-  const found = [], missing = [];
-  q.keywords.forEach(kw => {
-    if (val.includes(kw.toLowerCase())) found.push(kw); else missing.push(kw);
-  });
-  const kwHtml = found.map(k => '<span class="gl-keyword found">\u2713 ' + k + '</span>').join('') +
-                 missing.map(k => '<span class="gl-keyword missing">\u2717 ' + k + '</span>').join('');
-
-  if (found.length >= (q.minKeywords || 3)) {
-    fb.innerHTML = '<div class="gl-feedback success">Sehr gut! \uD83C\uDF89 Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt!<br>' + kwHtml + '</div>';
-    setTimeout(() => glossaryLevelUp(), 1800);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback info">Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt (' + (q.minKeywords || 3) + ' ben\u00f6tigt):<br>' + kwHtml +
-      '<br><span style="font-size:12px;margin-top:6px;display:inline-block">Versuch es nochmal \u2013 nutze die fehlenden Begriffe!</span></div>';
-  }
-}
-
-// ── Mastered View ──
-function glossaryMastered(g) {
-  document.getElementById('gl-content').innerHTML =
-    '<div style="text-align:center;padding:20px 0">' +
-    '<div style="font-size:48px;margin-bottom:12px">\u2B50</div>' +
-    '<div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px">Gemeistert!</div>' +
-    '<div style="font-size:13px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.6">' +
-    'Du hast <strong style="color:var(--text)">' + g.term + '</strong> vollst\u00e4ndig gelernt. ' + g.short + '</div>' +
-    '<button class="gl-btn" style="margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)" onclick="glossaryReset(\'' + g.term + '\')">Nochmal lernen \u21BA</button></div>';
-}
-
-function glossaryLevelUp() {
-  const term = glossaryState.current;
-  let lv = (glossaryState.levels[term] || 0) + 1;
-  if (lv > 3) lv = 3;
-  glossaryState.levels[term] = lv;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryReset(term) {
-  glossaryState.levels[term] = 0;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryClose() {
-  document.getElementById('glossary-learn').classList.remove('visible');
-  glossaryState.current = null;
-  glossaryRenderGrid();
-}
-
-// ── Term Highlighting in Reference Cards ──
-function glossaryHighlightTerms() {
-  const termMap = {};
-  GLOSSARY.forEach(g => { termMap[g.term.toLowerCase()] = g.term; });
-  termMap['subnetzmasken'] = 'Subnetzmaske';
-  termMap['broadcastadresse'] = 'Broadcast';
-  termMap['broadcastadressen'] = 'Broadcast';
-  termMap['netzadressen'] = 'Netzadresse';
-  termMap['prefixl\u00e4nge'] = 'Prefix';
-  termMap['prefixl\u00e4ngen'] = 'Prefix';
-  termMap['oktette'] = 'Oktett';
-  termMap['oktetten'] = 'Oktett';
-
-  const allTerms = Object.keys(termMap).sort((a, b) => b.length - a.length);
-  const pattern = new RegExp('\\b(' + allTerms.join('|') + ')\\b', 'gi');
-
-  document.querySelectorAll('.card p, .card li, .summary-card p').forEach(el => {
-    if (el.dataset.glDone) return;
-    el.dataset.glDone = '1';
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    let n;
-    while (n = walker.nextNode()) nodes.push(n);
-
-    nodes.forEach(textNode => {
-      const txt = textNode.textContent;
-      pattern.lastIndex = 0;
-      if (!pattern.test(txt)) return;
-      pattern.lastIndex = 0;
-
-      const frag = document.createDocumentFragment();
-      let last = 0, m;
-      while (m = pattern.exec(txt)) {
-        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
-        const span = document.createElement('span');
-        span.className = 'glossary-term';
-        span.dataset.term = termMap[m[0].toLowerCase()] || m[0];
-        span.textContent = m[0];
-        frag.appendChild(span);
-        last = pattern.lastIndex;
-      }
-      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
-      textNode.parentNode.replaceChild(frag, textNode);
-    });
-  });
-}
-
-// ── Floating Tooltip ──
-const glTooltip = document.createElement('div');
-glTooltip.className = 'glossary-tooltip';
-document.body.appendChild(glTooltip);
-
-document.addEventListener('mouseover', e => {
-  const t = e.target.closest('.glossary-term');
-  if (!t) { glTooltip.style.display = 'none'; return; }
-  const g = GLOSSARY.find(x => x.term === t.dataset.term);
-  if (!g) return;
-  const lv = glossaryState.levels[g.term] || 0;
-  const labels = ['Noch nicht gelernt', 'Kennengelernt', '\u00dcberpr\u00fcft', 'Gemeistert \u2B50'];
-  glTooltip.innerHTML = '<div class="gt-name">' + g.term + '</div><div class="gt-short">' + g.short + '</div><div class="gt-link">' + labels[lv] + ' \u00b7 Klicke zum Lernen \u2192</div>';
-  const r = t.getBoundingClientRect();
-  glTooltip.style.display = 'block';
-  glTooltip.style.left = Math.max(8, r.left + r.width / 2 - 130) + 'px';
-  glTooltip.style.top = (r.top - glTooltip.offsetHeight - 8) + 'px';
-  if (parseFloat(glTooltip.style.top) < 8) glTooltip.style.top = (r.bottom + 8) + 'px';
-});
-
-document.addEventListener('mouseout', e => {
-  if (!e.target.closest('.glossary-term')) glTooltip.style.display = 'none';
-});
-
-document.addEventListener('click', e => {
-  const t = e.target.closest('.glossary-term');
-  if (t) { e.preventDefault(); glossaryOpen(t.dataset.term); }
-});
-
-// ── Initialize Glossary ──
-glossaryLoad();
-glossaryRenderGrid();
-glossaryHighlightTerms();
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

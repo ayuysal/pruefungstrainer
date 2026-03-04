@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Netzklassifikation & Vermittlungsarten</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
   :root {
     --bg: #0c0e13;
@@ -280,72 +281,6 @@
     animation: moveDot 2.5s linear infinite;
   }
 
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -753,7 +688,7 @@
   <div class="glossary-section" id="glossary-section">
     <div class="section-title">
       <div class="icon-circle" style="background:linear-gradient(135deg,var(--cyan),var(--accent));">📖</div>
-      <h2>Glossar-Trainer</h2>
+      <h2>Begriffe lernen</h2>
       <span class="sub">Begriffe meistern</span>
     </div>
 
@@ -768,17 +703,11 @@
     <div class="glossary-learn" id="glossary-learn">
       <div class="gl-header">
         <h3 id="gl-title"></h3>
-        <button class="gl-close" id="gl-close">&times;</button>
+        <button class="gl-close" onclick="glossaryClose()">&times;</button>
       </div>
       <div class="gl-phase-indicator" id="gl-phases"></div>
       <div class="gl-content" id="gl-content"></div>
     </div>
-  </div>
-
-  <div id="glossary-tooltip" class="glossary-tooltip">
-    <div class="gt-name" id="gt-name"></div>
-    <div class="gt-short" id="gt-short"></div>
-    <div class="gt-link">Klicke im Glossar zum Lernen →</div>
   </div>
 
   <!-- Summary -->
@@ -809,492 +738,212 @@ document.querySelectorAll('.verm-tab').forEach(tab => {
   });
 });
 
-// ══════════════════════════════════════════
-//  GLOSSAR-LERNSYSTEM
-// ══════════════════════════════════════════
-(function(){
-  const STORAGE_KEY = 'glossary-netz-vermittlung';
-  const PHASES = ['Analogie','Definition','Lückentext','Multiple Choice','Erklärung'];
 
-  const glossaryTerms = [
-    {
-      id:'paketvermittlung',
-      term:'Paketvermittlung',
-      icon:'📦',
-      short:'Daten werden in einzelne Pakete zerteilt und unabhängig geroutet',
-      definition:'Bei der Paketvermittlung (Packet Switching) werden Daten in kleine, eigenständige Einheiten – sogenannte Pakete – aufgeteilt. Jedes Paket enthält einen Header mit Absender- und Zieladresse sowie eine Sequenznummer und wird unabhängig durch das Netz geroutet. Verschiedene Pakete derselben Nachricht können unterschiedliche Wege nehmen. Am Ziel werden sie anhand der Sequenznummern in der richtigen Reihenfolge zusammengesetzt. Das Internet (TCP/IP) basiert auf Paketvermittlung. Der grosse Vorteil: Das Netz wird effizient von vielen Teilnehmern gleichzeitig genutzt (Shared Medium).',
-      analogy:'Stell dir vor, du schickst ein Buch per Post, aber jedes Kapitel in einem eigenen Paket. Jedes Paket hat die Adresse und die Kapitelnummer drauf. Die Pakete können über verschiedene Postwege reisen – manche über München, andere über Hamburg. Der Empfänger sortiert die Kapitel nach Nummer und hat am Ende das vollständige Buch.',
-      hints:['Pakete enthalten Header (Adresse, Sequenznummer) und Payload (Nutzdaten).','TCP/IP und das Internet nutzen Paketvermittlung.','Pakete können unterschiedliche Wege nehmen und werden am Ziel sortiert.'],
-      questions:{
-        fill:{q:'Bei der Paketvermittlung werden Daten in einzelne ______ zerteilt, die ____________ durch das Netz geroutet werden.', answer:'Pakete', keywords:['pakete','unabhängig']},
-        choice:{q:'Welches Netz basiert auf dem Prinzip der Paketvermittlung?', options:['Klassisches Telefonnetz (ISDN)','Das Internet (TCP/IP)','Faxnetz','Kabelfernsehnetz'], correct:1},
-        explain:{q:'Erkläre, warum Paketvermittlung effizienter ist als Leitungsvermittlung.', keywords:['paket','shared','geteilt','gleichzeitig','effizient','unabhängig','weg','ressource','leitung','blockiert']}
-      },
-      difficulty:1
-    },
-    {
-      id:'leitungsvermittlung',
-      term:'Leitungsvermittlung',
-      icon:'📞',
-      short:'Dedizierter Kanal wird exklusiv für die gesamte Kommunikation reserviert',
-      definition:'Bei der Leitungsvermittlung (Circuit Switching) wird vor der eigentlichen Datenübertragung ein durchgehender, physischer oder logischer Kanal zwischen Sender und Empfänger aufgebaut. Dieser Kanal bleibt für die gesamte Dauer der Kommunikation exklusiv reserviert – auch wenn gerade keine Daten fliessen. Die Kommunikation erfolgt in drei Phasen: Verbindungsaufbau, Datenübertragung und Verbindungsabbau. Das klassische Telefonnetz (PSTN/ISDN) nutzt Leitungsvermittlung. Der Vorteil ist eine konstante, garantierte Bandbreite ohne Verzögerungsschwankungen.',
-      analogy:'Leitungsvermittlung ist wie ein Telefongespräch über das alte Festnetz: Wenn du jemanden anrufst, wird eine direkte Leitung von deinem Telefon zum anderen durchgeschaltet. Diese Leitung gehört nur euch beiden – auch wenn ihr gerade schweigt. Erst wenn ihr auflegt, wird die Leitung wieder freigegeben.',
-      hints:['Drei Phasen: Aufbau → Transfer → Abbau.','Die Leitung ist exklusiv reserviert, auch ohne aktive Datenübertragung.','Klassisches Beispiel: ISDN-Telefonnetz.'],
-      questions:{
-        fill:{q:'Bei der Leitungsvermittlung wird ein ____________ Kanal zwischen Sender und Empfänger aufgebaut, der für die gesamte Kommunikation ________ reserviert bleibt.', answer:'dedizierter', keywords:['dediziert','exklusiv']},
-        choice:{q:'Was ist ein Nachteil der Leitungsvermittlung?', options:['Variable Latenz (Jitter)','Leitung bleibt blockiert, auch ohne Datenfluss','Keine garantierte Bandbreite','Pakete können verloren gehen'], correct:1},
-        explain:{q:'Beschreibe die drei Phasen der Leitungsvermittlung und nenne ein klassisches Beispiel.', keywords:['aufbau','übertragung','transfer','abbau','phase','telefon','ISDN','exklusiv','dediziert','kanal']}
-      },
-      difficulty:1
-    },
-    {
-      id:'nachrichtenvermittlung',
-      term:'Nachrichtenvermittlung',
-      icon:'💾',
-      short:'Gesamte Nachricht wird gespeichert, geprüft und weitergeleitet',
-      definition:'Bei der Nachrichtenvermittlung (Message Switching, auch Speichervermittlung oder Store-and-Forward) wird die gesamte Nachricht als Ganzes an den nächsten Vermittlungsknoten gesendet. Dort wird sie komplett zwischengespeichert, auf Fehler geprüft und erst danach an den nächsten Knoten weitergeleitet. Die Nachricht wird nicht in Pakete zerteilt, sondern bleibt als geschlossene Einheit erhalten. Dies erfordert ausreichend Speicherplatz an jedem Knoten und führt zu hoher Latenz. Beispiele sind E-Mail (SMTP) und das historische Telex-Netz.',
-      analogy:'Nachrichtenvermittlung funktioniert wie die klassische Briefpost: Du gibst deinen Brief beim Postamt ab (Knoten 1). Das Postamt speichert ihn, prüft die Adresse und leitet ihn zum nächsten Verteilzentrum weiter (Knoten 2). Dort wird er erneut geprüft und weitertransportiert, bis er beim Empfänger ankommt. Der Brief bleibt immer als Ganzes erhalten.',
-      hints:['Store-and-Forward: speichern, prüfen, weiterleiten.','Die Nachricht wird nicht in Pakete zerteilt.','E-Mail (SMTP) ist ein modernes Beispiel für Nachrichtenvermittlung.'],
-      questions:{
-        fill:{q:'Bei der Nachrichtenvermittlung wird die gesamte Nachricht an jedem Knoten ________________, geprüft und dann ________________.', answer:'gespeichert', keywords:['gespeichert','zwischengespeichert','weitergeleitet']},
-        choice:{q:'Welches Prinzip beschreibt die Nachrichtenvermittlung?', options:['End-to-End','Peer-to-Peer','Store-and-Forward','Best Effort'], correct:2},
-        explain:{q:'Erkläre den Unterschied zwischen Nachrichtenvermittlung und Paketvermittlung.', keywords:['nachricht','ganz','paket','zerteilt','speicher','store','forward','latenz','knoten']}
-      },
-      difficulty:2
-    },
-    {
-      id:'protokoll',
-      term:'Protokoll',
-      icon:'📋',
-      short:'Regelwerk für die Kommunikation zwischen Netzwerkgeräten',
-      definition:'Ein Netzwerkprotokoll ist ein standardisiertes Regelwerk, das festlegt, wie Daten zwischen Kommunikationspartnern ausgetauscht werden. Es definiert das Format der Daten (Syntax), die Bedeutung der Felder (Semantik), die zeitliche Reihenfolge (Timing) und die Fehlerbehandlung. Protokolle arbeiten schichtweise gemäss dem OSI- oder TCP/IP-Modell. Beispiele: IP (Schicht 3, Adressierung und Routing), TCP (Schicht 4, zuverlässige Übertragung), HTTP (Schicht 7, Webkommunikation). Ohne Protokolle wäre keine standardisierte Netzwerkkommunikation möglich.',
-      analogy:'Ein Protokoll ist wie die Regeln einer Sprache: Es legt fest, welche Wörter (Syntax) es gibt, was sie bedeuten (Semantik) und in welcher Reihenfolge man sie verwendet (Timing). Wenn zwei Computer verschiedene "Sprachen" sprechen, können sie sich nicht verstehen – genau wie Menschen, die keine gemeinsame Sprache haben.',
-      hints:['Ein Protokoll definiert Syntax, Semantik und Timing.','Protokolle arbeiten in Schichten (OSI, TCP/IP).','Beispiele: IP, TCP, HTTP, SMTP, DNS.'],
-      questions:{
-        fill:{q:'Ein Netzwerkprotokoll definiert die ______ (Format), ________ (Bedeutung) und das Timing der Kommunikation.', answer:'Syntax', keywords:['syntax','semantik']},
-        choice:{q:'Auf welcher OSI-Schicht arbeitet das IP-Protokoll?', options:['Schicht 1 (Bitübertragung)','Schicht 2 (Sicherung)','Schicht 3 (Vermittlung)','Schicht 4 (Transport)'], correct:2},
-        explain:{q:'Erkläre, warum Netzwerkprotokolle in Schichten organisiert sind und nenne drei Beispielprotokolle.', keywords:['schicht','OSI','TCP','IP','HTTP','standard','kommunikation','regel','format']}
-      },
-      difficulty:1
-    },
-    {
-      id:'multiplexing',
-      term:'Multiplexing',
-      icon:'🔀',
-      short:'Mehrere Signale teilen sich ein gemeinsames Übertragungsmedium',
-      definition:'Multiplexing ist ein Verfahren, bei dem mehrere Datenströme oder Signale gleichzeitig über ein gemeinsames Übertragungsmedium übertragen werden. Dazu wird das Medium in logische Kanäle aufgeteilt. Es gibt verschiedene Verfahren: Zeitmultiplex (TDM – Time Division Multiplexing) teilt die Zeit in Zeitschlitze auf, Frequenzmultiplex (FDM – Frequency Division Multiplexing) nutzt verschiedene Frequenzbänder, und Wellenlängenmultiplex (WDM – Wavelength Division Multiplexing) verwendet unterschiedliche Lichtwellenlängen in Glasfaser. Multiplexing erhöht die Effizienz der Netzwerkinfrastruktur erheblich.',
-      analogy:'Multiplexing ist wie eine mehrspurige Autobahn: Statt einer einzigen Fahrspur für alle gibt es mehrere Spuren, auf denen verschiedene Fahrzeuge gleichzeitig fahren können. TDM ist wie eine Ampelschaltung (jeder darf abwechselnd), FDM wie verschiedene Spuren nebeneinander, und WDM wie ein Tunnel mit verschiedenfarbigen Lichtstrahlen.',
-      hints:['TDM = Zeitmultiplex (Zeitschlitze), FDM = Frequenzmultiplex (Frequenzbänder).','WDM nutzt verschiedene Lichtwellenlängen in Glasfaser.','Multiplexing ermöglicht die gleichzeitige Nutzung eines Mediums durch viele Teilnehmer.'],
-      questions:{
-        fill:{q:'Beim __________________ (TDM) werden Zeitschlitze zugewiesen, beim Frequenzmultiplex (FDM) verschiedene ________________.', answer:'Zeitmultiplex', keywords:['zeitmultiplex','frequenz','frequenzbänder']},
-        choice:{q:'Welches Multiplexverfahren nutzt verschiedene Lichtwellenlängen?', options:['TDM (Time Division)','FDM (Frequency Division)','WDM (Wavelength Division)','CDM (Code Division)'], correct:2},
-        explain:{q:'Erkläre die drei Hauptarten des Multiplexing (TDM, FDM, WDM) und ihre Einsatzgebiete.', keywords:['TDM','FDM','WDM','zeit','frequenz','wellenlänge','kanal','gleichzeitig','medium','glasfaser']}
-      },
-      difficulty:2
-    },
-    {
-      id:'latenz',
-      term:'Latenz',
-      icon:'⏱️',
-      short:'Zeitverzögerung bei der Datenübertragung von Sender zu Empfänger',
-      definition:'Die Latenz (Verzögerung, Delay) bezeichnet die Zeitspanne, die ein Datenpaket benötigt, um vom Sender zum Empfänger zu gelangen. Sie setzt sich aus mehreren Komponenten zusammen: Ausbreitungsverzögerung (Propagation Delay – abhängig von Distanz und Lichtgeschwindigkeit), Übertragungsverzögerung (Transmission Delay – abhängig von Paketgrösse und Bandbreite), Verarbeitungsverzögerung (Processing Delay – Routing-Entscheidungen in Knoten) und Warteschlangenverzögerung (Queuing Delay – Wartezeit im Puffer). Bei Leitungsvermittlung ist die Latenz konstant, bei Paketvermittlung variabel (Jitter).',
-      analogy:'Latenz ist wie die Reisezeit eines Briefes: Sie hängt ab von der Entfernung (Ausbreitungsverzögerung), davon wie schnell der Brief eingepackt wird (Übertragungsverzögerung), wie lange das Sortierzentrum braucht (Verarbeitungsverzögerung), und ob er in einer Warteschlange landet (Warteschlangenverzögerung).',
-      hints:['Latenz = Summe aus Ausbreitungs-, Übertragungs-, Verarbeitungs- und Warteschlangenverzögerung.','Jitter = Schwankung der Latenz bei Paketvermittlung.','Niedrige Latenz ist entscheidend für Echtzeitanwendungen (VoIP, Gaming).'],
-      questions:{
-        fill:{q:'Die Latenz setzt sich zusammen aus Ausbreitungs-, Übertragungs-, Verarbeitungs- und ________________________.', answer:'Warteschlangenverzögerung', keywords:['warteschlange','warteschlangenverzögerung','queuing']},
-        choice:{q:'Wie nennt man die Schwankung der Latenz bei Paketvermittlung?', options:['Throughput','Jitter','Overhead','Buffering'], correct:1},
-        explain:{q:'Erkläre die vier Komponenten der Latenz und warum Jitter bei Paketvermittlung auftritt.', keywords:['ausbreitung','übertragung','verarbeitung','warteschlange','jitter','paket','variabel','verzögerung','delay']}
-      },
-      difficulty:2
-    },
-    {
-      id:'datagramm',
-      term:'Datagramm',
-      icon:'📨',
-      short:'Eigenständiges, verbindungsloses Datenpaket mit vollständiger Adressierung',
-      definition:'Ein Datagramm ist eine eigenständige, verbindungslose Dateneinheit, die alle für die Zustellung notwendigen Informationen im Header enthält (Quell- und Zieladresse). Jedes Datagramm wird unabhängig von anderen geroutet – es gibt keine vorher aufgebaute Verbindung. Das Internet Protocol (IP) arbeitet datagrammbasiert: Jedes IP-Paket ist ein Datagramm, das eigenständig seinen Weg durch das Netz findet. Datagramme können in unterschiedlicher Reihenfolge ankommen, dupliziert werden oder verloren gehen. Höhere Protokolle wie TCP sorgen dann für Zuverlässigkeit.',
-      analogy:'Ein Datagramm ist wie eine Postkarte: Sie hat Absender und Empfänger draufstehen und wird eigenständig durch das Postnetz befördert. Es wird keine Leitung reserviert, und es ist nicht garantiert, dass sie ankommt oder in welcher Reihenfolge mehrere Postkarten eintreffen.',
-      hints:['Datagramme sind verbindungslos – jedes wird unabhängig geroutet.','IP-Pakete sind Datagramme.','Reihenfolge, Zustellung und Duplikaterkennung werden nicht garantiert (Best Effort).'],
-      questions:{
-        fill:{q:'Ein Datagramm ist eine ________________ Dateneinheit, die alle Adressinformationen im ______ enthält.', answer:'verbindungslose', keywords:['verbindungslos','header']},
-        choice:{q:'Welches Protokoll arbeitet datagrammbasiert?', options:['TCP','HTTP','IP','FTP'], correct:2},
-        explain:{q:'Erkläre den Unterschied zwischen verbindungsloser (Datagramm) und verbindungsorientierter Kommunikation.', keywords:['verbindungslos','unabhängig','header','adresse','IP','reihenfolge','best effort','verbindung','aufbau']}
-      },
-      difficulty:2
-    },
-    {
-      id:'virtuelle-verbindung',
-      term:'Virtuelle Verbindung',
-      icon:'🔗',
-      short:'Logischer Pfad durch das Netz, ohne physische Leitungsreservierung',
-      definition:'Eine virtuelle Verbindung (Virtual Circuit) ist ein logisch festgelegter Pfad durch ein paketvermittelndes Netz, der vor der Datenübertragung aufgebaut wird. Im Gegensatz zur Leitungsvermittlung wird keine physische Leitung exklusiv reserviert – die Bandbreite wird weiterhin geteilt. Alle Pakete folgen dem gleichen vordefinierten Weg in der richtigen Reihenfolge. Es gibt permanente virtuelle Verbindungen (PVC, dauerhaft konfiguriert) und geschaltete virtuelle Verbindungen (SVC, dynamisch aufgebaut). Beispiele sind ATM (Asynchronous Transfer Mode), MPLS und Frame Relay. Virtuelle Verbindungen kombinieren Vorteile beider Vermittlungsarten: Vorhersagbare Pfade wie bei Leitungsvermittlung und effiziente Ressourcennutzung wie bei Paketvermittlung.',
-      analogy:'Eine virtuelle Verbindung ist wie eine GPS-Route, die du vor Fahrtbeginn festlegst: Du weisst genau, welche Strassen du nehmen wirst (fester Pfad), aber die Strassen gehören nicht nur dir – andere Autos nutzen sie auch (geteilte Bandbreite). Im Unterschied zur Leitungsvermittlung wird keine Strasse gesperrt, und im Unterschied zum Datagramm wird die Route nicht spontan geändert.',
-      hints:['Virtual Circuit = logischer Pfad, keine physische Leitungsreservierung.','PVC = permanent, SVC = dynamisch geschaltet.','Beispiele: ATM, MPLS, Frame Relay.'],
-      questions:{
-        fill:{q:'Eine virtuelle Verbindung ist ein ________ festgelegter Pfad, bei dem alle Pakete den ________ Weg nehmen.', answer:'logisch', keywords:['logisch','gleichen','selben']},
-        choice:{q:'Welche Technologie nutzt virtuelle Verbindungen?', options:['Ethernet','WLAN','MPLS','HTTP'], correct:2},
-        explain:{q:'Erkläre, wie virtuelle Verbindungen Vorteile von Leitungs- und Paketvermittlung kombinieren.', keywords:['logisch','pfad','paket','leitung','geteilt','bandbreite','reihenfolge','PVC','SVC','ATM','MPLS']}
-      },
-      difficulty:3
-    }
-  ];
+// ── Glossar-System (Shared) ──
+var TRAINER_ID = 'netz-vermittlung';
 
-  // ── State ──
-  let state = loadState();
-  let currentTerm = null;
-  let currentPhase = 0;
-  let hintIndex = 0;
-
-  function loadState(){
-    try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; }catch(e){ return {}; }
+var GLOSSARY = [
+  {
+    term: 'Paketvermittlung',
+    short: 'Daten werden in Paketen unabhängig durch das Netz geroutet.',
+    definition: 'Bei der Paketvermittlung werden Nachrichten in kleine Pakete zerlegt, die unabhängig voneinander über verschiedene Wege zum Ziel geroutet werden. An jedem Knoten wird Store-and-Forward angewendet. Die Ressourcen werden von allen Teilnehmern geteilt. Das Internet basiert auf Paketvermittlung.',
+    analogy: '📦 Wie ein Paketverteilzentrum: Grosse Sendungen werden in kleine Pakete zerlegt, jedes mit eigener Adresse, jedes nimmt seinen eigenen Weg.',
+    hints: ['Pakete nehmen unabhängige Wege durch das Netz.','Store-and-Forward an jedem Knotenpunkt.','Das Internet basiert auf Paketvermittlung.'],
+    questions: [
+      {type:'fill', q:'Bei der Paketvermittlung werden Nachrichten in kleine ________ zerlegt, die unabhängig geroutet werden.', a:'Pakete', keywords:['pakete','paket']},
+      {type:'choice', q:'Welches Prinzip wird an jedem Knoten bei Paketvermittlung angewendet?', options:['Circuit Switching','Token Passing','Store-and-Forward','Time Division'], correct:2},
+      {type:'explain', q:'Erkläre den Unterschied zwischen Paketvermittlung und Leitungsvermittlung.', keywords:['paket','leitung','geteilt','reserviert','unabhängig','verbindung'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Leitungsvermittlung',
+    short: 'Dedizierte Leitung wird für die gesamte Kommunikation reserviert.',
+    definition: 'Bei der Leitungsvermittlung wird vor der Datenübertragung eine dedizierte physische oder logische Verbindung aufgebaut. Diese Leitung bleibt für die gesamte Dauer reserviert – auch wenn keine Daten fliessen. Vorteil: konstante Qualität. Nachteil: ineffiziente Ressourcennutzung. Beispiel: klassisches Telefonnetz (ISDN).',
+    analogy: '📞 Wie eine altmodische Telefonzentrale: Die Telefonistin steckt ein Kabel – eine dedizierte Leitung nur für dieses Gespräch!',
+    hints: ['Dedizierte Leitung wird vorher aufgebaut.','Reservierte Bandbreite, auch wenn niemand spricht.','Konstante Qualität, aber ineffizient.'],
+    questions: [
+      {type:'fill', q:'Bei der Leitungsvermittlung wird eine ____________ Verbindung für die gesamte Kommunikation reserviert.', a:'dedizierte', keywords:['dedizierte','feste','reservierte']},
+      {type:'choice', q:'Welches Netzwerk nutzt klassische Leitungsvermittlung?', options:['Internet','WLAN','ISDN/Telefonnetz','Ethernet'], correct:2},
+      {type:'explain', q:'Nenne Vor- und Nachteile der Leitungsvermittlung gegenüber Paketvermittlung.', keywords:['konstant','qualität','reserviert','ineffizient','bandbreite','verschwendung'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Nachrichtenvermittlung',
+    short: 'Ganze Nachricht wird Store-and-Forward von Knoten zu Knoten weitergeleitet.',
+    definition: 'Bei der Nachrichtenvermittlung wird die gesamte Nachricht (nicht in Pakete zerlegt) von Knoten zu Knoten weitergeleitet (Store-and-Forward). Jeder Knoten speichert die komplette Nachricht, prüft sie und leitet sie weiter. Keine Echtzeitkommunikation möglich. Historisches Beispiel: Telegrafie.',
+    analogy: '📧 Wie eine Briefpost-Zentrale: Der komplette Brief wird an jeder Station gespeichert, geprüft und weitergeleitet – nicht in Teile zerlegt.',
+    hints: ['Ganze Nachricht wird Store-and-Forward weitergeleitet.','Keine Zerlegung in Pakete.','Historisch: Telegrafie-Netz.'],
+    questions: [
+      {type:'fill', q:'Bei der Nachrichtenvermittlung wird die ________ Nachricht an jedem Knoten gespeichert und weitergeleitet.', a:'ganze', keywords:['ganze','komplette','gesamte','vollständige']},
+      {type:'choice', q:'Welches historische System nutzte Nachrichtenvermittlung?', options:['Internet','Telefonnetz','Telegrafie','WLAN'], correct:2},
+      {type:'explain', q:'Warum eignet sich Nachrichtenvermittlung nicht für Echtzeitkommunikation?', keywords:['speichern','verzögerung','komplett','warten','store','forward'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Protokoll',
+    short: 'Regeln und Formate für die Kommunikation zwischen Systemen.',
+    definition: 'Ein Protokoll definiert Regeln, Formate und Abläufe für die Kommunikation zwischen Systemen. Es legt fest: Nachrichtenformat, Reihenfolge der Kommunikation, Handshake-Verfahren und Fehlerbehandlung. Protokolle arbeiten in Schichten (OSI/TCP-IP). Beispiele: TCP, UDP, IP, HTTP.',
+    analogy: '📜 Wie Diplomaten-Regeln beim Dinner: Wer grüsst zuerst, wer spricht wann – feste Regeln für geordnete Kommunikation.',
+    hints: ['Regeln für Format, Reihenfolge, Handshake, Fehlerbehandlung.','Arbeiten in Schichten (OSI/TCP-IP).','Beispiele: TCP, UDP, IP, HTTP, FTP.'],
+    questions: [
+      {type:'fill', q:'Ein Protokoll definiert ________, Formate und Abläufe für die Kommunikation.', a:'Regeln', keywords:['regeln','rules','vereinbarungen']},
+      {type:'choice', q:'In welchem Modell sind Protokolle in Schichten organisiert?', options:['TCP/IP und OSI','HTTP und FTP','LAN und WAN','Client und Server'], correct:0},
+      {type:'explain', q:'Erkläre, warum Protokolle in Schichten organisiert sind.', keywords:['schicht','abstraktion','trennung','aufgabe','unabhängig','modular'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Multiplexing',
+    short: 'Mehrere Signale teilen sich ein Übertragungsmedium.',
+    definition: 'Multiplexing ist ein Verfahren, bei dem mehrere Signale über ein gemeinsames Medium übertragen werden. Varianten: FDM (Frequenzmultiplex – verschiedene Frequenzbänder), TDM (Zeitmultiplex – verschiedene Zeitschlitze), WDM (Wellenlängenmultiplex – bei Glasfaser, verschiedene Lichtfarben).',
+    analogy: '🛣️ Wie eine Autobahn: Viele Autos (Signale) teilen sich eine Strasse (Medium) – FDM: verschiedene Spuren, TDM: abwechselnd fahren, WDM: verschiedene Farben.',
+    hints: ['FDM = Frequenzmultiplex, TDM = Zeitmultiplex, WDM = Wellenlängenmultiplex.','Macht ein Medium effizienter nutzbar.','WDM nutzt verschiedene Lichtfarben bei Glasfaser.'],
+    questions: [
+      {type:'fill', q:'Bei ______ werden verschiedene Frequenzbänder für verschiedene Signale genutzt.', a:'FDM', keywords:['FDM','frequenzmultiplex']},
+      {type:'choice', q:'Welches Multiplexing-Verfahren nutzt verschiedene Lichtfarben?', options:['FDM','TDM','WDM','CDM'], correct:2},
+      {type:'explain', q:'Vergleiche FDM, TDM und WDM hinsichtlich ihrer Funktionsweise.', keywords:['frequenz','zeit','wellenlänge','band','schlitz','farbe','glasfaser'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Latenz',
+    short: 'Gesamtverzögerung eines Pakets von Sender zu Empfänger.',
+    definition: 'Die Latenz ist die gesamte Verzögerung eines Pakets auf dem Weg vom Sender zum Empfänger. Sie setzt sich zusammen aus: Ausbreitungsverzögerung (Signallaufzeit), Übertragungsverzögerung (Bits auf Medium setzen), Verarbeitungsverzögerung (Router-Prüfung) und Warteschlangenverzögerung (Puffer voll).',
+    analogy: '⏱️ Wie eine Achterbahn-Warteschlange: Anstehen (Warteschlange) + Ticket prüfen (Verarbeitung) + Fahrt (Ausbreitung) + Einsteigen (Übertragung) = Gesamtlatenz.',
+    hints: ['Ausbreitungs- + Übertragungs- + Verarbeitungs- + Warteschlangenverzögerung.','Ausbreitungsverzögerung: Signal braucht Zeit für die Strecke.','Warteschlangenverzögerung: wenn Router-Puffer voll sind.'],
+    questions: [
+      {type:'fill', q:'Die Latenz setzt sich aus vier Komponenten zusammen: Ausbreitung, Übertragung, Verarbeitung und ________________.', a:'Warteschlange', keywords:['warteschlange','warteschlangenverzögerung','queuing']},
+      {type:'choice', q:'Welche Latenzkomponente hängt von der physischen Entfernung ab?', options:['Übertragungsverzögerung','Verarbeitungsverzögerung','Ausbreitungsverzögerung','Warteschlangenverzögerung'], correct:2},
+      {type:'explain', q:'Erkläre die vier Komponenten der Latenz und wovon sie jeweils abhängen.', keywords:['ausbreitung','übertragung','verarbeitung','warteschlange','entfernung','bandbreite','router'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Datagramm',
+    short: 'Verbindungsloses, selbstständiges Datenpaket.',
+    definition: 'Ein Datagramm ist ein verbindungslos übertragenes Datenpaket, das alle Adressinformationen selbst trägt. Kein vorheriger Verbindungsaufbau nötig. Keine Garantie für Zustellung, Reihenfolge oder Duplikatvermeidung. IP-Pakete sind Datagramme. UDP ist ein Datagramm-Protokoll.',
+    analogy: '📮 Wie eine Postkarte: Einfach einwerfen, volle Adresse drauf, keine Garantie dass sie ankommt – aber schnell!',
+    hints: ['Verbindungslos, jedes Paket unabhängig.','Keine Garantie für Zustellung oder Reihenfolge.','IP-Pakete und UDP sind Datagramme.'],
+    questions: [
+      {type:'fill', q:'Ein Datagramm ist ein ________________ übertragenes Datenpaket.', a:'verbindungslos', keywords:['verbindungslos','connectionless']},
+      {type:'choice', q:'Welches Protokoll ist ein Datagramm-Protokoll?', options:['TCP','HTTP','UDP','FTP'], correct:2},
+      {type:'explain', q:'Erkläre die Vor- und Nachteile verbindungsloser Datagramm-Übertragung.', keywords:['verbindungslos','schnell','keine garantie','reihenfolge','overhead','einfach'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Virtuelle Verbindung',
+    short: 'Logischer Pfad durch das Netz, Ressourcen werden geteilt.',
+    definition: 'Eine virtuelle Verbindung ist ein verbindungsorientierter Dienst, bei dem vor der Datenübertragung ein logischer Pfad aufgebaut wird. Alle Pakete folgen demselben Pfad in der richtigen Reihenfolge. Anders als bei Leitungsvermittlung werden die Ressourcen mit anderen geteilt. Beispiele: TCP (logisch), ATM, MPLS.',
+    analogy: '🔧 Wie eine Rohrpost-Anlage: Bevor die erste Kapsel losgeschickt wird, wird ein Rohr (Pfad) aufgebaut. Alle Kapseln nehmen denselben Weg.',
+    hints: ['Verbindungsorientiert: Pfad wird vor Datenübertragung aufgebaut.','Alle Pakete folgen dem gleichen Pfad.','Ressourcen werden geteilt (nicht reserviert wie bei Leitungsvermittlung).'],
+    questions: [
+      {type:'fill', q:'Bei einer virtuellen Verbindung folgen alle Pakete dem ________ Pfad.', a:'gleichen', keywords:['gleichen','selben','festen']},
+      {type:'choice', q:'Welches Protokoll nutzt virtuelle Verbindungen?', options:['UDP','IP','TCP','ICMP'], correct:2},
+      {type:'explain', q:'Erkläre den Unterschied zwischen virtueller Verbindung und Leitungsvermittlung.', keywords:['geteilt','reserviert','logisch','physisch','pfad','ressourcen'], minKeywords:3}
+    ]
   }
-  function saveState(){
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+];
+
+var GP_STORIES = {
+  'Paketvermittlung': {
+    route: 'Ein Paketverteilzentrum',
+    scenes: [
+      {kw:'Pakete', img:'📦 Viele kleine Pakete', text:'Am Eingang werden grosse Sendungen in viele kleine Pakete zerlegt – jedes mit eigener Adresse.'},
+      {kw:'Unabhängige Wege', img:'🛤️ Verschiedene Routen', text:'Jedes Paket nimmt seinen eigenen Weg durchs Netz – manche links, manche rechts.'},
+      {kw:'Store-and-Forward', img:'📥 Zwischenlager', text:'An jedem Knotenpunkt wird das Paket zwischengelagert (Store), geprüft und weitergeleitet (Forward).'},
+      {kw:'Ressourcen geteilt', img:'🤝 Förderbänder für alle', text:'Die Förderbänder werden von allen Paketen geteilt – effiziente Auslastung!'},
+      {kw:'Internet', img:'🌐 Weltkarte', text:'Das Internet basiert auf Paketvermittlung – das grösste Paketverteilzentrum der Welt.'}
+    ]
+  },
+  'Leitungsvermittlung': {
+    route: 'Eine altmodische Telefonzentrale',
+    scenes: [
+      {kw:'Dedizierte Leitung', img:'🔌 Kabel wird gesteckt', text:'Die Telefonistin steckt ein Kabel – eine dedizierte Leitung nur für dieses Gespräch!'},
+      {kw:'Verbindungsaufbau', img:'📞 Wählscheibe dreht', text:'Erst muss die Verbindung aufgebaut werden, dann kann man sprechen.'},
+      {kw:'Reservierte Bandbreite', img:'🔒 Leitung blockiert', text:'Die Leitung ist reserviert – auch wenn niemand spricht, bleibt sie blockiert.'},
+      {kw:'Konstante Qualität', img:'📊 Gleichmässiges Signal', text:'Dafür ist die Qualität konstant – kein Warten, kein Jitter.'},
+      {kw:'ISDN / Telefonnetz', img:'☎️ Altes Telefon', text:'Das klassische Telefonnetz (ISDN) nutzt Leitungsvermittlung.'}
+    ]
+  },
+  'Nachrichtenvermittlung': {
+    route: 'Eine Briefpost-Zentrale',
+    scenes: [
+      {kw:'Ganze Nachricht', img:'📧 Kompletter Brief', text:'Hier wird der ganze Brief auf einmal verschickt – nicht in Teile zerlegt.'},
+      {kw:'Store-and-Forward', img:'📬 Zwischenstation', text:'An jeder Station wird der komplette Brief gespeichert, geprüft und weitergeleitet.'},
+      {kw:'Keine Echtzeit', img:'⏳ Sanduhr', text:'Der Brief braucht Zeit an jeder Station – keine Echtzeit, aber zuverlässig!'},
+      {kw:'Variable Grösse', img:'📐 Briefe in allen Grössen', text:'Briefe können beliebig gross sein – das kann zu langen Wartezeiten führen.'},
+      {kw:'Telegrafie', img:'📠 Fernschreiber', text:'Historisch: Das Telegrafie-Netz nutzte Nachrichtenvermittlung.'}
+    ]
+  },
+  'Protokoll': {
+    route: 'Ein Diplomaten-Dinner',
+    scenes: [
+      {kw:'Regeln', img:'📜 Verhaltensregeln', text:'Beim Dinner gibt es feste Regeln: Wer grüsst zuerst, wer spricht wann.'},
+      {kw:'Format', img:'📐 Platzordnung', text:'Jedes Paket hat ein vorgeschriebenes Format: Absender, Empfänger, Inhalt, Siegel.'},
+      {kw:'Handshake', img:'🤝 Begrüssung', text:'Vor dem Gespräch kommt der Handshake – beide Seiten einigen sich auf die Spielregeln.'},
+      {kw:'Schichten', img:'🎂 Mehrstöckige Torte', text:'Protokolle arbeiten in Schichten – jede Schicht hat ihre eigenen Regeln.'},
+      {kw:'Beispiele', img:'🏷️ Namensschilder', text:'An den Plätzen stehen: TCP, UDP, IP, HTTP – alles Protokolle!'}
+    ]
+  },
+  'Multiplexing': {
+    route: 'Eine Autobahn-Mautstelle',
+    scenes: [
+      {kw:'Mehrere Signale', img:'🛣️ Viele Autos, eine Strasse', text:'Viele Autos (Signale) teilen sich eine Strasse (Medium) – das ist Multiplexing.'},
+      {kw:'FDM', img:'🎵 Verschiedene Frequenzspuren', text:'FDM: Jedes Auto fährt auf seiner eigenen Frequenzspur – wie verschiedene Radiosender.'},
+      {kw:'TDM', img:'⏱️ Zeitschlitze', text:'TDM: Die Ampel gibt jedem Auto einen festen Zeitschlitz – abwechselnd fahren.'},
+      {kw:'WDM', img:'🌈 Verschiedene Lichtfarben', text:'WDM bei Glasfaser: Jedes Signal hat eine andere Lichtfarbe – alle gleichzeitig!'},
+      {kw:'Effizienz', img:'📈 Mehr Durchsatz', text:'Multiplexing macht ein Medium effizienter – statt vieler Kabel reicht eines!'}
+    ]
+  },
+  'Latenz': {
+    route: 'Eine Achterbahn-Warteschlange',
+    scenes: [
+      {kw:'Verzögerung', img:'⏱️ Stoppuhr', text:'Die Stoppuhr läuft: Latenz ist die gesamte Verzögerung von Sender bis Empfänger.'},
+      {kw:'Ausbreitungsverzögerung', img:'🏃 Laufstrecke', text:'Das Signal muss die Strecke physisch zurücklegen – auch Licht braucht Zeit!'},
+      {kw:'Übertragungsverzögerung', img:'🚪 Einlass-Drehkreuz', text:'Am Drehkreuz müssen alle Bits durchgezählt werden – je mehr, desto länger.'},
+      {kw:'Verarbeitungsverzögerung', img:'🧠 Ticket-Kontrolle', text:'Jeder Router prüft die Adresse – das braucht Verarbeitungszeit.'},
+      {kw:'Warteschlangenverzögerung', img:'🧍 Schlange stehen', text:'Wenn der Router voll ist, müssen Pakete warten – die Warteschlangenverzögerung!'}
+    ]
+  },
+  'Datagramm': {
+    route: 'Eine Postkarten-Versandzentrale',
+    scenes: [
+      {kw:'Verbindungslos', img:'📮 Einfach einwerfen', text:'Postkarten (Datagramme) werden einfach eingeworfen – kein Verbindungsaufbau nötig.'},
+      {kw:'Eigene Adressierung', img:'🏷️ Volle Adresse', text:'Jede Postkarte trägt die volle Ziel- und Absenderadresse – sie ist selbstständig.'},
+      {kw:'Keine Garantie', img:'🤷 Vielleicht kommt sie an', text:'Keine Garantie: Postkarten können verloren gehen oder in falscher Reihenfolge ankommen.'},
+      {kw:'IP-Paket', img:'🌐 Internet-Stempel', text:'Im Internet ist jedes IP-Paket ein Datagramm – selbstständig und verbindungslos.'},
+      {kw:'UDP', img:'📨 Schnellpost ohne Quittung', text:'UDP ist das Datagramm-Protokoll: Schnell, keine Quittung – ideal für Streaming.'}
+    ]
+  },
+  'Virtuelle Verbindung': {
+    route: 'Eine Rohrpost-Anlage',
+    scenes: [
+      {kw:'Verbindungsorientiert', img:'🔌 Rohr wird aufgebaut', text:'Bevor die erste Kapsel losgeschickt wird, wird ein Rohr (virtuelle Verbindung) aufgebaut.'},
+      {kw:'Fester Pfad', img:'🗺️ Route markiert', text:'Alle Kapseln nehmen denselben Weg – fester Pfad, richtige Reihenfolge.'},
+      {kw:'Ressourcen geteilt', img:'🔀 Rohr für alle', text:'Anders als bei Leitungsvermittlung wird das Rohr mit anderen geteilt – virtuell, nicht physisch!'},
+      {kw:'TCP', img:'📋 Quittung nötig', text:'TCP ist verbindungsorientiert: 3-Way-Handshake → Daten → Verbindung abbauen.'},
+      {kw:'ATM / MPLS', img:'🏷️ Label am Rohr', text:'ATM und MPLS nutzen virtuelle Verbindungen mit Labels.'}
+    ]
   }
-  function getLevel(id){
-    return (state[id] && state[id].level) || 0;
-  }
-  function setLevel(id, level){
-    if(!state[id]) state[id] = {};
-    state[id].level = Math.min(3, Math.max(0, level));
-    saveState();
-    renderGrid();
-    updateProgress();
-  }
+};
 
-  // ── Progress ──
-  function updateProgress(){
-    const mastered = glossaryTerms.filter(t => getLevel(t.id) >= 3).length;
-    const total = glossaryTerms.length;
-    const pct = Math.round((mastered / total) * 100);
-    document.getElementById('glossary-fill').style.width = pct + '%';
-    document.getElementById('glossary-count').textContent = mastered + ' / ' + total + ' gemeistert';
-  }
+var GLOSSARY_TERM_MAP = {
+  'paketvermittlung': 'Paketvermittlung',
+  'paket': 'Paketvermittlung',
+  'leitungsvermittlung': 'Leitungsvermittlung',
+  'nachrichtenvermittlung': 'Nachrichtenvermittlung',
+  'store-and-forward': 'Nachrichtenvermittlung',
+  'protokoll': 'Protokoll',
+  'multiplexing': 'Multiplexing',
+  'tdm': 'Multiplexing',
+  'fdm': 'Multiplexing',
+  'latenz': 'Latenz',
+  'verzögerung': 'Latenz',
+  'datagramm': 'Datagramm',
+  'virtuelle verbindung': 'Virtuelle Verbindung',
+  'verbindungsorientiert': 'Virtuelle Verbindung'
+};
 
-  // ── Grid ──
-  function renderGrid(){
-    const grid = document.getElementById('glossary-grid');
-    grid.innerHTML = '';
-    glossaryTerms.forEach(t => {
-      const level = getLevel(t.id);
-      const card = document.createElement('div');
-      card.className = 'glossary-card' + (currentTerm && currentTerm.id === t.id ? ' active' : '');
-      card.dataset.level = level;
-      card.innerHTML = '<div class="gc-icon">' + t.icon + '</div>' +
-        '<div class="gc-term">' + t.term + '</div>' +
-        '<div class="gc-short">' + t.short + '</div>' +
-        '<div class="gc-level"></div>';
-      card.addEventListener('click', () => openTerm(t));
-      grid.appendChild(card);
-    });
-  }
-
-  // ── Open Term ──
-  function openTerm(t){
-    currentTerm = t;
-    currentPhase = 0;
-    hintIndex = 0;
-    const panel = document.getElementById('glossary-learn');
-    panel.classList.add('visible');
-    document.getElementById('gl-title').textContent = t.icon + ' ' + t.term;
-    renderPhases();
-    renderPhaseContent();
-    renderGrid();
-    panel.scrollIntoView({behavior:'smooth', block:'start'});
-  }
-
-  function closeTerm(){
-    currentTerm = null;
-    document.getElementById('glossary-learn').classList.remove('visible');
-    renderGrid();
-  }
-
-  document.getElementById('gl-close').addEventListener('click', closeTerm);
-
-  // ── Phase Indicator ──
-  function renderPhases(){
-    const container = document.getElementById('gl-phases');
-    container.innerHTML = '';
-    PHASES.forEach((p, i) => {
-      const el = document.createElement('span');
-      el.className = 'gl-phase' + (i === currentPhase ? ' current' : '') + (i < currentPhase ? ' done' : '');
-      el.textContent = (i < currentPhase ? '✓ ' : '') + p;
-      if (i <= currentPhase) {
-        el.style.cursor = 'pointer';
-        el.addEventListener('click', () => { currentPhase = i; renderPhases(); renderPhaseContent(); });
-      }
-      container.appendChild(el);
-    });
-  }
-
-  // ── Phase Content ──
-  function renderPhaseContent(){
-    const content = document.getElementById('gl-content');
-    const t = currentTerm;
-    if(!t) return;
-    hintIndex = 0;
-
-    switch(currentPhase){
-      case 0: // Analogie
-        content.innerHTML = '<div class="gl-analogy">💡 ' + t.analogy + '</div>' +
-          '<button class="gl-btn primary" id="gl-next">Verstanden → Definition</button>';
-        document.getElementById('gl-next').addEventListener('click', nextPhase);
-        break;
-
-      case 1: // Definition
-        content.innerHTML = '<div class="gl-definition">' + t.definition + '</div>' +
-          '<button class="gl-btn primary" id="gl-next">Weiter → Lückentext</button>';
-        document.getElementById('gl-next').addEventListener('click', nextPhase);
-        break;
-
-      case 2: // Lückentext
-        content.innerHTML = '<div class="gl-question">' + t.questions.fill.q + '</div>' +
-          '<input type="text" class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben...">' +
-          '<div class="gl-hints" id="gl-hints">' +
-            t.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💡 '+h+'</div>').join('') +
-          '</div>' +
-          '<button class="gl-hint-btn" id="gl-hint-btn">💡 Hinweis anzeigen</button>' +
-          '<button class="gl-btn primary" id="gl-check-fill">Prüfen</button>' +
-          '<div id="gl-fill-feedback"></div>';
-        document.getElementById('gl-hint-btn').addEventListener('click', showHint);
-        document.getElementById('gl-check-fill').addEventListener('click', checkFill);
-        document.getElementById('gl-fill-input').addEventListener('keydown', function(e){ if(e.key==='Enter') checkFill(); });
-        break;
-
-      case 3: // Multiple Choice
-        const q = t.questions.choice;
-        content.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-          '<div class="gl-choices" id="gl-choices">' +
-            q.options.map((o,i) => '<button class="gl-choice" data-idx="'+i+'">'+o+'</button>').join('') +
-          '</div>' +
-          '<div id="gl-choice-feedback"></div>';
-        document.querySelectorAll('.gl-choice').forEach(btn => {
-          btn.addEventListener('click', function(){ checkChoice(parseInt(this.dataset.idx)); });
-        });
-        break;
-
-      case 4: // Erklärung
-        content.innerHTML = '<div class="gl-question">' + t.questions.explain.q + '</div>' +
-          '<textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten..."></textarea>' +
-          '<div class="gl-hints" id="gl-hints">' +
-            t.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💡 '+h+'</div>').join('') +
-          '</div>' +
-          '<button class="gl-hint-btn" id="gl-hint-btn">💡 Hinweis anzeigen</button>' +
-          '<button class="gl-btn primary" id="gl-check-explain">Antwort prüfen</button>' +
-          '<div id="gl-explain-feedback"></div>';
-        document.getElementById('gl-hint-btn').addEventListener('click', showHint);
-        document.getElementById('gl-check-explain').addEventListener('click', checkExplain);
-        break;
-    }
-  }
-
-  function nextPhase(){
-    if(currentPhase < PHASES.length - 1){
-      currentPhase++;
-      renderPhases();
-      renderPhaseContent();
-    }
-  }
-
-  function showHint(){
-    if(hintIndex < 3){
-      const el = document.getElementById('gl-hint-' + hintIndex);
-      if(el) el.classList.add('visible');
-      hintIndex++;
-      if(hintIndex >= 3){
-        const btn = document.getElementById('gl-hint-btn');
-        if(btn) btn.style.display = 'none';
-      }
-    }
-  }
-
-  // ── Check Fill ──
-  function checkFill(){
-    const input = document.getElementById('gl-fill-input').value.trim().toLowerCase();
-    const t = currentTerm;
-    const fb = document.getElementById('gl-fill-feedback');
-    if(!input){ fb.innerHTML = '<div class="gl-feedback info">Bitte gib eine Antwort ein.</div>'; return; }
-
-    const keywords = t.questions.fill.keywords;
-    const found = keywords.filter(k => input.includes(k.toLowerCase()));
-    const missing = keywords.filter(k => !input.includes(k.toLowerCase()));
-    const score = found.length / keywords.length;
-
-    let html = '<div class="gl-feedback ' + (score >= 0.5 ? 'success' : 'error') + '">';
-    if(score >= 0.5){
-      html += '✓ ' + (score === 1 ? 'Perfekt! Alle Schlüsselbegriffe erkannt.' : 'Gut! Die meisten Begriffe erkannt.') + '<br>';
-    } else {
-      html += '✗ Leider nicht ganz richtig.<br>';
-    }
-    html += '<div style="margin-top:8px">';
-    found.forEach(k => { html += '<span class="gl-keyword found">✓ '+k+'</span>'; });
-    missing.forEach(k => { html += '<span class="gl-keyword missing">✗ '+k+'</span>'; });
-    html += '</div></div>';
-
-    if(score >= 0.5){
-      html += '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Weiter → Multiple Choice</button>';
-    } else {
-      html += '<button class="gl-btn primary" id="gl-retry" style="margin-top:12px">Nochmal versuchen</button>';
-    }
-    fb.innerHTML = html;
-
-    if(score >= 0.5){
-      document.getElementById('gl-next').addEventListener('click', nextPhase);
-    } else {
-      document.getElementById('gl-retry').addEventListener('click', function(){
-        document.getElementById('gl-fill-input').value = '';
-        fb.innerHTML = '';
-        document.getElementById('gl-fill-input').focus();
-      });
-    }
-  }
-
-  // ── Check Choice ──
-  function checkChoice(idx){
-    const t = currentTerm;
-    const correct = t.questions.choice.correct;
-    const fb = document.getElementById('gl-choice-feedback');
-    const btns = document.querySelectorAll('.gl-choice');
-
-    btns.forEach((b, i) => {
-      b.style.pointerEvents = 'none';
-      if(i === correct) b.classList.add('correct');
-      if(i === idx && idx !== correct) b.classList.add('wrong');
-    });
-
-    if(idx === correct){
-      fb.innerHTML = '<div class="gl-feedback success">✓ Richtig!</div>' +
-        '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Weiter → Erklärung</button>';
-      document.getElementById('gl-next').addEventListener('click', nextPhase);
-    } else {
-      fb.innerHTML = '<div class="gl-feedback error">✗ Falsch. Die richtige Antwort ist markiert.</div>' +
-        '<button class="gl-btn primary" id="gl-next" style="margin-top:12px">Trotzdem weiter</button>';
-      document.getElementById('gl-next').addEventListener('click', nextPhase);
-    }
-  }
-
-  // ── Check Explain ──
-  function checkExplain(){
-    const input = document.getElementById('gl-explain-input').value.trim().toLowerCase();
-    const t = currentTerm;
-    const fb = document.getElementById('gl-explain-feedback');
-    if(input.length < 15){ fb.innerHTML = '<div class="gl-feedback info">Bitte schreibe eine ausführlichere Erklärung (mind. 15 Zeichen).</div>'; return; }
-
-    const keywords = t.questions.explain.keywords;
-    const found = keywords.filter(k => input.includes(k.toLowerCase()));
-    const missing = keywords.filter(k => !input.includes(k.toLowerCase()));
-    const score = found.length / keywords.length;
-
-    let newLevel;
-    if(score >= 0.6) newLevel = 3;
-    else if(score >= 0.35) newLevel = 2;
-    else newLevel = Math.max(getLevel(t.id), 1);
-
-    setLevel(t.id, newLevel);
-
-    const labels = ['Nicht gelernt','Gesehen','Verstanden','Gemeistert'];
-    const colors = ['var(--muted)','var(--yellow)','var(--cyan)','var(--green)'];
-
-    let html = '<div class="gl-feedback ' + (score >= 0.35 ? 'success' : 'error') + '">';
-    if(score >= 0.6){
-      html += '🎉 Ausgezeichnet! Begriff gemeistert!';
-    } else if(score >= 0.35){
-      html += '👍 Gut! Die wichtigsten Punkte erkannt.';
-    } else {
-      html += '📝 Noch nicht ganz. Wiederhole den Begriff später.';
-    }
-    html += '<br><span style="color:'+colors[newLevel]+';font-weight:600">Level: '+labels[newLevel]+'</span>';
-    html += '<div style="margin-top:8px">';
-    found.forEach(k => { html += '<span class="gl-keyword found">✓ '+k+'</span>'; });
-    missing.forEach(k => { html += '<span class="gl-keyword missing">✗ '+k+'</span>'; });
-    html += '</div></div>';
-    html += '<button class="gl-btn primary" id="gl-finish" style="margin-top:12px">Abschliessen</button>';
-    fb.innerHTML = html;
-
-    document.getElementById('gl-finish').addEventListener('click', closeTerm);
-  }
-
-  // ── Tooltip ──
-  const tooltip = document.getElementById('glossary-tooltip');
-  const ttName = document.getElementById('gt-name');
-  const ttShort = document.getElementById('gt-short');
-
-  function initTooltips(){
-    const selectors = [
-      '.v-desc', '.verm-info h3', '.verm-info .v-en',
-      '.summary-card p', '.summary-card h4',
-      '.compare-table td',
-      '.prop-item .prop-val', '.section-title h2',
-      '.net-card p', '.net-card h4',
-      'header p'
-    ];
-
-    const termMap = {};
-    glossaryTerms.forEach(t => {
-      const searchTerms = [t.term];
-      if(t.id === 'paketvermittlung') searchTerms.push('Paketvermittlung','Pakete','Paket','Packet Switching','Datagramme');
-      if(t.id === 'leitungsvermittlung') searchTerms.push('Leitungsvermittlung','Circuit Switching','dedizierter Kanal','ISDN');
-      if(t.id === 'nachrichtenvermittlung') searchTerms.push('Nachrichtenvermittlung','Speichervermittlung','Store-and-Forward','Message Switching');
-      if(t.id === 'protokoll') searchTerms.push('Protokoll','Protokolle','TCP/IP','TCP','IP');
-      if(t.id === 'multiplexing') searchTerms.push('Multiplexing','Multiplex','TDM','FDM','WDM');
-      if(t.id === 'latenz') searchTerms.push('Latenz','Verzögerung','Jitter','Delay');
-      if(t.id === 'datagramm') searchTerms.push('Datagramm','Datagramme','verbindungslos');
-      if(t.id === 'virtuelle-verbindung') searchTerms.push('Virtuelle Verbindung','Virtual Circuit','MPLS','ATM','Frame Relay');
-      searchTerms.forEach(s => { termMap[s.toLowerCase()] = t; });
-    });
-
-    selectors.forEach(sel => {
-      document.querySelectorAll(sel).forEach(el => {
-        if(el.querySelector('.glossary-term')) return;
-        let html = el.innerHTML;
-        const sortedKeys = Object.keys(termMap).sort((a,b) => b.length - a.length);
-        sortedKeys.forEach(key => {
-          const t = termMap[key];
-          const regex = new RegExp('(?<![\\w-])(' + key.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')(?![\\w-])', 'gi');
-          let replaced = false;
-          html = html.replace(regex, function(match){
-            if(replaced) return match;
-            replaced = true;
-            return '<span class="glossary-term" data-glossary-id="'+t.id+'">'+match+'</span>';
-          });
-        });
-        el.innerHTML = html;
-      });
-    });
-
-    document.querySelectorAll('.glossary-term').forEach(el => {
-      el.addEventListener('mouseenter', function(e){
-        const t = glossaryTerms.find(x => x.id === this.dataset.glossaryId);
-        if(!t) return;
-        ttName.textContent = t.icon + ' ' + t.term;
-        ttShort.textContent = t.short;
-        tooltip.style.display = 'block';
-        positionTooltip(e);
-      });
-      el.addEventListener('mousemove', positionTooltip);
-      el.addEventListener('mouseleave', function(){
-        tooltip.style.display = 'none';
-      });
-    });
-  }
-
-  function positionTooltip(e){
-    let x = e.clientX + 16;
-    let y = e.clientY + 16;
-    const w = 260;
-    const h = 100;
-    if(x + w > window.innerWidth) x = e.clientX - w - 10;
-    if(y + h > window.innerHeight) y = e.clientY - h - 10;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-  }
-
-  // ── Init ──
-  renderGrid();
-  updateProgress();
-  initTooltips();
-})();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.sv-desc, .net-desc p, .section-title h2, .scale-info p';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MAC-Schicht, CSMA & WLAN Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -89,72 +90,6 @@ tr:last-child td{border-bottom:none}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.viz-canvas{padding:12px}}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -287,12 +222,17 @@ tr:last-child td{border-bottom:none}
 <!-- ========== GLOSSAR ========== -->
 <div class="glossary-section" id="glossary-section">
 <div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128218;</div><h2>Glossar &ndash; Begriffe meistern</h2></div>
-<div class="glossary-progress-bar"><span class="gp-text">Fortschritt</span><div class="gp-bar"><div class="gp-fill" id="gp-fill" style="width:0%"></div></div><span class="gp-count" id="gp-count">0 / 8 gemeistert</span></div>
+<div class="glossary-progress-bar"><span class="gp-text">Fortschritt</span><div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div><span class="gp-count" id="glossary-count">0 / 8 gemeistert</span></div>
 <div class="glossary-grid" id="glossary-grid"></div>
-<div class="glossary-learn" id="glossary-learn"></div>
+<div class="glossary-learn" id="glossary-learn">
+  <div class="gl-header">
+    <h3 id="gl-title"></h3>
+    <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+  </div>
+  <div class="gl-phase-indicator" id="gl-phases"></div>
+  <div class="gl-content" id="gl-content"></div>
 </div>
-
-<div id="glossary-tooltip" class="glossary-tooltip"><div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">&#128073; Klicken zum Lernen</div></div>
+</div>
 </div>
 
 <script>
@@ -473,284 +413,177 @@ function showSolution(){const s=document.getElementById('sol');s.textContent=cur
 function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
 newTask();
 
-// ===== GLOSSAR SYSTEM =====
-const glossaryTerms=[
-  {id:'csma-cd',term:'CSMA/CD',icon:'&#128268;',short:'Carrier Sense Multiple Access / Collision Detection',
-   definition:'CSMA/CD (IEEE 802.3) ist das Medienzugriffsverfahren für kabelgebundenes Ethernet im Halbduplex-Betrieb. Jede Station hört den Kanal ab (Carrier Sense), bevor sie sendet. Senden mehrere Stationen gleichzeitig, wird die Kollision erkannt (Collision Detection), ein Jam Signal (32 Bit) gesendet und nach dem Binary Exponential Backoff (zufällige Wartezeit aus 0..2^n-1 Slotzeiten) erneut versucht. Bei Vollduplex-Switches ist CSMA/CD nicht mehr nötig.',
-   analogy:'Stell dir ein Gespräch am Tisch vor: Bevor du sprichst, hörst du, ob jemand redet. Falls zwei gleichzeitig anfangen, bemerken beide das Durcheinander (Kollision) und schweigen. Dann wartet jeder eine zufällige Zeit, bevor er es erneut versucht.',
-   hints:['Nur bei Halbduplex-Verbindungen relevant (z.B. Hub-basierte Netze)','Jam Signal = 32 Bit, um alle Stationen über die Kollision zu informieren','Backoff-Formel: zufällige Wartezeit aus 0 bis 2^n - 1 Slotzeiten (n = Versuchsnummer)'],
-   questions:[
-     {type:'fill',q:'CSMA/CD steht für Carrier Sense Multiple Access / Collision ___.',a:'Detection',keywords:['Detection','Erkennung']},
-     {type:'choice',q:'Wann ist CSMA/CD NICHT mehr nötig?',correct:'Bei Vollduplex-Verbindungen über Switches',wrong:['Bei WLAN-Verbindungen über Access Points','Bei Verbindungen mit hoher Bandbreite','Bei IPv6-Netzwerken']},
-     {type:'explain',q:'Erkläre den Ablauf von CSMA/CD in eigenen Worten.',keywords:['kanal','abhören','senden','kollision','erkennen','jam','backoff','warten']}
-   ],difficulty:1},
+// ===== GLOSSAR-DATEN (Format A) =====
+var TRAINER_ID = 'mac-csma-wlan';
 
-  {id:'csma-ca',term:'CSMA/CA',icon:'&#128225;',short:'Carrier Sense Multiple Access / Collision Avoidance',
-   definition:'CSMA/CA (IEEE 802.11) ist das Medienzugriffsverfahren für WLAN. Da im Funk eine Kollisionserkennung unmöglich ist (man kann nicht gleichzeitig senden und empfangen), werden Kollisionen vermieden (Avoidance). Der Ablauf: Kanal abhören, DIFS abwarten, zufälligen Backoff-Timer herunterzählen, senden, auf ACK warten. Optional kann RTS/CTS eingesetzt werden, um das Hidden-Station-Problem zu lösen.',
-   analogy:'Wie ein höfliches Walkie-Talkie-Gespräch: Du wartest eine kurze Pause ab, zählst innerlich bis zu einer zufälligen Zahl, und erst dann drückst du die Sprechtaste. Nach dem Sprechen wartest du auf ein "Roger" (ACK) als Bestätigung.',
-   hints:['Im Funk kann man nicht gleichzeitig senden und empfangen – daher Vermeidung statt Erkennung','DIFS = Distributed Inter-Frame Spacing – Pflichtwartezeit vor dem Senden','ACK = Acknowledgement – ohne Bestätigung wird die Übertragung wiederholt'],
+var GLOSSARY = [
+  {term:'CSMA/CD',short:'Carrier Sense Multiple Access / Collision Detection',
+   definition:'CSMA/CD (IEEE 802.3) ist das Medienzugriffsverfahren f\u00fcr kabelgebundenes Ethernet im Halbduplex-Betrieb. Jede Station h\u00f6rt den Kanal ab (Carrier Sense), bevor sie sendet. Senden mehrere Stationen gleichzeitig, wird die Kollision erkannt (Collision Detection), ein Jam Signal (32 Bit) gesendet und nach dem Binary Exponential Backoff (zuf\u00e4llige Wartezeit aus 0..2^n-1 Slotzeiten) erneut versucht. Bei Vollduplex-Switches ist CSMA/CD nicht mehr n\u00f6tig.',
+   analogy:'\uD83D\uDD0C Stell dir ein Gespr\u00e4ch am Tisch vor: Bevor du sprichst, h\u00f6rst du, ob jemand redet. Falls zwei gleichzeitig anfangen, bemerken beide das Durcheinander (Kollision) und schweigen. Dann wartet jeder eine zuf\u00e4llige Zeit, bevor er es erneut versucht.',
+   hints:['Nur bei Halbduplex-Verbindungen relevant (z.B. Hub-basierte Netze)','Jam Signal = 32 Bit, um alle Stationen \u00fcber die Kollision zu informieren','Backoff-Formel: zuf\u00e4llige Wartezeit aus 0 bis 2^n - 1 Slotzeiten (n = Versuchsnummer)'],
    questions:[
-     {type:'fill',q:'CSMA/CA steht für Carrier Sense Multiple Access / Collision ___.',a:'Avoidance',keywords:['Avoidance','Vermeidung']},
-     {type:'choice',q:'Warum wird im WLAN Collision Avoidance statt Detection verwendet?',correct:'Weil Funkstationen nicht gleichzeitig senden und empfangen können',wrong:['Weil WLAN schneller ist als Ethernet','Weil Kollisionen im Funk nicht vorkommen','Weil der Access Point alle Kollisionen verhindert']},
-     {type:'explain',q:'Beschreibe den vollständigen Ablauf einer CSMA/CA-Übertragung.',keywords:['kanal','abhören','difs','backoff','senden','ack','bestätigung']}
-   ],difficulty:1},
-
-  {id:'mac-schicht',term:'MAC-Schicht',icon:'&#128279;',short:'Media Access Control – Teilschicht von OSI Layer 2',
-   definition:'Die MAC-Schicht (Media Access Control) ist die untere Teilschicht des Data Link Layers (OSI-Schicht 2). Sie regelt den Zugriff mehrerer Stationen auf ein gemeinsames Übertragungsmedium. Die MAC-Adresse ist eine weltweit eindeutige 48-Bit-Hardwareadresse (6 Byte, 12 Hex-Zeichen), bestehend aus OUI (Organizationally Unique Identifier, 24 Bit, Herstellerkennung) und Device ID (24 Bit). Die Broadcast-MAC ist FF:FF:FF:FF:FF:FF.',
-   analogy:'Die MAC-Schicht ist wie ein Verkehrspolizist an einer Kreuzung ohne Ampel: Sie regelt, wer wann die Straße (das Medium) benutzen darf, und jedes Fahrzeug hat ein einzigartiges Nummernschild (MAC-Adresse).',
-   hints:['MAC-Adresse = 48 Bit = 6 Byte = 12 Hex-Zeichen (z.B. A4:3E:51:0F:C2:7B)','OUI (erste 3 Byte) identifiziert den Hersteller der Netzwerkkarte','Broadcast-MAC FF:FF:FF:FF:FF:FF erreicht alle Geräte im lokalen Netz'],
+     {type:'fill',q:'CSMA/CD steht f\u00fcr Carrier Sense Multiple Access / Collision ___.',a:'Detection',keywords:['Detection','Erkennung']},
+     {type:'choice',q:'Wann ist CSMA/CD NICHT mehr n\u00f6tig?',options:['Bei Vollduplex-Verbindungen \u00fcber Switches','Bei WLAN-Verbindungen \u00fcber Access Points','Bei Verbindungen mit hoher Bandbreite','Bei IPv6-Netzwerken'],correct:0},
+     {type:'explain',q:'Erkl\u00e4re den Ablauf von CSMA/CD in eigenen Worten.',keywords:['kanal','abh\u00f6ren','senden','kollision','erkennen','jam','backoff','warten'],minKeywords:3}
+   ]},
+  {term:'CSMA/CA',short:'Carrier Sense Multiple Access / Collision Avoidance',
+   definition:'CSMA/CA (IEEE 802.11) ist das Medienzugriffsverfahren f\u00fcr WLAN. Da im Funk eine Kollisionserkennung unm\u00f6glich ist (man kann nicht gleichzeitig senden und empfangen), werden Kollisionen vermieden (Avoidance). Der Ablauf: Kanal abh\u00f6ren, DIFS abwarten, zuf\u00e4lligen Backoff-Timer herunterz\u00e4hlen, senden, auf ACK warten. Optional kann RTS/CTS eingesetzt werden, um das Hidden-Station-Problem zu l\u00f6sen.',
+   analogy:'\uD83D\uDCE1 Wie ein h\u00f6fliches Walkie-Talkie-Gespr\u00e4ch: Du wartest eine kurze Pause ab, z\u00e4hlst innerlich bis zu einer zuf\u00e4lligen Zahl, und erst dann dr\u00fcckst du die Sprechtaste. Nach dem Sprechen wartest du auf ein "Roger" (ACK) als Best\u00e4tigung.',
+   hints:['Im Funk kann man nicht gleichzeitig senden und empfangen \u2013 daher Vermeidung statt Erkennung','DIFS = Distributed Inter-Frame Spacing \u2013 Pflichtwartezeit vor dem Senden','ACK = Acknowledgement \u2013 ohne Best\u00e4tigung wird die \u00dcbertragung wiederholt'],
+   questions:[
+     {type:'fill',q:'CSMA/CA steht f\u00fcr Carrier Sense Multiple Access / Collision ___.',a:'Avoidance',keywords:['Avoidance','Vermeidung']},
+     {type:'choice',q:'Warum wird im WLAN Collision Avoidance statt Detection verwendet?',options:['Weil Funkstationen nicht gleichzeitig senden und empfangen k\u00f6nnen','Weil WLAN schneller ist als Ethernet','Weil Kollisionen im Funk nicht vorkommen','Weil der Access Point alle Kollisionen verhindert'],correct:0},
+     {type:'explain',q:'Beschreibe den vollst\u00e4ndigen Ablauf einer CSMA/CA-\u00dcbertragung.',keywords:['kanal','abh\u00f6ren','difs','backoff','senden','ack','best\u00e4tigung'],minKeywords:3}
+   ]},
+  {term:'MAC-Schicht',short:'Media Access Control \u2013 Teilschicht von OSI Layer 2',
+   definition:'Die MAC-Schicht (Media Access Control) ist die untere Teilschicht des Data Link Layers (OSI-Schicht 2). Sie regelt den Zugriff mehrerer Stationen auf ein gemeinsames \u00dcbertragungsmedium. Die MAC-Adresse ist eine weltweit eindeutige 48-Bit-Hardwareadresse (6 Byte, 12 Hex-Zeichen), bestehend aus OUI (24 Bit, Herstellerkennung) und Device ID (24 Bit). Die Broadcast-MAC ist FF:FF:FF:FF:FF:FF.',
+   analogy:'\uD83D\uDD17 Die MAC-Schicht ist wie ein Verkehrspolizist an einer Kreuzung ohne Ampel: Sie regelt, wer wann die Stra\u00dfe (das Medium) benutzen darf, und jedes Fahrzeug hat ein einzigartiges Nummernschild (MAC-Adresse).',
+   hints:['MAC-Adresse = 48 Bit = 6 Byte = 12 Hex-Zeichen (z.B. A4:3E:51:0F:C2:7B)','OUI (erste 3 Byte) identifiziert den Hersteller der Netzwerkkarte','Broadcast-MAC FF:FF:FF:FF:FF:FF erreicht alle Ger\u00e4te im lokalen Netz'],
    questions:[
      {type:'fill',q:'Eine MAC-Adresse ist ___ Bit lang.',a:'48',keywords:['48']},
-     {type:'choice',q:'Welcher Teil der MAC-Adresse identifiziert den Hersteller?',correct:'OUI (Organizationally Unique Identifier) – die ersten 24 Bit',wrong:['Device ID – die letzten 24 Bit','FCS – Frame Check Sequence','Das Type/Length-Feld im Ethernet-Frame']},
-     {type:'explain',q:'Erkläre den Aufbau einer MAC-Adresse und die Rolle der MAC-Schicht.',keywords:['48 bit','6 byte','oui','hersteller','device id','schicht 2','zugriff','medium']}
-   ],difficulty:1},
-
-  {id:'kollision',term:'Kollision',icon:'&#128165;',short:'Gleichzeitiges Senden zweier Stationen auf dem gleichen Medium',
-   definition:'Eine Kollision entsteht, wenn zwei oder mehr Stationen gleichzeitig Daten auf einem gemeinsamen Medium senden. Die Signale überlagern sich und werden unlesbar. Bei kabelgebundenem Ethernet (CSMA/CD) werden Kollisionen erkannt und mit einem Jam Signal signalisiert. Im WLAN (CSMA/CA) werden Kollisionen nicht erkannt, sondern durch Wartezeiten und ACK-Mechanismen vermieden. Ein fehlender ACK deutet auf eine Kollision hin.',
-   analogy:'Wie wenn zwei Personen gleichzeitig in ein Megafon sprechen – die Zuhörer verstehen nur Lärm. Im Kabel-Netzwerk hört man den Lärm sofort (Detection), beim Funk merkt man es erst, wenn keine Antwort kommt (kein ACK).',
-   hints:['Kollisionsdomäne: Alle Geräte, die sich ein Medium teilen (z.B. an einem Hub)','Switches teilen Kollisionsdomänen auf – jeder Port ist eine eigene Domäne','Im Vollduplex gibt es keine Kollisionen (getrennte Sende-/Empfangsleitungen)'],
+     {type:'choice',q:'Welcher Teil der MAC-Adresse identifiziert den Hersteller?',options:['OUI (Organizationally Unique Identifier) \u2013 die ersten 24 Bit','Device ID \u2013 die letzten 24 Bit','FCS \u2013 Frame Check Sequence','Das Type/Length-Feld im Ethernet-Frame'],correct:0},
+     {type:'explain',q:'Erkl\u00e4re den Aufbau einer MAC-Adresse und die Rolle der MAC-Schicht.',keywords:['48 bit','6 byte','oui','hersteller','device id','schicht 2','zugriff','medium'],minKeywords:3}
+   ]},
+  {term:'Kollision',short:'Gleichzeitiges Senden zweier Stationen auf dem gleichen Medium',
+   definition:'Eine Kollision entsteht, wenn zwei oder mehr Stationen gleichzeitig Daten auf einem gemeinsamen Medium senden. Die Signale \u00fcberlagern sich und werden unlesbar. Bei kabelgebundenem Ethernet (CSMA/CD) werden Kollisionen erkannt und mit einem Jam Signal signalisiert. Im WLAN (CSMA/CA) werden Kollisionen nicht erkannt, sondern durch Wartezeiten und ACK-Mechanismen vermieden.',
+   analogy:'\uD83D\uDCA5 Wie wenn zwei Personen gleichzeitig in ein Megafon sprechen \u2013 die Zuh\u00f6rer verstehen nur L\u00e4rm. Im Kabel-Netzwerk h\u00f6rt man den L\u00e4rm sofort (Detection), beim Funk merkt man es erst, wenn keine Antwort kommt (kein ACK).',
+   hints:['Kollisionsdom\u00e4ne: Alle Ger\u00e4te, die sich ein Medium teilen (z.B. an einem Hub)','Switches teilen Kollisionsdom\u00e4nen auf \u2013 jeder Port ist eine eigene Dom\u00e4ne','Im Vollduplex gibt es keine Kollisionen (getrennte Sende-/Empfangsleitungen)'],
    questions:[
      {type:'fill',q:'Nach einer Kollision bei CSMA/CD wird ein ___ Signal gesendet.',a:'Jam',keywords:['Jam','Jam-Signal']},
-     {type:'choice',q:'Wie erkennt CSMA/CA, dass eine Kollision stattgefunden hat?',correct:'Das ACK (Acknowledgement) vom Empfänger bleibt aus',wrong:['Durch Messung der Signalverzerrung auf dem Kabel','Durch das Jam Signal des Empfängers','Gar nicht – Kollisionen sind bei WLAN unmöglich']},
-     {type:'explain',q:'Erkläre den Unterschied der Kollisionsbehandlung bei CSMA/CD und CSMA/CA.',keywords:['erkennen','detect','vermeiden','avoid','jam','ack','kabel','funk']}
-   ],difficulty:2},
-
-  {id:'backoff',term:'Backoff-Algorithmus',icon:'&#9200;',short:'Zufällige Wartezeit nach einer Kollision',
-   definition:'Der Binary Exponential Backoff ist der Algorithmus, der nach einer Kollision die Wartezeit bestimmt. Die Station wählt eine zufällige Zahl aus dem Intervall [0, 2^n - 1] (n = Anzahl bisheriger Versuche für dieses Frame) und wartet diese Anzahl an Slotzeiten. Mit jedem Fehlversuch verdoppelt sich das Intervall (exponentiell), wodurch die Wahrscheinlichkeit weiterer Kollisionen sinkt. Nach 16 Versuchen wird das Frame verworfen.',
-   analogy:'Wie wenn sich zwei Personen an einer Tür treffen: Beim ersten Mal wartet jeder 0 oder 1 Sekunde. Beim zweiten Treffen wählt jeder aus 0-3 Sekunden. Beim dritten aus 0-7. Je öfter man sich blockiert, desto länger könnte man warten – damit nicht immer beide gleichzeitig losgehen.',
-   hints:['Formel: Wartezeit = Zufallszahl aus [0, 2^n - 1] × Slotzeit','n steigt mit jedem Fehlversuch (1. Versuch: 0-1, 2. Versuch: 0-3, 3. Versuch: 0-7 ...)','Nach 16 Versuchen wird aufgegeben und das Frame verworfen'],
+     {type:'choice',q:'Wie erkennt CSMA/CA, dass eine Kollision stattgefunden hat?',options:['Das ACK (Acknowledgement) vom Empf\u00e4nger bleibt aus','Durch Messung der Signalverzerrung auf dem Kabel','Durch das Jam Signal des Empf\u00e4ngers','Gar nicht \u2013 Kollisionen sind bei WLAN unm\u00f6glich'],correct:0},
+     {type:'explain',q:'Erkl\u00e4re den Unterschied der Kollisionsbehandlung bei CSMA/CD und CSMA/CA.',keywords:['erkennen','detect','vermeiden','avoid','jam','ack','kabel','funk'],minKeywords:3}
+   ]},
+  {term:'Backoff-Algorithmus',short:'Zuf\u00e4llige Wartezeit nach einer Kollision',
+   definition:'Der Binary Exponential Backoff ist der Algorithmus, der nach einer Kollision die Wartezeit bestimmt. Die Station w\u00e4hlt eine zuf\u00e4llige Zahl aus dem Intervall [0, 2^n - 1] (n = Anzahl bisheriger Versuche) und wartet diese Anzahl an Slotzeiten. Mit jedem Fehlversuch verdoppelt sich das Intervall (exponentiell). Nach 16 Versuchen wird das Frame verworfen.',
+   analogy:'\u23F0 Wie wenn sich zwei Personen an einer T\u00fcr treffen: Beim ersten Mal wartet jeder 0 oder 1 Sekunde. Beim zweiten Treffen w\u00e4hlt jeder aus 0-3 Sekunden. Je \u00f6fter man sich blockiert, desto l\u00e4nger k\u00f6nnte man warten.',
+   hints:['Formel: Wartezeit = Zufallszahl aus [0, 2^n - 1] \u00d7 Slotzeit','n steigt mit jedem Fehlversuch (1. Versuch: 0-1, 2. Versuch: 0-3, 3. Versuch: 0-7 ...)','Nach 16 Versuchen wird aufgegeben und das Frame verworfen'],
    questions:[
-     {type:'fill',q:'Beim Binary Exponential Backoff wählt die Station eine Zufallszahl aus 0 bis 2^n - ___.',a:'1',keywords:['1']},
-     {type:'choice',q:'Was passiert mit dem Backoff-Intervall bei weiteren Kollisionen?',correct:'Es verdoppelt sich mit jedem Fehlversuch (exponentielles Wachstum)',wrong:['Es bleibt konstant','Es halbiert sich mit jedem Fehlversuch','Es wird auf 0 zurückgesetzt']},
-     {type:'explain',q:'Erkläre, warum der Backoff-Algorithmus exponentiell wächst.',keywords:['kollision','wahrscheinlichkeit','verdoppel','intervall','zufall','slotzeit']}
-   ],difficulty:2},
-
-  {id:'wlan',term:'WLAN (IEEE 802.11)',icon:'&#128225;',short:'Wireless Local Area Network – Drahtloses lokales Netzwerk',
-   definition:'WLAN (Wireless LAN) nach IEEE 802.11 ermöglicht drahtlose Netzwerkkommunikation über Funkwellen. Wichtige Standards: 802.11b (2.4 GHz, 11 Mbit/s), 802.11a (5 GHz, 54 Mbit/s), 802.11g (2.4 GHz, 54 Mbit/s), 802.11n/Wi-Fi 4 (2.4/5 GHz, 600 Mbit/s), 802.11ac/Wi-Fi 5 (5 GHz, 6.9 Gbit/s), 802.11ax/Wi-Fi 6 (2.4/5 GHz, 9.6 Gbit/s). Topologien: BSS (ein AP), ESS (mehrere APs, Roaming), IBSS (Ad-hoc). Sicherheit: WEP (unsicher), WPA (TKIP), WPA2 (AES/CCMP), WPA3 (SAE).',
-   analogy:'WLAN ist wie ein unsichtbares Sprechzimmer: Alle können reden (Funk), aber nur einer gleichzeitig. Der Access Point ist der Moderator, der regelt, wer dran ist. Je neuer der Standard, desto schneller und sicherer das "Gespräch".',
-   hints:['2.4 GHz: größere Reichweite, mehr Störungen. 5 GHz: höhere Datenrate, kürzere Reichweite','BSS = ein AP, ESS = mehrere APs (Roaming), IBSS = ohne AP (Ad-hoc)','Sicherheitsreihenfolge: WEP (unsicher) → WPA → WPA2 (AES) → WPA3 (SAE)'],
+     {type:'fill',q:'Beim Binary Exponential Backoff w\u00e4hlt die Station eine Zufallszahl aus 0 bis 2^n - ___.',a:'1',keywords:['1']},
+     {type:'choice',q:'Was passiert mit dem Backoff-Intervall bei weiteren Kollisionen?',options:['Es verdoppelt sich mit jedem Fehlversuch (exponentielles Wachstum)','Es bleibt konstant','Es halbiert sich mit jedem Fehlversuch','Es wird auf 0 zur\u00fcckgesetzt'],correct:0},
+     {type:'explain',q:'Erkl\u00e4re, warum der Backoff-Algorithmus exponentiell w\u00e4chst.',keywords:['kollision','wahrscheinlichkeit','verdoppel','intervall','zufall','slotzeit'],minKeywords:3}
+   ]},
+  {term:'WLAN (IEEE 802.11)',short:'Wireless Local Area Network \u2013 Drahtloses lokales Netzwerk',
+   definition:'WLAN nach IEEE 802.11 erm\u00f6glicht drahtlose Netzwerkkommunikation \u00fcber Funkwellen. Wichtige Standards: 802.11b (2.4 GHz, 11 Mbit/s), 802.11n/Wi-Fi 4 (2.4/5 GHz, 600 Mbit/s), 802.11ac/Wi-Fi 5 (5 GHz, 6.9 Gbit/s), 802.11ax/Wi-Fi 6 (2.4/5 GHz, 9.6 Gbit/s). Topologien: BSS (ein AP), ESS (mehrere APs, Roaming), IBSS (Ad-hoc). Sicherheit: WEP (unsicher), WPA (TKIP), WPA2 (AES/CCMP), WPA3 (SAE).',
+   analogy:'\uD83D\uDCE1 WLAN ist wie ein unsichtbares Sprechzimmer: Alle k\u00f6nnen reden (Funk), aber nur einer gleichzeitig. Der Access Point ist der Moderator, der regelt, wer dran ist.',
+   hints:['2.4 GHz: gr\u00f6\u00dfere Reichweite, mehr St\u00f6rungen. 5 GHz: h\u00f6here Datenrate, k\u00fcrzere Reichweite','BSS = ein AP, ESS = mehrere APs (Roaming), IBSS = ohne AP (Ad-hoc)','Sicherheitsreihenfolge: WEP (unsicher) \u2192 WPA \u2192 WPA2 (AES) \u2192 WPA3 (SAE)'],
    questions:[
-     {type:'fill',q:'Der aktuelle Sicherheitsstandard für WLAN verwendet AES/CCMP und heißt ___.',a:'WPA2',keywords:['WPA2']},
-     {type:'choice',q:'Welcher WLAN-Standard unterstützt sowohl 2.4 GHz als auch 5 GHz?',correct:'802.11n (Wi-Fi 4) und 802.11ax (Wi-Fi 6)',wrong:['802.11b (Wi-Fi 1) und 802.11g (Wi-Fi 3)','802.11a (Wi-Fi 2) und 802.11ac (Wi-Fi 5)','Alle WLAN-Standards unterstützen beide Frequenzen']},
-     {type:'explain',q:'Vergleiche die WLAN-Topologien BSS, ESS und IBSS.',keywords:['bss','ess','ibss','access point','roaming','ad-hoc','infrastruktur']}
-   ],difficulty:1},
-
-  {id:'hidden-station',term:'Hidden-Station-Problem',icon:'&#128123;',short:'Zwei Stationen können sich gegenseitig nicht hören',
-   definition:'Das Hidden-Station-Problem (auch Hidden-Node-Problem) tritt in WLAN-Netzen auf, wenn zwei Stationen jeweils den Access Point erreichen können, aber aufgrund der Entfernung oder Hindernisse nicht voneinander wissen. Beide prüfen den Kanal, finden ihn frei (weil sie die Sendung der anderen nicht hören) und senden gleichzeitig – es kommt zur Kollision am AP. Die Lösung ist der RTS/CTS-Mechanismus (Request to Send / Clear to Send).',
-   analogy:'Stell dir zwei Personen vor, die auf verschiedenen Seiten eines Berges stehen und beide mit jemandem auf dem Gipfel (AP) reden wollen. Keiner hört den anderen, also reden beide gleichzeitig los. Der auf dem Gipfel versteht nichts mehr – eine "versteckte" Kollision.',
-   hints:['Tritt auf, wenn Stationen außerhalb der Funkreichweite voneinander liegen','Der AP empfängt beide Signale gleichzeitig → Kollision am AP','Lösung: RTS/CTS reserviert den Kanal, sodass versteckte Stationen gewarnt werden'],
+     {type:'fill',q:'Der aktuelle Sicherheitsstandard f\u00fcr WLAN verwendet AES/CCMP und hei\u00dft ___.',a:'WPA2',keywords:['WPA2']},
+     {type:'choice',q:'Welcher WLAN-Standard unterst\u00fctzt sowohl 2.4 GHz als auch 5 GHz?',options:['802.11n (Wi-Fi 4) und 802.11ax (Wi-Fi 6)','802.11b (Wi-Fi 1) und 802.11g (Wi-Fi 3)','802.11a (Wi-Fi 2) und 802.11ac (Wi-Fi 5)','Alle WLAN-Standards unterst\u00fctzen beide Frequenzen'],correct:0},
+     {type:'explain',q:'Vergleiche die WLAN-Topologien BSS, ESS und IBSS.',keywords:['bss','ess','ibss','access point','roaming','ad-hoc','infrastruktur'],minKeywords:3}
+   ]},
+  {term:'Hidden-Station-Problem',short:'Zwei Stationen k\u00f6nnen sich gegenseitig nicht h\u00f6ren',
+   definition:'Das Hidden-Station-Problem tritt in WLAN-Netzen auf, wenn zwei Stationen jeweils den Access Point erreichen k\u00f6nnen, aber aufgrund der Entfernung oder Hindernisse nicht voneinander wissen. Beide pr\u00fcfen den Kanal, finden ihn frei und senden gleichzeitig \u2013 es kommt zur Kollision am AP. Die L\u00f6sung ist der RTS/CTS-Mechanismus.',
+   analogy:'\uD83D\uDC7B Stell dir zwei Personen vor, die auf verschiedenen Seiten eines Berges stehen und beide mit jemandem auf dem Gipfel (AP) reden wollen. Keiner h\u00f6rt den anderen, also reden beide gleichzeitig los.',
+   hints:['Tritt auf, wenn Stationen au\u00dferhalb der Funkreichweite voneinander liegen','Der AP empf\u00e4ngt beide Signale gleichzeitig \u2192 Kollision am AP','L\u00f6sung: RTS/CTS reserviert den Kanal, sodass versteckte Stationen gewarnt werden'],
    questions:[
-     {type:'fill',q:'Das Hidden-Station-Problem wird durch den ___/CTS-Mechanismus gelöst.',a:'RTS',keywords:['RTS','Request to Send']},
-     {type:'choice',q:'Wann tritt das Hidden-Station-Problem auf?',correct:'Wenn zwei Stationen den AP erreichen, aber sich gegenseitig nicht hören können',wrong:['Wenn der Access Point ausfällt','Wenn zu viele Stationen im Netzwerk sind','Wenn die Verschlüsselung falsch konfiguriert ist']},
-     {type:'explain',q:'Erkläre das Hidden-Station-Problem und seine Lösung.',keywords:['station','hören','reichweite','ap','access point','kollision','rts','cts']}
-   ],difficulty:2},
-
-  {id:'rts-cts',term:'RTS/CTS',icon:'&#128172;',short:'Request to Send / Clear to Send – Kanalreservierung',
-   definition:'RTS/CTS (Request to Send / Clear to Send) ist ein optionaler Mechanismus bei CSMA/CA (IEEE 802.11), der das Hidden-Station-Problem löst. Ablauf: Die sendende Station schickt ein kurzes RTS-Frame an den Empfänger (AP). Der Empfänger antwortet mit einem CTS-Frame, das von allen Stationen in seiner Reichweite empfangen wird. Alle Stationen, die das CTS hören, wissen, dass der Kanal reserviert ist, und warten (NAV = Network Allocation Vector). Erst nach Ablauf des NAV oder nach dem ACK dürfen sie senden.',
-   analogy:'Wie das Handheben im Klassenzimmer: Du hebst die Hand (RTS), der Lehrer zeigt auf dich (CTS) und alle anderen wissen, dass sie still sein müssen. Erst wenn du fertig bist (ACK), darf der nächste sprechen.',
-   hints:['RTS/CTS ist optional und wird nur bei größeren Frames empfohlen (Overhead!)','CTS wird von allen Stationen in Reichweite des AP gehört – auch von "versteckten"','NAV (Network Allocation Vector) gibt an, wie lange der Kanal reserviert ist'],
+     {type:'fill',q:'Das Hidden-Station-Problem wird durch den ___/CTS-Mechanismus gel\u00f6st.',a:'RTS',keywords:['RTS','Request to Send']},
+     {type:'choice',q:'Wann tritt das Hidden-Station-Problem auf?',options:['Wenn zwei Stationen den AP erreichen, aber sich gegenseitig nicht h\u00f6ren k\u00f6nnen','Wenn der Access Point ausf\u00e4llt','Wenn zu viele Stationen im Netzwerk sind','Wenn die Verschl\u00fcsselung falsch konfiguriert ist'],correct:0},
+     {type:'explain',q:'Erkl\u00e4re das Hidden-Station-Problem und seine L\u00f6sung.',keywords:['station','h\u00f6ren','reichweite','ap','access point','kollision','rts','cts'],minKeywords:3}
+   ]},
+  {term:'RTS/CTS',short:'Request to Send / Clear to Send \u2013 Kanalreservierung',
+   definition:'RTS/CTS ist ein optionaler Mechanismus bei CSMA/CA (IEEE 802.11), der das Hidden-Station-Problem l\u00f6st. Die sendende Station schickt ein kurzes RTS-Frame an den Empf\u00e4nger (AP). Der Empf\u00e4nger antwortet mit einem CTS-Frame, das von allen Stationen in seiner Reichweite empfangen wird. Alle wissen, dass der Kanal reserviert ist, und warten (NAV = Network Allocation Vector).',
+   analogy:'\uD83D\uDCAC Wie das Handheben im Klassenzimmer: Du hebst die Hand (RTS), der Lehrer zeigt auf dich (CTS) und alle anderen wissen, dass sie still sein m\u00fcssen. Erst wenn du fertig bist (ACK), darf der n\u00e4chste sprechen.',
+   hints:['RTS/CTS ist optional und wird nur bei gr\u00f6\u00dferen Frames empfohlen (Overhead!)','CTS wird von allen Stationen in Reichweite des AP geh\u00f6rt \u2013 auch von "versteckten"','NAV (Network Allocation Vector) gibt an, wie lange der Kanal reserviert ist'],
    questions:[
-     {type:'fill',q:'RTS steht für Request to ___, CTS für Clear to ___.',a:'Send',keywords:['Send','Senden']},
-     {type:'choice',q:'Warum ist RTS/CTS optional und wird nicht immer verwendet?',correct:'Weil der zusätzliche Overhead (RTS+CTS-Frames) bei kleinen Datenpaketen ineffizient ist',wrong:['Weil RTS/CTS nur bei 5-GHz-Netzen funktioniert','Weil moderne Access Points keine Kollisionen mehr haben','Weil WPA2 die Funktion von RTS/CTS übernommen hat']},
-     {type:'explain',q:'Beschreibe den vollständigen RTS/CTS-Ablauf und warum er das Hidden-Station-Problem löst.',keywords:['rts','cts','ap','reserv','nav','versteckt','hidden','kanal']}
-   ],difficulty:3}
+     {type:'fill',q:'RTS steht f\u00fcr Request to ___, CTS f\u00fcr Clear to ___.',a:'Send',keywords:['Send','Senden']},
+     {type:'choice',q:'Warum ist RTS/CTS optional und wird nicht immer verwendet?',options:['Weil der zus\u00e4tzliche Overhead (RTS+CTS-Frames) bei kleinen Datenpaketen ineffizient ist','Weil RTS/CTS nur bei 5-GHz-Netzen funktioniert','Weil moderne Access Points keine Kollisionen mehr haben','Weil WPA2 die Funktion von RTS/CTS \u00fcbernommen hat'],correct:0},
+     {type:'explain',q:'Beschreibe den vollst\u00e4ndigen RTS/CTS-Ablauf und warum er das Hidden-Station-Problem l\u00f6st.',keywords:['rts','cts','ap','reserv','nav','versteckt','hidden','kanal'],minKeywords:3}
+   ]}
 ];
 
-const GLOSSARY_KEY='glossary-mac-csma-wlan';
-let glossaryState={};
-function loadGlossaryState(){try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){glossaryState={};}}
-function saveGlossaryState(){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));}
-function getLevel(id){return glossaryState[id]||0;}
-function setLevel(id,lv){glossaryState[id]=Math.min(3,Math.max(0,lv));saveGlossaryState();renderGlossaryGrid();updateGlossaryProgress();}
-
-function updateGlossaryProgress(){
-  const mastered=glossaryTerms.filter(t=>getLevel(t.id)>=3).length;
-  const pct=Math.round(mastered/glossaryTerms.length*100);
-  document.getElementById('gp-fill').style.width=pct+'%';
-  document.getElementById('gp-count').textContent=mastered+' / '+glossaryTerms.length+' gemeistert';
-}
-
-function renderGlossaryGrid(){
-  const grid=document.getElementById('glossary-grid');
-  grid.innerHTML=glossaryTerms.map(t=>{
-    const lv=getLevel(t.id);
-    return '<div class="glossary-card'+(glossaryState._active===t.id?' active':'')+'" data-level="'+lv+'" data-id="'+t.id+'" onclick="openGlossaryLearn(\''+t.id+'\')"><div class="gc-icon">'+t.icon+'</div><div class="gc-term">'+t.term+'</div><div class="gc-short">'+t.short+'</div><div class="gc-level"></div></div>';
-  }).join('');
-}
-
-// ===== Glossary Learn Panel =====
-let glCurrentPhase=0,glHintIdx=0,glCurrentTerm=null;
-function openGlossaryLearn(id){
-  glCurrentTerm=glossaryTerms.find(t=>t.id===id);
-  if(!glCurrentTerm)return;
-  glossaryState._active=id;
-  glCurrentPhase=0;glHintIdx=0;
-  renderGlossaryGrid();
-  renderGlossaryPhase();
-  const panel=document.getElementById('glossary-learn');
-  panel.classList.add('visible');
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-function closeGlossaryLearn(){
-  document.getElementById('glossary-learn').classList.remove('visible');
-  glossaryState._active=null;renderGlossaryGrid();
-}
-function renderGlossaryPhase(){
-  const t=glCurrentTerm;
-  const phases=['Verstehen','Vertiefen','Prüfen'];
-  let html='<div class="gl-header"><h3>'+t.icon+' '+t.term+'</h3><button class="gl-close" onclick="closeGlossaryLearn()">&times;</button></div>';
-  html+='<div class="gl-phase-indicator">'+phases.map((p,i)=>'<span class="gl-phase'+(i===glCurrentPhase?' current':'')+(i<glCurrentPhase?' done':'')+'"'+(i<=glCurrentPhase?' onclick="glGoToPhase('+i+')"':'')+'>'+p+'</span>').join('')+'</div>';
-  html+='<div class="gl-content">';
-  if(glCurrentPhase===0){
-    html+='<div class="gl-analogy">&#128161; '+t.analogy+'</div>';
-    html+='<div class="gl-definition">'+t.definition+'</div>';
-    html+='<div style="margin-top:14px"><button class="gl-btn primary" onclick="glNextPhase()">Verstanden &rarr;</button></div>';
-  }else if(glCurrentPhase===1){
-    html+='<div class="gl-hints" id="gl-hints">';
-    t.hints.forEach((h,i)=>{html+='<div class="gl-hint'+(i<glHintIdx?' visible':'')+'" id="gl-hint-'+i+'">&#128204; '+h+'</div>';});
-    html+='</div>';
-    if(glHintIdx<t.hints.length) html+='<button class="gl-hint-btn" onclick="glShowHint()">&#128161; Nächster Hinweis ('+glHintIdx+'/'+t.hints.length+')</button>';
-    else html+='<button class="gl-btn primary" onclick="glNextPhase()">Zur Prüfung &rarr;</button>';
-  }else{
-    const q=t.questions[Math.min(getLevel(t.id),t.questions.length-1)];
-    html+='<div class="gl-question">'+q.q+'</div>';
-    if(q.type==='fill'){
-      html+='<input class="gl-input" id="gl-answer" placeholder="Antwort eingeben..." autocomplete="off">';
-      html+='<button class="gl-btn primary" onclick="glCheckFill()">Prüfen</button>';
-    }else if(q.type==='choice'){
-      const opts=shuffle([q.correct,...q.wrong]);
-      html+='<div class="gl-choices">'+opts.map(o=>'<button class="gl-choice" onclick="glCheckChoice(this,\''+btoa(unescape(encodeURIComponent(q.correct)))+'\')">'+o+'</button>').join('')+'</div>';
-    }else if(q.type==='explain'){
-      html+='<textarea class="gl-input" id="gl-answer" placeholder="Erkläre in eigenen Worten..."></textarea>';
-      html+='<div style="margin-bottom:8px;font-size:11px;color:var(--muted)">Schlüsselwörter: '+q.keywords.map(k=>'<span class="gl-keyword" style="background:rgba(255,255,255,.04);color:var(--muted)">'+k+'</span>').join(' ')+'</div>';
-      html+='<button class="gl-btn primary" onclick="glCheckExplain()">Prüfen</button>';
-    }
-    html+='<div id="gl-feedback"></div>';
+var GP_STORIES = {
+  'CSMA/CD': {
+    route: 'Du betrittst eine laute Fabrikhalle mit zwei Montageb\u00e4ndern.',
+    scenes: [
+      {kw:'Carrier Sense',img:'\uD83D\uDC42 Lauschen',text:'Am Eingang stehst du still und lauschst \u2013 ist die Halle ruhig? Carrier Sense: Erst h\u00f6ren, ob jemand sendet!'},
+      {kw:'Kollision',img:'\uD83D\uDCA5 Zusammensto\u00df',text:'Zwei Gabelstapler rasen aufeinander zu und krachen zusammen \u2013 KOLLISION! Beide Signale \u00fcberlagern sich, nichts ist mehr lesbar.'},
+      {kw:'Jam Signal',img:'\uD83D\uDEA8 Alarmsirene',text:'Sofort heult eine ohrenbetaeubende Alarmsirene los \u2013 32 Bit laut! Das ist das Jam Signal, das ALLE warnt.'},
+      {kw:'Backoff',img:'\u23F0 Zufalls-Timer',text:'Beide Staplerfahrer ziehen eine Zufallskarte: "Warte 3 Sekunden" vs. "Warte 1 Sekunde". Der mit der k\u00fcrzeren Wartezeit f\u00e4hrt zuerst los.'},
+      {kw:'Halbduplex',img:'\uD83D\uDEA7 Einbahnstra\u00dfe',text:'Die Halle hat nur EINE Fahrspur \u2013 Halbduplex. Nur einer kann gleichzeitig fahren. Bei Vollduplex-Switches gibt es zwei Spuren!'}
+    ]
+  },
+  'CSMA/CA': {
+    route: 'Du stehst in einem h\u00f6flichen japanischen Teehaus.',
+    scenes: [
+      {kw:'DIFS',img:'\uD83C\uDF75 Tee-Pause',text:'Bevor jemand spricht, verneigt sich jeder und wartet eine h\u00f6fliche Pause \u2013 die DIFS-Zeit. Erst dann darf man den Mund \u00f6ffnen.'},
+      {kw:'Backoff Timer',img:'\uD83C\uDFB2 W\u00fcrfel werfen',text:'Jeder Gast w\u00fcrfelt heimlich eine Zahl und z\u00e4hlt innerlich herunter. Wer bei Null ankommt, darf sprechen.'},
+      {kw:'ACK',img:'\uD83D\uDE4F Verbeugung',text:'Nach dem Sprechen verbeugt sich der Zuh\u00f6rer tief \u2013 das ACK, die Best\u00e4tigung: "Ich habe verstanden!"'},
+      {kw:'RTS/CTS',img:'\u270B Hand heben',text:'Bei wichtigen Themen hebt man die Hand (RTS). Der Teemeister nickt (CTS) und alle anderen schweigen respektvoll.'},
+      {kw:'Funk',img:'\uD83C\uDF10 Unsichtbare Wellen',text:'Die Stimmen schweben als unsichtbare Wellen durch den Raum \u2013 im Funk kann man nicht gleichzeitig reden und zuh\u00f6ren!'}
+    ]
+  },
+  'MAC-Schicht': {
+    route: 'Du bist auf einem riesigen Parkplatz voller Autos.',
+    scenes: [
+      {kw:'Schicht 2',img:'\uD83C\uDFE2 Zweites Stockwerk',text:'Du f\u00e4hrst in die zweite Etage des Parkhauses \u2013 die MAC-Schicht arbeitet auf OSI-Schicht 2, dem Data Link Layer.'},
+      {kw:'48 Bit',img:'\uD83D\uDE97 Nummernschild',text:'Jedes Auto hat ein einzigartiges Nummernschild mit 12 Zeichen (Hex) \u2013 die 48-Bit MAC-Adresse. Weltweit eindeutig!'},
+      {kw:'OUI',img:'\uD83C\uDFED Herstellerlogo',text:'Die ersten 3 Zeichenpaare zeigen das Herstellerlogo (OUI). Du erkennst sofort: Das ist ein BMW (Intel, Cisco...)!'},
+      {kw:'Broadcast',img:'\uD83D\uDCE2 Megafon',text:'Ein Parkw\u00e4chter schreit durch ein Megafon: FF:FF:FF:FF:FF:FF \u2013 die Broadcast-Adresse erreicht ALLE Autos gleichzeitig!'}
+    ]
+  },
+  'Kollision': {
+    route: 'Du stehst an einer engen Br\u00fccke ohne Ampel.',
+    scenes: [
+      {kw:'gleichzeitig',img:'\uD83D\uDE97\uD83D\uDE97 Zwei Autos',text:'Von beiden Seiten rasen gleichzeitig Autos auf die Br\u00fccke \u2013 CRASH! Beide senden zur gleichen Zeit auf dem gleichen Medium.'},
+      {kw:'Jam Signal',img:'\uD83D\uDEA8 Warnsignal',text:'Ein lautes Warnsignal ert\u00f6nt \u2013 das 32-Bit Jam Signal informiert alle: "STOPP! Kollision!"'},
+      {kw:'Kollisionsdom\u00e4ne',img:'\uD83D\uDFE2 Kreisverkehr',text:'Der gesamte Kreisverkehr ist eine Kollisionsdom\u00e4ne \u2013 alle Ger\u00e4te am Hub teilen sich denselben Raum.'},
+      {kw:'Switch',img:'\uD83D\uDEA6 Ampel',text:'Ein Switch baut individuelle Ampeln f\u00fcr jeden Arm \u2013 jeder Port ist eine eigene Kollisionsdom\u00e4ne. Keine Crashs mehr!'}
+    ]
+  },
+  'Backoff-Algorithmus': {
+    route: 'Du bist in einem Casino mit einem besonderen W\u00fcrfelspiel.',
+    scenes: [
+      {kw:'Zufallszahl',img:'\uD83C\uDFB2 W\u00fcrfel',text:'Nach jeder Kollision w\u00fcrfelst du \u2013 die Zufallszahl bestimmt, wie lange du wartest.'},
+      {kw:'exponentiell',img:'\uD83D\uDCC8 Wachsende W\u00fcrfel',text:'Beim ersten Wurf hast du einen 2-seitigen W\u00fcrfel, beim zweiten einen 4-seitigen, beim dritten einen 8-seitigen \u2013 exponentielles Wachstum!'},
+      {kw:'Slotzeit',img:'\u23F1 Stoppuhr',text:'Jede Warteeinheit ist eine "Slotzeit" \u2013 du multiplizierst deine W\u00fcrfelzahl mit dieser festen Zeiteinheit.'},
+      {kw:'16 Versuche',img:'\u274C Game Over',text:'Nach 16 gescheiterten Versuchen zeigt das Display "GAME OVER" \u2013 das Frame wird verworfen. Zu viele Kollisionen!'}
+    ]
+  },
+  'WLAN (IEEE 802.11)': {
+    route: 'Du betrittst ein gro\u00dfes Kongresszentrum mit vielen R\u00e4umen.',
+    scenes: [
+      {kw:'2.4 GHz',img:'\uD83D\uDCFB Langwellen-Antenne',text:'Im Erdgeschoss steht eine gro\u00dfe Antenne mit Schild "2.4 GHz" \u2013 gro\u00dfe Reichweite, aber alle funken hier und st\u00f6ren sich!'},
+      {kw:'5 GHz',img:'\uD83D\uDCE1 Kurzwellen-Dish',text:'Im Obergeschoss eine kompakte Satellitensch\u00fcssel "5 GHz" \u2013 superschnell, aber die Reichweite ist k\u00fcrzer.'},
+      {kw:'BSS',img:'\uD83C\uDFE0 Einzelner Raum',text:'Ein einzelner Konferenzraum mit EINEM Moderator (AP) und 10 Teilnehmern \u2013 das ist ein BSS (Basic Service Set).'},
+      {kw:'ESS',img:'\uD83C\uDFE2 Verbundene R\u00e4ume',text:'Mehrere R\u00e4ume sind verbunden, Teilnehmer k\u00f6nnen nahtlos wechseln (Roaming) \u2013 das ESS (Extended Service Set).'},
+      {kw:'WPA2',img:'\uD83D\uDD12 Sicherheitsschloss',text:'An jeder T\u00fcr h\u00e4ngt ein modernes AES-Schloss \u2013 WPA2 mit AES/CCMP ist der aktuelle Sicherheitsstandard!'}
+    ]
+  },
+  'Hidden-Station-Problem': {
+    route: 'Du stehst auf einer Insel mit einem hohen Berg in der Mitte.',
+    scenes: [
+      {kw:'versteckt',img:'\uD83C\uDFD4\uFE0F Berg dazwischen',text:'Auf der Westseite steht Station A, auf der Ostseite Station B. Der Berg dazwischen blockiert jede Sicht \u2013 sie sind f\u00fcreinander versteckt!'},
+      {kw:'AP auf dem Gipfel',img:'\uD83D\uDCE1 Antenne oben',text:'Auf dem Berggipfel steht der Access Point mit einer riesigen Antenne \u2013 beide Stationen k\u00f6nnen IHN erreichen.'},
+      {kw:'gleichzeitig senden',img:'\uD83D\uDCE2\uD83D\uDCE2 Beide rufen',text:'Beide Stationen rufen gleichzeitig zum Gipfel \u2013 der AP h\u00f6rt nur Chaos! Kollision am Empf\u00e4nger.'},
+      {kw:'RTS/CTS',img:'\uD83D\uDEA9 Flaggensignal',text:'L\u00f6sung: Station A wedelt mit einer Flagge (RTS), der AP wedelt zur\u00fcck (CTS) \u2013 und Station B sieht das CTS und wartet!'}
+    ]
+  },
+  'RTS/CTS': {
+    route: 'Du bist in einem Klassenzimmer mit einem strengen Lehrer.',
+    scenes: [
+      {kw:'RTS',img:'\u270B Hand heben',text:'Du hebst die Hand \u2013 das ist dein RTS (Request to Send). "Darf ich etwas sagen?"'},
+      {kw:'CTS',img:'\uD83D\uDC46 Lehrer zeigt',text:'Der Lehrer zeigt auf dich \u2013 CTS (Clear to Send). "Ja, du darfst sprechen!" ALLE sehen das.'},
+      {kw:'NAV',img:'\u23F3 Timer an der Tafel',text:'An der Tafel l\u00e4uft ein Timer herunter (NAV \u2013 Network Allocation Vector) \u2013 so lange ist der Kanal reserviert.'},
+      {kw:'Overhead',img:'\uD83D\uDCDD Extra Zettel',text:'F\u00fcr eine kurze Frage ist das Handheben \u00fcbertrieben (Overhead!). Deshalb ist RTS/CTS optional.'},
+      {kw:'Hidden Station',img:'\uD83D\uDC7B Versteckter Sch\u00fcler',text:'Ein Sch\u00fcler sitzt hinter einer S\u00e4ule (versteckt). Er sieht zwar den Lehrer (CTS), aber nicht dich \u2013 trotzdem wei\u00df er: "Jetzt still sein!"'}
+    ]
   }
-  html+='</div>';
-  document.getElementById('glossary-learn').innerHTML=html;
-  const inp=document.getElementById('gl-answer');
-  if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();if(glCurrentTerm.questions[Math.min(getLevel(glCurrentTerm.id),glCurrentTerm.questions.length-1)].type==='fill')glCheckFill();}});}
-}
-function glGoToPhase(idx){if(idx<=glCurrentPhase){glCurrentPhase=idx;glHintIdx=0;renderGlossaryPhase();}}
-function glNextPhase(){glCurrentPhase++;glHintIdx=0;renderGlossaryPhase();}
-function glShowHint(){glHintIdx++;renderGlossaryPhase();}
-
-function glCheckFill(){
-  const inp=document.getElementById('gl-answer');
-  const fb=document.getElementById('gl-feedback');
-  if(!inp.value.trim())return;
-  const q=glCurrentTerm.questions[Math.min(getLevel(glCurrentTerm.id),glCurrentTerm.questions.length-1)];
-  const val=inp.value.trim().toLowerCase();
-  const correct=q.keywords.some(k=>val.includes(k.toLowerCase()));
-  if(correct){
-    fb.innerHTML='<div class="gl-feedback success">&#10003; Richtig! '+q.a+'</div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelUp()">Weiter &rarr;</button></div>';
-    inp.style.borderColor='var(--green)';
-  }else{
-    fb.innerHTML='<div class="gl-feedback error">&#10007; Nicht ganz. Die richtige Antwort ist: <strong>'+q.a+'</strong></div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelDown()">Nochmal lernen</button></div>';
-    inp.style.borderColor='var(--red)';
-  }
-}
-function glCheckChoice(btn,b64){
-  const correct=decodeURIComponent(escape(atob(b64)));
-  const all=btn.parentElement.querySelectorAll('.gl-choice');
-  all.forEach(b=>{b.disabled=true;b.style.pointerEvents='none';if(b.textContent===correct)b.classList.add('correct');});
-  const fb=document.getElementById('gl-feedback');
-  if(btn.textContent===correct){
-    btn.classList.add('correct');
-    fb.innerHTML='<div class="gl-feedback success">&#10003; Richtig!</div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelUp()">Weiter &rarr;</button></div>';
-  }else{
-    btn.classList.add('wrong');
-    fb.innerHTML='<div class="gl-feedback error">&#10007; Falsch. Richtig wäre: <strong>'+correct+'</strong></div><div style="margin-top:10px"><button class="gl-btn primary" onclick="glLevelDown()">Nochmal lernen</button></div>';
-  }
-}
-function glCheckExplain(){
-  const inp=document.getElementById('gl-answer');
-  const fb=document.getElementById('gl-feedback');
-  if(!inp.value.trim())return;
-  const q=glCurrentTerm.questions[Math.min(getLevel(glCurrentTerm.id),glCurrentTerm.questions.length-1)];
-  const val=inp.value.trim().toLowerCase();
-  const found=q.keywords.filter(k=>val.includes(k.toLowerCase()));
-  const missing=q.keywords.filter(k=>!val.includes(k.toLowerCase()));
-  const ratio=found.length/q.keywords.length;
-  let html='<div class="gl-feedback '+(ratio>=0.5?'success':'error')+'">'+
-    (ratio>=0.5?'&#10003; Gute Erklärung!':'&#10007; Einige Schlüsselbegriffe fehlen.')+
-    ' ('+found.length+'/'+q.keywords.length+' Schlüsselwörter)</div>';
-  html+='<div style="margin-top:8px">'+q.keywords.map(k=>'<span class="gl-keyword '+(found.map(f=>f.toLowerCase()).includes(k.toLowerCase())?'found':'missing')+'">'+k+'</span>').join(' ')+'</div>';
-  html+='<div style="margin-top:10px"><button class="gl-btn primary" onclick="'+(ratio>=0.5?'glLevelUp()':'glLevelDown()')+'">'+(ratio>=0.5?'Weiter &rarr;':'Nochmal lernen')+'</button></div>';
-  fb.innerHTML=html;
-}
-function glLevelUp(){setLevel(glCurrentTerm.id,getLevel(glCurrentTerm.id)+1);glCurrentPhase=0;renderGlossaryPhase();}
-function glLevelDown(){const lv=getLevel(glCurrentTerm.id);if(lv>0)setLevel(glCurrentTerm.id,lv-1);glCurrentPhase=0;renderGlossaryPhase();}
-
-// ===== Tooltip =====
-const termMap={
-  'csma/cd':'csma-cd','csma cd':'csma-cd','collision detection':'csma-cd',
-  'csma/ca':'csma-ca','csma ca':'csma-ca','collision avoidance':'csma-ca',
-  'mac-schicht':'mac-schicht','mac schicht':'mac-schicht','mac-adresse':'mac-schicht','mac adresse':'mac-schicht','media access control':'mac-schicht',
-  'kollision':'kollision','kollisionen':'kollision','jam signal':'kollision','jam-signal':'kollision',
-  'backoff':'backoff','backoff-algorithmus':'backoff','binary exponential backoff':'backoff','backoff timer':'backoff','backoff-timer':'backoff',
-  'wlan':'wlan','ieee 802.11':'wlan','802.11':'wlan','wi-fi':'wlan','wifi':'wlan','wireless lan':'wlan',
-  'hidden-station':'hidden-station','hidden station':'hidden-station','hidden-station-problem':'hidden-station','hidden station problem':'hidden-station','hidden-node':'hidden-station','hidden node':'hidden-station',
-  'rts/cts':'rts-cts','rts cts':'rts-cts','rts':'rts-cts','cts':'rts-cts','request to send':'rts-cts','clear to send':'rts-cts'
 };
 
-function highlightGlossaryTerms(){
-  const selectors='.card p,.card li,.task-sub,.viz-step-label,.summary-card p,.gl-definition,.gl-analogy';
-  document.querySelectorAll(selectors).forEach(el=>{
-    if(el.dataset.glDone)return;el.dataset.glDone='1';
-    let h=el.innerHTML;
-    const patterns=[
-      [/\bCSMA\/CD\b/g,'csma-cd'],
-      [/\bCSMA\/CA\b/g,'csma-ca'],
-      [/\bMAC-Schicht\b/g,'mac-schicht'],
-      [/\bMAC-Adresse[n]?\b/g,'mac-schicht'],
-      [/\bKollision(?:en)?\b/g,'kollision'],
-      [/\bBackoff(?:-Algorithmus|-Timer)?\b/gi,'backoff'],
-      [/\bBinary Exponential Backoff\b/gi,'backoff'],
-      [/\bWLAN\b/g,'wlan'],
-      [/\bHidden[- ]Station(?:[- ]Problem)?\b/gi,'hidden-station'],
-      [/\bRTS\/CTS\b/g,'rts-cts']
-    ];
-    patterns.forEach(([re,id])=>{
-      h=h.replace(re,m=>{
-        if(m.indexOf('glossary-term')!==-1)return m;
-        return '<span class="glossary-term" data-g="'+id+'">'+m+'</span>';
-      });
-    });
-    el.innerHTML=h;
-  });
-}
+var GLOSSARY_TERM_MAP = {
+  'csma/cd':'CSMA/CD','csma cd':'CSMA/CD','collision detection':'CSMA/CD',
+  'csma/ca':'CSMA/CA','csma ca':'CSMA/CA','collision avoidance':'CSMA/CA',
+  'mac-schicht':'MAC-Schicht','mac schicht':'MAC-Schicht','mac-adresse':'MAC-Schicht','mac adresse':'MAC-Schicht',
+  'kollision':'Kollision','kollisionen':'Kollision','jam signal':'Kollision',
+  'backoff':'Backoff-Algorithmus','backoff-algorithmus':'Backoff-Algorithmus','binary exponential backoff':'Backoff-Algorithmus',
+  'wlan':'WLAN (IEEE 802.11)','ieee 802.11':'WLAN (IEEE 802.11)','802.11':'WLAN (IEEE 802.11)','wi-fi':'WLAN (IEEE 802.11)',
+  'hidden-station':'Hidden-Station-Problem','hidden station':'Hidden-Station-Problem','hidden-station-problem':'Hidden-Station-Problem',
+  'rts/cts':'RTS/CTS','rts':'RTS/CTS','cts':'RTS/CTS','request to send':'RTS/CTS','clear to send':'RTS/CTS'
+};
 
-const tooltip=document.getElementById('glossary-tooltip');
-document.addEventListener('mouseover',e=>{
-  const g=e.target.closest('.glossary-term');
-  if(!g)return;
-  const t=glossaryTerms.find(t=>t.id===g.dataset.g);
-  if(!t)return;
-  tooltip.querySelector('.gt-name').textContent=t.term;
-  tooltip.querySelector('.gt-short').textContent=t.short;
-  tooltip.style.display='block';
-  const r=g.getBoundingClientRect();
-  let top=r.bottom+8,left=r.left;
-  if(top+200>window.innerHeight)top=r.top-tooltip.offsetHeight-8;
-  if(left+270>window.innerWidth)left=window.innerWidth-280;
-  tooltip.style.top=top+'px';tooltip.style.left=Math.max(8,left)+'px';
-});
-document.addEventListener('mouseout',e=>{if(e.target.closest('.glossary-term'))tooltip.style.display='none';});
-document.addEventListener('click',e=>{
-  const g=e.target.closest('.glossary-term');
-  if(!g)return;
-  tooltip.style.display='none';
-  openGlossaryLearn(g.dataset.g);
-});
-
-// ===== Init Glossar =====
-loadGlossaryState();
-renderGlossaryGrid();
-updateGlossaryProgress();
-setTimeout(highlightGlossaryTerms,300);
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card li, .task-sub, .viz-step-label, .summary-card p';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

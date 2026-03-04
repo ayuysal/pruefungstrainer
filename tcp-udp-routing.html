@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TCP vs. UDP & Routing Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -97,72 +98,6 @@ tr:last-child td{border-bottom:none}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.compare-grid{grid-template-columns:1fr}.choice-btn{padding:10px 16px;font-size:12px}}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -355,15 +290,10 @@ tr:last-child td{border-bottom:none}
 </div>
 <div class="glossary-grid" id="glossary-grid"></div>
 <div class="glossary-learn" id="glossary-learn">
-  <div class="gl-header"><h3 id="gl-title"></h3><button class="gl-close" onclick="closeGlossaryLearn()">&times;</button></div>
+  <div class="gl-header"><h3 id="gl-title"></h3><button class="gl-close" onclick="glossaryClose()">&#x2715;</button></div>
   <div class="gl-phase-indicator" id="gl-phases"></div>
   <div class="gl-content" id="gl-content"></div>
 </div>
-</div>
-<div id="glossary-tooltip" class="glossary-tooltip">
-  <div class="gt-name" id="gt-name"></div>
-  <div class="gt-short" id="gt-short"></div>
-  <div class="gt-link">Klicke zum Lernen &#8595;</div>
 </div>
 </div>
 
@@ -542,396 +472,228 @@ function showSolution(){const s=document.getElementById('sol');s.textContent=cur
 function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
 newTask();
 
-// ===== GLOSSARY SYSTEM =====
-const GLOSSARY_KEY='glossary-tcp-udp-routing';
-const glossaryTerms=[
+// ===== GLOSSARY DATA (Format A – shared/glossary.js) =====
+var TRAINER_ID = 'tcp-udp-routing';
+
+var GLOSSARY = [
   {
-    term:'TCP',short:'Transmission Control Protocol',icon:'&#128257;',difficulty:1,
-    definition:'TCP (Transmission Control Protocol) ist ein verbindungsorientiertes Transportprotokoll der Schicht 4 im OSI-Modell. Es stellt eine zuverlässige, geordnete und fehlergeprüfte Übertragung von Datenströmen zwischen Anwendungen sicher. TCP nutzt Sequenznummern, Bestätigungen (ACKs) und Neuübertragungen, um Datenverlust zu verhindern.',
-    analogy:'Stell dir TCP wie ein Einschreiben bei der Post vor: Du bekommst eine Bestätigung, dass der Brief angekommen ist. Falls nicht, wird er erneut gesendet. Alles kommt in der richtigen Reihenfolge an.',
-    hints:['TCP arbeitet auf Schicht 4 (Transport) des OSI-Modells.','Der 3-Way-Handshake (SYN, SYN-ACK, ACK) baut die Verbindung auf.','Flusskontrolle per Sliding-Window-Verfahren verhindert Überlastung des Empfängers.'],
-    questions:[
-      {type:'fill',q:'TCP ist ein ________-orientiertes Transportprotokoll.',a:'verbindungs',keywords:['verbindungs','verbindungsorientiert']},
-      {type:'choice',q:'Welches Verfahren nutzt TCP zur Flusskontrolle?',correct:'Sliding Window',wrong:['Round Robin','Token Passing','CSMA/CD']},
-      {type:'explain',q:'Erkläre, warum TCP für HTTP/HTTPS verwendet wird, aber nicht für Live-Streaming.',keywords:['zuverlässig','bestätigung','ack','reihenfolge','latenz','overhead','verzögerung','neuübertragung']}
+    term: 'TCP',
+    short: 'Transmission Control Protocol',
+    definition: 'TCP (Transmission Control Protocol) ist ein verbindungsorientiertes Transportprotokoll der Schicht 4 im OSI-Modell. Es stellt eine zuverlässige, geordnete und fehlergeprüfte Übertragung von Datenströmen zwischen Anwendungen sicher. TCP nutzt Sequenznummern, Bestätigungen (ACKs) und Neuübertragungen, um Datenverlust zu verhindern.',
+    analogy: '&#128257; Stell dir TCP wie ein Einschreiben bei der Post vor: Du bekommst eine Bestätigung, dass der Brief angekommen ist. Falls nicht, wird er erneut gesendet. Alles kommt in der richtigen Reihenfolge an.',
+    hints: ['TCP arbeitet auf Schicht 4 (Transport) des OSI-Modells.','Der 3-Way-Handshake (SYN, SYN-ACK, ACK) baut die Verbindung auf.','Flusskontrolle per Sliding-Window-Verfahren verhindert Überlastung des Empfängers.'],
+    questions: [
+      {type:'fill', q:'TCP ist ein ________-orientiertes Transportprotokoll.', a:'verbindungs', keywords:['verbindungs','verbindungsorientiert']},
+      {type:'choice', q:'Welches Verfahren nutzt TCP zur Flusskontrolle?', options:['Sliding Window','Round Robin','Token Passing','CSMA/CD'], correct:0},
+      {type:'explain', q:'Erkläre, warum TCP für HTTP/HTTPS verwendet wird, aber nicht für Live-Streaming.', keywords:['zuverlässig','bestätigung','ack','reihenfolge','latenz','overhead','verzögerung','neuübertragung'], minKeywords:3}
     ]
   },
   {
-    term:'UDP',short:'User Datagram Protocol',icon:'&#9889;',difficulty:1,
-    definition:'UDP (User Datagram Protocol) ist ein verbindungsloses Transportprotokoll der Schicht 4. Es bietet keine Garantie für Zustellung, Reihenfolge oder Fehlerfreiheit. Dafür ist es sehr schnell und effizient, da kein Verbindungsaufbau und keine Bestätigungen nötig sind. Der Header umfasst nur 8 Bytes.',
-    analogy:'UDP ist wie ein Brief ohne Einschreiben: Du wirfst ihn in den Briefkasten und hoffst, dass er ankommt. Schnell, aber ohne Garantie. Ideal, wenn Geschwindigkeit wichtiger ist als Vollständigkeit.',
-    hints:['UDP hat einen minimalen Header von nur 8 Bytes (vs. 20-60 bei TCP).','Typische UDP-Dienste: DNS (Port 53), DHCP (Port 67/68), VoIP, Streaming.','UDP unterstützt Broadcast und Multicast, TCP nicht.'],
-    questions:[
-      {type:'fill',q:'Der UDP-Header ist nur ________ Bytes groß.',a:'8',keywords:['8']},
-      {type:'choice',q:'Welcher Dienst nutzt typischerweise UDP?',correct:'DNS',wrong:['HTTP','FTP','SSH']},
-      {type:'explain',q:'Erkläre, warum UDP für VoIP und Online-Gaming bevorzugt wird.',keywords:['latenz','geschwindigkeit','schnell','echtzeit','verzögerung','overhead','verbindungslos']}
+    term: 'UDP',
+    short: 'User Datagram Protocol',
+    definition: 'UDP (User Datagram Protocol) ist ein verbindungsloses Transportprotokoll der Schicht 4. Es bietet keine Garantie für Zustellung, Reihenfolge oder Fehlerfreiheit. Dafür ist es sehr schnell und effizient, da kein Verbindungsaufbau und keine Bestätigungen nötig sind. Der Header umfasst nur 8 Bytes.',
+    analogy: '&#9889; UDP ist wie ein Brief ohne Einschreiben: Du wirfst ihn in den Briefkasten und hoffst, dass er ankommt. Schnell, aber ohne Garantie. Ideal, wenn Geschwindigkeit wichtiger ist als Vollständigkeit.',
+    hints: ['UDP hat einen minimalen Header von nur 8 Bytes (vs. 20-60 bei TCP).','Typische UDP-Dienste: DNS (Port 53), DHCP (Port 67/68), VoIP, Streaming.','UDP unterstützt Broadcast und Multicast, TCP nicht.'],
+    questions: [
+      {type:'fill', q:'Der UDP-Header ist nur ________ Bytes groß.', a:'8', keywords:['8']},
+      {type:'choice', q:'Welcher Dienst nutzt typischerweise UDP?', options:['DNS','HTTP','FTP','SSH'], correct:0},
+      {type:'explain', q:'Erkläre, warum UDP für VoIP und Online-Gaming bevorzugt wird.', keywords:['latenz','geschwindigkeit','schnell','echtzeit','verzögerung','overhead','verbindungslos'], minKeywords:3}
     ]
   },
   {
-    term:'Drei-Wege-Handshake',short:'TCP-Verbindungsaufbau in 3 Schritten',icon:'&#129309;',difficulty:2,
-    definition:'Der Drei-Wege-Handshake (3-Way-Handshake) ist das Verfahren, mit dem TCP eine Verbindung aufbaut. In drei Schritten synchronisieren Client und Server ihre Sequenznummern: 1) Client sendet SYN (Seq=x), 2) Server antwortet mit SYN-ACK (Seq=y, Ack=x+1), 3) Client bestätigt mit ACK (Seq=x+1, Ack=y+1). Erst danach beginnt der Datenaustausch.',
-    analogy:'Wie ein Telefongespräch: „Hallo, hörst du mich?" (SYN) – „Ja, ich höre dich, hörst du mich?" (SYN-ACK) – „Ja, perfekt, lass uns reden!" (ACK). Beide Seiten bestätigen die Bereitschaft.',
-    hints:['SYN = Synchronize, ACK = Acknowledge – die beiden wichtigsten TCP-Flags.','Der Verbindungsabbau erfolgt mit 4 Schritten: FIN, ACK, FIN, ACK.','Jede Seite wählt eine zufällige initiale Sequenznummer (ISN).'],
-    questions:[
-      {type:'fill',q:'Im zweiten Schritt des Handshakes antwortet der Server mit ________.',a:'SYN-ACK',keywords:['syn-ack','synack','syn+ack']},
-      {type:'choice',q:'Wie viele Schritte hat der TCP-Verbindungsaufbau?',correct:'3',wrong:['2','4','5']},
-      {type:'explain',q:'Beschreibe die drei Schritte des TCP-Handshakes und nenne die verwendeten Flags.',keywords:['syn','ack','syn-ack','sequenznummer','client','server','verbindung']}
+    term: 'Drei-Wege-Handshake',
+    short: 'TCP-Verbindungsaufbau in 3 Schritten',
+    definition: 'Der Drei-Wege-Handshake (3-Way-Handshake) ist das Verfahren, mit dem TCP eine Verbindung aufbaut. In drei Schritten synchronisieren Client und Server ihre Sequenznummern: 1) Client sendet SYN (Seq=x), 2) Server antwortet mit SYN-ACK (Seq=y, Ack=x+1), 3) Client bestätigt mit ACK (Seq=x+1, Ack=y+1). Erst danach beginnt der Datenaustausch.',
+    analogy: '&#129309; Wie ein Telefongespräch: \u201eHallo, hörst du mich?\u201c (SYN) \u2013 \u201eJa, ich höre dich, hörst du mich?\u201c (SYN-ACK) \u2013 \u201eJa, perfekt, lass uns reden!\u201c (ACK). Beide Seiten bestätigen die Bereitschaft.',
+    hints: ['SYN = Synchronize, ACK = Acknowledge \u2013 die beiden wichtigsten TCP-Flags.','Der Verbindungsabbau erfolgt mit 4 Schritten: FIN, ACK, FIN, ACK.','Jede Seite wählt eine zufällige initiale Sequenznummer (ISN).'],
+    questions: [
+      {type:'fill', q:'Im zweiten Schritt des Handshakes antwortet der Server mit ________.', a:'SYN-ACK', keywords:['syn-ack','synack','syn+ack']},
+      {type:'choice', q:'Wie viele Schritte hat der TCP-Verbindungsaufbau?', options:['3','2','4','5'], correct:0},
+      {type:'explain', q:'Beschreibe die drei Schritte des TCP-Handshakes und nenne die verwendeten Flags.', keywords:['syn','ack','syn-ack','sequenznummer','client','server','verbindung'], minKeywords:3}
     ]
   },
   {
-    term:'Port',short:'Logische Adresse für Netzwerkdienste',icon:'&#128451;',difficulty:1,
-    definition:'Ein Port ist eine 16-Bit-Nummer (0–65535), die zusammen mit einer IP-Adresse einen eindeutigen Kommunikationsendpunkt (Socket) bildet. Ports ermöglichen es, mehrere Netzwerkdienste auf einem Rechner gleichzeitig zu betreiben. Well-Known Ports (0–1023) sind für Standarddienste reserviert (z.B. HTTP=80, HTTPS=443, SSH=22).',
-    analogy:'Wenn die IP-Adresse die Hausnummer eines Gebäudes ist, dann ist der Port die Wohnungsnummer. Verschiedene Dienste (Bewohner) teilen sich dieselbe IP-Adresse (Haus), sind aber über verschiedene Ports (Wohnungen) erreichbar.',
-    hints:['Well-Known Ports: 0–1023 (HTTP=80, HTTPS=443, SSH=22, DNS=53).','Registrierte Ports: 1024–49151 (z.B. MySQL=3306).','Dynamische/Ephemeral Ports: 49152–65535 (vom Betriebssystem vergeben).'],
-    questions:[
-      {type:'fill',q:'Portnummern umfassen den Bereich von 0 bis ________.',a:'65535',keywords:['65535']},
-      {type:'choice',q:'Welcher Port gehört zu HTTPS?',correct:'443',wrong:['80','22','25']},
-      {type:'explain',q:'Erkläre den Unterschied zwischen Well-Known Ports und Ephemeral Ports.',keywords:['well-known','0','1023','ephemeral','dynamisch','49152','65535','reserviert','betriebssystem']}
+    term: 'Port',
+    short: 'Logische Adresse für Netzwerkdienste',
+    definition: 'Ein Port ist eine 16-Bit-Nummer (0\u201365535), die zusammen mit einer IP-Adresse einen eindeutigen Kommunikationsendpunkt (Socket) bildet. Ports ermöglichen es, mehrere Netzwerkdienste auf einem Rechner gleichzeitig zu betreiben. Well-Known Ports (0\u20131023) sind für Standarddienste reserviert (z.B. HTTP=80, HTTPS=443, SSH=22).',
+    analogy: '&#128451; Wenn die IP-Adresse die Hausnummer eines Gebäudes ist, dann ist der Port die Wohnungsnummer. Verschiedene Dienste (Bewohner) teilen sich dieselbe IP-Adresse (Haus), sind aber über verschiedene Ports (Wohnungen) erreichbar.',
+    hints: ['Well-Known Ports: 0\u20131023 (HTTP=80, HTTPS=443, SSH=22, DNS=53).','Registrierte Ports: 1024\u201349151 (z.B. MySQL=3306).','Dynamische/Ephemeral Ports: 49152\u201365535 (vom Betriebssystem vergeben).'],
+    questions: [
+      {type:'fill', q:'Portnummern umfassen den Bereich von 0 bis ________.', a:'65535', keywords:['65535']},
+      {type:'choice', q:'Welcher Port gehört zu HTTPS?', options:['443','80','22','25'], correct:0},
+      {type:'explain', q:'Erkläre den Unterschied zwischen Well-Known Ports und Ephemeral Ports.', keywords:['well-known','0','1023','ephemeral','dynamisch','49152','65535','reserviert','betriebssystem'], minKeywords:3}
     ]
   },
   {
-    term:'Flusskontrolle',short:'Mechanismus zur Vermeidung von Überlastung',icon:'&#128167;',difficulty:2,
-    definition:'Die Flusskontrolle (Flow Control) ist ein Mechanismus in TCP, der verhindert, dass ein schneller Sender einen langsameren Empfänger mit Daten überflutet. TCP nutzt das Sliding-Window-Verfahren: Der Empfänger teilt dem Sender über das Window-Size-Feld im TCP-Header mit, wie viele Bytes er aktuell aufnehmen kann.',
-    analogy:'Wie ein Kellner, der nur so viele Speisen bringt, wie Platz auf dem Tisch ist. Der Gast (Empfänger) sagt: „Ich habe noch Platz für 3 Teller" (Window Size). Der Kellner (Sender) schickt nicht mehr als das.',
-    hints:['Das Window-Size-Feld im TCP-Header ist 16 Bit groß.','Window Scaling (Option) erweitert die effektive Window-Größe auf bis zu 1 GB.','Flusskontrolle schützt den Empfänger, Staukontrolle (Congestion Control) schützt das Netzwerk.'],
-    questions:[
-      {type:'fill',q:'TCP nutzt das ________-Verfahren zur Flusskontrolle.',a:'Sliding-Window',keywords:['sliding-window','sliding window','schiebefenster']},
-      {type:'choice',q:'Was teilt der Empfänger dem Sender über die Window Size mit?',correct:'Wie viele Bytes er noch aufnehmen kann',wrong:['Die maximale Paketgröße','Die aktuelle Bandbreite','Die Anzahl offener Verbindungen']},
-      {type:'explain',q:'Erkläre, warum UDP keine Flusskontrolle besitzt und welche Konsequenzen das hat.',keywords:['verbindungslos','paketverlust','sender','empfänger','überlast','geschwindigkeit','keine bestätigung']}
+    term: 'Flusskontrolle',
+    short: 'Mechanismus zur Vermeidung von Überlastung',
+    definition: 'Die Flusskontrolle (Flow Control) ist ein Mechanismus in TCP, der verhindert, dass ein schneller Sender einen langsameren Empfänger mit Daten überflutet. TCP nutzt das Sliding-Window-Verfahren: Der Empfänger teilt dem Sender über das Window-Size-Feld im TCP-Header mit, wie viele Bytes er aktuell aufnehmen kann.',
+    analogy: '&#128167; Wie ein Kellner, der nur so viele Speisen bringt, wie Platz auf dem Tisch ist. Der Gast (Empfänger) sagt: \u201eIch habe noch Platz für 3 Teller\u201c (Window Size). Der Kellner (Sender) schickt nicht mehr als das.',
+    hints: ['Das Window-Size-Feld im TCP-Header ist 16 Bit groß.','Window Scaling (Option) erweitert die effektive Window-Größe auf bis zu 1 GB.','Flusskontrolle schützt den Empfänger, Staukontrolle (Congestion Control) schützt das Netzwerk.'],
+    questions: [
+      {type:'fill', q:'TCP nutzt das ________-Verfahren zur Flusskontrolle.', a:'Sliding-Window', keywords:['sliding-window','sliding window','schiebefenster']},
+      {type:'choice', q:'Was teilt der Empfänger dem Sender über die Window Size mit?', options:['Wie viele Bytes er noch aufnehmen kann','Die maximale Paketgröße','Die aktuelle Bandbreite','Die Anzahl offener Verbindungen'], correct:0},
+      {type:'explain', q:'Erkläre, warum UDP keine Flusskontrolle besitzt und welche Konsequenzen das hat.', keywords:['verbindungslos','paketverlust','sender','empfänger','überlast','geschwindigkeit','keine bestätigung'], minKeywords:3}
     ]
   },
   {
-    term:'Routing',short:'Wegfindung für Pakete im Netzwerk',icon:'&#128739;',difficulty:2,
-    definition:'Routing ist der Prozess der Wegfindung (Pfadbestimmung) für Datenpakete durch ein Netzwerk von der Quelle zum Ziel. Router analysieren die Ziel-IP-Adresse jedes Pakets und leiten es anhand ihrer Routing-Tabelle an den nächsten Hop weiter. Man unterscheidet statisches Routing (manuell) und dynamisches Routing (automatisch über Protokolle wie RIP, OSPF, BGP).',
-    analogy:'Routing funktioniert wie ein Navigationssystem: Jede Kreuzung (Router) hat einen Wegweiser (Routing-Tabelle), der sagt, in welche Richtung ein Paket weitergeleitet werden muss, um sein Ziel zu erreichen.',
-    hints:['Statisches Routing: Manuell konfigurierte Routen, geeignet für kleine Netze.','Dynamisches Routing: Protokolle wie RIP, OSPF, BGP tauschen automatisch Routeninformationen aus.','IGP (Interior Gateway Protocol) = innerhalb eines AS; EGP (Exterior) = zwischen AS.'],
-    questions:[
-      {type:'fill',q:'Router leiten Pakete anhand ihrer ________-Tabelle weiter.',a:'Routing',keywords:['routing','weiterleitungs']},
-      {type:'choice',q:'Welches Routing-Protokoll nutzt den Dijkstra-Algorithmus?',correct:'OSPF',wrong:['RIP','BGP','ICMP']},
-      {type:'explain',q:'Erkläre den Unterschied zwischen statischem und dynamischem Routing.',keywords:['statisch','dynamisch','manuell','automatisch','protokoll','routing-tabelle','konfigur']}
+    term: 'Routing',
+    short: 'Wegfindung für Pakete im Netzwerk',
+    definition: 'Routing ist der Prozess der Wegfindung (Pfadbestimmung) für Datenpakete durch ein Netzwerk von der Quelle zum Ziel. Router analysieren die Ziel-IP-Adresse jedes Pakets und leiten es anhand ihrer Routing-Tabelle an den nächsten Hop weiter. Man unterscheidet statisches Routing (manuell) und dynamisches Routing (automatisch über Protokolle wie RIP, OSPF, BGP).',
+    analogy: '&#128739; Routing funktioniert wie ein Navigationssystem: Jede Kreuzung (Router) hat einen Wegweiser (Routing-Tabelle), der sagt, in welche Richtung ein Paket weitergeleitet werden muss, um sein Ziel zu erreichen.',
+    hints: ['Statisches Routing: Manuell konfigurierte Routen, geeignet für kleine Netze.','Dynamisches Routing: Protokolle wie RIP, OSPF, BGP tauschen automatisch Routeninformationen aus.','IGP (Interior Gateway Protocol) = innerhalb eines AS; EGP (Exterior) = zwischen AS.'],
+    questions: [
+      {type:'fill', q:'Router leiten Pakete anhand ihrer ________-Tabelle weiter.', a:'Routing', keywords:['routing','weiterleitungs']},
+      {type:'choice', q:'Welches Routing-Protokoll nutzt den Dijkstra-Algorithmus?', options:['OSPF','RIP','BGP','ICMP'], correct:0},
+      {type:'explain', q:'Erkläre den Unterschied zwischen statischem und dynamischem Routing.', keywords:['statisch','dynamisch','manuell','automatisch','protokoll','routing-tabelle','konfigur'], minKeywords:3}
     ]
   },
   {
-    term:'Hop',short:'Ein Weiterleitungsschritt zwischen Routern',icon:'&#128640;',difficulty:1,
-    definition:'Ein Hop bezeichnet einen einzelnen Weiterleitungsschritt eines Pakets von einem Router zum nächsten auf dem Weg zum Ziel. Die Anzahl der Hops (Hop Count) wird von manchen Routing-Protokollen als Metrik verwendet. Bei RIP ist die maximale Hop-Anzahl auf 15 begrenzt; 16 Hops gelten als „nicht erreichbar" (unreachable).',
-    analogy:'Wie Haltestellen einer Busfahrt: Jeder Halt (Router) ist ein Hop. Je mehr Haltestellen, desto länger dauert die Fahrt. Bei RIP sind maximal 15 Haltestellen erlaubt.',
-    hints:['RIP nutzt Hop Count als einzige Metrik – max. 15 Hops, 16 = unreachable.','OSPF nutzt nicht Hop Count, sondern Kosten basierend auf Bandbreite.','Mit dem traceroute-Befehl kann man die Hops zu einem Ziel anzeigen.'],
-    questions:[
-      {type:'fill',q:'RIP erlaubt maximal ________ Hops.',a:'15',keywords:['15']},
-      {type:'choice',q:'Was bedeutet bei RIP ein Hop Count von 16?',correct:'Ziel nicht erreichbar',wrong:['Optimale Route','Maximale Geschwindigkeit','Backup-Route']},
-      {type:'explain',q:'Erkläre, warum die Hop-Count-Beschränkung bei RIP ein Problem für große Netzwerke darstellt.',keywords:['15','16','unreachable','groß','netzwerk','skalier','begrenzt','entfernung']}
+    term: 'Hop',
+    short: 'Ein Weiterleitungsschritt zwischen Routern',
+    definition: 'Ein Hop bezeichnet einen einzelnen Weiterleitungsschritt eines Pakets von einem Router zum nächsten auf dem Weg zum Ziel. Die Anzahl der Hops (Hop Count) wird von manchen Routing-Protokollen als Metrik verwendet. Bei RIP ist die maximale Hop-Anzahl auf 15 begrenzt; 16 Hops gelten als \u201enicht erreichbar\u201c (unreachable).',
+    analogy: '&#128640; Wie Haltestellen einer Busfahrt: Jeder Halt (Router) ist ein Hop. Je mehr Haltestellen, desto länger dauert die Fahrt. Bei RIP sind maximal 15 Haltestellen erlaubt.',
+    hints: ['RIP nutzt Hop Count als einzige Metrik \u2013 max. 15 Hops, 16 = unreachable.','OSPF nutzt nicht Hop Count, sondern Kosten basierend auf Bandbreite.','Mit dem traceroute-Befehl kann man die Hops zu einem Ziel anzeigen.'],
+    questions: [
+      {type:'fill', q:'RIP erlaubt maximal ________ Hops.', a:'15', keywords:['15']},
+      {type:'choice', q:'Was bedeutet bei RIP ein Hop Count von 16?', options:['Ziel nicht erreichbar','Optimale Route','Maximale Geschwindigkeit','Backup-Route'], correct:0},
+      {type:'explain', q:'Erkläre, warum die Hop-Count-Beschränkung bei RIP ein Problem für große Netzwerke darstellt.', keywords:['15','16','unreachable','groß','netzwerk','skalier','begrenzt','entfernung'], minKeywords:3}
     ]
   },
   {
-    term:'TTL',short:'Time to Live – Lebensdauer eines Pakets',icon:'&#9200;',difficulty:2,
-    definition:'TTL (Time to Live) ist ein Feld im IP-Header, das die maximale Lebensdauer eines Pakets begrenzt. Bei jedem Hop wird der TTL-Wert um 1 reduziert. Erreicht er 0, wird das Paket verworfen und eine ICMP-Fehlermeldung (Time Exceeded) an den Absender gesendet. TTL verhindert, dass Pakete endlos im Netzwerk kreisen (Routing-Loops).',
-    analogy:'TTL ist wie ein Countdown-Zähler auf einem Paket: Bei jeder Station (Router) wird eine Zahl abgezogen. Wenn der Zähler auf 0 steht, wird das Paket „entsorgt". Das verhindert, dass verlorene Pakete ewig im Netz kreisen.',
-    hints:['Typische TTL-Startwerte: 64 (Linux), 128 (Windows), 255 (Netzwerkgeräte).','TTL wird im IP-Header gespeichert (Schicht 3), nicht im TCP/UDP-Header.','Das Tool traceroute nutzt TTL systematisch, um den Pfad zu einem Ziel zu ermitteln.'],
-    questions:[
-      {type:'fill',q:'Bei jedem Hop wird der TTL-Wert um ________ reduziert.',a:'1',keywords:['1','eins']},
-      {type:'choice',q:'Was passiert, wenn der TTL-Wert eines Pakets 0 erreicht?',correct:'Das Paket wird verworfen',wrong:['Das Paket wird zurückgesendet','Der TTL wird zurückgesetzt','Das Paket wird dupliziert']},
-      {type:'explain',q:'Erkläre, warum TTL notwendig ist und wie traceroute dieses Feld nutzt.',keywords:['routing-loop','endlos','kreisen','verworfen','icmp','time exceeded','hop','zähler','pfad']}
+    term: 'TTL',
+    short: 'Time to Live \u2013 Lebensdauer eines Pakets',
+    definition: 'TTL (Time to Live) ist ein Feld im IP-Header, das die maximale Lebensdauer eines Pakets begrenzt. Bei jedem Hop wird der TTL-Wert um 1 reduziert. Erreicht er 0, wird das Paket verworfen und eine ICMP-Fehlermeldung (Time Exceeded) an den Absender gesendet. TTL verhindert, dass Pakete endlos im Netzwerk kreisen (Routing-Loops).',
+    analogy: '&#9200; TTL ist wie ein Countdown-Zähler auf einem Paket: Bei jeder Station (Router) wird eine Zahl abgezogen. Wenn der Zähler auf 0 steht, wird das Paket \u201eentsorgt\u201c. Das verhindert, dass verlorene Pakete ewig im Netz kreisen.',
+    hints: ['Typische TTL-Startwerte: 64 (Linux), 128 (Windows), 255 (Netzwerkgeräte).','TTL wird im IP-Header gespeichert (Schicht 3), nicht im TCP/UDP-Header.','Das Tool traceroute nutzt TTL systematisch, um den Pfad zu einem Ziel zu ermitteln.'],
+    questions: [
+      {type:'fill', q:'Bei jedem Hop wird der TTL-Wert um ________ reduziert.', a:'1', keywords:['1','eins']},
+      {type:'choice', q:'Was passiert, wenn der TTL-Wert eines Pakets 0 erreicht?', options:['Das Paket wird verworfen','Das Paket wird zurückgesendet','Der TTL wird zurückgesetzt','Das Paket wird dupliziert'], correct:0},
+      {type:'explain', q:'Erkläre, warum TTL notwendig ist und wie traceroute dieses Feld nutzt.', keywords:['routing-loop','endlos','kreisen','verworfen','icmp','time exceeded','hop','zähler','pfad'], minKeywords:3}
     ]
   }
 ];
 
-const glossaryTermMap={};
-glossaryTerms.forEach(t=>{
-  const key=t.term.toLowerCase();
-  glossaryTermMap[key]=t;
-  glossaryTermMap[t.short.toLowerCase()]=t;
-});
-// Additional variants for tooltip matching
-glossaryTermMap['tcp']=glossaryTerms[0];
-glossaryTermMap['transmission control protocol']=glossaryTerms[0];
-glossaryTermMap['udp']=glossaryTerms[1];
-glossaryTermMap['user datagram protocol']=glossaryTerms[1];
-glossaryTermMap['drei-wege-handshake']=glossaryTerms[2];
-glossaryTermMap['3-way-handshake']=glossaryTerms[2];
-glossaryTermMap['3-way handshake']=glossaryTerms[2];
-glossaryTermMap['handshake']=glossaryTerms[2];
-glossaryTermMap['tcp-handshake']=glossaryTerms[2];
-glossaryTermMap['tcp handshake']=glossaryTerms[2];
-glossaryTermMap['port']=glossaryTerms[3];
-glossaryTermMap['portnummer']=glossaryTerms[3];
-glossaryTermMap['portnummern']=glossaryTerms[3];
-glossaryTermMap['ports']=glossaryTerms[3];
-glossaryTermMap['flusskontrolle']=glossaryTerms[4];
-glossaryTermMap['flow control']=glossaryTerms[4];
-glossaryTermMap['sliding window']=glossaryTerms[4];
-glossaryTermMap['sliding-window']=glossaryTerms[4];
-glossaryTermMap['window size']=glossaryTerms[4];
-glossaryTermMap['routing']=glossaryTerms[5];
-glossaryTermMap['wegfindung']=glossaryTerms[5];
-glossaryTermMap['routing-tabelle']=glossaryTerms[5];
-glossaryTermMap['routingtabelle']=glossaryTerms[5];
-glossaryTermMap['hop']=glossaryTerms[6];
-glossaryTermMap['hops']=glossaryTerms[6];
-glossaryTermMap['hop count']=glossaryTerms[6];
-glossaryTermMap['hop-count']=glossaryTerms[6];
-glossaryTermMap['routing-hop']=glossaryTerms[6];
-glossaryTermMap['ttl']=glossaryTerms[7];
-glossaryTermMap['time to live']=glossaryTerms[7];
-glossaryTermMap['time-to-live']=glossaryTerms[7];
-
-let glossaryState={};
-function loadGlossaryState(){try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){glossaryState={};}}
-function saveGlossaryState(){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));}
-function getTermLevel(term){return(glossaryState[term]&&glossaryState[term].level)||0;}
-function setTermLevel(term,level){if(!glossaryState[term])glossaryState[term]={level:0,seen:0};glossaryState[term].level=Math.min(3,Math.max(0,level));glossaryState[term].seen=(glossaryState[term].seen||0)+1;saveGlossaryState();}
-
-function renderGlossaryGrid(){
-  loadGlossaryState();
-  const grid=document.getElementById('glossary-grid');
-  grid.innerHTML=glossaryTerms.map((t,i)=>{
-    const lv=getTermLevel(t.term);
-    return `<div class="glossary-card" data-level="${lv}" data-idx="${i}" onclick="openGlossaryLearn(${i})">
-      <div class="gc-level"></div>
-      <div class="gc-icon">${t.icon}</div>
-      <div class="gc-term">${t.term}</div>
-      <div class="gc-short">${t.short}</div>
-    </div>`;
-  }).join('');
-  updateGlossaryProgress();
-}
-
-function updateGlossaryProgress(){
-  loadGlossaryState();
-  const mastered=glossaryTerms.filter(t=>getTermLevel(t.term)>=3).length;
-  const pct=Math.round(mastered/glossaryTerms.length*100);
-  document.getElementById('glossary-fill').style.width=pct+'%';
-  document.getElementById('glossary-count').textContent=mastered+' / '+glossaryTerms.length+' gemeistert';
-}
-
-let glCurrentTerm=null;
-let glPhase=0;
-let glHintIdx=0;
-const phaseNames=['Analogie','Definition','Abfrage'];
-
-function openGlossaryLearn(idx){
-  glCurrentTerm=glossaryTerms[idx];
-  glPhase=0;glHintIdx=0;
-  const panel=document.getElementById('glossary-learn');
-  panel.classList.add('visible');
-  document.getElementById('gl-title').textContent=glCurrentTerm.icon+' '+glCurrentTerm.term;
-  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',parseInt(c.dataset.idx)===idx));
-  renderGlossaryPhase();
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
-
-function closeGlossaryLearn(){
-  document.getElementById('glossary-learn').classList.remove('visible');
-  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
-  glCurrentTerm=null;
-}
-
-window._glGoToPhase=function(idx){if(idx>glPhase)return;glPhase=idx;glHintIdx=0;renderGlossaryPhase();};
-
-function renderGlossaryPhase(){
-  const phases=document.getElementById('gl-phases');
-  phases.innerHTML=phaseNames.map((n,i)=>`<div class="gl-phase ${i===glPhase?'current':''} ${i<glPhase?'done':''}" ${i<=glPhase?`onclick="window._glGoToPhase(${i})"`:''}>${i<glPhase?'&#10003; ':''}${n}</div>`).join('');
-  const content=document.getElementById('gl-content');
-  if(glPhase===0){
-    content.innerHTML=`<div class="gl-analogy">&#128161; <strong>Analogie:</strong> ${glCurrentTerm.analogy}</div>
-      <button class="gl-btn primary" onclick="glPhase=1;renderGlossaryPhase();">Weiter zur Definition &#8594;</button>`;
-  }else if(glPhase===1){
-    glHintIdx=0;
-    content.innerHTML=`<div class="gl-definition">${glCurrentTerm.definition}</div>
-      <div class="gl-hints" id="gl-hints">${glCurrentTerm.hints.map((h,i)=>`<div class="gl-hint" id="gl-hint-${i}">&#128204; ${h}</div>`).join('')}</div>
-      <button class="gl-hint-btn" onclick="showGlossaryHint()">&#128161; Hinweis anzeigen</button>
-      <button class="gl-btn primary" onclick="glPhase=2;renderGlossaryPhase();">Weiter zur Abfrage &#8594;</button>`;
-  }else if(glPhase===2){
-    renderGlossaryQuestion();
+var GP_STORIES = {
+  'TCP': {
+    route: 'Du betrittst das Hauptpostamt der Zuverlässigkeit.',
+    scenes: [
+      {kw:'verbindungsorientiert', img:'&#128257;', text:'Am Schalter steht ein Beamter, der erst eine Verbindung aufbaut, bevor er auch nur einen Brief annimmt \u2013 verbindungsorientiert, kein Paket ohne Handschlag.'},
+      {kw:'Sequenznummern', img:'&#128220;', text:'Jeder Brief bekommt eine fortlaufende Sequenznummer gestempelt. Der Beamte ordnet sie penibel in Reihenfolge, kein Brief darf vordrängeln.'},
+      {kw:'ACK-Bestätigung', img:'&#9989;', text:'Für jeden zugestellten Brief fliegt eine grün leuchtende Bestätigungskarte (ACK) zurück zum Absender \u2013 erst dann gilt der Brief als angekommen.'},
+      {kw:'Sliding Window', img:'&#128295;', text:'Der Briefkasten hat ein Schiebefenster (Sliding Window): Es öffnet sich nur so weit, wie der Empfänger Platz hat \u2013 so wird niemand überflutet.'},
+      {kw:'Neuübertragung', img:'&#128260;', text:'Kommt keine Bestätigung, greift der Beamte zum Kopierer und sendet den Brief erneut \u2013 Neuübertragung, bis es klappt.'}
+    ]
+  },
+  'UDP': {
+    route: 'Du stehst vor einem Expresskurier-Schalter ohne Warteschlange.',
+    scenes: [
+      {kw:'verbindungslos', img:'&#9889;', text:'Der Kurier nimmt dein Paket ohne jede Anmeldung \u2013 verbindungslos, kein Handshake, kein Vertrag, einfach losschicken.'},
+      {kw:'8-Byte-Header', img:'&#128230;', text:'Das Etikett auf dem Paket ist winzig, nur 8 Bytes: Quellport, Zielport, Länge, Prüfsumme \u2013 minimaler Overhead.'},
+      {kw:'keine Garantie', img:'&#127922;', text:'Am Schalter hängt ein Schild: \u201eKeine Zustellgarantie!\u201c \u2013 Pakete können verloren gehen, doppelt ankommen oder in falscher Reihenfolge.'},
+      {kw:'DNS/VoIP/Streaming', img:'&#127908;', text:'Neben dem Schalter stehen Bildschirme mit Live-Streams, ein DNS-Server blinkt und ein Telefon klingelt \u2013 typische UDP-Dienste, bei denen Geschwindigkeit zählt.'},
+      {kw:'Broadcast/Multicast', img:'&#128227;', text:'Der Kurier hat einen Megafon-Modus: Er kann an alle gleichzeitig senden (Broadcast) oder an eine Gruppe (Multicast) \u2013 das kann TCP nicht.'}
+    ]
+  },
+  'Drei-Wege-Handshake': {
+    route: 'Du betrittst einen Verhandlungssaal mit drei großen Tischen.',
+    scenes: [
+      {kw:'SYN', img:'&#129309;', text:'Am ersten Tisch steht der Client und streckt die Hand aus: \u201eSYN \u2013 ich möchte eine Verbindung!\u201c Er legt seine Sequenznummer x auf den Tisch.'},
+      {kw:'SYN-ACK', img:'&#128172;', text:'Am zweiten Tisch antwortet der Server mit einem Doppelhandschlag: \u201eSYN-ACK \u2013 verstanden, hier ist meine Nummer y, und ich bestätige deine mit x+1!\u201c'},
+      {kw:'ACK', img:'&#10003;', text:'Am dritten Tisch nickt der Client: \u201eACK \u2013 bestätigt, deine Nummer y+1!\u201c Jetzt leuchtet eine grüne Lampe: Verbindung steht!'},
+      {kw:'Sequenznummern synchronisieren', img:'&#128273;', text:'Beide Seiten tragen ihre synchronisierten Sequenznummern in ein gemeinsames Buch ein \u2013 ab jetzt wissen beide, wo gezählt wird.'},
+      {kw:'FIN-Abbau', img:'&#128683;', text:'Am Ausgang hängt ein Schild: \u201eVerbindungsabbau in 4 Schritten: FIN, ACK, FIN, ACK\u201c \u2013 der Rückbau ist noch gründlicher als der Aufbau.'}
+    ]
+  },
+  'Port': {
+    route: 'Du stehst vor einem riesigen Hochhaus mit 65.536 Wohnungen.',
+    scenes: [
+      {kw:'16-Bit-Nummer', img:'&#128451;', text:'An der Eingangstür steht: \u201e16-Bit-Adressraum: Wohnungen 0 bis 65535\u201c. Jede Wohnung ist ein Port, zusammen mit der Hausnummer (IP) ergibt sich der Socket.'},
+      {kw:'Well-Known Ports', img:'&#127383;', text:'Die Erdgeschoss-Wohnungen (0\u20131023) haben goldene Türschilder: HTTP wohnt in 80, HTTPS in 443, SSH in 22, DNS in 53 \u2013 die Well-Known Ports.'},
+      {kw:'Registrierte Ports', img:'&#128209;', text:'In den mittleren Stockwerken (1024\u201349151) wohnen registrierte Dienste: MySQL hat Tür 3306, PostgreSQL Tür 5432.'},
+      {kw:'Ephemeral Ports', img:'&#128256;', text:'Ganz oben (49152\u201365535) sind die Kurzzeitwohnungen \u2013 Ephemeral Ports, die das Betriebssystem temporär an Clients vergibt.'},
+      {kw:'Socket', img:'&#128268;', text:'In jeder Wohnung steckt ein Socket (IP:Port) \u2013 die vollständige Adresse für eine Netzwerkverbindung.'}
+    ]
+  },
+  'Flusskontrolle': {
+    route: 'Du betrittst ein Restaurant, in dem der Kellner penibel auf die Tischkapazität achtet.',
+    scenes: [
+      {kw:'Flow Control', img:'&#128167;', text:'Über der Küche leuchtet ein Schild: \u201eFlow Control \u2013 nur so viel servieren, wie der Gast verarbeiten kann!\u201c'},
+      {kw:'Sliding Window', img:'&#128295;', text:'Der Kellner schaut durch ein Schiebefenster (Sliding Window) zum Tisch: Es zeigt genau, wie viel Platz noch frei ist.'},
+      {kw:'Window Size', img:'&#128207;', text:'Der Gast hält eine Tafel hoch: \u201eWindow Size: 3 Teller!\u201c \u2013 der Kellner bringt exakt diese Menge.'},
+      {kw:'Empfänger schützen', img:'&#128737;', text:'Ein Türsteher erklärt: \u201eFlusskontrolle schützt den Empfänger vor Überflutung \u2013 Staukontrolle (Congestion Control) schützt dagegen das Netzwerk.\u201c'},
+      {kw:'Window Scaling', img:'&#128200;', text:'Für VIP-Gäste gibt es Window Scaling: Die Tischfläche kann auf bis zu 1 GB vergrößert werden \u2013 per TCP-Option.'}
+    ]
+  },
+  'Routing': {
+    route: 'Du stehst an einer riesigen Autobahnkreuzung mit Wegweisern in alle Richtungen.',
+    scenes: [
+      {kw:'Wegfindung', img:'&#128739;', text:'Jeder Wegweiser ist ein Router, der die Ziel-IP liest und das Paket in die richtige Richtung schickt \u2013 Wegfindung durch das Netzwerk.'},
+      {kw:'Routing-Tabelle', img:'&#128209;', text:'In jedem Wegweiser steckt eine Routing-Tabelle: \u201eZiel 192.168.1.0 \u2192 nächster Hop: 10.0.0.1\u201c \u2013 Zeile für Zeile.'},
+      {kw:'Statisches Routing', img:'&#128295;', text:'Manche Schilder sind festgeschraubt: Statisches Routing, manuell konfiguriert, ideal für kleine, stabile Netze.'},
+      {kw:'Dynamisches Routing', img:'&#128260;', text:'Andere Schilder drehen sich automatisch: Dynamisches Routing mit Protokollen wie RIP, OSPF, BGP \u2013 sie reagieren auf Änderungen.'},
+      {kw:'IGP vs. EGP', img:'&#127760;', text:'Am Rand steht eine Grenze: \u201eIGP = innerhalb des Autonomen Systems, EGP (BGP) = zwischen Systemen\u201c \u2013 zwei Welten der Wegfindung.'}
+    ]
+  },
+  'Hop': {
+    route: 'Du steigst in einen Bus, der an jeder Station (Router) hält.',
+    scenes: [
+      {kw:'Weiterleitungsschritt', img:'&#128640;', text:'Jede Haltestelle ist ein Hop \u2013 ein einzelner Weiterleitungsschritt von Router zu Router auf dem Weg zum Ziel.'},
+      {kw:'Hop Count', img:'&#128290;', text:'Der Busfahrer zählt die Haltestellen: \u201eHop Count = 5\u201c \u2013 manche Routing-Protokolle nutzen diese Zahl als Metrik.'},
+      {kw:'RIP max. 15', img:'&#128683;', text:'An der 15. Haltestelle hängt ein Stoppschild: \u201eRIP-Maximum erreicht! 16 = unreachable.\u201c Der Bus fährt nicht weiter.'},
+      {kw:'OSPF Kosten', img:'&#128176;', text:'Ein anderer Bus (OSPF) ignoriert die Haltestellenzahl und achtet stattdessen auf die Straßenqualität \u2013 Kosten basierend auf Bandbreite.'},
+      {kw:'traceroute', img:'&#128269;', text:'Ein Fahrgast notiert jede Haltestelle: Das ist traceroute \u2013 es zeigt den gesamten Hop-Pfad zum Ziel an.'}
+    ]
+  },
+  'TTL': {
+    route: 'Du betrittst eine Fabrik, in der Pakete einen Countdown-Zähler tragen.',
+    scenes: [
+      {kw:'IP-Header-Feld', img:'&#9200;', text:'Jedes Paket hat einen leuchtenden Countdown am IP-Header: TTL (Time to Live) \u2013 die Lebensdauer in Hops.'},
+      {kw:'Dekrementierung', img:'&#128347;', text:'An jeder Station (Router) dreht ein Mechaniker den Zähler um 1 herunter \u2013 Dekrementierung bei jedem Hop.'},
+      {kw:'TTL = 0 verworfen', img:'&#128465;', text:'Erreicht der Zähler 0, landet das Paket im Schredder \u2013 verworfen! Gleichzeitig fliegt eine ICMP-Meldung (Time Exceeded) zum Absender.'},
+      {kw:'Routing-Loop verhindern', img:'&#128260;', text:'Ohne TTL könnten Pakete endlos im Kreis fahren (Routing-Loop). Der Countdown ist die Notbremse gegen ewiges Kreisen.'},
+      {kw:'traceroute nutzt TTL', img:'&#128269;', text:'Das Tool traceroute sendet Pakete mit TTL=1, dann 2, dann 3... Bei jedem Ablauf antwortet der Router \u2013 so entsteht eine Landkarte aller Hops.'}
+    ]
   }
-}
+};
 
-function showGlossaryHint(){
-  if(glHintIdx<glCurrentTerm.hints.length){
-    document.getElementById('gl-hint-'+glHintIdx).classList.add('visible');
-    glHintIdx++;
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'tcp': 'TCP',
+  'transmission control protocol': 'TCP',
+  'udp': 'UDP',
+  'user datagram protocol': 'UDP',
+  'drei-wege-handshake': 'Drei-Wege-Handshake',
+  '3-way-handshake': 'Drei-Wege-Handshake',
+  '3-way handshake': 'Drei-Wege-Handshake',
+  'handshake': 'Drei-Wege-Handshake',
+  'tcp-handshake': 'Drei-Wege-Handshake',
+  'tcp handshake': 'Drei-Wege-Handshake',
+  'port': 'Port',
+  'portnummer': 'Port',
+  'portnummern': 'Port',
+  'ports': 'Port',
+  'flusskontrolle': 'Flusskontrolle',
+  'flow control': 'Flusskontrolle',
+  'sliding window': 'Flusskontrolle',
+  'sliding-window': 'Flusskontrolle',
+  'window size': 'Flusskontrolle',
+  'routing': 'Routing',
+  'wegfindung': 'Routing',
+  'routing-tabelle': 'Routing',
+  'routingtabelle': 'Routing',
+  'hop': 'Hop',
+  'hops': 'Hop',
+  'hop count': 'Hop',
+  'hop-count': 'Hop',
+  'routing-hop': 'Hop',
+  'ttl': 'TTL',
+  'time to live': 'TTL',
+  'time-to-live': 'TTL'
+};
 
-function renderGlossaryQuestion(){
-  const content=document.getElementById('gl-content');
-  const qIdx=Math.min(getTermLevel(glCurrentTerm.term),glCurrentTerm.questions.length-1);
-  const q=glCurrentTerm.questions[qIdx];
-  let html=`<div class="gl-question">${q.q}</div>`;
-  if(q.type==='fill'){
-    html+=`<input type="text" class="gl-input" id="gl-answer" placeholder="Antwort eingeben..." autocomplete="off">
-      <button class="gl-btn primary" onclick="checkGlossaryFill()">Prüfen</button>
-      <div id="gl-fb"></div>`;
-  }else if(q.type==='choice'){
-    const opts=shuffle([q.correct,...q.wrong]);
-    html+=`<div class="gl-choices">${opts.map(o=>`<button class="gl-choice" onclick="checkGlossaryChoice(this,'${o.replace(/'/g,"\\'")}','${q.correct.replace(/'/g,"\\'")}')">${o}</button>`).join('')}</div><div id="gl-fb"></div>`;
-  }else if(q.type==='explain'){
-    html+=`<textarea class="gl-input" id="gl-answer" placeholder="Deine Erklärung..." rows="3"></textarea>
-      <button class="gl-btn primary" onclick="checkGlossaryExplain()">Prüfen</button>
-      <div id="gl-fb"></div>`;
-  }
-  content.innerHTML=html;
-  const inp=document.getElementById('gl-answer');
-  if(inp){inp.focus();if(q.type==='fill')inp.addEventListener('keydown',e=>{if(e.key==='Enter')checkGlossaryFill();});}
-}
-
-function checkGlossaryFill(){
-  const inp=document.getElementById('gl-answer');
-  const v=inp.value.trim().toLowerCase();
-  if(!v)return;
-  const q=glCurrentTerm.questions[Math.min(getTermLevel(glCurrentTerm.term),glCurrentTerm.questions.length-1)];
-  const ok=q.keywords.some(k=>v.includes(k.toLowerCase()));
-  const fb=document.getElementById('gl-fb');
-  if(ok){
-    fb.innerHTML=`<div class="gl-feedback success">&#10003; Richtig! Gut gemacht.</div>`;
-    glossaryLevelUp();
-  }else{
-    fb.innerHTML=`<div class="gl-feedback error">&#10007; Nicht ganz. Richtige Antwort: <strong>${q.a}</strong></div>`;
-    glossaryLevelDown();
-  }
-}
-
-function checkGlossaryChoice(btn,selected,correct){
-  const fb=document.getElementById('gl-fb');
-  document.querySelectorAll('.gl-choice').forEach(c=>{c.style.pointerEvents='none';});
-  if(selected===correct){
-    btn.classList.add('correct');
-    fb.innerHTML=`<div class="gl-feedback success">&#10003; Richtig!</div>`;
-    glossaryLevelUp();
-  }else{
-    btn.classList.add('wrong');
-    document.querySelectorAll('.gl-choice').forEach(c=>{if(c.textContent===correct)c.classList.add('correct');});
-    fb.innerHTML=`<div class="gl-feedback error">&#10007; Falsch. Richtig: <strong>${correct}</strong></div>`;
-    glossaryLevelDown();
-  }
-}
-
-function checkGlossaryExplain(){
-  const inp=document.getElementById('gl-answer');
-  const v=inp.value.trim().toLowerCase();
-  if(!v)return;
-  const q=glCurrentTerm.questions[Math.min(getTermLevel(glCurrentTerm.term),glCurrentTerm.questions.length-1)];
-  const found=q.keywords.filter(k=>v.includes(k.toLowerCase()));
-  const missing=q.keywords.filter(k=>!v.includes(k.toLowerCase()));
-  const fb=document.getElementById('gl-fb');
-  const pct=Math.round(found.length/q.keywords.length*100);
-  let html=`<div class="gl-feedback ${pct>=50?'success':'error'}">`;
-  html+=pct>=50?`&#10003; Gute Erklärung! (${pct}% der Schlüsselbegriffe)`:`&#10007; Noch nicht vollständig (${pct}% der Schlüsselbegriffe)`;
-  html+=`<div style="margin-top:8px">`;
-  found.forEach(k=>{html+=`<span class="gl-keyword found">${k}</span>`;});
-  missing.forEach(k=>{html+=`<span class="gl-keyword missing">${k}</span>`;});
-  html+=`</div></div>`;
-  fb.innerHTML=html;
-  if(pct>=50)glossaryLevelUp();else glossaryLevelDown();
-}
-
-function glossaryLevelUp(){
-  if(!glCurrentTerm)return;
-  const lv=getTermLevel(glCurrentTerm.term);
-  setTermLevel(glCurrentTerm.term,lv+1);
-  renderGlossaryGrid();
-  setTimeout(()=>{
-    const idx=glossaryTerms.indexOf(glCurrentTerm);
-    const next=glossaryTerms.find((t,i)=>i!==idx&&getTermLevel(t.term)<3);
-    if(next){
-      const fb=document.getElementById('gl-fb');
-      fb.innerHTML+=`<div style="margin-top:10px"><button class="gl-btn primary" onclick="openGlossaryLearn(${glossaryTerms.indexOf(next)})">Nächster Begriff: ${next.term} &#8594;</button></div>`;
-    }else if(glossaryTerms.every(t=>getTermLevel(t.term)>=3)){
-      const fb=document.getElementById('gl-fb');
-      fb.innerHTML+=`<div class="gl-feedback success" style="margin-top:10px">&#127942; Alle Begriffe gemeistert! Hervorragend!</div>`;
-    }
-  },300);
-}
-
-function glossaryLevelDown(){
-  if(!glCurrentTerm)return;
-  const lv=getTermLevel(glCurrentTerm.term);
-  if(lv>0)setTermLevel(glCurrentTerm.term,lv-1);
-  renderGlossaryGrid();
-  setTimeout(()=>{
-    const fb=document.getElementById('gl-fb');
-    fb.innerHTML+=`<div style="margin-top:10px"><button class="gl-btn primary" onclick="glPhase=0;renderGlossaryPhase();">Nochmal lernen &#8635;</button></div>`;
-  },300);
-}
-
-// ===== GLOSSARY TOOLTIPS =====
-function initGlossaryTooltips(){
-  const selectors=['.card p','.card li','.compare-row','.task-sub','.summary-card p','td','.section-title h2'];
-  const tooltip=document.getElementById('glossary-tooltip');
-  const ttName=document.getElementById('gt-name');
-  const ttShort=document.getElementById('gt-short');
-  const termPatterns=glossaryTerms.map(t=>{
-    const variants=[t.term];
-    if(t.term==='TCP')variants.push('Transmission Control Protocol');
-    if(t.term==='UDP')variants.push('User Datagram Protocol');
-    if(t.term==='Drei-Wege-Handshake')variants.push('3-Way-Handshake','3-Way Handshake','TCP-Handshake');
-    if(t.term==='Port')variants.push('Portnummer','Portnummern');
-    if(t.term==='Flusskontrolle')variants.push('Flow Control','Sliding Window','Window Size');
-    if(t.term==='Routing')variants.push('Routing-Tabelle');
-    if(t.term==='Hop')variants.push('Hops','Hop Count','Hop-Count');
-    if(t.term==='TTL')variants.push('Time to Live','Time-to-Live');
-    return{term:t,variants:variants};
-  });
-
-  selectors.forEach(sel=>{
-    document.querySelectorAll(sel).forEach(el=>{
-      if(el.querySelector('.glossary-term'))return;
-      let html=el.innerHTML;
-      termPatterns.forEach(tp=>{
-        tp.variants.forEach(v=>{
-          const regex=new RegExp('(?<!<[^>]*)\\b('+v.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')\\b(?![^<]*>)','gi');
-          let replaced=false;
-          html=html.replace(regex,(match)=>{
-            if(replaced)return match;
-            replaced=true;
-            return `<span class="glossary-term" data-term="${tp.term.term}">${match}</span>`;
-          });
-        });
-      });
-      el.innerHTML=html;
-    });
-  });
-
-  document.addEventListener('mouseover',e=>{
-    const gt=e.target.closest('.glossary-term');
-    if(!gt)return;
-    const termKey=gt.dataset.term.toLowerCase();
-    const termData=glossaryTermMap[termKey];
-    if(!termData)return;
-    ttName.textContent=termData.term;
-    ttShort.textContent=termData.short+' — '+termData.definition.substring(0,100)+'...';
-    tooltip.style.display='block';
-    const rect=gt.getBoundingClientRect();
-    let tx=rect.left;
-    let ty=rect.bottom+8;
-    if(tx+270>window.innerWidth)tx=window.innerWidth-280;
-    if(ty+120>window.innerHeight)ty=rect.top-130;
-    if(tx<8)tx=8;
-    tooltip.style.left=tx+'px';
-    tooltip.style.top=ty+'px';
-  });
-
-  document.addEventListener('mouseout',e=>{
-    const gt=e.target.closest('.glossary-term');
-    if(gt)tooltip.style.display='none';
-  });
-
-  document.addEventListener('click',e=>{
-    const gt=e.target.closest('.glossary-term');
-    if(!gt)return;
-    const termKey=gt.dataset.term.toLowerCase();
-    const termData=glossaryTermMap[termKey];
-    if(!termData)return;
-    const idx=glossaryTerms.indexOf(termData);
-    if(idx>=0){
-      openGlossaryLearn(idx);
-      document.getElementById('glossary-section').scrollIntoView({behavior:'smooth'});
-    }
-  });
-}
-
-renderGlossaryGrid();
-initGlossaryTooltips();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card li, .compare-row, .task-sub, .summary-card p, td, .section-title h2';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

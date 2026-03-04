@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Informationsgehalt · Entropie · Shannon</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
   :root {
     --bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;
@@ -125,72 +126,6 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
   @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -373,7 +308,14 @@
     </div>
 
     <div class="glossary-grid" id="glossary-grid"></div>
-    <div class="glossary-learn" id="glossary-learn"></div>
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
   </div>
 
   <!-- ═══════════════════════════════════
@@ -682,612 +624,209 @@ function updateScore() {
 calcEntropy();
 newTask();
 
-// ═══════════════════════════════════════════════
-//  GLOSSAR – Interaktives Begriffe-Lernsystem
-// ═══════════════════════════════════════════════
-(function(){
-  const STORAGE_KEY = 'glossary-shannon';
 
-  const glossaryTerms = [
-    {
-      id: 'entropie',
-      term: 'Entropie',
-      icon: '🔀',
-      short: 'Mittlerer Informationsgehalt einer Quelle',
-      definition: 'Die Shannon-Entropie H ist der gewichtete Durchschnitt der Informationsgehalte aller Zeichen einer Quelle. Sie wird berechnet als H = Σ pᵢ · log₂(1/pᵢ) und gibt an, wie viele Bit pro Zeichen im Mittel benötigt werden. Die Entropie ist ein Mass für die Unsicherheit bzw. den mittleren Überraschungswert einer Nachrichtenquelle.',
-      analogy: 'Stell dir eine Lostrommel vor: Sind alle Lose verschieden beschriftet, weisst du vorher nicht, was kommt – die Unsicherheit (Entropie) ist maximal. Sind fast alle Lose gleich, ist die Überraschung gering – die Entropie ist niedrig.',
-      hints: [
-        'Die Entropie wird in Bit/Zeichen gemessen.',
-        'H ist maximal bei Gleichverteilung und beträgt dann log₂(N).',
-        'H ist immer ≥ 0 und ≤ H₀ (Entscheidungsgehalt).'
-      ],
-      questions: {
-        fill: { q: 'Wie lautet die Formel für die Shannon-Entropie?', a: 'H = Σ pᵢ · log₂(1/pᵢ)', keywords: ['Summe','p','log','1/p'] },
-        choice: {
-          q: 'Wann ist die Entropie einer Quelle maximal?',
-          choices: [
-            'Wenn ein Zeichen deutlich häufiger vorkommt als alle anderen',
-            'Wenn alle Zeichen gleich wahrscheinlich sind (Gleichverteilung)',
-            'Wenn die Quelle nur ein einziges Zeichen enthält',
-            'Wenn die Wahrscheinlichkeiten exponentiell verteilt sind'
-          ],
-          correct: 1
-        },
-        explain: { q: 'Erkläre in eigenen Worten, was die Entropie einer Quelle beschreibt und warum sie bei Gleichverteilung maximal ist.', keywords: ['mittler','Informationsgehalt','Unsicherheit','Gleichverteilung','maximal','Bit'] }
-      },
-      difficulty: 2
-    },
-    {
-      id: 'informationsgehalt',
-      term: 'Informationsgehalt',
-      icon: '📊',
-      short: 'Überraschungswert eines einzelnen Zeichens',
-      definition: 'Der Informationsgehalt I eines Zeichens gibt an, wie viel Information (in Bit) das Auftreten dieses Zeichens liefert. Er wird berechnet als I = log₂(1/p) = −log₂(p), wobei p die Auftrittswahrscheinlichkeit ist. Je unwahrscheinlicher ein Zeichen, desto höher sein Informationsgehalt.',
-      analogy: 'Wenn dir jemand sagt "Morgen geht die Sonne auf" (sehr wahrscheinlich), ist das wenig überraschend – geringer Informationsgehalt. Sagt man dir "Morgen schneit es im Juli", ist das sehr überraschend – hoher Informationsgehalt.',
-      hints: [
-        'Formel: I = log₂(1/p) oder gleichwertig I = −log₂(p).',
-        'Bei p = 1 (sicheres Ereignis) ist I = 0 Bit.',
-        'Bei p = 0.5 ist I = 1 Bit, bei p = 0.25 ist I = 2 Bit.'
-      ],
-      questions: {
-        fill: { q: 'Wie berechnet man den Informationsgehalt eines Zeichens mit Wahrscheinlichkeit p?', a: 'I = log₂(1/p)', keywords: ['log','1/p','I'] },
-        choice: {
-          q: 'Ein Zeichen tritt mit p = 0.125 auf. Wie gross ist sein Informationsgehalt?',
-          choices: ['1 Bit','2 Bit','3 Bit','8 Bit'],
-          correct: 2
-        },
-        explain: { q: 'Erkläre, warum ein seltenes Zeichen mehr Information trägt als ein häufiges.', keywords: ['selten','unwahrscheinlich','Überraschung','Information','häufig','wenig'] }
-      },
-      difficulty: 1
-    },
-    {
-      id: 'wahrscheinlichkeit',
-      term: 'Wahrscheinlichkeit',
-      icon: '🎲',
-      short: 'Auftrittswahrscheinlichkeit eines Zeichens',
-      definition: 'Die Auftrittswahrscheinlichkeit p(x) gibt an, mit welcher relativen Häufigkeit ein bestimmtes Zeichen x in einer Nachrichtenquelle vorkommt. Alle Wahrscheinlichkeiten einer Quelle summieren sich zu 1. Die Wahrscheinlichkeit bestimmt direkt den Informationsgehalt: p klein → I gross, p gross → I klein.',
-      analogy: 'In einem Beutel mit 100 Buchstaben-Plättchen: Wenn 40 davon ein "E" sind, ist p(E) = 0.4 (40%). Das "E" kommt oft vor und überrascht daher wenig.',
-      hints: [
-        'Es gilt immer: Σ pᵢ = 1 (alle Wahrscheinlichkeiten zusammen ergeben 1).',
-        'Bei Gleichverteilung ist p = 1/N für jedes Zeichen.',
-        'Die Wahrscheinlichkeit liegt immer zwischen 0 und 1.'
-      ],
-      questions: {
-        fill: { q: 'Wie lautet die Bedingung für die Summe aller Zeichenwahrscheinlichkeiten einer Quelle?', a: 'Σ pᵢ = 1', keywords: ['Summe','1','p'] },
-        choice: {
-          q: 'Ein Alphabet hat 8 gleichverteilte Zeichen. Wie gross ist p für jedes Zeichen?',
-          choices: ['0.25','0.125','0.0625','0.5'],
-          correct: 1
-        },
-        explain: { q: 'Erkläre den Zusammenhang zwischen der Auftrittswahrscheinlichkeit p und dem Informationsgehalt I.', keywords: ['klein','gross','Informationsgehalt','unwahrscheinlich','selten','umgekehrt'] }
-      },
-      difficulty: 1
-    },
-    {
-      id: 'logarithmus',
-      term: 'Logarithmus',
-      icon: '📐',
-      short: 'log₂ als Basis der Informationsberechnung',
-      definition: 'Der binäre Logarithmus (log₂) ist die mathematische Grundlage der Informationstheorie. log₂(x) beantwortet die Frage: "Welche Potenz von 2 ergibt x?" Er wird verwendet, weil digitale Systeme auf Binärziffern (0 und 1) basieren. Beispiele: log₂(8) = 3, log₂(16) = 4, log₂(1) = 0.',
-      analogy: 'Der Logarithmus zählt, wie oft man halbieren muss: Um aus 8 Möglichkeiten eine zu finden, braucht man 3 Ja/Nein-Fragen – das entspricht log₂(8) = 3.',
-      hints: [
-        'log₂(2ⁿ) = n, z.B. log₂(8) = log₂(2³) = 3.',
-        'log₂(1) = 0, log₂(2) = 1, log₂(1024) = 10.',
-        'Umrechnung: log₂(x) = ln(x) / ln(2) ≈ log₁₀(x) / 0.301.'
-      ],
-      questions: {
-        fill: { q: 'Was ergibt log₂(32)?', a: '5', keywords: ['5'] },
-        choice: {
-          q: 'Warum verwendet die Informationstheorie log₂ statt log₁₀?',
-          choices: [
-            'Weil log₂ einfacher zu berechnen ist',
-            'Weil digitale Systeme binär arbeiten (0 und 1)',
-            'Weil Shannon den Logarithmus zur Basis 2 erfunden hat',
-            'Weil log₁₀ keine ganzen Zahlen liefert'
-          ],
-          correct: 1
-        },
-        explain: { q: 'Erkläre, was log₂(x) anschaulich bedeutet und warum er in der Informationstheorie verwendet wird.', keywords: ['binär','Bit','halbieren','Potenz','2','digital'] }
-      },
-      difficulty: 1
-    },
-    {
-      id: 'bit',
-      term: 'Bit',
-      icon: '💾',
-      short: 'Grundeinheit der Information',
-      definition: 'Ein Bit (Binary Digit) ist die fundamentale Einheit der Information. Ein Bit entspricht der Informationsmenge einer einzelnen Ja/Nein-Entscheidung (Binärentscheidung). Der Informationsgehalt wird in Bit gemessen, die Entropie in Bit/Zeichen. Ein Bit kann die Werte 0 oder 1 annehmen.',
-      analogy: 'Ein Bit ist wie ein Lichtschalter: an oder aus, ja oder nein, 0 oder 1. Eine einzelne Ja/Nein-Frage liefert genau 1 Bit Information.',
-      hints: [
-        'Ein fairer Münzwurf liefert genau 1 Bit Information (log₂(2) = 1).',
-        'Informationsgehalt wird in Bit gemessen, Entropie in Bit/Zeichen.',
-        '1 Byte = 8 Bit, 1 Kilobyte = 1024 Byte.'
-      ],
-      questions: {
-        fill: { q: 'Wie viel Bit Information liefert ein fairer Münzwurf (2 gleichwahrscheinliche Ergebnisse)?', a: '1 Bit', keywords: ['1','Bit'] },
-        choice: {
-          q: 'Was beschreibt die Einheit "Bit/Zeichen"?',
-          choices: [
-            'Die Speichergrösse einer Datei',
-            'Die Übertragungsgeschwindigkeit',
-            'Den mittleren Informationsgehalt pro Zeichen (Entropie)',
-            'Die Anzahl der Zeichen in einer Nachricht'
-          ],
-          correct: 2
-        },
-        explain: { q: 'Erkläre, was ein Bit ist und warum es die natürliche Einheit der Information ist.', keywords: ['Binär','Entscheidung','0','1','Ja','Nein','Einheit'] }
-      },
-      difficulty: 1
-    },
-    {
-      id: 'redundanz',
-      term: 'Redundanz',
-      icon: '📦',
-      short: 'Überschüssige, nicht genutzte Bit-Kapazität',
-      definition: 'Die Redundanz R = H₀ − H gibt an, wie viele Bit pro Zeichen "verschwendet" werden, weil die Zeichen nicht gleichverteilt sind. Die relative Redundanz r = R/H₀ = 1 − H/H₀ wird in Prozent angegeben. Hohe Redundanz bedeutet: Die Quelle nutzt ihren Zeichenvorrat ineffizient und lässt sich gut komprimieren.',
-      analogy: 'Stell dir einen Rucksack vor, der 10 kg tragen kann, aber nur 6 kg drin sind. Die 4 kg ungenutzter Platz sind die Redundanz. Bei Texten: Der deutsche Buchstabenvorrat könnte pro Zeichen ~4.7 Bit tragen, nutzt aber nur ~4.1 Bit – der Rest ist Redundanz.',
-      hints: [
-        'Formel: R = H₀ − H (absolute Redundanz in Bit/Zeichen).',
-        'Relative Redundanz: r = 1 − H/H₀ (Anteil ungenutzter Kapazität).',
-        'Bei Gleichverteilung ist R = 0 (keine Redundanz).'
-      ],
-      questions: {
-        fill: { q: 'Wie berechnet man die absolute Redundanz R?', a: 'R = H₀ − H', keywords: ['H₀','H','Differenz','minus'] },
-        choice: {
-          q: 'Was bedeutet eine hohe Redundanz einer Quelle?',
-          choices: [
-            'Die Quelle hat eine hohe Entropie',
-            'Die Quelle nutzt ihren Zeichenvorrat ineffizient und lässt sich gut komprimieren',
-            'Alle Zeichen sind gleichverteilt',
-            'Die Quelle enthält viele verschiedene Zeichen'
-          ],
-          correct: 1
-        },
-        explain: { q: 'Erkläre den Zusammenhang zwischen Redundanz, Entropie und Komprimierbarkeit.', keywords: ['H₀','H','Differenz','komprimier','ungleichverteilt','ineffizient'] }
-      },
-      difficulty: 2
-    },
-    {
-      id: 'gleichverteilung',
-      term: 'Gleichverteilung',
-      icon: '⚖️',
-      short: 'Maximale Entropie wenn alle p gleich',
-      definition: 'Bei einer Gleichverteilung haben alle N Zeichen die gleiche Auftrittswahrscheinlichkeit p = 1/N. In diesem Fall erreicht die Entropie ihr Maximum: H = H₀ = log₂(N). Dies ist der Zustand maximaler Unsicherheit, da kein Zeichen vorhersagbar ist. Die Redundanz ist dann R = 0.',
-      analogy: 'Ein perfekt fairer Würfel mit 6 Seiten: Jede Seite hat p = 1/6. Du kannst das Ergebnis am wenigsten vorhersagen – maximale Überraschung, maximale Entropie.',
-      hints: [
-        'Bei Gleichverteilung: p = 1/N für alle Zeichen.',
-        'Dann gilt: H = H₀ = log₂(N) (Entscheidungsgehalt).',
-        'Gleichverteilung = maximale Entropie = maximale Unsicherheit = Redundanz 0.'
-      ],
-      questions: {
-        fill: { q: 'Wie gross ist die Entropie bei Gleichverteilung von N Zeichen?', a: 'H = log₂(N)', keywords: ['log','N','H'] },
-        choice: {
-          q: 'Ein Alphabet hat 16 gleichverteilte Zeichen. Wie gross ist H?',
-          choices: ['2 Bit/Zeichen','3 Bit/Zeichen','4 Bit/Zeichen','16 Bit/Zeichen'],
-          correct: 2
-        },
-        explain: { q: 'Erkläre, warum die Entropie bei Gleichverteilung maximal ist.', keywords: ['gleich','wahrscheinlich','Unsicherheit','vorhersag','maximal','ungewiss'] }
-      },
-      difficulty: 2
-    },
-    {
-      id: 'codierung',
-      term: 'Codierung',
-      icon: '🔣',
-      short: 'Quellencodierung zur Datenkompression',
-      definition: 'Die Quellencodierung (Source Coding) wandelt Nachrichten in Bitfolgen um. Nach Shannons Quellencodierungstheorem kann eine optimale Codierung im Mittel nicht weniger als H Bit pro Zeichen verwenden. Häufige Zeichen erhalten kurze Codes, seltene Zeichen lange Codes (z.B. Huffman-Codierung). Die untere Grenze für die mittlere Codewortlänge ist die Entropie H.',
-      analogy: 'Wie Abkürzungen in einer SMS: Häufige Wörter wie "und" kürzt man ab ("u"), seltene Wörter schreibt man aus. So spart man insgesamt Platz – genau wie bei optimaler Codierung.',
-      hints: [
-        'Shannon-Theorem: Die mittlere Codewortlänge L ≥ H (Entropie ist die untere Grenze).',
-        'Huffman-Code: Häufige Zeichen → kurze Codes, seltene → lange Codes.',
-        'Optimale Codierung eliminiert Redundanz.'
-      ],
-      questions: {
-        fill: { q: 'Was ist die theoretische untere Grenze für die mittlere Codewortlänge?', a: 'Die Entropie H', keywords: ['Entropie','H','untere','Grenze'] },
-        choice: {
-          q: 'Welches Prinzip nutzt die Huffman-Codierung?',
-          choices: [
-            'Alle Zeichen erhalten gleich lange Codes',
-            'Häufige Zeichen erhalten kurze, seltene Zeichen lange Codes',
-            'Codes werden zufällig zugewiesen',
-            'Nur Zeichen mit p > 0.1 werden codiert'
-          ],
-          correct: 1
-        },
-        explain: { q: 'Erkläre das Shannon-Quellencodierungstheorem und seine Bedeutung für die Datenkompression.', keywords: ['Entropie','mittlere','Codewortlänge','untere Grenze','komprimier','optimal'] }
-      },
-      difficulty: 3
-    }
-  ];
+// ── Glossar-System (Shared) ──
+var TRAINER_ID = 'shannon-trainer';
 
-  // Term-Map: Varianten → Term-ID
-  const termMap = {
-    'entropie': 'entropie',
-    'shannon-entropie': 'entropie',
-    'shannon entropie': 'entropie',
-    'h': 'entropie',
-    'mittlerer informationsgehalt': 'entropie',
-    'informationsgehalt': 'informationsgehalt',
-    'überraschungswert': 'informationsgehalt',
-    'information content': 'informationsgehalt',
-    'informationsgehalte': 'informationsgehalt',
-    'wahrscheinlichkeit': 'wahrscheinlichkeit',
-    'auftrittswahrscheinlichkeit': 'wahrscheinlichkeit',
-    'wahrscheinlichkeiten': 'wahrscheinlichkeit',
-    'logarithmus': 'logarithmus',
-    'log₂': 'logarithmus',
-    'log2': 'logarithmus',
-    'binärer logarithmus': 'logarithmus',
-    'bit': 'bit',
-    'binary digit': 'bit',
-    'bit/zeichen': 'bit',
-    'redundanz': 'redundanz',
-    'redundanz r': 'redundanz',
-    'relative redundanz': 'redundanz',
-    'gleichverteilung': 'gleichverteilung',
-    'maximale entropie': 'gleichverteilung',
-    'entscheidungsgehalt': 'gleichverteilung',
-    'h₀': 'gleichverteilung',
-    'codierung': 'codierung',
-    'quellencodierung': 'codierung',
-    'source coding': 'codierung',
-    'huffman': 'codierung',
-    'huffman-codierung': 'codierung'
-  };
-
-  // ── State Management ──
-  function loadState() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
+var GLOSSARY = [
+  {
+    term: 'Entropie',
+    short: 'Mittlerer Informationsgehalt pro Zeichen einer Quelle.',
+    definition: 'Die Entropie H beschreibt den mittleren Informationsgehalt pro Symbol einer Nachrichtenquelle. Formel: H = -Σ p(xᵢ) · log₂(p(xᵢ)). Sie wird in Bit/Symbol gemessen. Bei Gleichverteilung ist die Entropie maximal (H_max = log₂(n)). Shannon definierte sie 1948.',
+    analogy: '📦 Die Entropie ist wie der durchschnittliche Überraschungswert aller Preise in einer Überraschungskiste – je gleichmässiger verteilt, desto grösser die Überraschung.',
+    hints: ['H = -Σ p·log₂(p), Einheit: Bit/Symbol.','Maximum bei Gleichverteilung: H_max = log₂(n).','Claude Shannon (1948) – Vater der Informationstheorie.'],
+    questions: [
+      {type:'fill', q:'Die Formel für die Entropie lautet: H = -Σ p(xᵢ) · _______(p(xᵢ))', a:'log₂', keywords:['log₂','log2','logarithmus']},
+      {type:'choice', q:'Wann ist die Entropie maximal?', options:['Bei nur einem möglichen Zeichen','Bei Gleichverteilung aller Zeichen','Bei sehr ungleicher Verteilung','Bei minimalem Informationsgehalt'], correct:1},
+      {type:'explain', q:'Erkläre, warum die Entropie bei Gleichverteilung maximal ist.', keywords:['gleichverteilung','überraschung','vorhersehbar','maximal','wahrscheinlichkeit'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Informationsgehalt',
+    short: 'Überraschungswert eines einzelnen Ereignisses in Bit.',
+    definition: 'Der Informationsgehalt I eines Ereignisses mit Wahrscheinlichkeit p beträgt: I = -log₂(p) = log₂(1/p). Je unwahrscheinlicher ein Ereignis, desto höher sein Informationsgehalt. Ein sicheres Ereignis (p=1) hat I=0 Bit, ein Münzwurf (p=0.5) hat I=1 Bit.',
+    analogy: '📰 Der Informationsgehalt ist wie der Schlagzeilenwert: "Sonne geht auf" (p≈1) ist keine Neuigkeit (0 Bit). "Schnee im Juli" (p≈0) wäre eine Riesenschlagzeile (viele Bit).',
+    hints: ['I = -log₂(p) = log₂(1/p), Einheit: Bit.','p=1 → I=0 (sicheres Ereignis = keine Info).','p=0.5 → I=1 Bit (Münzwurf).'],
+    questions: [
+      {type:'fill', q:'Der Informationsgehalt eines Ereignisses mit p=0.5 beträgt ___ Bit.', a:'1', keywords:['1']},
+      {type:'choice', q:'Welches Ereignis hat den höchsten Informationsgehalt?', options:['p = 0.9','p = 0.5','p = 0.1','p = 1.0'], correct:2},
+      {type:'explain', q:'Erkläre, warum seltene Ereignisse mehr Information tragen als häufige.', keywords:['selten','wahrscheinlichkeit','überraschung','log','bit'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Wahrscheinlichkeit',
+    short: 'Mass für die Häufigkeit eines Ereignisses (0 bis 1).',
+    definition: 'Die Wahrscheinlichkeit p eines Ereignisses liegt zwischen 0 (unmöglich) und 1 (sicher). Die Summe aller Wahrscheinlichkeiten einer vollständigen Ereignismenge ist immer 1. In der Informationstheorie bestimmt p direkt den Informationsgehalt und die Entropie.',
+    analogy: '🎲 Beim fairen Würfel hat jede Seite p=1/6. Alle sechs Wahrscheinlichkeiten zusammen ergeben 1 – den ganzen Kuchen.',
+    hints: ['p liegt zwischen 0 und 1, Σp = 1.','Häufige Ereignisse (hohes p) tragen wenig Information.','Seltene Ereignisse (niedriges p) tragen viel Information.'],
+    questions: [
+      {type:'fill', q:'Die Summe aller Wahrscheinlichkeiten einer vollständigen Menge beträgt ___.', a:'1', keywords:['1','eins']},
+      {type:'choice', q:'Welche Aussage ist korrekt?', options:['p kann grösser als 1 sein','Häufige Ereignisse haben hohen Informationsgehalt','Σp = 1 für eine vollständige Menge','p = 0 bedeutet sicheres Ereignis'], correct:2},
+      {type:'explain', q:'Erkläre den Zusammenhang zwischen Wahrscheinlichkeit und Informationsgehalt.', keywords:['wahrscheinlichkeit','information','selten','häufig','log','bit'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Logarithmus',
+    short: 'Umkehrfunktion der Potenz – beantwortet: Welcher Exponent?',
+    definition: 'Der Logarithmus zur Basis 2 (log₂) beantwortet: Wie viele Ja/Nein-Fragen brauche ich, um aus n Möglichkeiten zu wählen? Er ist die Umkehrung der Potenz: Wenn 2³=8, dann log₂(8)=3. In der Informationstheorie wird log₂ verwendet, weil Computer binär arbeiten.',
+    analogy: '🪜 log₂ ist wie ein Treppenhaus: Die Treppe verdoppelt sich mit jeder Stufe (1→2→4→8→16). log₂ zählt, wie viele Stufen du brauchst.',
+    hints: ['log₂(8)=3, weil 2³=8. Drei Bit für 8 Möglichkeiten.','log₂(n) = Anzahl Ja/Nein-Fragen für n Möglichkeiten.','Basis 2, weil Computer binär (0/1) arbeiten.'],
+    questions: [
+      {type:'fill', q:'log₂(16) = ___', a:'4', keywords:['4']},
+      {type:'choice', q:'Warum wird in der Informationstheorie log₂ verwendet?', options:['Weil es einfacher zu rechnen ist','Weil Computer binär arbeiten','Weil Shannon es so wollte','Weil log₁₀ zu grosse Werte liefert'], correct:1},
+      {type:'explain', q:'Erkläre, was log₂(n) im Kontext der Informationstheorie bedeutet.', keywords:['bit','fragen','möglichkeiten','binär','potenz','umkehrung'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Bit',
+    short: 'Kleinste Informationseinheit – Binary Digit (0 oder 1).',
+    definition: 'Ein Bit (Binary Digit) ist die kleinste Einheit der Information. Es hat genau zwei Zustände: 0 oder 1. Mit n Bit können 2ⁿ verschiedene Zustände dargestellt werden. 1 Bit entspricht dem Informationsgehalt eines fairen Münzwurfs.',
+    analogy: '🪙 Ein Bit ist wie ein Münzwurf: Kopf oder Zahl, 0 oder 1. Eine einzige Ja/Nein-Entscheidung.',
+    hints: ['Binary Digit – zwei Zustände: 0 oder 1.','n Bit = 2ⁿ Zustände (8 Bit = 256).','1 Bit = Informationsgehalt eines fairen Münzwurfs.'],
+    questions: [
+      {type:'fill', q:'Mit 8 Bit können ______ verschiedene Zustände dargestellt werden.', a:'256', keywords:['256','2^8']},
+      {type:'choice', q:'Wie viele Zustände kann ein einzelnes Bit darstellen?', options:['1','2','8','256'], correct:1},
+      {type:'explain', q:'Erkläre, warum 1 Bit dem Informationsgehalt eines fairen Münzwurfs entspricht.', keywords:['münzwurf','wahrscheinlichkeit','0.5','log₂','zwei','zustände'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Redundanz',
+    short: 'Überflüssige Information – Differenz zwischen Maximum und tatsächlicher Entropie.',
+    definition: 'Redundanz R beschreibt den Anteil überflüssiger Information: R = 1 - H/H_max (relativ) oder R = H_max - H (absolut). Natürliche Sprache hat ca. 50% Redundanz. Redundanz ermöglicht Datenkompression, dient aber auch der Fehlererkennung (z.B. Prüfziffern).',
+    analogy: '🪂 Redundanz ist wie ein Reservefallschirm: überflüssig im Normalfall, aber lebensrettend bei Ausfall. Man kann sie entfernen (Kompression) oder bewusst hinzufügen (Fehlerschutz).',
+    hints: ['R = 1 - H/H_max (relativ, 0 bis 1).','Natürliche Sprache: ca. 50% redundant.','Kompression entfernt Redundanz, Fehlerschutz fügt sie hinzu.'],
+    questions: [
+      {type:'fill', q:'Die relative Redundanz berechnet sich: R = 1 - H / _______', a:'H_max', keywords:['H_max','Hmax']},
+      {type:'choice', q:'Natürliche Sprache hat ungefähr wie viel Redundanz?', options:['10%','30%','50%','90%'], correct:2},
+      {type:'explain', q:'Erkläre, warum Redundanz sowohl für Kompression als auch für Fehlererkennung relevant ist.', keywords:['kompression','entfernen','fehlererkennung','prüfziffer','überflüssig','schutz'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Gleichverteilung',
+    short: 'Alle Symbole haben die gleiche Wahrscheinlichkeit.',
+    definition: 'Bei Gleichverteilung hat jedes Symbol die gleiche Wahrscheinlichkeit p = 1/n. Dies führt zur maximalen Entropie H_max = log₂(n). Jede Abweichung von der Gleichverteilung senkt die Entropie. Gleichverteilung bedeutet maximale Unvorhersehbarkeit.',
+    analogy: '🎰 Ein perfektes Rouletterad: Alle Felder gleich gross, jedes Ergebnis gleich wahrscheinlich – maximale Überraschung.',
+    hints: ['p = 1/n für jedes Symbol.','H_max = log₂(n) Bit/Symbol.','n=2 (Münzwurf): H_max = 1 Bit.'],
+    questions: [
+      {type:'fill', q:'Bei Gleichverteilung mit n Symbolen beträgt H_max = _______(n) Bit.', a:'log₂', keywords:['log₂','log2']},
+      {type:'choice', q:'Was passiert mit der Entropie, wenn die Verteilung ungleichmässig wird?', options:['Sie steigt','Sie bleibt gleich','Sie sinkt','Sie verdoppelt sich'], correct:2},
+      {type:'explain', q:'Erkläre, warum Gleichverteilung zur maximalen Entropie führt.', keywords:['gleich','wahrscheinlichkeit','überraschung','vorhersehbar','maximum'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Codierung',
+    short: 'Zuordnung von Symbolen zu Bitfolgen.',
+    definition: 'Codierung ordnet jedem Symbol einer Quelle eine Bitfolge zu. Bei fester Codierung (z.B. ASCII, 8 Bit/Zeichen) sind alle Codes gleich lang. Bei variabler Codierung (z.B. Huffman) bekommen häufige Symbole kurze und seltene lange Codes. Die Entropie ist die untere Schranke der mittleren Codewortlänge.',
+    analogy: '📖 Codierung ist wie ein Geheimsprachen-Codebuch: Jedes Wort bekommt einen Code. Häufige Wörter bekommen kurze Codes, seltene lange – so wird die Nachricht kürzer.',
+    hints: ['Feste Länge (z.B. ASCII 8 Bit) vs. variable Länge (z.B. Huffman).','Huffman-Code: optimal, präfixfrei.','Entropie H ist die untere Schranke für mittlere Codewortlänge.'],
+    questions: [
+      {type:'fill', q:'Bei der ____________-Codierung bekommen häufige Symbole kürzere Codes.', a:'Huffman', keywords:['huffman','variable','variablen']},
+      {type:'choice', q:'Was ist die untere Schranke der mittleren Codewortlänge?', options:['0 Bit','1 Bit','Die Entropie H','log₂(n)'], correct:2},
+      {type:'explain', q:'Erkläre den Vorteil variabler Codierung gegenüber fester Codierung.', keywords:['häufig','kurz','selten','lang','effizienter','entropie','kompression'], minKeywords:3}
+    ]
   }
-  function saveState(state) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+];
+
+var GP_STORIES = {
+  'Entropie': {
+    route: 'Eine Überraschungskiste auf dem Jahrmarkt',
+    scenes: [
+      {kw:'Mittlerer Informationsgehalt', img:'📦 Kiste mit gemischtem Inhalt', text:'Die Entropie ist wie der durchschnittliche Überraschungswert aller Preise in der Kiste – der mittlere Informationsgehalt.'},
+      {kw:'H = -Σ p·log₂(p)', img:'📋 Formel am Losstand', text:'Am Losstand steht die Formel: H = -Σ p·log₂(p). Jeder Preis wird mit seiner Wahrscheinlichkeit gewichtet.'},
+      {kw:'Maximum bei Gleichverteilung', img:'🎰 Alle Fächer gleich voll', text:'Die Überraschung ist am grössten, wenn alle Fächer gleich voll sind – Gleichverteilung = maximale Entropie.'},
+      {kw:'Bit/Symbol', img:'🏷️ Einheit: Bit pro Zeichen', text:'Die Einheit steht auf dem Etikett: Bit pro Symbol – so viel Info steckt durchschnittlich in jedem Zeichen.'},
+      {kw:'Shannon 1948', img:'🎓 Erfinder-Porträt', text:'An der Wand hängt das Porträt von Claude Shannon (1948) – der Vater der Informationstheorie.'}
+    ]
+  },
+  'Informationsgehalt': {
+    route: 'Ein Nachrichtenstudio',
+    scenes: [
+      {kw:'I = -log₂(p)', img:'📰 Schlagzeilen-Generator', text:'Der Schlagzeilen-Generator berechnet: I = -log₂(p). Je seltener, desto grösser die Schlagzeile!'},
+      {kw:'Seltenes = wertvoll', img:'💎 Diamant vs. Kieselstein', text:'Ein Diamant (seltenes Ereignis) hat hohen Informationsgehalt, ein Kieselstein (häufig) ist langweilig.'},
+      {kw:'p=1 → I=0', img:'🌅 Sonnenaufgang = keine News', text:'Dass die Sonne aufgeht (p=1) ist keine Neuigkeit – Informationsgehalt = 0 Bit.'},
+      {kw:'p=0.5 → I=1 Bit', img:'🪙 Münzwurf', text:'Kopf oder Zahl (p=0.5)? Eine faire Münze liefert genau 1 Bit Information.'},
+      {kw:'Einheit: Bit', img:'📐 Bit-Massstab', text:'Der Informationsgehalt wird in Bit gemessen – je mehr Bit, desto überraschender.'}
+    ]
+  },
+  'Wahrscheinlichkeit': {
+    route: 'Ein Würfelspiel-Tisch',
+    scenes: [
+      {kw:'p zwischen 0 und 1', img:'🎲 Würfel auf dem Tisch', text:'Auf dem Tisch liegt ein Würfel – jede Seite hat eine Wahrscheinlichkeit zwischen 0 und 1.'},
+      {kw:'Σp = 1', img:'🍰 Ganzer Kuchen', text:'Alle Wahrscheinlichkeiten zusammen ergeben immer den ganzen Kuchen: Σp = 1.'},
+      {kw:'Häufig → wenig Info', img:'😴 Gähnender Spieler', text:'Wenn fast immer die 6 fällt, gähnt der Spieler – häufige Ereignisse tragen wenig Information.'},
+      {kw:'Selten → viel Info', img:'😱 Staunender Spieler', text:'Fällt plötzlich die 1, staunt jeder – seltene Ereignisse haben hohen Informationsgehalt!'},
+      {kw:'Basis für Entropie', img:'🧱 Fundament', text:'Die Wahrscheinlichkeiten sind das Fundament: Ohne sie kann man weder I noch H berechnen.'}
+    ]
+  },
+  'Logarithmus': {
+    route: 'Ein Treppenhaus im Informationsturm',
+    scenes: [
+      {kw:'log₂', img:'📐 Zweier-Treppe', text:'Die Treppe verdoppelt sich mit jeder Stufe: 1→2→4→8→16. log₂ zählt die Stufen.'},
+      {kw:'log₂(8) = 3', img:'3️⃣ Drei Stufen bis 8', text:'Von 1 bis 8 braucht man 3 Stufen: log₂(8) = 3. Drei Bit reichen für 8 Möglichkeiten!'},
+      {kw:'Umkehrung der Potenz', img:'🔄 Rauf und runter', text:'2³ = 8 geht rauf (Potenz), log₂(8) = 3 geht runter (Logarithmus) – sie sind Umkehrungen.'},
+      {kw:'Bit-Bedarf', img:'❓ Wie viele Ja/Nein-Fragen?', text:'log₂(n) beantwortet: Wie viele Ja/Nein-Fragen brauche ich, um aus n Möglichkeiten zu wählen?'},
+      {kw:'Basis 2', img:'💡 Binär-Lampe', text:'Basis 2 weil Computer binär denken: An/Aus, 0/1 – darum log₂!'}
+    ]
+  },
+  'Bit': {
+    route: 'Eine Münzprägestätte',
+    scenes: [
+      {kw:'Binary Digit', img:'🏭 Fabrikschild', text:'Am Eingang steht: "Binary Digit Factory" – Bit ist die Kurzform.'},
+      {kw:'0 oder 1', img:'🪙 Kopf oder Zahl', text:'Jedes geprägte Bit hat genau zwei Seiten: 0 oder 1.'},
+      {kw:'Kleinste Einheit', img:'🔬 Mikroskopisch klein', text:'Das Bit ist die kleinste Einheit der Information – unteilbar wie ein Atom.'},
+      {kw:'n Bit = 2ⁿ Zustände', img:'📊 Exponential-Tafel', text:'An der Wand: 1 Bit = 2, 8 Bit = 256, 16 Bit = 65.536 Zustände!'},
+      {kw:'Entscheidungsgehalt', img:'🤔 Eine Ja/Nein-Frage', text:'1 Bit beantwortet genau eine Ja/Nein-Frage – der elementare Entscheidungsgehalt.'}
+    ]
+  },
+  'Redundanz': {
+    route: 'Ein Fallschirmspringer-Ausrüstungsraum',
+    scenes: [
+      {kw:'Überflüssige Information', img:'🪂 Zweiter Fallschirm', text:'Der Reservefallschirm ist redundant – überflüssig im Normalfall, aber lebensrettend bei Ausfall!'},
+      {kw:'R = 1 - H/H_max', img:'📋 Formel am Spind', text:'Am Spind steht: R = 1 - H/H_max. Je weiter H von H_max entfernt, desto mehr Redundanz.'},
+      {kw:'Natürliche Sprache ~50%', img:'🗣️ Halbe Wörter reichen', text:'In natürlicher Sprache ist ca. 50% redundant – man kann jeden zweiten Buchstaben weglassen und versteht noch!'},
+      {kw:'Datenkompression', img:'🗜️ Schraubstock', text:'Kompression entfernt Redundanz: Gleiche Info, weniger Platz.'},
+      {kw:'Fehlererkennung', img:'🛡️ Prüfziffer', text:'Aber Redundanz schützt auch! Prüfziffern nutzen bewusst Redundanz zur Fehlererkennung.'}
+    ]
+  },
+  'Gleichverteilung': {
+    route: 'Ein perfektes Rouletterad',
+    scenes: [
+      {kw:'Alle p gleich', img:'🎰 Alle Felder gleich gross', text:'Auf dem perfekten Rouletterad sind alle Felder gleich gross – gleiche Wahrscheinlichkeit.'},
+      {kw:'Maximale Entropie', img:'📈 Höchster Punkt', text:'Bei Gleichverteilung ist die Entropie maximal – maximale Überraschung!'},
+      {kw:'H_max = log₂(n)', img:'📐 Formel am Rad', text:'Die Maximal-Entropie: H_max = log₂(n) Bit, wobei n die Anzahl der Symbole ist.'},
+      {kw:'n=2 → H=1 Bit', img:'🪙 Münze = 2 Felder', text:'Bei nur 2 Feldern (Münzwurf): H_max = log₂(2) = 1 Bit.'},
+      {kw:'Ungleichverteilung < H_max', img:'📉 Schiefes Rad', text:'Ist ein Feld grösser als die anderen, sinkt die Entropie unter H_max.'}
+    ]
+  },
+  'Codierung': {
+    route: 'Eine Geheimsprachen-Werkstatt',
+    scenes: [
+      {kw:'Zuordnung Zeichen → Bits', img:'📖 Codebuch', text:'Im Codebuch steht die Zuordnung: Jedes Zeichen bekommt eine bestimmte Folge von Bits.'},
+      {kw:'Feste Länge', img:'📏 Gleich lange Schlüssel', text:'Bei fester Codierung (z.B. ASCII) hat jedes Zeichen 8 Bit.'},
+      {kw:'Variable Länge', img:'📐 Unterschiedlich lange Schlüssel', text:'Bei variabler Codierung bekommen häufige Zeichen kurze Codes, seltene lange.'},
+      {kw:'Huffman', img:'🌳 Codierungsbaum', text:'Der Huffman-Baum hängt an der Wand: Er erzeugt optimale präfixfreie Codes.'},
+      {kw:'Entropie als Grenze', img:'🚧 Schranke', text:'Die Entropie ist die untere Schranke: Kein Code kann kürzer sein als H Bit pro Symbol!'}
+    ]
   }
-  function getLevel(id) {
-    const s = loadState();
-    return (s[id] && s[id].level) || 0;
-  }
-  function setLevel(id, level) {
-    const s = loadState();
-    if (!s[id]) s[id] = {};
-    s[id].level = Math.min(3, Math.max(0, level));
-    saveState(s);
-  }
+};
 
-  // ── Tooltip ──
-  const tooltip = document.createElement('div');
-  tooltip.className = 'glossary-tooltip';
-  tooltip.innerHTML = '<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">Klicken zum Lernen ↓</div>';
-  document.body.appendChild(tooltip);
+var GLOSSARY_TERM_MAP = {
+  'entropie': 'Entropie',
+  'informationsgehalt': 'Informationsgehalt',
+  'wahrscheinlichkeit': 'Wahrscheinlichkeit',
+  'logarithmus': 'Logarithmus',
+  'log2': 'Logarithmus',
+  'bit': 'Bit',
+  'redundanz': 'Redundanz',
+  'gleichverteilung': 'Gleichverteilung',
+  'codierung': 'Codierung',
+  'huffman': 'Codierung'
+};
 
-  // ── Highlight Terms in Page ──
-  function highlightTermsInPage() {
-    const selectors = ['.f-desc', '.task-sub', '.ev-sub', '.summary-card p', '.formula-card .f-en'];
-    const containers = [];
-    selectors.forEach(sel => {
-      document.querySelectorAll(sel).forEach(el => containers.push(el));
-    });
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.formula-card .f-desc, .calc-output, .section-title h2';
 
-    containers.forEach(container => {
-      if (container.dataset.glossaryProcessed) return;
-      container.dataset.glossaryProcessed = '1';
-
-      const sortedTerms = Object.keys(termMap).sort((a,b) => b.length - a.length);
-      let html = container.innerHTML;
-
-      sortedTerms.forEach(variant => {
-        const termId = termMap[variant];
-        const regex = new RegExp('(?<![\\w-])(' + variant.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')(?![\\w-])', 'gi');
-        html = html.replace(regex, (match) => {
-          return '<span class="glossary-term" data-glossary="' + termId + '">' + match + '</span>';
-        });
-      });
-
-      container.innerHTML = html;
-    });
-
-    // Attach tooltip events
-    document.querySelectorAll('.glossary-term').forEach(el => {
-      el.addEventListener('mouseenter', function(e) {
-        const term = glossaryTerms.find(t => t.id === this.dataset.glossary);
-        if (!term) return;
-        tooltip.querySelector('.gt-name').textContent = term.term;
-        tooltip.querySelector('.gt-short').textContent = term.short;
-        tooltip.style.display = 'block';
-        positionTooltip(e);
-      });
-      el.addEventListener('mousemove', positionTooltip);
-      el.addEventListener('mouseleave', function() {
-        tooltip.style.display = 'none';
-      });
-      el.addEventListener('click', function() {
-        tooltip.style.display = 'none';
-        openLearnPanel(this.dataset.glossary);
-        document.getElementById('glossary-section').scrollIntoView({ behavior: 'smooth', block: 'center' });
-      });
-    });
-  }
-
-  function positionTooltip(e) {
-    let x = e.clientX + 16;
-    let y = e.clientY + 16;
-    if (x + 280 > window.innerWidth) x = e.clientX - 276;
-    if (y + 120 > window.innerHeight) y = e.clientY - 120;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-  }
-
-  // ── Render Grid ──
-  function renderGrid() {
-    const grid = document.getElementById('glossary-grid');
-    grid.innerHTML = '';
-    let mastered = 0;
-
-    glossaryTerms.forEach(t => {
-      const level = getLevel(t.id);
-      if (level >= 3) mastered++;
-      const card = document.createElement('div');
-      card.className = 'glossary-card';
-      card.dataset.level = level;
-      card.dataset.id = t.id;
-      card.innerHTML = `
-        <div class="gc-level"></div>
-        <div class="gc-icon">${t.icon}</div>
-        <div class="gc-term">${t.term}</div>
-        <div class="gc-short">${t.short}</div>`;
-      card.addEventListener('click', () => openLearnPanel(t.id));
-      grid.appendChild(card);
-    });
-
-    // Update progress
-    const pct = Math.round((mastered / glossaryTerms.length) * 100);
-    document.getElementById('glossary-progress-fill').style.width = pct + '%';
-    document.getElementById('glossary-progress-count').textContent = mastered + ' / ' + glossaryTerms.length + ' gemeistert';
-  }
-
-  // ── Learn Panel ──
-  let currentTermId = null;
-  let currentPhase = 0; // 0=learn, 1=fill, 2=choice, 3=explain
-  let currentHintIdx = 0;
-  const phaseNames = ['Lernen', 'Lückentext', 'Multiple Choice', 'Erklären'];
-
-  function openLearnPanel(id) {
-    currentTermId = id;
-    currentPhase = 0;
-    currentHintIdx = 0;
-
-    // Mark card active
-    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
-    const activeCard = document.querySelector('.glossary-card[data-id="'+id+'"]');
-    if (activeCard) activeCard.classList.add('active');
-
-    renderPhase();
-    const panel = document.getElementById('glossary-learn');
-    panel.classList.add('visible');
-  }
-
-  window.__goToPhase = function(idx) {
-    if (idx <= currentPhase) {
-      currentPhase = idx;
-      currentHintIdx = 0;
-      renderPhase();
-    }
-  };
-
-  function closeLearnPanel() {
-    document.getElementById('glossary-learn').classList.remove('visible');
-    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
-    currentTermId = null;
-  }
-
-  function renderPhase() {
-    const term = glossaryTerms.find(t => t.id === currentTermId);
-    if (!term) return;
-
-    const panel = document.getElementById('glossary-learn');
-    const level = getLevel(term.id);
-
-    let phasesHTML = phaseNames.map((name, i) => {
-      let cls = 'gl-phase';
-      if (i < currentPhase) cls += ' done';
-      if (i === currentPhase) cls += ' current';
-      let clickAttr = (i <= currentPhase) ? ' onclick="window.__goToPhase(' + i + ')"' : '';
-      return '<span class="' + cls + '"' + clickAttr + '>' + name + '</span>';
-    }).join('');
-
-    let contentHTML = '';
-
-    if (currentPhase === 0) {
-      // LEARN phase
-      contentHTML = `
-        <div class="gl-analogy">💡 ${term.analogy}</div>
-        <div class="gl-definition">${term.definition}</div>
-        <div class="gl-hints" id="gl-hints">
-          ${term.hints.map((h,i) => '<div class="gl-hint" id="gl-hint-'+i+'">💬 '+h+'</div>').join('')}
-        </div>
-        <button class="gl-hint-btn" id="gl-hint-btn" onclick="window._glossaryHint()">Hinweis anzeigen</button>
-        <div style="margin-top:8px">
-          <button class="gl-btn primary" onclick="window._glossaryNextPhase()">Verstanden → Weiter</button>
-        </div>`;
-    } else if (currentPhase === 1) {
-      // FILL phase
-      const q = term.questions.fill;
-      contentHTML = `
-        <div class="gl-question">${q.q}</div>
-        <input class="gl-input" id="gl-fill-input" type="text" placeholder="Deine Antwort..." autocomplete="off">
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="gl-btn primary" onclick="window._glossaryCheckFill()">Prüfen</button>
-          <button class="gl-hint-btn" onclick="window._glossaryShowAnswer()">Antwort zeigen</button>
-        </div>
-        <div id="gl-feedback"></div>`;
-    } else if (currentPhase === 2) {
-      // CHOICE phase
-      const q = term.questions.choice;
-      const shuffled = q.choices.map((c,i) => ({text:c, idx:i})).sort(() => Math.random()-0.5);
-      contentHTML = `
-        <div class="gl-question">${q.q}</div>
-        <div class="gl-choices" id="gl-choices">
-          ${shuffled.map(c => '<button class="gl-choice" data-idx="'+c.idx+'" onclick="window._glossaryCheckChoice(this)">'+c.text+'</button>').join('')}
-        </div>
-        <div id="gl-feedback"></div>`;
-    } else if (currentPhase === 3) {
-      // EXPLAIN phase
-      const q = term.questions.explain;
-      contentHTML = `
-        <div class="gl-question">${q.q}</div>
-        <textarea class="gl-input" id="gl-explain-input" placeholder="Erkläre in eigenen Worten..."></textarea>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="gl-btn primary" onclick="window._glossaryCheckExplain()">Prüfen</button>
-        </div>
-        <div id="gl-feedback"></div>`;
-    }
-
-    panel.innerHTML = `
-      <div class="gl-header">
-        <h3>${term.icon} ${term.term}</h3>
-        <button class="gl-close" onclick="window._glossaryClose()">✕</button>
-      </div>
-      <div class="gl-phase-indicator">${phasesHTML}</div>
-      <div class="gl-content">${contentHTML}</div>`;
-
-    // Focus input
-    setTimeout(() => {
-      const inp = panel.querySelector('.gl-input');
-      if (inp) inp.focus();
-    }, 100);
-  }
-
-  // ── Hint Logic ──
-  window._glossaryHint = function() {
-    const term = glossaryTerms.find(t => t.id === currentTermId);
-    if (!term || currentHintIdx >= term.hints.length) return;
-    const hintEl = document.getElementById('gl-hint-' + currentHintIdx);
-    if (hintEl) hintEl.classList.add('visible');
-    currentHintIdx++;
-    if (currentHintIdx >= term.hints.length) {
-      const btn = document.getElementById('gl-hint-btn');
-      if (btn) btn.style.display = 'none';
-    }
-  };
-
-  // ── Phase Navigation ──
-  window._glossaryNextPhase = function() {
-    currentPhase++;
-    currentHintIdx = 0;
-    if (currentPhase > 3) {
-      // Completed all phases
-      const lvl = getLevel(currentTermId);
-      setLevel(currentTermId, Math.min(3, lvl + 1));
-      renderGrid();
-      closeLearnPanel();
-      return;
-    }
-    renderPhase();
-  };
-
-  window._glossaryClose = closeLearnPanel;
-
-  // ── Fill Check ──
-  window._glossaryCheckFill = function() {
-    const term = glossaryTerms.find(t => t.id === currentTermId);
-    if (!term) return;
-    const input = document.getElementById('gl-fill-input');
-    const fb = document.getElementById('gl-feedback');
-    const userText = input.value.trim().toLowerCase();
-    if (!userText) return;
-
-    const keywords = term.questions.fill.keywords;
-    const found = [];
-    const missing = [];
-    keywords.forEach(kw => {
-      if (userText.includes(kw.toLowerCase())) found.push(kw);
-      else missing.push(kw);
-    });
-
-    const ratio = found.length / keywords.length;
-    let kwHTML = keywords.map(kw => {
-      const cls = found.includes(kw) ? 'found' : 'missing';
-      return '<span class="gl-keyword '+cls+'">'+kw+'</span>';
-    }).join(' ');
-
-    if (ratio >= 0.6) {
-      fb.innerHTML = '<div class="gl-feedback success">Richtig! '+kwHTML+'</div>';
-      setTimeout(() => window._glossaryNextPhase(), 1200);
-    } else {
-      fb.innerHTML = '<div class="gl-feedback error">Nicht ganz. Erwartete Schlüsselwörter: '+kwHTML+'<br>Korrekte Antwort: <strong>'+term.questions.fill.a+'</strong></div>';
-    }
-  };
-
-  // ── Show Answer ──
-  window._glossaryShowAnswer = function() {
-    const term = glossaryTerms.find(t => t.id === currentTermId);
-    if (!term) return;
-    const fb = document.getElementById('gl-feedback');
-    fb.innerHTML = '<div class="gl-feedback info">Antwort: <strong>'+term.questions.fill.a+'</strong></div>';
-  };
-
-  // ── Choice Check ──
-  window._glossaryCheckChoice = function(btn) {
-    const term = glossaryTerms.find(t => t.id === currentTermId);
-    if (!term) return;
-    const fb = document.getElementById('gl-feedback');
-    const idx = parseInt(btn.dataset.idx);
-    const correct = term.questions.choice.correct;
-
-    // Disable all
-    document.querySelectorAll('#gl-choices .gl-choice').forEach(c => {
-      c.style.pointerEvents = 'none';
-      if (parseInt(c.dataset.idx) === correct) c.classList.add('correct');
-    });
-
-    if (idx === correct) {
-      btn.classList.add('correct');
-      fb.innerHTML = '<div class="gl-feedback success">Richtig!</div>';
-      setTimeout(() => window._glossaryNextPhase(), 1200);
-    } else {
-      btn.classList.add('wrong');
-      fb.innerHTML = '<div class="gl-feedback error">Leider falsch. Die richtige Antwort ist markiert.</div>';
-    }
-  };
-
-  // ── Explain Check ──
-  window._glossaryCheckExplain = function() {
-    const term = glossaryTerms.find(t => t.id === currentTermId);
-    if (!term) return;
-    const input = document.getElementById('gl-explain-input');
-    const fb = document.getElementById('gl-feedback');
-    const userText = input.value.trim().toLowerCase();
-    if (userText.length < 10) {
-      fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe mindestens einen kurzen Satz.</div>';
-      return;
-    }
-
-    const keywords = term.questions.explain.keywords;
-    const found = [];
-    const missing = [];
-    keywords.forEach(kw => {
-      if (userText.includes(kw.toLowerCase())) found.push(kw);
-      else missing.push(kw);
-    });
-
-    const ratio = found.length / keywords.length;
-    let kwHTML = keywords.map(kw => {
-      const cls = found.includes(kw) ? 'found' : 'missing';
-      return '<span class="gl-keyword '+cls+'">'+kw+'</span>';
-    }).join(' ');
-
-    if (ratio >= 0.4) {
-      fb.innerHTML = '<div class="gl-feedback success">Gute Erklärung! Erkannte Begriffe: '+kwHTML+'</div>';
-      setTimeout(() => window._glossaryNextPhase(), 1500);
-    } else {
-      fb.innerHTML = '<div class="gl-feedback error">Versuche folgende Begriffe einzubauen: '+kwHTML+'</div>';
-    }
-  };
-
-  // ── Init ──
-  renderGrid();
-  highlightTermsInPage();
-})();
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

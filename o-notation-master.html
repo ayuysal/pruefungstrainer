@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>O-Notation & Master-Theorem Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -91,72 +92,6 @@ canvas{width:100%;border-radius:10px;margin-top:12px;background:rgba(0,0,0,.3)}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.match-grid{grid-template-columns:1fr}}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -228,14 +163,30 @@ canvas{width:100%;border-radius:10px;margin-top:12px;background:rgba(0,0,0,.3)}
 <div class="summary-card"><h4>&#x26A0;&#xFE0F; Häufige Fehler</h4><p>1. log<sub>b</sub>(a) falsch berechnet<br>2. Vergessen, dass f(n)=n&sup2; bedeutet c=2<br>3. Verwechslung: O ist obere, &Omega; untere Schranke<br>4. Master-Theorem gilt NUR für T(n)=aT(n/b)+f(n)</p></div>
 </div>
 
-<div class="glossary-section" id="glossary-section">
-<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--cyan))">&#x1F4D6;</div><h2>Glossar-Trainer</h2></div>
-<div class="glossary-progress-bar"><span class="gp-text">Fortschritt</span><div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div><span class="gp-count" id="glossary-count">0 / 8 gemeistert</span></div>
-<div class="glossary-grid" id="glossary-grid"></div>
-<div class="glossary-learn" id="glossary-learn"></div>
-</div>
+<div class="glossary-section">
+  <div class="section-title">
+    <div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--green))">&#129504;</div>
+    <h2>Begriffe lernen</h2>
+    <span class="sub" id="glossary-sub">0 / 8 gemeistert</span>
+  </div>
 
-<div class="glossary-tooltip" id="glossary-tooltip"><div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">&#x1F4D6; Klicken zum Lernen</div></div>
+  <div class="glossary-progress-bar">
+    <span class="gp-text">Fortschritt</span>
+    <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+    <span class="gp-count" id="glossary-count">0%</span>
+  </div>
+
+  <div class="glossary-grid" id="glossary-grid"></div>
+
+  <div class="glossary-learn" id="glossary-learn">
+    <div class="gl-header">
+      <h3 id="gl-title"></h3>
+      <button class="gl-close" onclick="glossaryClose()">&#10005;</button>
+    </div>
+    <div class="gl-phase-indicator" id="gl-phases"></div>
+    <div class="gl-content" id="gl-content"></div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -589,347 +540,232 @@ function updateScore(){
 
 newTask();
 
-// ===== GLOSSARY SYSTEM =====
-(function(){
-const GLOSSARY_KEY='glossary-o-notation';
-const glossaryTerms=[
+var TRAINER_ID = 'o-notation-master';
+var GLOSSARY = [
   {
-    id:'o-notation',term:'O-Notation',short:'Landau-Notation zur Beschreibung der oberen Schranke der Laufzeit.',
-    definition:'Die O-Notation (auch Landau-Notation oder Big-O) beschreibt das asymptotische Wachstumsverhalten einer Funktion. O(g(n)) ist die Menge aller Funktionen f(n), fuer die gilt: Es existieren Konstanten c > 0 und n_0, sodass f(n) <= c * g(n) fuer alle n >= n_0. Sie gibt die obere Schranke der Laufzeit oder des Speicherbedarfs eines Algorithmus an und wird hauptsaechlich fuer die Worst-Case-Analyse verwendet.',
-    analogy:'Stell dir vor, du sagst: "Das Paket kommt spaetestens in 3 Tagen." Du gibst eine obere Grenze an -- es koennte auch schneller da sein. Die O-Notation macht genau das fuer Algorithmen: Sie sagt, wie lange es hoechstens dauert, wenn die Eingabe waechst.',
-    hints:['Denke an "obere Schranke" -- O steht fuer "Oben".','Es zaehlen nur die dominanten Terme: O(3n^2 + 5n) = O(n^2).','Konstante Faktoren werden ignoriert: O(1000n) = O(n).'],
-    questions:[
-      {type:'fill',q:'Die O-Notation beschreibt die _____ Schranke der Laufzeit.',a:'obere',keywords:['obere','upper']},
-      {type:'choice',q:'Welche Aussage ist korrekt?',choices:['O(n) beschreibt die exakte Laufzeit','O(n) beschreibt die obere Schranke','O(n) beschreibt die untere Schranke','O(n) beschreibt den Durchschnitt'],correct:1},
-      {type:'explain',q:'Warum ist O(3n^2 + 5n + 7) = O(n^2)? Erklaere die Vereinfachungsregeln.',keywords:['dominant','konstant','faktor','hoechst','groesst','term','ignor','wachstum','asymptot']}
-    ],
-    icon:'&#x1F4C8;',difficulty:1
+    term: 'O-Notation',
+    short: 'Landau-Notation zur Beschreibung der oberen Schranke der Laufzeit.',
+    definition: 'Die O-Notation (auch Landau-Notation oder Big-O) beschreibt das asymptotische Wachstumsverhalten einer Funktion. O(g(n)) ist die Menge aller Funktionen f(n), fuer die gilt: Es existieren Konstanten c > 0 und n_0, sodass f(n) <= c * g(n) fuer alle n >= n_0. Sie gibt die obere Schranke der Laufzeit oder des Speicherbedarfs eines Algorithmus an und wird hauptsaechlich fuer die Worst-Case-Analyse verwendet.',
+    analogy: '\uD83D\uDCC8 Stell dir vor, du sagst: "Das Paket kommt spaetestens in 3 Tagen." Du gibst eine obere Grenze an -- es koennte auch schneller da sein. Die O-Notation macht genau das fuer Algorithmen: Sie sagt, wie lange es hoechstens dauert, wenn die Eingabe waechst.',
+    hints: ['Denke an "obere Schranke" -- O steht fuer "Oben".','Es zaehlen nur die dominanten Terme: O(3n^2 + 5n) = O(n^2).','Konstante Faktoren werden ignoriert: O(1000n) = O(n).'],
+    questions: [
+      { type: 'fill', q: 'Die O-Notation beschreibt die _____ Schranke der Laufzeit.', a: 'obere', keywords: ['obere','upper'] },
+      { type: 'choice', q: 'Welche Aussage ist korrekt?', options: ['O(n) beschreibt die exakte Laufzeit','O(n) beschreibt die obere Schranke','O(n) beschreibt die untere Schranke','O(n) beschreibt den Durchschnitt'], correct: 1 },
+      { type: 'explain', q: 'Warum ist O(3n^2 + 5n + 7) = O(n^2)? Erklaere die Vereinfachungsregeln.', keywords: ['dominant','konstant','faktor','hoechst','groesst','term','ignor','wachstum','asymptot'], minKeywords: 3 }
+    ]
   },
   {
-    id:'zeitkomplexitaet',term:'Zeitkomplexitaet',short:'Mass fuer die Anzahl der Rechenschritte in Abhaengigkeit von der Eingabegroesse.',
-    definition:'Die Zeitkomplexitaet gibt an, wie viele elementare Operationen (Vergleiche, Zuweisungen, Berechnungen) ein Algorithmus in Abhaengigkeit von der Eingabegroesse n benoetigt. Sie wird meist als Funktion T(n) ausgedrueckt und mithilfe der O-Notation klassifiziert. Die Zeitkomplexitaet ist entscheidend fuer die Bewertung der Effizienz eines Algorithmus.',
-    analogy:'Wie lange brauchst du, um n Buecher alphabetisch einzusortieren? Bei 10 Buechern geht es schnell, bei 10.000 dauert es laenger. Die Zeitkomplexitaet beschreibt, wie stark die benoetigte Zeit mit der Menge der Buecher waechst.',
-    hints:['Zaehle die Schleifendurchlaeufe in Abhaengigkeit von n.','Verschachtelte Schleifen multiplizieren sich: zwei n-Schleifen => O(n^2).','Konstante Operationen (z.B. eine Addition) sind immer O(1).'],
-    questions:[
-      {type:'fill',q:'Die Zeitkomplexitaet misst die Anzahl der _____ in Abhaengigkeit von n.',a:'Operationen',keywords:['operation','schritt','rechenschritt','anweisung']},
-      {type:'choice',q:'Zwei verschachtelte Schleifen mit je n Durchlaeufen haben welche Zeitkomplexitaet?',choices:['O(n)','O(2n)','O(n^2)','O(n log n)'],correct:2},
-      {type:'explain',q:'Erklaere den Unterschied zwischen Zeitkomplexitaet und tatsaechlicher Laufzeit.',keywords:['konstant','hardware','faktor','asymptot','wachstum','eingabe','abstrakt','modell','unabhaengig']}
-    ],
-    icon:'&#x23F1;&#xFE0F;',difficulty:1
+    term: 'Zeitkomplexitaet',
+    short: 'Mass fuer die Anzahl der Rechenschritte in Abhaengigkeit von der Eingabegroesse.',
+    definition: 'Die Zeitkomplexitaet gibt an, wie viele elementare Operationen (Vergleiche, Zuweisungen, Berechnungen) ein Algorithmus in Abhaengigkeit von der Eingabegroesse n benoetigt. Sie wird meist als Funktion T(n) ausgedrueckt und mithilfe der O-Notation klassifiziert. Die Zeitkomplexitaet ist entscheidend fuer die Bewertung der Effizienz eines Algorithmus.',
+    analogy: '\u23F1\uFE0F Wie lange brauchst du, um n Buecher alphabetisch einzusortieren? Bei 10 Buechern geht es schnell, bei 10.000 dauert es laenger. Die Zeitkomplexitaet beschreibt, wie stark die benoetigte Zeit mit der Menge der Buecher waechst.',
+    hints: ['Zaehle die Schleifendurchlaeufe in Abhaengigkeit von n.','Verschachtelte Schleifen multiplizieren sich: zwei n-Schleifen => O(n^2).','Konstante Operationen (z.B. eine Addition) sind immer O(1).'],
+    questions: [
+      { type: 'fill', q: 'Die Zeitkomplexitaet misst die Anzahl der _____ in Abhaengigkeit von n.', a: 'Operationen', keywords: ['operation','schritt','rechenschritt','anweisung'] },
+      { type: 'choice', q: 'Zwei verschachtelte Schleifen mit je n Durchlaeufen haben welche Zeitkomplexitaet?', options: ['O(n)','O(2n)','O(n^2)','O(n log n)'], correct: 2 },
+      { type: 'explain', q: 'Erklaere den Unterschied zwischen Zeitkomplexitaet und tatsaechlicher Laufzeit.', keywords: ['konstant','hardware','faktor','asymptot','wachstum','eingabe','abstrakt','modell','unabhaengig'], minKeywords: 3 }
+    ]
   },
   {
-    id:'speicherkomplexitaet',term:'Speicherkomplexitaet',short:'Mass fuer den zusaetzlichen Speicherverbrauch eines Algorithmus.',
-    definition:'Die Speicherkomplexitaet (auch Platzkomplexitaet oder Space Complexity) beschreibt den zusaetzlichen Speicher, den ein Algorithmus neben der Eingabe benoetigt. Sie wird ebenfalls in O-Notation angegeben. Ein Algorithmus mit O(1) Speicher arbeitet "in-place", waehrend z.B. MergeSort O(n) zusaetzlichen Speicher benoetigt. Die Speicherkomplexitaet ist besonders relevant bei grossen Datenmengen oder eingebetteten Systemen.',
-    analogy:'Stell dir vor, du sortierst Spielkarten. Wenn du sie direkt auf dem Tisch umsortierst, brauchst du keinen Extra-Platz (in-place, O(1)). Wenn du einen zweiten Stapel daneben legst, brauchst du extra Platz proportional zur Kartenzahl (O(n)).',
-    hints:['In-place bedeutet O(1) zusaetzlicher Speicher.','Rekursive Algorithmen brauchen O(Rekursionstiefe) Stack-Speicher.','MergeSort braucht O(n) Extra-Speicher, QuickSort nur O(log n) im Average Case.'],
-    questions:[
-      {type:'fill',q:'Ein Algorithmus mit O(1) Speicherkomplexitaet arbeitet _____.',a:'in-place',keywords:['in-place','inplace','in place','konstant']},
-      {type:'choice',q:'Welcher Sortieralgorithmus arbeitet in-place?',choices:['MergeSort','QuickSort (in-place Variante)','Radix Sort','Counting Sort'],correct:1},
-      {type:'explain',q:'Warum hat MergeSort eine Speicherkomplexitaet von O(n)?',keywords:['hilfsarray','kopie','merge','zusammen','temp','zusaetz','extra','array']}
-    ],
-    icon:'&#x1F4BE;',difficulty:2
+    term: 'Speicherkomplexitaet',
+    short: 'Mass fuer den zusaetzlichen Speicherverbrauch eines Algorithmus.',
+    definition: 'Die Speicherkomplexitaet (auch Platzkomplexitaet oder Space Complexity) beschreibt den zusaetzlichen Speicher, den ein Algorithmus neben der Eingabe benoetigt. Sie wird ebenfalls in O-Notation angegeben. Ein Algorithmus mit O(1) Speicher arbeitet "in-place", waehrend z.B. MergeSort O(n) zusaetzlichen Speicher benoetigt. Die Speicherkomplexitaet ist besonders relevant bei grossen Datenmengen oder eingebetteten Systemen.',
+    analogy: '\uD83D\uDCBE Stell dir vor, du sortierst Spielkarten. Wenn du sie direkt auf dem Tisch umsortierst, brauchst du keinen Extra-Platz (in-place, O(1)). Wenn du einen zweiten Stapel daneben legst, brauchst du extra Platz proportional zur Kartenzahl (O(n)).',
+    hints: ['In-place bedeutet O(1) zusaetzlicher Speicher.','Rekursive Algorithmen brauchen O(Rekursionstiefe) Stack-Speicher.','MergeSort braucht O(n) Extra-Speicher, QuickSort nur O(log n) im Average Case.'],
+    questions: [
+      { type: 'fill', q: 'Ein Algorithmus mit O(1) Speicherkomplexitaet arbeitet _____.', a: 'in-place', keywords: ['in-place','inplace','in place','konstant'] },
+      { type: 'choice', q: 'Welcher Sortieralgorithmus arbeitet in-place?', options: ['MergeSort','QuickSort (in-place Variante)','Radix Sort','Counting Sort'], correct: 1 },
+      { type: 'explain', q: 'Warum hat MergeSort eine Speicherkomplexitaet von O(n)?', keywords: ['hilfsarray','kopie','merge','zusammen','temp','zusaetz','extra','array'], minKeywords: 3 }
+    ]
   },
   {
-    id:'o-1-konstant',term:'O(1) - Konstant',short:'Laufzeit unabhaengig von der Eingabegroesse.',
-    definition:'Ein Algorithmus mit O(1)-Komplexitaet benoetigt eine konstante Anzahl von Operationen, unabhaengig von der Groesse der Eingabe n. Beispiele sind der Zugriff auf ein Array-Element ueber den Index, das Einfuegen am Anfang einer verketteten Liste, oder eine einfache arithmetische Operation. O(1) ist die bestmoegliche Komplexitaetsklasse.',
-    analogy:'Egal ob ein Buch 100 oder 10.000 Seiten hat -- das Aufschlagen der Seite 1 dauert immer gleich lang. Das ist O(1): Die "Arbeit" haengt nicht davon ab, wie gross das Buch ist.',
-    hints:['Array-Zugriff per Index: arr[5] ist immer O(1).','HashTable-Lookup ist im Durchschnitt O(1).','Auch 1000 konstante Operationen sind O(1), da Konstanten ignoriert werden.'],
-    questions:[
-      {type:'fill',q:'Der Zugriff auf ein Array-Element ueber den Index hat die Komplexitaet _____.',a:'O(1)',keywords:['O(1)','o(1)','konstant']},
-      {type:'choice',q:'Welche Operation ist NICHT O(1)?',choices:['arr[i] Zugriff','Einfuegen am Listen-Anfang','Lineare Suche in einem Array','push() auf einen Stack'],correct:2},
-      {type:'explain',q:'Warum ist ein HashTable-Lookup im Durchschnitt O(1), im Worst Case aber O(n)?',keywords:['kollision','hash','verkettung','bucket','worst','degeneri','alle','gleich']}
-    ],
-    icon:'&#x26A1;',difficulty:1
+    term: 'O(1) - Konstant',
+    short: 'Laufzeit unabhaengig von der Eingabegroesse.',
+    definition: 'Ein Algorithmus mit O(1)-Komplexitaet benoetigt eine konstante Anzahl von Operationen, unabhaengig von der Groesse der Eingabe n. Beispiele sind der Zugriff auf ein Array-Element ueber den Index, das Einfuegen am Anfang einer verketteten Liste, oder eine einfache arithmetische Operation. O(1) ist die bestmoegliche Komplexitaetsklasse.',
+    analogy: '\u26A1 Egal ob ein Buch 100 oder 10.000 Seiten hat -- das Aufschlagen der Seite 1 dauert immer gleich lang. Das ist O(1): Die "Arbeit" haengt nicht davon ab, wie gross das Buch ist.',
+    hints: ['Array-Zugriff per Index: arr[5] ist immer O(1).','HashTable-Lookup ist im Durchschnitt O(1).','Auch 1000 konstante Operationen sind O(1), da Konstanten ignoriert werden.'],
+    questions: [
+      { type: 'fill', q: 'Der Zugriff auf ein Array-Element ueber den Index hat die Komplexitaet _____.', a: 'O(1)', keywords: ['O(1)','o(1)','konstant'] },
+      { type: 'choice', q: 'Welche Operation ist NICHT O(1)?', options: ['arr[i] Zugriff','Einfuegen am Listen-Anfang','Lineare Suche in einem Array','push() auf einen Stack'], correct: 2 },
+      { type: 'explain', q: 'Warum ist ein HashTable-Lookup im Durchschnitt O(1), im Worst Case aber O(n)?', keywords: ['kollision','hash','verkettung','bucket','worst','degeneri','alle','gleich'], minKeywords: 3 }
+    ]
   },
   {
-    id:'o-n-linear',term:'O(n) - Linear',short:'Laufzeit waechst proportional zur Eingabegroesse.',
-    definition:'Ein Algorithmus mit O(n)-Komplexitaet benoetigt eine Anzahl von Operationen, die linear mit der Eingabegroesse n waechst. Das bedeutet: Verdoppelt sich die Eingabe, verdoppelt sich auch die Laufzeit. Typische Beispiele sind die lineare Suche, das Durchlaufen eines Arrays, oder das Zaehlen von Elementen. O(n) ist die bestmoegliche Komplexitaet fuer Probleme, bei denen jedes Element mindestens einmal betrachtet werden muss.',
-    analogy:'Du suchst einen bestimmten Namen in einer unsortieren Namensliste. Im schlimmsten Fall musst du jeden einzelnen Namen lesen -- bei doppelt so vielen Namen dauert es doppelt so lange.',
-    hints:['Eine einzelne Schleife ueber n Elemente ist O(n).','Lineare Suche: Im Worst Case n Vergleiche.','Auch O(2n) oder O(5n) wird zu O(n) vereinfacht.'],
-    questions:[
-      {type:'fill',q:'Bei der linearen Suche werden im Worst Case _____ Elemente verglichen.',a:'n',keywords:['n','alle']},
-      {type:'choice',q:'Welcher Algorithmus hat O(n) Zeitkomplexitaet?',choices:['Binary Search','Lineare Suche','BubbleSort','QuickSort'],correct:1},
-      {type:'explain',q:'Warum kann man nicht schneller als O(n) feststellen, ob ein Element in einem unsortierten Array vorkommt?',keywords:['jedes','element','betracht','pruef','unsortiert','kein','ueberspringen','information']}
-    ],
-    icon:'&#x1F4CF;',difficulty:1
+    term: 'O(n) - Linear',
+    short: 'Laufzeit waechst proportional zur Eingabegroesse.',
+    definition: 'Ein Algorithmus mit O(n)-Komplexitaet benoetigt eine Anzahl von Operationen, die linear mit der Eingabegroesse n waechst. Das bedeutet: Verdoppelt sich die Eingabe, verdoppelt sich auch die Laufzeit. Typische Beispiele sind die lineare Suche, das Durchlaufen eines Arrays, oder das Zaehlen von Elementen.',
+    analogy: '\uD83D\uDCCF Du suchst einen bestimmten Namen in einer unsortieren Namensliste. Im schlimmsten Fall musst du jeden einzelnen Namen lesen -- bei doppelt so vielen Namen dauert es doppelt so lange.',
+    hints: ['Eine einzelne Schleife ueber n Elemente ist O(n).','Lineare Suche: Im Worst Case n Vergleiche.','Auch O(2n) oder O(5n) wird zu O(n) vereinfacht.'],
+    questions: [
+      { type: 'fill', q: 'Bei der linearen Suche werden im Worst Case _____ Elemente verglichen.', a: 'n', keywords: ['n','alle'] },
+      { type: 'choice', q: 'Welcher Algorithmus hat O(n) Zeitkomplexitaet?', options: ['Binary Search','Lineare Suche','BubbleSort','QuickSort'], correct: 1 },
+      { type: 'explain', q: 'Warum kann man nicht schneller als O(n) feststellen, ob ein Element in einem unsortierten Array vorkommt?', keywords: ['jedes','element','betracht','pruef','unsortiert','kein','ueberspringen','information'], minKeywords: 3 }
+    ]
   },
   {
-    id:'o-nlogn-linearithmisch',term:'O(n log n) - Linearithmisch',short:'Typische Komplexitaet effizienter Sortieralgorithmen.',
-    definition:'O(n log n) beschreibt eine linearithmische Komplexitaet und ist die untere Schranke fuer vergleichsbasierte Sortierverfahren (bewiesen durch den Entscheidungsbaum). Algorithmen wie MergeSort, HeapSort und QuickSort (Average Case) erreichen diese Komplexitaet. Sie entsteht typischerweise, wenn ein Problem in jedem Schritt halbiert wird (log n Stufen) und auf jeder Stufe n Operationen durchgefuehrt werden.',
-    analogy:'Stell dir vor, du sortierst einen Kartenstapel mit MergeSort: Du teilst ihn immer wieder in zwei Haelften (log n Stufen), und beim Zusammenfuegen vergleichst du auf jeder Stufe alle n Karten. Das ergibt n * log n Schritte.',
-    hints:['MergeSort: T(n) = 2T(n/2) + n => Master-Theorem Fall 2 => O(n log n).','O(n log n) ist die bestmoegliche Zeitkomplexitaet fuer vergleichsbasiertes Sortieren.','Divide-and-Conquer mit linearem Merge-Schritt fuehrt oft zu O(n log n).'],
-    questions:[
-      {type:'fill',q:'Die untere Schranke fuer vergleichsbasiertes Sortieren ist _____.',a:'O(n log n)',keywords:['O(n log n)','o(n log n)','n log n','nlogn']},
-      {type:'choice',q:'Welcher Sortieralgorithmus hat NICHT O(n log n) im Worst Case?',choices:['MergeSort','HeapSort','QuickSort','Alle haben O(n log n)'],correct:2},
-      {type:'explain',q:'Warum ist O(n log n) die untere Schranke fuer vergleichsbasiertes Sortieren?',keywords:['entscheidungsbaum','vergleich','blaetter','n!','permutation','hoehe','log','tiefe']}
-    ],
-    icon:'&#x1F4CA;',difficulty:2
+    term: 'O(n log n) - Linearithmisch',
+    short: 'Typische Komplexitaet effizienter Sortieralgorithmen.',
+    definition: 'O(n log n) beschreibt eine linearithmische Komplexitaet und ist die untere Schranke fuer vergleichsbasierte Sortierverfahren (bewiesen durch den Entscheidungsbaum). Algorithmen wie MergeSort, HeapSort und QuickSort (Average Case) erreichen diese Komplexitaet.',
+    analogy: '\uD83D\uDCCA Stell dir vor, du sortierst einen Kartenstapel mit MergeSort: Du teilst ihn immer wieder in zwei Haelften (log n Stufen), und beim Zusammenfuegen vergleichst du auf jeder Stufe alle n Karten. Das ergibt n * log n Schritte.',
+    hints: ['MergeSort: T(n) = 2T(n/2) + n => Master-Theorem Fall 2 => O(n log n).','O(n log n) ist die bestmoegliche Zeitkomplexitaet fuer vergleichsbasiertes Sortieren.','Divide-and-Conquer mit linearem Merge-Schritt fuehrt oft zu O(n log n).'],
+    questions: [
+      { type: 'fill', q: 'Die untere Schranke fuer vergleichsbasiertes Sortieren ist _____.', a: 'O(n log n)', keywords: ['O(n log n)','o(n log n)','n log n','nlogn'] },
+      { type: 'choice', q: 'Welcher Sortieralgorithmus hat NICHT O(n log n) im Worst Case?', options: ['MergeSort','HeapSort','QuickSort','Alle haben O(n log n)'], correct: 2 },
+      { type: 'explain', q: 'Warum ist O(n log n) die untere Schranke fuer vergleichsbasiertes Sortieren?', keywords: ['entscheidungsbaum','vergleich','blaetter','n!','permutation','hoehe','log','tiefe'], minKeywords: 3 }
+    ]
   },
   {
-    id:'o-n2-quadratisch',term:'O(n^2) - Quadratisch',short:'Laufzeit waechst mit dem Quadrat der Eingabegroesse.',
-    definition:'Ein Algorithmus mit O(n^2)-Komplexitaet hat eine Laufzeit, die quadratisch mit der Eingabegroesse waechst. Verdoppelt sich n, vervierfacht sich die Laufzeit. Typisch sind zwei verschachtelte Schleifen ueber n Elemente. Beispiele: BubbleSort, SelectionSort, InsertionSort (Worst Case), naive Matrixmultiplikation (Teilschritt). Fuer grosse n sind quadratische Algorithmen oft zu langsam.',
-    analogy:'In einer Klasse mit n Schuelern soll jeder jedem die Hand schuetteln. Das ergibt n*(n-1)/2 Handschlaege -- also ungefaehr n^2. Doppelt so viele Schueler bedeuten viermal so viele Handschlaege.',
-    hints:['Zwei verschachtelte for-Schleifen ueber n: O(n^2).','BubbleSort: n-1 + n-2 + ... + 1 = n(n-1)/2 = O(n^2).','QuickSort hat im Worst Case (bereits sortiert) O(n^2).'],
-    questions:[
-      {type:'fill',q:'BubbleSort hat im Worst Case eine Zeitkomplexitaet von _____.',a:'O(n^2)',keywords:['O(n^2)','O(n2)','o(n^2)','quadrat','n hoch 2']},
-      {type:'choice',q:'Welcher Algorithmus hat O(n^2) im Worst Case?',choices:['MergeSort','Binary Search','QuickSort','HeapSort'],correct:2},
-      {type:'explain',q:'Warum fuehren zwei verschachtelte Schleifen (je ueber n) zu O(n^2)?',keywords:['aeussere','innere','n mal','multiplik','n*n','jede','durchlauf','iteration']}
-    ],
-    icon:'&#x1F4D0;',difficulty:1
+    term: 'O(n^2) - Quadratisch',
+    short: 'Laufzeit waechst mit dem Quadrat der Eingabegroesse.',
+    definition: 'Ein Algorithmus mit O(n^2)-Komplexitaet hat eine Laufzeit, die quadratisch mit der Eingabegroesse waechst. Verdoppelt sich n, vervierfacht sich die Laufzeit. Typisch sind zwei verschachtelte Schleifen ueber n Elemente. Beispiele: BubbleSort, SelectionSort, InsertionSort (Worst Case).',
+    analogy: '\uD83D\uDCD0 In einer Klasse mit n Schuelern soll jeder jedem die Hand schuetteln. Das ergibt n*(n-1)/2 Handschlaege -- also ungefaehr n^2. Doppelt so viele Schueler bedeuten viermal so viele Handschlaege.',
+    hints: ['Zwei verschachtelte for-Schleifen ueber n: O(n^2).','BubbleSort: n-1 + n-2 + ... + 1 = n(n-1)/2 = O(n^2).','QuickSort hat im Worst Case (bereits sortiert) O(n^2).'],
+    questions: [
+      { type: 'fill', q: 'BubbleSort hat im Worst Case eine Zeitkomplexitaet von _____.', a: 'O(n^2)', keywords: ['O(n^2)','O(n2)','o(n^2)','quadrat','n hoch 2'] },
+      { type: 'choice', q: 'Welcher Algorithmus hat O(n^2) im Worst Case?', options: ['MergeSort','Binary Search','QuickSort','HeapSort'], correct: 2 },
+      { type: 'explain', q: 'Warum fuehren zwei verschachtelte Schleifen (je ueber n) zu O(n^2)?', keywords: ['aeussere','innere','n mal','multiplik','n*n','jede','durchlauf','iteration'], minKeywords: 3 }
+    ]
   },
   {
-    id:'worst-best-average',term:'Worst / Best / Average Case',short:'Drei Szenarien zur Analyse der Laufzeit eines Algorithmus.',
-    definition:'Die Laufzeitanalyse unterscheidet drei Faelle: Der Best Case beschreibt die guenstigste Eingabe (z.B. bereits sortiertes Array bei InsertionSort => O(n)). Der Worst Case beschreibt die unguenstigste Eingabe und wird standardmaessig mit der O-Notation angegeben (z.B. QuickSort mit bereits sortiertem Array => O(n^2)). Der Average Case ist der Erwartungswert ueber alle moeglichen Eingaben und beruecksichtigt Wahrscheinlichkeitsverteilungen (z.B. QuickSort => O(n log n)).',
-    analogy:'Stell dir vor, du suchst deinen Schluessel. Best Case: Er liegt direkt vor dir (1 Versuch). Worst Case: Du musst das ganze Haus durchsuchen (n Orte). Average Case: Durchschnittlich findest du ihn nach der Haelfte der Orte (n/2).',
-    hints:['Die O-Notation bezieht sich standardmaessig auf den Worst Case.','Omega beschreibt die untere Schranke (Best Case).','QuickSort: Best O(n log n), Average O(n log n), Worst O(n^2).'],
-    questions:[
-      {type:'fill',q:'Die O-Notation bezieht sich standardmaessig auf den _____ Case.',a:'Worst',keywords:['worst','schlecht','unguenstig']},
-      {type:'choice',q:'Welchen Best Case hat InsertionSort?',choices:['O(1)','O(n)','O(n log n)','O(n^2)'],correct:1},
-      {type:'explain',q:'Warum ist der Worst Case von QuickSort O(n^2) und wann tritt er ein?',keywords:['pivot','sortiert','partition','ungleich','einseit','n-1','teil','degener']}
-    ],
-    icon:'&#x1F3AF;',difficulty:2
+    term: 'Worst / Best / Average Case',
+    short: 'Drei Szenarien zur Analyse der Laufzeit eines Algorithmus.',
+    definition: 'Die Laufzeitanalyse unterscheidet drei Faelle: Der Best Case beschreibt die guenstigste Eingabe. Der Worst Case beschreibt die unguenstigste Eingabe und wird standardmaessig mit der O-Notation angegeben. Der Average Case ist der Erwartungswert ueber alle moeglichen Eingaben.',
+    analogy: '\uD83C\uDFAF Stell dir vor, du suchst deinen Schluessel. Best Case: Er liegt direkt vor dir (1 Versuch). Worst Case: Du musst das ganze Haus durchsuchen (n Orte). Average Case: Durchschnittlich findest du ihn nach der Haelfte der Orte (n/2).',
+    hints: ['Die O-Notation bezieht sich standardmaessig auf den Worst Case.','Omega beschreibt die untere Schranke (Best Case).','QuickSort: Best O(n log n), Average O(n log n), Worst O(n^2).'],
+    questions: [
+      { type: 'fill', q: 'Die O-Notation bezieht sich standardmaessig auf den _____ Case.', a: 'Worst', keywords: ['worst','schlecht','unguenstig'] },
+      { type: 'choice', q: 'Welchen Best Case hat InsertionSort?', options: ['O(1)','O(n)','O(n log n)','O(n^2)'], correct: 1 },
+      { type: 'explain', q: 'Warum ist der Worst Case von QuickSort O(n^2) und wann tritt er ein?', keywords: ['pivot','sortiert','partition','ungleich','einseit','n-1','teil','degener'], minKeywords: 3 }
+    ]
   }
 ];
 
-// termMap for tooltip highlighting
-const glossaryTermMap={};
-glossaryTerms.forEach(t=>{
-  glossaryTermMap[t.term.toLowerCase()]=t.id;
-});
-// Additional variants
-const termVariants={
-  'o-notation':['o-notation','landau-notation','landau notation','big-o','big o','groß-o','gross-o'],
-  'zeitkomplexitaet':['zeitkomplexitaet','zeitkomplexität','laufzeitkomplexitaet','laufzeitkomplexität','laufzeit','time complexity'],
-  'speicherkomplexitaet':['speicherkomplexitaet','speicherkomplexität','platzkomplexitaet','platzkomplexität','space complexity','speicherbedarf'],
-  'o-1-konstant':['o(1)','konstante zeit','konstante komplexitaet','konstante komplexität','constant time'],
-  'o-n-linear':['o(n)','lineare zeit','lineare komplexitaet','lineare komplexität','linear time'],
-  'o-nlogn-linearithmisch':['o(n log n)','linearithmisch','n log n','quasilinear'],
-  'o-n2-quadratisch':['o(n²)','o(n^2)','quadratische zeit','quadratische komplexitaet','quadratische komplexität','quadratic time'],
-  'worst-best-average':['worst case','best case','average case','worst-case','best-case','average-case','bester fall','schlechtester fall','durchschnittsfall']
-};
-Object.entries(termVariants).forEach(([id,variants])=>{
-  variants.forEach(v=>{glossaryTermMap[v.toLowerCase()]=id;});
-});
-
-function loadGlossaryState(){try{return JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){return{};}}
-function saveGlossaryState(s){localStorage.setItem(GLOSSARY_KEY,JSON.stringify(s));}
-
-function getTermLevel(id){const s=loadGlossaryState();return(s[id]&&s[id].level)||0;}
-function setTermLevel(id,level){const s=loadGlossaryState();if(!s[id])s[id]={};s[id].level=Math.min(3,Math.max(0,level));saveGlossaryState(s);}
-function getMasteredCount(){let c=0;glossaryTerms.forEach(t=>{if(getTermLevel(t.id)>=3)c++;});return c;}
-
-function renderGlossaryGrid(){
-  const grid=document.getElementById('glossary-grid');
-  if(!grid)return;
-  grid.innerHTML=glossaryTerms.map(t=>{
-    const lv=getTermLevel(t.id);
-    return`<div class="glossary-card" data-level="${lv}" data-id="${t.id}" onclick="window._glossaryOpen('${t.id}')"><div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div></div>`;
-  }).join('');
-  updateGlossaryProgress();
-}
-
-function updateGlossaryProgress(){
-  const mastered=getMasteredCount();
-  const total=glossaryTerms.length;
-  const pct=Math.round((mastered/total)*100);
-  const fill=document.getElementById('glossary-fill');
-  const count=document.getElementById('glossary-count');
-  if(fill)fill.style.width=pct+'%';
-  if(count)count.textContent=mastered+' / '+total+' gemeistert';
-}
-
-// Phases: 0=analogy, 1=definition, 2=fill, 3=choice, 4=explain
-const phaseNames=['Analogie','Definition','Lueckenfrage','Multiple Choice','Erklaerung'];
-let glCurrentTerm=null,glPhase=0,glHintsShown=0,glFeedbackTimeout=null;
-
-window._glossaryOpen=function(id){
-  const t=glossaryTerms.find(x=>x.id===id);
-  if(!t)return;
-  glCurrentTerm=t;glPhase=0;glHintsShown=0;
-  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.toggle('active',c.dataset.id===id));
-  renderGlossaryLearn();
-};
-
-function renderGlossaryLearn(){
-  const el=document.getElementById('glossary-learn');
-  if(!el||!glCurrentTerm)return;
-  el.classList.add('visible');
-  const t=glCurrentTerm;
-  const lv=getTermLevel(t.id);
-  let phasesHtml=phaseNames.map((p,i)=>{
-    let cls='gl-phase';
-    if(i===glPhase)cls+=' current';
-    else if(i<glPhase)cls+=' done';
-    const clickable=i<=glPhase;
-    return`<div class="${cls}"${clickable?' onclick="window._glGoToPhase('+i+')"':''}>${p}</div>`;
-  }).join('');
-  let contentHtml='';
-  if(glPhase===0){
-    contentHtml=`<div class="gl-analogy">${t.analogy}</div><button class="gl-btn primary" onclick="window._glNextPhase()">Verstanden &rarr;</button>`;
-  }else if(glPhase===1){
-    contentHtml=`<div class="gl-definition">${t.definition}</div><button class="gl-btn primary" onclick="window._glNextPhase()">Weiter zur Uebung &rarr;</button>`;
-  }else if(glPhase===2){
-    const q=t.questions.find(x=>x.type==='fill');
-    contentHtml=`<div class="gl-question">${q.q}</div><input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben..." autocomplete="off"><div class="gl-hints" id="gl-hints">${t.hints.map((h,i)=>`<div class="gl-hint" id="gl-hint-${i}">${h}</div>`).join('')}</div><button class="gl-hint-btn" onclick="window._glShowHint()">Hinweis anzeigen</button><br><button class="gl-btn primary" onclick="window._glCheckFill()">Pruefen</button><div id="gl-feedback-area"></div>`;
-  }else if(glPhase===3){
-    const q=t.questions.find(x=>x.type==='choice');
-    contentHtml=`<div class="gl-question">${q.q}</div><div class="gl-choices">${q.choices.map((c,i)=>`<button class="gl-choice" data-idx="${i}" onclick="window._glCheckChoice(${i})">${c}</button>`).join('')}</div><div id="gl-feedback-area"></div>`;
-  }else if(glPhase===4){
-    const q=t.questions.find(x=>x.type==='explain');
-    contentHtml=`<div class="gl-question">${q.q}</div><textarea class="gl-input" id="gl-explain-input" placeholder="Erklaere in eigenen Worten..."></textarea><div class="gl-hints" id="gl-hints">${t.hints.map((h,i)=>`<div class="gl-hint" id="gl-hint-${i}">${h}</div>`).join('')}</div><button class="gl-hint-btn" onclick="window._glShowHint()">Hinweis anzeigen</button><br><button class="gl-btn primary" onclick="window._glCheckExplain()">Pruefen</button><div id="gl-feedback-area"></div>`;
-  }
-  el.innerHTML=`<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="window._glClose()">&times;</button></div><div class="gl-phase-indicator">${phasesHtml}</div><div class="gl-content">${contentHtml}</div>`;
-  if(glPhase===2){const inp=document.getElementById('gl-fill-input');if(inp){inp.focus();inp.addEventListener('keydown',e=>{if(e.key==='Enter')window._glCheckFill();});}}
-  if(glPhase===4){const inp=document.getElementById('gl-explain-input');if(inp)inp.focus();}
-}
-
-window._glNextPhase=function(){
-  glPhase++;glHintsShown=0;
-  if(glPhase>=phaseNames.length){
-    const newLv=Math.min(3,getTermLevel(glCurrentTerm.id)+1);
-    setTermLevel(glCurrentTerm.id,newLv);
-    renderGlossaryGrid();
-    glPhase=0;
-    const el=document.getElementById('glossary-learn');
-    if(el){
-      el.innerHTML=`<div class="gl-header"><h3>${glCurrentTerm.icon} ${glCurrentTerm.term}</h3><button class="gl-close" onclick="window._glClose()">&times;</button></div><div class="gl-feedback success" style="text-align:center;font-size:15px;padding:24px;">Sehr gut! Level ${newLv}/3 erreicht.${newLv>=3?' Dieser Begriff ist gemeistert!':' Wiederhole fuer das naechste Level.'}</div><div style="text-align:center;margin-top:16px"><button class="gl-btn primary" onclick="window._glossaryOpen('${glCurrentTerm.id}')">Nochmal ueben</button></div>`;
-    }
-    return;
-  }
-  renderGlossaryLearn();
-};
-
-window._glGoToPhase=function(idx){
-  if(idx>glPhase)return;
-  glPhase=idx;glHintsShown=0;
-  renderGlossaryLearn();
-};
-
-window._glClose=function(){
-  const el=document.getElementById('glossary-learn');
-  if(el){el.classList.remove('visible');el.innerHTML='';}
-  document.querySelectorAll('.glossary-card').forEach(c=>c.classList.remove('active'));
-};
-
-window._glShowHint=function(){
-  if(!glCurrentTerm)return;
-  const hint=document.getElementById('gl-hint-'+glHintsShown);
-  if(hint){hint.classList.add('visible');glHintsShown++;}
-};
-
-window._glCheckFill=function(){
-  const inp=document.getElementById('gl-fill-input');
-  const area=document.getElementById('gl-feedback-area');
-  if(!inp||!area||!glCurrentTerm)return;
-  const q=glCurrentTerm.questions.find(x=>x.type==='fill');
-  const val=inp.value.trim().toLowerCase();
-  if(!val){area.innerHTML='<div class="gl-feedback error">Bitte gib eine Antwort ein.</div>';return;}
-  const found=q.keywords.some(k=>val.includes(k.toLowerCase()));
-  if(found){
-    area.innerHTML='<div class="gl-feedback success">Richtig! Die Antwort ist: '+q.a+'</div>';
-    setTimeout(()=>window._glNextPhase(),1200);
-  }else{
-    area.innerHTML='<div class="gl-feedback error">Nicht ganz. Die richtige Antwort ist: <strong>'+q.a+'</strong></div>';
-    setTimeout(()=>window._glNextPhase(),2500);
+var GP_STORIES = {
+  'O-Notation': {
+    route: 'Ein Wettbuero',
+    scenes: [
+      { kw: 'obere Schranke', img: '\uD83D\uDCC8 Decke im Raum', text: 'Du betrittst ein Wettbuero. An der Decke steht "OBERE SCHRANKE". Egal wie hoch du springst \u2013 du kommst nie ueber die Decke hinaus. So beschraenkt O(f) die Laufzeit nach oben!' },
+      { kw: 'Wachstum', img: '\uD83C\uDF31 Pflanze im Zeitraffer', text: 'Im Schaufenster waechst eine Pflanze im Zeitraffer. Klein angefangen, aber bei grossem n explodiert die Groesse. Das Wachstum zeigt, WIE SCHNELL die Laufzeit steigt.' },
+      { kw: 'dominanter Term', img: '\uD83E\uDD47 Grosser Pokal neben kleinen', text: 'Auf dem Regal steht ein riesiger Pokal neben winzigen Medaillen. Bei der O-Notation zaehlt nur der groesste Pokal \u2013 der dominante Term. O(3n^2 + 5n) = O(n^2).' },
+      { kw: 'Konstanten ignoriert', img: '\uD83D\uDEAE Preisschilder abgerissen', text: 'Der Wettbuero-Besitzer reisst alle Preisschilder (Konstanten) ab. "Ob 2n oder 1000n \u2013 beides ist O(n)!" Konstante Faktoren werden ignoriert.' },
+      { kw: 'Worst Case', img: '\u26C8\uFE0F Unwetter-Warntafel', text: 'An der Wand haengt eine Unwetter-Warntafel: "Im schlimmsten Fall..." Die O-Notation beschreibt standardmaessig den Worst Case \u2013 die unguenstigste Moeglichkeit.' }
+    ]
+  },
+  'Zeitkomplexitaet': {
+    route: 'Eine Fabrik',
+    scenes: [
+      { kw: 'Operationen', img: '\u2699\uFE0F Zahnraeder zaehlen', text: 'In der Fabrik zaehlt ein Sensor jede Zahnrad-Drehung (Operation). Die Zeitkomplexitaet misst, wie viele Operationen der Algorithmus braucht \u2013 nicht die echte Zeit in Sekunden!' },
+      { kw: 'Eingabegroesse n', img: '\uD83D\uDCE6 Pakete auf dem Fliessband', text: 'Auf dem Fliessband liegen n Pakete. Je mehr Pakete, desto mehr Arbeit. Die Zeitkomplexitaet beschreibt, wie die Arbeit mit n waechst.' },
+      { kw: 'verschachtelte Schleifen', img: '\uD83D\uDD04 Doppeltes Fliessband', text: 'Ein zweites Fliessband laeuft INNERHALB des ersten. Fuer jedes der n Pakete werden nochmal n Schritte gemacht \u2013 n*n = O(n^2) verschachtelte Schleifen!' },
+      { kw: 'T(n)', img: '\uD83D\uDCCA Leistungstafel', text: 'An der Fabrikwand zeigt eine Tafel T(n) \u2013 die Funktion, die die Schritte zaehlt. T(n) wird mit O-Notation klassifiziert.' },
+      { kw: 'Effizienz', img: '\uD83C\uDFC6 Mitarbeiter des Monats', text: 'Das Foto des effizientesten Algorithmus haengt an der Wand. Er schafft die gleiche Arbeit mit weniger Schritten \u2013 niedrigere Zeitkomplexitaet!' }
+    ]
+  },
+  'Speicherkomplexitaet': {
+    route: 'Ein Lagerhaus',
+    scenes: [
+      { kw: 'zusaetzlicher Speicher', img: '\uD83D\uDCE6 Extra-Regale', text: 'Im Lagerhaus stehen die Original-Pakete (Eingabe). Fuer den Algorithmus werden extra Regale aufgestellt \u2013 der zusaetzliche Speicher neben der Eingabe.' },
+      { kw: 'in-place', img: '\uD83D\uDCCF Umsortieren am Platz', text: 'Ein fleissiger Arbeiter sortiert die Pakete direkt im Regal um, ohne extra Regale \u2013 das ist "in-place"! O(1) zusaetzlicher Speicher.' },
+      { kw: 'O(n) Speicher', img: '\uD83C\uDFD7\uFE0F Zweites identisches Regal', text: 'MergeSort baut ein zweites, gleich grosses Regal daneben \u2013 O(n) Extra-Speicher! Fuer jedes Element ein extra Fach.' },
+      { kw: 'Rekursion', img: '\uD83D\uDDC2\uFE0F Stapel von Zetteln', text: 'Bei Rekursion waechst ein Stapel von Notizzetteln (Call Stack). Jeder Aufruf braucht einen Zettel \u2013 O(Rekursionstiefe) zusaetzlicher Speicher.' },
+      { kw: 'Trade-off', img: '\u2696\uFE0F Waage: Zeit vs. Platz', text: 'Auf einer Waage liegen Zeit und Speicher. Oft muss man sich entscheiden: Schneller (mehr Speicher) oder sparsamer (mehr Zeit)? Das ist der Trade-off!' }
+    ]
+  },
+  'O(1) - Konstant': {
+    route: 'Ein Lichtschalter-Raum',
+    scenes: [
+      { kw: 'konstant', img: '\uD83D\uDCA1 Ein Klick = Licht an', text: 'Du betrittst einen Raum mit einem Lichtschalter. Egal wie gross der Raum ist \u2013 EIN Klick macht das Licht an. Die Arbeit ist immer gleich: O(1) = konstant!' },
+      { kw: 'Array-Zugriff', img: '\uD83D\uDCDA Buch aufschlagen bei Seite 42', text: 'Ein Buch mit Index: Du schlaegst direkt Seite 42 auf \u2013 arr[42]. Egal ob das Buch 100 oder 10.000 Seiten hat, der Zugriff dauert gleich lang.' },
+      { kw: 'HashTable', img: '\uD83D\uDD11 Schluesselkasten', text: 'Im Schluesselkasten steckst du den Schluessel (Key) rein und bekommst sofort den Wert \u2013 HashTable-Lookup! Im Durchschnitt O(1), weil der Hash direkt zum Fach fuehrt.' },
+      { kw: 'unabhaengig', img: '\uD83D\uDCCF Lineal zeigt immer 1', text: 'Ein Lineal zeigt immer den Wert 1, egal wo du es anlegst. O(1) ist unabhaengig von der Eingabegroesse n \u2013 die Linie ist immer flach!' },
+      { kw: 'Konstanten ignoriert', img: '\uD83D\uDEAE 1000 Schalter = O(1)', text: 'Auch 1000 Lichtschalter nacheinander sind O(1) \u2013 weil 1000 eine Konstante ist! O(1000) = O(1). Konstanten werden ignoriert.' }
+    ]
+  },
+  'O(n) - Linear': {
+    route: 'Eine Warteschlange',
+    scenes: [
+      { kw: 'proportional', img: '\uD83D\uDEB6 Schlange wird laenger', text: 'An der Kasse wartet eine Schlange. Doppelt so viele Kunden = doppelt so lange warten. O(n) waechst proportional zur Eingabegroesse!' },
+      { kw: 'lineare Suche', img: '\uD83D\uDD0D Jede Person einzeln fragen', text: 'Du suchst jemanden in der Schlange und fragst jeden einzeln: "Bist du Max?" Im Worst Case musst du ALLE n Personen fragen \u2013 lineare Suche O(n).' },
+      { kw: 'eine Schleife', img: '\uD83D\uDD01 Einmal durch die Reihe', text: 'Du gehst genau einmal durch die Schlange von Anfang bis Ende \u2013 eine einzelne for-Schleife ueber n Elemente. Das ist O(n).' },
+      { kw: 'verdoppeln', img: '\u2197\uFE0F Graph steigt gleichmaessig', text: 'Ein Graph an der Wand zeigt eine gerade Linie nach oben. n verdoppelt sich? Die Linie steigt auf das Doppelte. Lineares Wachstum!' },
+      { kw: 'bestmoeglich', img: '\u2705 Mindestens jeden sehen', text: 'Wenn du JEDES Element pruefen musst, geht es nicht schneller als O(n). Du musst mindestens jeden einmal ansehen \u2013 O(n) ist dann das Optimum.' }
+    ]
+  },
+  'O(n log n) - Linearithmisch': {
+    route: 'Eine Sortier-Fabrik',
+    scenes: [
+      { kw: 'Divide-and-Conquer', img: '\u2702\uFE0F Stapel halbieren', text: 'In der Sortier-Fabrik wird jeder Kartenstapel immer wieder halbiert \u2013 Divide! Dann werden die Haelften zusammengefuegt \u2013 Conquer! Das ist Divide-and-Conquer.' },
+      { kw: 'log n Stufen', img: '\uD83C\uDFDA\uFE0F Pyramide mit Etagen', text: 'Die Fabrik hat eine Pyramide: Unten n Karten, jede Etage halbiert. Bei n=64: 6 Etagen (log_2(64)=6). Die Hoehe ist log n!' },
+      { kw: 'n pro Stufe', img: '\uD83D\uDCE6 Jede Etage verarbeitet alle', text: 'Auf JEDER Etage werden alle n Karten einmal angefasst (Merge-Schritt). n Arbeit mal log n Stufen = O(n log n)!' },
+      { kw: 'untere Schranke', img: '\uD83D\uDEA7 Boden der Fabrik', text: 'Der Boden der Fabrik traegt ein Schild: "Schneller geht es nicht!" O(n log n) ist die untere Schranke fuer vergleichsbasiertes Sortieren \u2013 bewiesen durch den Entscheidungsbaum.' },
+      { kw: 'MergeSort', img: '\uD83E\uDDE9 Zwei sortierte Haelften zusammenfuegen', text: 'Am Fliessband werden zwei bereits sortierte Haelften zusammengefuegt. Links und rechts vergleichen, den Kleineren nehmen \u2013 das ist der Merge-Schritt von MergeSort!' }
+    ]
+  },
+  'O(n^2) - Quadratisch': {
+    route: 'Ein Klassenzimmer',
+    scenes: [
+      { kw: 'verschachtelte Schleifen', img: '\uD83D\uDD04 Doppelte Runde', text: 'Im Klassenzimmer soll jeder Schueler mit jedem anderen reden. Fuer jeden der n Schueler gehst du nochmal durch alle n \u2013 zwei verschachtelte Schleifen = O(n^2)!' },
+      { kw: 'quadratisch', img: '\u25A0 n mal n Felder', text: 'An der Tafel zeichnet der Lehrer ein n-mal-n-Gitter. Die Flaeche waechst quadratisch \u2013 doppelt so gross heisst viermal so viel Flaeche!' },
+      { kw: 'BubbleSort', img: '\uD83E\uDEE7 Blasen steigen auf', text: 'In einem Aquarium steigen Blasen (grosse Werte) nach oben. Bei jedem Durchgang vergleicht BubbleSort Nachbarpaare \u2013 n Durchgaenge mit je bis zu n Vergleichen = O(n^2).' },
+      { kw: 'Handschlaege', img: '\uD83E\uDD1D Jeder schuettelt jedem die Hand', text: 'n Schueler schuetteln sich gegenseitig die Hand: n*(n-1)/2 Handschlaege. Das ist ungefaehr n^2/2 \u2013 also O(n^2), da wir Konstanten ignorieren.' },
+      { kw: 'zu langsam', img: '\uD83D\uDC22 Schnecke bei grossem n', text: 'Eine Schnecke kriecht ueber das n-mal-n-Gitter. Bei n=1000 sind das eine Million Schritte! Quadratische Algorithmen sind fuer grosse n oft zu langsam.' }
+    ]
+  },
+  'Worst / Best / Average Case': {
+    route: 'Ein Gluecksrad',
+    scenes: [
+      { kw: 'Worst Case', img: '\u26C8\uFE0F Schwarzes Feld: Maximum', text: 'Am Gluecksrad gibt es ein schwarzes Feld \u2013 der schlimmste Fall (Worst Case). Hier dauert alles am laengsten. Die O-Notation beschreibt standardmaessig DIESEN Fall.' },
+      { kw: 'Best Case', img: '\u2600\uFE0F Goldenes Feld: Minimum', text: 'Das goldene Feld ist der Best Case \u2013 der Glueckstreffer! InsertionSort bei sortierter Eingabe: O(n). Omega beschreibt die untere Schranke.' },
+      { kw: 'Average Case', img: '\uD83C\uDFB2 Durchschnittliches Feld', text: 'Die meisten Drehungen landen auf durchschnittlichen Feldern. Der Average Case ist der Erwartungswert \u2013 QuickSort schafft hier O(n log n).' },
+      { kw: 'QuickSort', img: '\u2694\uFE0F Schwert: Pivot-Wahl', text: 'QuickSort waehlt ein Schwert (Pivot) und teilt die Reihe. Gute Wahl = O(n log n). Schlechte Wahl (sortierte Eingabe) = O(n^2) \u2013 Worst Case!' },
+      { kw: 'Theta', img: '\u2696\uFE0F Exakte Waage', text: 'Die Waage zeigt Theta \u2013 die EXAKTE Schranke. Theta bedeutet: Obere UND untere Schranke sind gleich. Der Algorithmus braucht IMMER ungefaehr so viel.' }
+    ]
   }
 };
 
-window._glCheckChoice=function(idx){
-  const area=document.getElementById('gl-feedback-area');
-  if(!area||!glCurrentTerm)return;
-  const q=glCurrentTerm.questions.find(x=>x.type==='choice');
-  const btns=document.querySelectorAll('.gl-choice');
-  btns.forEach((b,i)=>{
-    b.style.pointerEvents='none';
-    if(i===q.correct)b.classList.add('correct');
-    if(i===idx&&i!==q.correct)b.classList.add('wrong');
-  });
-  if(idx===q.correct){
-    area.innerHTML='<div class="gl-feedback success">Richtig!</div>';
-    setTimeout(()=>window._glNextPhase(),1200);
-  }else{
-    area.innerHTML='<div class="gl-feedback error">Falsch. Die richtige Antwort ist markiert.</div>';
-    setTimeout(()=>window._glNextPhase(),2500);
-  }
+var GLOSSARY_TERM_MAP = {
+  'o-notation': 'O-Notation',
+  'landau-notation': 'O-Notation',
+  'landau notation': 'O-Notation',
+  'big-o': 'O-Notation',
+  'big o': 'O-Notation',
+  'gross-o': 'O-Notation',
+  'zeitkomplexitaet': 'Zeitkomplexitaet',
+  'laufzeitkomplexitaet': 'Zeitkomplexitaet',
+  'laufzeit': 'Zeitkomplexitaet',
+  'time complexity': 'Zeitkomplexitaet',
+  'speicherkomplexitaet': 'Speicherkomplexitaet',
+  'platzkomplexitaet': 'Speicherkomplexitaet',
+  'space complexity': 'Speicherkomplexitaet',
+  'speicherbedarf': 'Speicherkomplexitaet',
+  'o(1)': 'O(1) - Konstant',
+  'konstante zeit': 'O(1) - Konstant',
+  'constant time': 'O(1) - Konstant',
+  'o(n)': 'O(n) - Linear',
+  'lineare zeit': 'O(n) - Linear',
+  'linear time': 'O(n) - Linear',
+  'o(n log n)': 'O(n log n) - Linearithmisch',
+  'linearithmisch': 'O(n log n) - Linearithmisch',
+  'n log n': 'O(n log n) - Linearithmisch',
+  'quasilinear': 'O(n log n) - Linearithmisch',
+  'o(n^2)': 'O(n^2) - Quadratisch',
+  'quadratische zeit': 'O(n^2) - Quadratisch',
+  'quadratic time': 'O(n^2) - Quadratisch',
+  'worst case': 'Worst / Best / Average Case',
+  'best case': 'Worst / Best / Average Case',
+  'average case': 'Worst / Best / Average Case',
+  'worst-case': 'Worst / Best / Average Case',
+  'best-case': 'Worst / Best / Average Case',
+  'average-case': 'Worst / Best / Average Case',
+  'bester fall': 'Worst / Best / Average Case',
+  'schlechtester fall': 'Worst / Best / Average Case',
+  'durchschnittsfall': 'Worst / Best / Average Case'
 };
 
-window._glCheckExplain=function(){
-  const inp=document.getElementById('gl-explain-input');
-  const area=document.getElementById('gl-feedback-area');
-  if(!inp||!area||!glCurrentTerm)return;
-  const q=glCurrentTerm.questions.find(x=>x.type==='explain');
-  const val=inp.value.trim().toLowerCase();
-  if(val.length<10){area.innerHTML='<div class="gl-feedback error">Bitte schreibe eine ausfuehrlichere Erklaerung (mind. 10 Zeichen).</div>';return;}
-  const foundKw=q.keywords.filter(k=>val.includes(k.toLowerCase()));
-  const missingKw=q.keywords.filter(k=>!val.includes(k.toLowerCase()));
-  const ratio=foundKw.length/q.keywords.length;
-  let kwHtml='<div style="margin-top:8px">'+q.keywords.map(k=>{
-    const f=val.includes(k.toLowerCase());
-    return`<span class="gl-keyword ${f?'found':'missing'}">${k}</span>`;
-  }).join(' ')+'</div>';
-  if(ratio>=0.4){
-    area.innerHTML=`<div class="gl-feedback success">Gute Erklaerung! ${foundKw.length}/${q.keywords.length} Schluesselwoerter erkannt.${kwHtml}</div>`;
-    setTimeout(()=>window._glNextPhase(),2000);
-  }else{
-    area.innerHTML=`<div class="gl-feedback error">Versuche mehr Kernkonzepte einzubeziehen. ${foundKw.length}/${q.keywords.length} Schluesselwoerter erkannt.${kwHtml}</div>`;
-    setTimeout(()=>window._glNextPhase(),3500);
-  }
-};
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card li, .task-sub, .summary-card p, .calc-wrap p, .section-title h2';
 
-// Tooltip system
-const tooltip=document.getElementById('glossary-tooltip');
-function initGlossaryTooltips(){
-  if(!tooltip)return;
-  const selectors=['.card p','.card li','.task-sub','.summary-card p','.calc-wrap p','.section-title h2','.gl-definition','.gl-analogy'];
-  selectors.forEach(sel=>{
-    document.querySelectorAll(sel).forEach(el=>{
-      if(el.dataset.glossaryProcessed)return;
-      el.dataset.glossaryProcessed='1';
-      let html=el.innerHTML;
-      const sortedEntries=Object.entries(glossaryTermMap).sort((a,b)=>b[0].length-a[0].length);
-      sortedEntries.forEach(([variant,id])=>{
-        const escaped=variant.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
-        const regex=new RegExp('(?<![<\\/\\w-])(' + escaped + ')(?![\\w-]*[>])','gi');
-        html=html.replace(regex,(match)=>{
-          return`<span class="glossary-term" data-glossary-id="${id}">${match}</span>`;
-        });
-      });
-      el.innerHTML=html;
-    });
-  });
-  document.querySelectorAll('.glossary-term').forEach(el=>{
-    el.addEventListener('mouseenter',function(e){
-      const id=this.dataset.glossaryId;
-      const t=glossaryTerms.find(x=>x.id===id);
-      if(!t||!tooltip)return;
-      tooltip.querySelector('.gt-name').textContent=t.term;
-      tooltip.querySelector('.gt-short').textContent=t.short;
-      tooltip.style.display='block';
-      const rect=this.getBoundingClientRect();
-      let top=rect.bottom+8,left=rect.left;
-      if(top+tooltip.offsetHeight>window.innerHeight)top=rect.top-tooltip.offsetHeight-8;
-      if(left+260>window.innerWidth)left=window.innerWidth-270;
-      if(left<10)left=10;
-      tooltip.style.top=top+'px';
-      tooltip.style.left=left+'px';
-    });
-    el.addEventListener('mouseleave',function(){
-      if(tooltip)tooltip.style.display='none';
-    });
-    el.addEventListener('click',function(){
-      const id=this.dataset.glossaryId;
-      if(tooltip)tooltip.style.display='none';
-      const section=document.getElementById('glossary-section');
-      if(section)section.scrollIntoView({behavior:'smooth',block:'start'});
-      setTimeout(()=>window._glossaryOpen(id),400);
-    });
-  });
-}
-
-renderGlossaryGrid();
-setTimeout(initGlossaryTooltips,200);
-})();
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

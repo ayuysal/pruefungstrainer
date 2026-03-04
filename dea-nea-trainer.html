@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DEA & NEA Automaten Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -127,72 +128,6 @@ tr:last-child td{border-bottom:none}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.options-grid{grid-template-columns:1fr}}
 
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -289,7 +224,14 @@ tr:last-child td{border-bottom:none}
 <div class="gp-count" id="glossary-count">0 / 8 gemeistert</div>
 </div>
 <div class="glossary-grid" id="glossary-grid"></div>
-<div class="glossary-learn" id="glossary-learn"></div>
+<div class="glossary-learn" id="glossary-learn">
+  <div class="gl-header">
+    <h3 id="gl-title"></h3>
+    <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+  </div>
+  <div class="gl-phase-indicator" id="gl-phases"></div>
+  <div class="gl-content" id="gl-content"></div>
+</div>
 </div>
 
 <!-- SUMMARY -->
@@ -854,586 +796,235 @@ function renderExamples() {
 renderExamples();
 
 // ===== GLOSSARY SYSTEM =====
-(function(){
-const STORAGE_KEY = 'glossary-dea-nea';
-const glossaryTerms = [
+var TRAINER_ID = 'dea-nea-trainer';
+
+var GLOSSARY = [
   {
-    id: 'endlicher-automat',
     term: 'Endlicher Automat',
     short: 'Mathematisches Modell mit endlich vielen Zust\u00e4nden zur Erkennung regul\u00e4rer Sprachen.',
-    icon: '\u2699\uFE0F',
-    difficulty: 1,
     definition: 'Ein endlicher Automat (Finite Automaton, FA) ist ein abstraktes Berechnungsmodell, das aus einer endlichen Menge von Zust\u00e4nden, einem Eingabealphabet, einer \u00dcbergangsfunktion, einem Startzustand und einer Menge von Endzust\u00e4nden besteht. Er verarbeitet eine Eingabe zeichenweise und wechselt dabei gem\u00e4\u00df der \u00dcbergangsfunktion zwischen Zust\u00e4nden. Man definiert ihn als 5-Tupel A = (Q, \u03a3, \u03b4, q\u2080, F).',
-    analogy: 'Stell dir einen Fahrkartenautomaten vor: Er hat verschiedene Bildschirmseiten (Zust\u00e4nde) und je nach Knopfdruck (Eingabesymbol) wechselt er zur n\u00e4chsten Seite. Am Ende akzeptiert er dein Ticket \u2013 oder eben nicht.',
+    analogy: '\u2699\uFE0F Stell dir einen Fahrkartenautomaten vor: Er hat verschiedene Bildschirmseiten (Zust\u00e4nde) und je nach Knopfdruck (Eingabesymbol) wechselt er zur n\u00e4chsten Seite. Am Ende akzeptiert er dein Ticket \u2013 oder eben nicht.',
     hints: [
       'Das 5-Tupel besteht aus: Q (Zustandsmenge), \u03a3 (Alphabet), \u03b4 (\u00dcbergangsfunktion), q\u2080 (Startzustand), F (Endzust\u00e4nde).',
       'Endliche Automaten k\u00f6nnen genau die regul\u00e4ren Sprachen (Chomsky-Typ 3) erkennen.',
       'Der Automat verarbeitet die Eingabe strikt von links nach rechts, Symbol f\u00fcr Symbol \u2013 er kann nicht zur\u00fcckspringen.'
     ],
-    questions: {
-      fill: {
-        q: 'Aus welchem 5-Tupel besteht ein endlicher Automat? A = (Q, ___, \u03b4, q\u2080, F)',
-        a: '\u03a3',
-        keywords: ['\u03a3', 'Sigma', 'Alphabet', 'Eingabealphabet']
-      },
-      choice: {
-        q: 'Welche Sprachklasse erkennen endliche Automaten?',
-        choices: ['Kontextfreie Sprachen (Typ 2)', 'Regul\u00e4re Sprachen (Typ 3)', 'Kontextsensitive Sprachen (Typ 1)', 'Rekursiv aufz\u00e4hlbare Sprachen (Typ 0)'],
-        correct: 1
-      },
-      explain: {
-        q: 'Erkl\u00e4re kurz, was ein endlicher Automat ist und nenne die Bestandteile des 5-Tupels.',
-        keywords: ['Zustandsmenge', 'Alphabet', '\u00dcbergangsfunktion', 'Startzustand', 'Endzust\u00e4nde', '5-Tupel']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'Aus welchem 5-Tupel besteht ein endlicher Automat? A = (Q, ___, \u03b4, q\u2080, F)', a: '\u03a3', keywords: ['\u03a3', 'Sigma', 'Alphabet', 'Eingabealphabet'] },
+      { type: 'choice', q: 'Welche Sprachklasse erkennen endliche Automaten?', options: ['Kontextfreie Sprachen (Typ 2)', 'Regul\u00e4re Sprachen (Typ 3)', 'Kontextsensitive Sprachen (Typ 1)', 'Rekursiv aufz\u00e4hlbare Sprachen (Typ 0)'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re kurz, was ein endlicher Automat ist und nenne die Bestandteile des 5-Tupels.', keywords: ['Zustandsmenge', 'Alphabet', '\u00dcbergangsfunktion', 'Startzustand', 'Endzust\u00e4nde', '5-Tupel'], minKeywords: 3 }
+    ]
   },
   {
-    id: 'dea',
     term: 'DEA',
     short: 'Deterministischer Endlicher Automat \u2013 genau ein Folgezustand pro \u00dcbergang.',
-    icon: '\u27a1\uFE0F',
-    difficulty: 1,
     definition: 'Ein Deterministischer Endlicher Automat (DEA/DFA) ist ein endlicher Automat, bei dem die \u00dcbergangsfunktion \u03b4: Q \u00d7 \u03a3 \u2192 Q total und eindeutig ist. Das bedeutet: F\u00fcr jeden Zustand und jedes Eingabesymbol gibt es genau einen Folgezustand. Es gibt keine \u03b5-\u00dcberg\u00e4nge und keine Mehrdeutigkeit.',
-    analogy: 'Ein DEA ist wie ein Navigationsger\u00e4t mit eindeutigen Anweisungen: An jeder Kreuzung (\u201eZustand\u201c) gibt es f\u00fcr jede Richtung (Symbol) genau eine klare Anweisung. Kein Raten, kein Ausprobieren.',
+    analogy: '\u27a1\uFE0F Ein DEA ist wie ein Navigationsger\u00e4t mit eindeutigen Anweisungen: An jeder Kreuzung (\u201eZustand\u201c) gibt es f\u00fcr jede Richtung (Symbol) genau eine klare Anweisung. Kein Raten, kein Ausprobieren.',
     hints: [
       '\u00dcbergangsfunktion: \u03b4: Q \u00d7 \u03a3 \u2192 Q \u2013 total (f\u00fcr jede Kombination definiert) und eindeutig (genau ein Ergebnis).',
       'Fehlt ein \u00dcbergang, wird h\u00e4ufig ein Fangzustand (Fehlerzustand) eingef\u00fchrt, um die Totalit\u00e4t sicherzustellen.',
       'In der Praxis leichter zu implementieren als ein NEA, da kein Backtracking n\u00f6tig ist.'
     ],
-    questions: {
-      fill: {
-        q: 'Beim DEA ist die \u00dcbergangsfunktion \u03b4: Q \u00d7 \u03a3 \u2192 ___ definiert.',
-        a: 'Q',
-        keywords: ['Q', 'Zustandsmenge', 'genau ein Zustand']
-      },
-      choice: {
-        q: 'Welche Aussage trifft auf einen DEA zu?',
-        choices: ['\u03b5-\u00dcberg\u00e4nge sind erlaubt', 'Mehrere Folgezust\u00e4nde pro Symbol sind m\u00f6glich', 'F\u00fcr jedes (Zustand, Symbol)-Paar gibt es genau einen Folgezustand', 'Die \u00dcbergangsfunktion bildet in die Potenzmenge P(Q) ab'],
-        correct: 2
-      },
-      explain: {
-        q: 'Erkl\u00e4re, was einen DEA von einem NEA unterscheidet. Gehe auf die \u00dcbergangsfunktion ein.',
-        keywords: ['genau ein', 'Folgezustand', 'total', 'eindeutig', 'kein \u03b5', 'deterministisch']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'Beim DEA ist die \u00dcbergangsfunktion \u03b4: Q \u00d7 \u03a3 \u2192 ___ definiert.', a: 'Q', keywords: ['Q', 'Zustandsmenge', 'genau ein Zustand'] },
+      { type: 'choice', q: 'Welche Aussage trifft auf einen DEA zu?', options: ['\u03b5-\u00dcberg\u00e4nge sind erlaubt', 'Mehrere Folgezust\u00e4nde pro Symbol sind m\u00f6glich', 'F\u00fcr jedes (Zustand, Symbol)-Paar gibt es genau einen Folgezustand', 'Die \u00dcbergangsfunktion bildet in die Potenzmenge P(Q) ab'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re, was einen DEA von einem NEA unterscheidet. Gehe auf die \u00dcbergangsfunktion ein.', keywords: ['genau ein', 'Folgezustand', 'total', 'eindeutig', 'kein \u03b5', 'deterministisch'], minKeywords: 3 }
+    ]
   },
   {
-    id: 'nea',
     term: 'NEA',
     short: 'Nichtdeterministischer Endlicher Automat \u2013 mehrere Folgezust\u00e4nde m\u00f6glich.',
-    icon: '\uD83D\uDD00',
-    difficulty: 2,
     definition: 'Ein Nichtdeterministischer Endlicher Automat (NEA/NFA) ist ein endlicher Automat, dessen \u00dcbergangsfunktion \u03b4: Q \u00d7 (\u03a3 \u222a {\u03b5}) \u2192 P(Q) in die Potenzmenge von Q abbildet. F\u00fcr ein Zustand-Symbol-Paar kann es null, einen oder mehrere Folgezust\u00e4nde geben. Zus\u00e4tzlich sind \u03b5-\u00dcberg\u00e4nge (spontane Zustands\u00fcberg\u00e4nge ohne Eingabe) erlaubt.',
-    analogy: 'Ein NEA ist wie ein Labyrinth: An manchen Kreuzungen hast du mehrere Wege zur Auswahl. Du pr\u00fcfst quasi alle m\u00f6glichen Pfade gleichzeitig \u2013 wenn auch nur einer zum Ausgang f\u00fchrt, ist das Wort akzeptiert.',
+    analogy: '\uD83D\uDD00 Ein NEA ist wie ein Labyrinth: An manchen Kreuzungen hast du mehrere Wege zur Auswahl. Du pr\u00fcfst quasi alle m\u00f6glichen Pfade gleichzeitig \u2013 wenn auch nur einer zum Ausgang f\u00fchrt, ist das Wort akzeptiert.',
     hints: [
       '\u00dcbergangsfunktion: \u03b4: Q \u00d7 (\u03a3 \u222a {\u03b5}) \u2192 P(Q) \u2013 Ergebnis ist eine Menge von Zust\u00e4nden.',
       '\u03b5-\u00dcberg\u00e4nge erlauben Zustandswechsel ohne dass ein Eingabesymbol verbraucht wird.',
       'Ein Wort wird akzeptiert, wenn mindestens ein m\u00f6glicher Berechnungspfad in einem Endzustand endet.'
     ],
-    questions: {
-      fill: {
-        q: 'Beim NEA bildet \u03b4 in die ___ von Q ab.',
-        a: 'Potenzmenge',
-        keywords: ['Potenzmenge', 'P(Q)', 'Teilmengen']
-      },
-      choice: {
-        q: 'Was ist beim NEA im Vergleich zum DEA zus\u00e4tzlich erlaubt?',
-        choices: ['Unendlich viele Zust\u00e4nde', '\u03b5-\u00dcberg\u00e4nge und mehrere Folgezust\u00e4nde', 'Kelleroperationen (Push/Pop)', 'Zweidimensionales Eingabeband'],
-        correct: 1
-      },
-      explain: {
-        q: 'Was bedeutet Nichtdeterminismus beim endlichen Automaten und wann wird ein Wort akzeptiert?',
-        keywords: ['mehrere', 'Folgezust\u00e4nde', '\u03b5', 'Potenzmenge', 'mindestens ein Pfad', 'akzeptiert']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'Beim NEA bildet \u03b4 in die ___ von Q ab.', a: 'Potenzmenge', keywords: ['Potenzmenge', 'P(Q)', 'Teilmengen'] },
+      { type: 'choice', q: 'Was ist beim NEA im Vergleich zum DEA zus\u00e4tzlich erlaubt?', options: ['Unendlich viele Zust\u00e4nde', '\u03b5-\u00dcberg\u00e4nge und mehrere Folgezust\u00e4nde', 'Kelleroperationen (Push/Pop)', 'Zweidimensionales Eingabeband'], correct: 1 },
+      { type: 'explain', q: 'Was bedeutet Nichtdeterminismus beim endlichen Automaten und wann wird ein Wort akzeptiert?', keywords: ['mehrere', 'Folgezust\u00e4nde', '\u03b5', 'Potenzmenge', 'mindestens ein Pfad', 'akzeptiert'], minKeywords: 3 }
+    ]
   },
   {
-    id: 'zustandsuebergangstabelle',
     term: 'Zustands\u00fcbergangstabelle',
     short: 'Tabellarische Darstellung der \u00dcbergangsfunktion \u03b4 eines Automaten.',
-    icon: '\uD83D\uDCCB',
-    difficulty: 1,
     definition: 'Die Zustands\u00fcbergangstabelle ist eine tabellarische Darstellung der \u00dcbergangsfunktion \u03b4. Die Zeilen repr\u00e4sentieren die Zust\u00e4nde (Q), die Spalten die Eingabesymbole (\u03a3). In jeder Zelle steht der Folgezustand (DEA: genau einer) bzw. die Menge der Folgezust\u00e4nde (NEA: ggf. mehrere oder \u2205). Der Startzustand wird mit \u2192 markiert, Endzust\u00e4nde mit *.',
-    analogy: 'Wie ein Fahrplan: Du suchst deine Haltestelle (Zustand) und die Linie (Symbol) \u2013 und findest die n\u00e4chste Haltestelle (Folgezustand). Beim DEA f\u00e4hrt genau ein Bus, beim NEA k\u00f6nnen mehrere Busse gleichzeitig losfahren.',
+    analogy: '\uD83D\uDCCB Wie ein Fahrplan: Du suchst deine Haltestelle (Zustand) und die Linie (Symbol) \u2013 und findest die n\u00e4chste Haltestelle (Folgezustand). Beim DEA f\u00e4hrt genau ein Bus, beim NEA k\u00f6nnen mehrere Busse gleichzeitig losfahren.',
     hints: [
       'Zeilen = Zust\u00e4nde, Spalten = Eingabesymbole. Zelle = Folgezustand(e).',
       'Markierungen: \u2192 f\u00fcr Startzustand, * f\u00fcr Endzust\u00e4nde.',
       'Bei einem vollst\u00e4ndigen DEA darf keine Zelle leer sein \u2013 ggf. Fangzustand einf\u00fchren.'
     ],
-    questions: {
-      fill: {
-        q: 'In der Zustands\u00fcbergangstabelle stehen die ___ in den Zeilen und die Eingabesymbole in den Spalten.',
-        a: 'Zust\u00e4nde',
-        keywords: ['Zust\u00e4nde', 'Zustandsmenge', 'Q']
-      },
-      choice: {
-        q: 'Wie wird der Startzustand in der Tabelle markiert?',
-        choices: ['Mit einem Doppelkreis', 'Mit einem Pfeil (\u2192)', 'Mit einem Stern (*)', 'Durch Fettdruck'],
-        correct: 1
-      },
-      explain: {
-        q: 'Beschreibe den Aufbau einer Zustands\u00fcbergangstabelle und wie sich DEA- und NEA-Tabellen unterscheiden.',
-        keywords: ['Zeilen', 'Spalten', 'Folgezustand', 'Menge', '\u2192', 'Startzustand', '*', 'Endzustand']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'In der Zustands\u00fcbergangstabelle stehen die ___ in den Zeilen und die Eingabesymbole in den Spalten.', a: 'Zust\u00e4nde', keywords: ['Zust\u00e4nde', 'Zustandsmenge', 'Q'] },
+      { type: 'choice', q: 'Wie wird der Startzustand in der Tabelle markiert?', options: ['Mit einem Doppelkreis', 'Mit einem Pfeil (\u2192)', 'Mit einem Stern (*)', 'Durch Fettdruck'], correct: 1 },
+      { type: 'explain', q: 'Beschreibe den Aufbau einer Zustands\u00fcbergangstabelle und wie sich DEA- und NEA-Tabellen unterscheiden.', keywords: ['Zeilen', 'Spalten', 'Folgezustand', 'Menge', '\u2192', 'Startzustand', '*', 'Endzustand'], minKeywords: 3 }
+    ]
   },
   {
-    id: 'startzustand',
     term: 'Startzustand',
     short: 'Der Zustand q\u2080, in dem der Automat die Verarbeitung beginnt.',
-    icon: '\u25B6\uFE0F',
-    difficulty: 1,
     definition: 'Der Startzustand q\u2080 \u2208 Q ist der ausgezeichnete Zustand, in dem sich ein endlicher Automat zu Beginn der Verarbeitung befindet. Jeder endliche Automat hat genau einen Startzustand. Im Zustandsdiagramm wird er durch einen Pfeil von au\u00dfen gekennzeichnet, in der Zustandstabelle durch das Symbol \u2192.',
-    analogy: 'Wie die Startlinie bei einem Rennen: Egal welches Wort du verarbeitest, der Automat beginnt immer an derselben Stelle. Von dort aus bestimmt die Eingabe den weiteren Weg.',
+    analogy: '\u25B6\uFE0F Wie die Startlinie bei einem Rennen: Egal welches Wort du verarbeitest, der Automat beginnt immer an derselben Stelle. Von dort aus bestimmt die Eingabe den weiteren Weg.',
     hints: [
       'Im 5-Tupel ist q\u2080 der vierte Eintrag: A = (Q, \u03a3, \u03b4, q\u2080, F).',
       'Im Zustandsdiagramm: Pfeil von au\u00dfen, der auf den Startzustand zeigt.',
       'Es gibt immer genau einen Startzustand \u2013 sowohl beim DEA als auch beim NEA.'
     ],
-    questions: {
-      fill: {
-        q: 'Im Zustandsdiagramm wird der Startzustand durch einen ___ von au\u00dfen markiert.',
-        a: 'Pfeil',
-        keywords: ['Pfeil', 'Pfeil von au\u00dfen', 'Kante']
-      },
-      choice: {
-        q: 'Wie viele Startzust\u00e4nde hat ein endlicher Automat?',
-        choices: ['Keinen', 'Genau einen', 'Mindestens einen, beliebig viele', 'Genau zwei (einen f\u00fcr DEA, einen f\u00fcr NEA)'],
-        correct: 1
-      },
-      explain: {
-        q: 'Erkl\u00e4re die Rolle des Startzustands im endlichen Automaten und wie er dargestellt wird.',
-        keywords: ['q\u2080', 'Beginn', 'Verarbeitung', 'Pfeil', 'genau ein', 'Zustandsdiagramm']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'Im Zustandsdiagramm wird der Startzustand durch einen ___ von au\u00dfen markiert.', a: 'Pfeil', keywords: ['Pfeil', 'Pfeil von au\u00dfen', 'Kante'] },
+      { type: 'choice', q: 'Wie viele Startzust\u00e4nde hat ein endlicher Automat?', options: ['Keinen', 'Genau einen', 'Mindestens einen, beliebig viele', 'Genau zwei (einen f\u00fcr DEA, einen f\u00fcr NEA)'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re die Rolle des Startzustands im endlichen Automaten und wie er dargestellt wird.', keywords: ['q\u2080', 'Beginn', 'Verarbeitung', 'Pfeil', 'genau ein', 'Zustandsdiagramm'], minKeywords: 3 }
+    ]
   },
   {
-    id: 'endzustand',
     term: 'Endzustand',
     short: 'Akzeptierender Zustand \u2013 bestimmt, ob ein Wort akzeptiert wird.',
-    icon: '\u2705',
-    difficulty: 1,
     definition: 'Die Endzust\u00e4nde (auch: akzeptierende Zust\u00e4nde) bilden die Menge F \u2286 Q im 5-Tupel. Ein Wort wird genau dann akzeptiert, wenn der Automat nach dem Lesen aller Symbole in einem Endzustand steht (DEA) bzw. mindestens ein Berechnungspfad in einem Endzustand endet (NEA). Im Zustandsdiagramm werden Endzust\u00e4nde durch einen Doppelkreis dargestellt.',
-    analogy: 'Endzust\u00e4nde sind wie das Ziel bei einer Schnitzeljagd: Nur wenn du am Ende an einem der markierten Zielorte stehst, hast du gewonnen. Es kann mehrere g\u00fcltige Zielorte geben.',
+    analogy: '\u2705 Endzust\u00e4nde sind wie das Ziel bei einer Schnitzeljagd: Nur wenn du am Ende an einem der markierten Zielorte stehst, hast du gewonnen. Es kann mehrere g\u00fcltige Zielorte geben.',
     hints: [
       'F ist eine Teilmenge von Q: F \u2286 Q. Auch F = \u2205 oder F = Q ist m\u00f6glich.',
       'Im Diagramm: Doppelkreis. In der Tabelle: Stern (*).',
       'Beim DEA z\u00e4hlt der eine erreichte Zustand; beim NEA reicht es, wenn mindestens ein Pfad in F endet.'
     ],
-    questions: {
-      fill: {
-        q: 'Im Zustandsdiagramm werden Endzust\u00e4nde durch einen ___ dargestellt.',
-        a: 'Doppelkreis',
-        keywords: ['Doppelkreis', 'doppelter Kreis', 'zwei Kreise']
-      },
-      choice: {
-        q: 'Wann akzeptiert ein NEA ein Wort?',
-        choices: ['Wenn alle Pfade in einem Endzustand enden', 'Wenn kein Pfad in einem Endzustand endet', 'Wenn mindestens ein Pfad in einem Endzustand endet', 'Wenn der k\u00fcrzeste Pfad in einem Endzustand endet'],
-        correct: 2
-      },
-      explain: {
-        q: 'Was sind Endzust\u00e4nde, wie werden sie dargestellt und was ist der Unterschied zwischen DEA und NEA beim Akzeptieren?',
-        keywords: ['F', 'Teilmenge', 'Doppelkreis', 'akzeptiert', 'mindestens ein Pfad', 'Endzustand']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'Im Zustandsdiagramm werden Endzust\u00e4nde durch einen ___ dargestellt.', a: 'Doppelkreis', keywords: ['Doppelkreis', 'doppelter Kreis', 'zwei Kreise'] },
+      { type: 'choice', q: 'Wann akzeptiert ein NEA ein Wort?', options: ['Wenn alle Pfade in einem Endzustand enden', 'Wenn kein Pfad in einem Endzustand endet', 'Wenn mindestens ein Pfad in einem Endzustand endet', 'Wenn der k\u00fcrzeste Pfad in einem Endzustand endet'], correct: 2 },
+      { type: 'explain', q: 'Was sind Endzust\u00e4nde, wie werden sie dargestellt und was ist der Unterschied zwischen DEA und NEA beim Akzeptieren?', keywords: ['F', 'Teilmenge', 'Doppelkreis', 'akzeptiert', 'mindestens ein Pfad', 'Endzustand'], minKeywords: 3 }
+    ]
   },
   {
-    id: 'regulaere-sprache',
     term: 'Regul\u00e4re Sprache',
     short: 'Sprachklasse, die von endlichen Automaten erkannt wird (Chomsky Typ 3).',
-    icon: '\uD83D\uDCD0',
-    difficulty: 2,
     definition: 'Eine regul\u00e4re Sprache ist eine formale Sprache, die von einem endlichen Automaten (DEA oder NEA) erkannt werden kann. Sie bildet die Klasse der Typ-3-Sprachen in der Chomsky-Hierarchie. \u00c4quivalent kann jede regul\u00e4re Sprache durch einen regul\u00e4ren Ausdruck beschrieben und durch eine rechtslineare (oder linkslineare) Grammatik erzeugt werden.',
-    analogy: 'Regul\u00e4re Sprachen sind wie einfache Muster in Textilien: Sie lassen sich durch ein festes Schema beschreiben und wiederholen sich vorhersagbar. Komplexere Muster (wie verschachtelte Klammern) geh\u00f6ren nicht mehr dazu.',
+    analogy: '\uD83D\uDCD0 Regul\u00e4re Sprachen sind wie einfache Muster in Textilien: Sie lassen sich durch ein festes Schema beschreiben und wiederholen sich vorhersagbar. Komplexere Muster (wie verschachtelte Klammern) geh\u00f6ren nicht mehr dazu.',
     hints: [
       'Typ-3 in der Chomsky-Hierarchie \u2013 die einfachste Sprachklasse.',
       '\u00c4quivalente Beschreibungen: DEA \u2194 NEA \u2194 regul\u00e4rer Ausdruck \u2194 rechtslineare Grammatik.',
       'Regul\u00e4re Sprachen sind abgeschlossen unter Vereinigung, Durchschnitt, Komplement, Konkatenation und Kleene-Stern.'
     ],
-    questions: {
-      fill: {
-        q: 'Regul\u00e4re Sprachen entsprechen Typ ___ in der Chomsky-Hierarchie.',
-        a: '3',
-        keywords: ['3', 'Typ 3', 'Typ-3', 'drei']
-      },
-      choice: {
-        q: 'Welches Modell kann KEINE regul\u00e4ren Sprachen beschreiben?',
-        choices: ['DEA', 'NEA', 'Regul\u00e4rer Ausdruck', 'Kontextfreie Grammatik (die ist m\u00e4chtiger)'],
-        correct: 3
-      },
-      explain: {
-        q: 'Was ist eine regul\u00e4re Sprache und welche Beschreibungsmittel sind daf\u00fcr \u00e4quivalent?',
-        keywords: ['Typ 3', 'Chomsky', 'DEA', 'NEA', 'regul\u00e4rer Ausdruck', 'Grammatik', 'endlicher Automat']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'Regul\u00e4re Sprachen entsprechen Typ ___ in der Chomsky-Hierarchie.', a: '3', keywords: ['3', 'Typ 3', 'Typ-3', 'drei'] },
+      { type: 'choice', q: 'Welches Modell kann KEINE regul\u00e4ren Sprachen beschreiben?', options: ['DEA', 'NEA', 'Regul\u00e4rer Ausdruck', 'Kontextfreie Grammatik (die ist m\u00e4chtiger)'], correct: 3 },
+      { type: 'explain', q: 'Was ist eine regul\u00e4re Sprache und welche Beschreibungsmittel sind daf\u00fcr \u00e4quivalent?', keywords: ['Typ 3', 'Chomsky', 'DEA', 'NEA', 'regul\u00e4rer Ausdruck', 'Grammatik', 'endlicher Automat'], minKeywords: 3 }
+    ]
   },
   {
-    id: 'aequivalenz',
     term: '\u00c4quivalenz',
     short: 'DEA und NEA erkennen dieselbe Sprachklasse \u2013 Umwandlung per Potenzmengenkonstruktion.',
-    icon: '\uD83D\uDD04',
-    difficulty: 3,
     definition: 'DEA und NEA sind ausdrucks\u00e4quivalent: Zu jedem NEA existiert ein \u00e4quivalenter DEA (und umgekehrt), der dieselbe Sprache erkennt. Die Umwandlung NEA \u2192 DEA erfolgt durch die Potenzmengenkonstruktion (auch Teilmengenkonstruktion). Dabei wird jede Menge von gleichzeitig aktiven NEA-Zust\u00e4nden zu einem einzelnen DEA-Zustand. Im schlimmsten Fall hat der DEA 2\u207f Zust\u00e4nde bei n NEA-Zust\u00e4nden.',
-    analogy: 'Stell dir vor, du beschreibst einen Weg einmal als \u201eFolge der m\u00f6glichen Abzweigungen\u201c (NEA) und einmal als \u201eexakte Route auf einer Karte\u201c (DEA). Beide beschreiben dieselben erreichbaren Ziele, nur die Darstellung ist anders.',
+    analogy: '\uD83D\uDD04 Stell dir vor, du beschreibst einen Weg einmal als \u201eFolge der m\u00f6glichen Abzweigungen\u201c (NEA) und einmal als \u201eexakte Route auf einer Karte\u201c (DEA). Beide beschreiben dieselben erreichbaren Ziele, nur die Darstellung ist anders.',
     hints: [
       'Jeder NEA kann in einen \u00e4quivalenten DEA umgewandelt werden (Satz der \u00c4quivalenz).',
       'Potenzmengenkonstruktion: DEA-Zustand = Menge von NEA-Zust\u00e4nden. Maximal 2\u207f DEA-Zust\u00e4nde bei n NEA-Zust\u00e4nden.',
       'In der Praxis sind oft deutlich weniger als 2\u207f Zust\u00e4nde erreichbar.'
     ],
-    questions: {
-      fill: {
-        q: 'Die Umwandlung NEA \u2192 DEA erfolgt durch die ___.',
-        a: 'Potenzmengenkonstruktion',
-        keywords: ['Potenzmengenkonstruktion', 'Teilmengenkonstruktion', 'Potenzmengen']
-      },
-      choice: {
-        q: 'Wie viele Zust\u00e4nde kann der DEA maximal haben, wenn der NEA n Zust\u00e4nde hat?',
-        choices: ['n', 'n\u00b2', '2\u207f', 'n!'],
-        correct: 2
-      },
-      explain: {
-        q: 'Erkl\u00e4re die \u00c4quivalenz von DEA und NEA und beschreibe das Prinzip der Potenzmengenkonstruktion.',
-        keywords: ['gleiche Sprache', '\u00e4quivalent', 'Potenzmengenkonstruktion', 'Menge von Zust\u00e4nden', '2\u207f', 'Teilmenge']
-      }
-    }
+    questions: [
+      { type: 'fill', q: 'Die Umwandlung NEA \u2192 DEA erfolgt durch die ___.', a: 'Potenzmengenkonstruktion', keywords: ['Potenzmengenkonstruktion', 'Teilmengenkonstruktion', 'Potenzmengen'] },
+      { type: 'choice', q: 'Wie viele Zust\u00e4nde kann der DEA maximal haben, wenn der NEA n Zust\u00e4nde hat?', options: ['n', 'n\u00b2', '2\u207f', 'n!'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re die \u00c4quivalenz von DEA und NEA und beschreibe das Prinzip der Potenzmengenkonstruktion.', keywords: ['gleiche Sprache', '\u00e4quivalent', 'Potenzmengenkonstruktion', 'Menge von Zust\u00e4nden', '2\u207f', 'Teilmenge'], minKeywords: 3 }
+    ]
   }
 ];
 
-const termMap = {};
-glossaryTerms.forEach(t => {
-  termMap[t.term.toLowerCase()] = t.id;
-});
-// Additional variants for inline highlighting
-termMap['endlicher automat'] = 'endlicher-automat';
-termMap['endliche automaten'] = 'endlicher-automat';
-termMap['finite automaton'] = 'endlicher-automat';
-termMap['endlichen automaten'] = 'endlicher-automat';
-termMap['dea'] = 'dea';
-termMap['dfa'] = 'dea';
-termMap['deterministischer endlicher automat'] = 'dea';
-termMap['deterministischen endlichen automaten'] = 'dea';
-termMap['nea'] = 'nea';
-termMap['nfa'] = 'nea';
-termMap['nichtdeterministischer endlicher automat'] = 'nea';
-termMap['nichtdeterministischen endlichen automaten'] = 'nea';
-termMap['zustands\u00fcbergangstabelle'] = 'zustandsuebergangstabelle';
-termMap['zustandstabelle'] = 'zustandsuebergangstabelle';
-termMap['\u00fcbergangstabelle'] = 'zustandsuebergangstabelle';
-termMap['startzustand'] = 'startzustand';
-termMap['startzust\u00e4nde'] = 'startzustand';
-termMap['q\u2080'] = 'startzustand';
-termMap['endzustand'] = 'endzustand';
-termMap['endzust\u00e4nde'] = 'endzustand';
-termMap['akzeptierender zustand'] = 'endzustand';
-termMap['akzeptierende zust\u00e4nde'] = 'endzustand';
-termMap['regul\u00e4re sprache'] = 'regulaere-sprache';
-termMap['regul\u00e4re sprachen'] = 'regulaere-sprache';
-termMap['typ-3-sprache'] = 'regulaere-sprache';
-termMap['typ 3'] = 'regulaere-sprache';
-termMap['\u00e4quivalenz'] = 'aequivalenz';
-termMap['dea-nea-\u00e4quivalenz'] = 'aequivalenz';
-termMap['potenzmengenkonstruktion'] = 'aequivalenz';
-termMap['teilmengenkonstruktion'] = 'aequivalenz';
-
-function loadProgress() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { return {}; }
-}
-function saveGlossaryProgress(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
-
-function getLevel(termId) {
-  const p = loadProgress();
-  return (p[termId] && p[termId].level) || 0;
-}
-function setLevel(termId, level) {
-  const p = loadProgress();
-  if (!p[termId]) p[termId] = {};
-  p[termId].level = Math.min(3, Math.max(0, level));
-  saveGlossaryProgress(p);
-}
-
-function countMastered() {
-  const p = loadProgress();
-  return glossaryTerms.filter(t => (p[t.id] && p[t.id].level || 0) >= 3).length;
-}
-
-function updateProgressBar() {
-  const m = countMastered();
-  const pct = Math.round((m / glossaryTerms.length) * 100);
-  const fill = document.getElementById('glossary-fill');
-  const count = document.getElementById('glossary-count');
-  if (fill) fill.style.width = pct + '%';
-  if (count) count.textContent = m + ' / ' + glossaryTerms.length + ' gemeistert';
-}
-
-function renderGlossaryGrid() {
-  const grid = document.getElementById('glossary-grid');
-  if (!grid) return;
-  let html = '';
-  glossaryTerms.forEach(t => {
-    const lvl = getLevel(t.id);
-    html += `<div class="glossary-card" data-level="${lvl}" data-id="${t.id}" onclick="window._glossaryOpen('${t.id}')">
-      <div class="gc-level"></div>
-      <div class="gc-icon">${t.icon}</div>
-      <div class="gc-term">${t.term}</div>
-      <div class="gc-short">${t.short}</div>
-    </div>`;
-  });
-  grid.innerHTML = html;
-  updateProgressBar();
-}
-
-const phases = ['Verstehen', 'L\u00fcckentext', 'Multiple Choice', 'Erkl\u00e4ren'];
-let currentGlossaryTerm = null;
-let currentPhase = 0;
-let glossaryHintIdx = 0;
-
-window._glossaryOpen = function(termId) {
-  const term = glossaryTerms.find(t => t.id === termId);
-  if (!term) return;
-  currentGlossaryTerm = term;
-  currentPhase = 0;
-  glossaryHintIdx = 0;
-  const el = document.getElementById('glossary-learn');
-  el.classList.add('visible');
-  renderGlossaryPhase();
-  // Mark active card
-  document.querySelectorAll('.glossary-card').forEach(c => c.classList.toggle('active', c.dataset.id === termId));
-  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-};
-
-function closeGlossaryLearn() {
-  const el = document.getElementById('glossary-learn');
-  el.classList.remove('visible');
-  currentGlossaryTerm = null;
-  document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
-}
-
-function renderGlossaryPhase() {
-  const t = currentGlossaryTerm;
-  if (!t) return;
-  const el = document.getElementById('glossary-learn');
-  let html = `<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="closeGlossaryLearn()">&times;</button></div>`;
-  html += '<div class="gl-phase-indicator">';
-  phases.forEach((p, i) => {
-    const cls = i < currentPhase ? 'done' : i === currentPhase ? 'current' : '';
-    const click = i <= currentPhase ? ` onclick="window._glossaryGoToPhase(${i})"` : '';
-    html += `<div class="gl-phase ${cls}"${click}>${p}</div>`;
-  });
-  html += '</div><div class="gl-content">';
-
-  if (currentPhase === 0) {
-    html += `<div class="gl-analogy">\uD83D\uDCA1 ${t.analogy}</div>`;
-    html += `<div class="gl-definition">${t.definition}</div>`;
-    html += '<div class="gl-hints">';
-    t.hints.forEach((h, i) => {
-      html += `<div class="gl-hint ${i < glossaryHintIdx ? 'visible' : ''}" id="gl-hint-${i}">\uD83D\uDD0D ${h}</div>`;
-    });
-    html += '</div>';
-    if (glossaryHintIdx < t.hints.length) {
-      html += `<button class="gl-hint-btn" onclick="window._glossaryShowHint()">+ Hinweis anzeigen (${glossaryHintIdx}/${t.hints.length})</button>`;
-    }
-    html += `<button class="gl-btn primary" onclick="window._glossaryNextPhase()">Verstanden &rarr;</button>`;
-  } else if (currentPhase === 1) {
-    // Fill
-    const q = t.questions.fill;
-    html += `<div class="gl-question">${q.q}</div>`;
-    html += `<input class="gl-input" id="gl-fill-input" type="text" placeholder="Deine Antwort..." autocomplete="off">`;
-    html += `<button class="gl-btn primary" onclick="window._glossaryCheckFill()">Pr\u00fcfen</button>`;
-    html += '<div id="gl-fill-feedback"></div>';
-  } else if (currentPhase === 2) {
-    // Choice
-    const q = t.questions.choice;
-    html += `<div class="gl-question">${q.q}</div>`;
-    html += '<div class="gl-choices">';
-    q.choices.forEach((c, i) => {
-      html += `<button class="gl-choice" data-idx="${i}" onclick="window._glossaryCheckChoice(${i})">${c}</button>`;
-    });
-    html += '</div>';
-    html += '<div id="gl-choice-feedback"></div>';
-  } else if (currentPhase === 3) {
-    // Explain
-    const q = t.questions.explain;
-    html += `<div class="gl-question">${q.q}</div>`;
-    html += `<textarea class="gl-input" id="gl-explain-input" placeholder="Erkl\u00e4re in eigenen Worten..."></textarea>`;
-    html += `<button class="gl-btn primary" onclick="window._glossaryCheckExplain()">Pr\u00fcfen</button>`;
-    html += '<div id="gl-explain-feedback"></div>';
-  }
-
-  html += '</div>';
-  el.innerHTML = html;
-
-  // Focus inputs
-  const fi = document.getElementById('gl-fill-input');
-  if (fi) { fi.focus(); fi.addEventListener('keydown', e => { if (e.key === 'Enter') window._glossaryCheckFill(); }); }
-  const ei = document.getElementById('gl-explain-input');
-  if (ei) ei.focus();
-}
-
-window._glossaryShowHint = function() {
-  glossaryHintIdx++;
-  renderGlossaryPhase();
-};
-
-window._glossaryNextPhase = function() {
-  currentPhase++;
-  glossaryHintIdx = 0;
-  if (currentPhase >= phases.length) {
-    // Completed all phases
-    const lvl = getLevel(currentGlossaryTerm.id);
-    setLevel(currentGlossaryTerm.id, Math.min(3, lvl + 1));
-    renderGlossaryGrid();
-    closeGlossaryLearn();
-    return;
-  }
-  renderGlossaryPhase();
-};
-
-window._glossaryGoToPhase = function(idx) {
-  if (idx > currentPhase) return;
-  currentPhase = idx;
-  glossaryHintIdx = 0;
-  renderGlossaryPhase();
-};
-
-window._glossaryCheckFill = function() {
-  const input = document.getElementById('gl-fill-input');
-  if (!input) return;
-  const val = input.value.trim().toLowerCase();
-  if (!val) return;
-  const fb = document.getElementById('gl-fill-feedback');
-  const q = currentGlossaryTerm.questions.fill;
-  const found = q.keywords.some(k => val.includes(k.toLowerCase()));
-  if (found) {
-    fb.innerHTML = `<div class="gl-feedback success">\u2713 Richtig! Die Antwort ist: <strong>${q.a}</strong></div>`;
-    input.disabled = true;
-    setTimeout(() => window._glossaryNextPhase(), 1200);
-  } else {
-    fb.innerHTML = `<div class="gl-feedback error">\u2717 Nicht ganz. Die richtige Antwort ist: <strong>${q.a}</strong></div>`;
-    input.disabled = true;
-    setTimeout(() => window._glossaryNextPhase(), 2000);
+var GP_STORIES = {
+  'Endlicher Automat': {
+    route: 'Du stehst vor einem grossen Fahrkartenautomaten am Bahnhof',
+    scenes: [
+      {kw: '5-Tupel', img: '\u2699\uFE0F F\u00fcnf Kn\u00f6pfe', text: 'Der Automat hat genau f\u00fcnf Bedienelemente \u2013 die f\u00fcnf Teile des 5-Tupels: Q, \u03a3, \u03b4, q\u2080, F.'},
+      {kw: 'Zustandsmenge', img: '\uD83D\uDCFA Bildschirmseiten', text: 'Jede Bildschirmseite ist ein Zustand \u2013 es gibt endlich viele verschiedene Anzeigen.'},
+      {kw: 'Alphabet', img: '\uD83D\uDD22 Tastenfeld', text: 'Die Tasten sind dein Eingabealphabet \u03a3 \u2013 jede Taste ist ein Symbol.'},
+      {kw: '\u00dcbergangsfunktion', img: '\u27a1\uFE0F Seitensprung', text: 'Dr\u00fcckst du eine Taste, springt der Bildschirm zur n\u00e4chsten Seite \u2013 das ist die \u00dcbergangsfunktion \u03b4.'},
+      {kw: 'Endzustand', img: '\uD83C\uDFAB Ticket drucken', text: 'Nur auf bestimmten Seiten wird das Ticket gedruckt \u2013 das sind die Endzust\u00e4nde F.'}
+    ]
+  },
+  'DEA': {
+    route: 'Du f\u00e4hrst mit einem GPS-Navi durch eine Stadt',
+    scenes: [
+      {kw: 'deterministisch', img: '\uD83D\uDEE3\uFE0F Eindeutige Route', text: 'Das Navi gibt an jeder Kreuzung GENAU EINE Anweisung \u2013 kein Raten, kein Ausprobieren.'},
+      {kw: 'genau ein', img: '\u2611\uFE0F Ein Pfeil', text: 'F\u00fcr jede Kreuzung und jede Richtung gibt es genau einen Pfeil \u2013 total und eindeutig.'},
+      {kw: 'Fangzustand', img: '\uD83D\uDEA7 Sackgasse', text: 'Fehlende Abzweigungen f\u00fchren in eine markierte Sackgasse \u2013 den Fangzustand.'},
+      {kw: 'kein \u03b5', img: '\u26D4 Kein Teleportieren', text: 'Du kannst dich nicht einfach so bewegen \u2013 jede Bewegung braucht ein Eingabesymbol, keine \u03b5-\u00dcberg\u00e4nge.'},
+      {kw: 'implementieren', img: '\uD83D\uDCBB Einfacher Code', text: 'Das Navi ist einfach programmiert \u2013 DEAs sind leicht zu implementieren, kein Backtracking n\u00f6tig.'}
+    ]
+  },
+  'NEA': {
+    route: 'Du erkundest ein magisches Labyrinth mit Geisterg\u00e4ngen',
+    scenes: [
+      {kw: 'mehrere', img: '\uD83D\uDD00 Weggabelung', text: 'An manchen Kreuzungen teilst du dich in Klone auf und nimmst ALLE Wege gleichzeitig.'},
+      {kw: 'Potenzmenge', img: '\uD83C\uDF0C Klonwolke', text: 'Die Menge aller aktiven Klone bildet einen DEA-Zustand aus der Potenzmenge P(Q).'},
+      {kw: '\u03b5-\u00dcberg\u00e4nge', img: '\uD83D\uDC7B Geistergang', text: 'Durch Geisterg\u00e4nge teleportierst du dich in andere R\u00e4ume \u2013 OHNE ein Symbol zu verbrauchen.'},
+      {kw: 'mindestens ein Pfad', img: '\u2705 Ein Klon am Ziel', text: 'Es reicht, wenn EIN einziger Klon den Ausgang findet \u2013 das Wort wird akzeptiert.'},
+      {kw: 'null', img: '\u274C Sackgassen', text: 'Manche Kreuzungen haben f\u00fcr bestimmte Richtungen KEINEN Weg \u2013 der Klon verschwindet dort.'}
+    ]
+  },
+  'Zustands\u00fcbergangstabelle': {
+    route: 'Du sitzt in der Bibliothek vor einer grossen Fahrplantafel',
+    scenes: [
+      {kw: 'Zeilen', img: '\uD83D\uDE89 Haltestellen', text: 'Jede Zeile der Tafel ist eine Haltestelle (Zustand) \u2013 du suchst deine aktuelle Station.'},
+      {kw: 'Spalten', img: '\uD83D\uDE8C Buslinien', text: 'Die Spalten sind die Buslinien (Eingabesymbole) \u2013 welche Linie nimmst du?'},
+      {kw: 'Folgezustand', img: '\uD83D\uDCCD N\u00e4chste Haltestelle', text: 'In der Zelle findest du die n\u00e4chste Haltestelle \u2013 den Folgezustand.'},
+      {kw: '\u2192', img: '\u27a1\uFE0F Pfeil am Eingang', text: 'Ein grosser Pfeil markiert die Eingangshaltestelle \u2013 den Startzustand.'},
+      {kw: '*', img: '\u2B50 Stern am Ziel', text: 'Goldene Sterne markieren die Zielhaltestellen \u2013 die Endzust\u00e4nde.'}
+    ]
+  },
+  'Startzustand': {
+    route: 'Du stehst an der Startlinie eines Orientierungslaufs',
+    scenes: [
+      {kw: 'q\u2080', img: '\uD83C\uDFC1 Startflagge', text: 'Die Flagge tr\u00e4gt die Aufschrift q\u2080 \u2013 hier beginnt JEDER Lauf, egal welches Wort.'},
+      {kw: 'genau ein', img: '\u261D\uFE0F Eine Linie', text: 'Es gibt nur EINE Startlinie \u2013 nie zwei, nie null. Genau ein Startzustand.'},
+      {kw: 'Pfeil', img: '\u27a1\uFE0F Richtungspfeil', text: 'Ein grosser Pfeil von aussen zeigt auf die Startlinie \u2013 so erkennt man sie im Diagramm.'},
+      {kw: 'Beginn', img: '\uD83D\uDCA8 Startschuss', text: 'Mit dem Startschuss beginnt der Automat die Verarbeitung \u2013 von q\u2080 aus.'}
+    ]
+  },
+  'Endzustand': {
+    route: 'Du bist bei einer Schnitzeljagd im Wald',
+    scenes: [
+      {kw: 'F', img: '\uD83C\uDFF4 Zielfahnen', text: 'An mehreren Lichtungen stehen Zielfahnen \u2013 die Menge F der Endzust\u00e4nde.'},
+      {kw: 'Doppelkreis', img: '\u2B55 Doppelring', text: 'Jede Ziellichtung hat einen Doppelring am Boden \u2013 im Diagramm der Doppelkreis.'},
+      {kw: 'akzeptiert', img: '\uD83C\uDFC6 Pokal', text: 'Stehst du am Ende auf einer Ziellichtung, gewinnst du den Pokal \u2013 das Wort wird akzeptiert.'},
+      {kw: 'mindestens ein Pfad', img: '\uD83E\uDDED Viele Wege', text: 'Beim NEA reicht EIN Weg zur Lichtung \u2013 andere d\u00fcrfen im Dickicht enden.'},
+      {kw: 'Teilmenge', img: '\uD83D\uDDFA\uFE0F Teilgebiet', text: 'Die Ziellichtungen sind ein Teil des Waldes \u2013 F ist eine Teilmenge von Q.'}
+    ]
+  },
+  'Regul\u00e4re Sprache': {
+    route: 'Du besuchst eine Weberei mit einfachen Mustern',
+    scenes: [
+      {kw: 'Typ 3', img: '\uD83E\uDDF5 Einfachstes Muster', text: 'Die einfachsten Webmuster \u2013 Typ 3, die unterste Stufe der Chomsky-Hierarchie.'},
+      {kw: 'endlicher Automat', img: '\uD83E\uDD16 Webmaschine', text: 'Eine einfache Webmaschine (endlicher Automat) kann genau diese Muster weben.'},
+      {kw: 'regul\u00e4rer Ausdruck', img: '\uD83D\uDCDD Webvorlage', text: 'Die Vorlage auf Papier (regul\u00e4rer Ausdruck) beschreibt dasselbe Muster \u2013 \u00e4quivalent.'},
+      {kw: 'Grammatik', img: '\uD83D\uDCD6 Webanleitung', text: 'Eine rechtslineare Webanleitung (Grammatik) erzeugt exakt dieselben Muster.'},
+      {kw: 'abgeschlossen', img: '\uD83D\uDD17 Kombinierbar', text: 'Kombinierst du zwei einfache Muster, entsteht wieder ein einfaches \u2013 abgeschlossen unter Vereinigung und Stern.'}
+    ]
+  },
+  '\u00c4quivalenz': {
+    route: 'Du stehst vor zwei Landkarten desselben Gebiets',
+    scenes: [
+      {kw: '\u00e4quivalent', img: '\uD83D\uDDFA\uFE0F Gleiche Gebiete', text: 'Beide Karten zeigen exakt dasselbe Gebiet \u2013 DEA und NEA erkennen dieselbe Sprache.'},
+      {kw: 'Potenzmengenkonstruktion', img: '\u2699\uFE0F Kartenkonverter', text: 'Eine Maschine wandelt die unscharfe Karte (NEA) in eine pr\u00e4zise Karte (DEA) um \u2013 die Potenzmengenkonstruktion.'},
+      {kw: 'Menge von Zust\u00e4nden', img: '\uD83D\uDCE6 Zustandspakete', text: 'Jeder DEA-Punkt auf der Karte ist ein Paket aus mehreren NEA-Punkten \u2013 eine Zustandsmenge.'},
+      {kw: '2\u207f', img: '\uD83D\uDCA5 Explosionsgefahr', text: 'Im schlimmsten Fall explodiert die Karte: 2 hoch n m\u00f6gliche Pakete bei n NEA-Zust\u00e4nden.'},
+      {kw: 'Teilmenge', img: '\u2702\uFE0F Ausschnitte', text: 'In der Praxis braucht man nur die erreichbaren Ausschnitte \u2013 oft viel weniger als 2\u207f.'}
+    ]
   }
 };
 
-window._glossaryCheckChoice = function(idx) {
-  const q = currentGlossaryTerm.questions.choice;
-  const btns = document.querySelectorAll('.gl-choice');
-  btns.forEach((b, i) => {
-    b.style.pointerEvents = 'none';
-    if (i === q.correct) b.classList.add('correct');
-    else if (i === idx && idx !== q.correct) b.classList.add('wrong');
-  });
-  const fb = document.getElementById('gl-choice-feedback');
-  if (idx === q.correct) {
-    fb.innerHTML = '<div class="gl-feedback success">\u2713 Richtig!</div>';
-  } else {
-    fb.innerHTML = `<div class="gl-feedback error">\u2717 Falsch. Richtige Antwort: <strong>${q.choices[q.correct]}</strong></div>`;
-  }
-  setTimeout(() => window._glossaryNextPhase(), 1500);
+var GLOSSARY_TERM_MAP = {
+  'endlicher automat': 'Endlicher Automat', 'endliche automaten': 'Endlicher Automat', 'finite automaton': 'Endlicher Automat', 'endlichen automaten': 'Endlicher Automat',
+  'dea': 'DEA', 'dfa': 'DEA', 'deterministischer endlicher automat': 'DEA', 'deterministischen endlichen automaten': 'DEA',
+  'nea': 'NEA', 'nfa': 'NEA', 'nichtdeterministischer endlicher automat': 'NEA', 'nichtdeterministischen endlichen automaten': 'NEA',
+  'zustands\u00fcbergangstabelle': 'Zustands\u00fcbergangstabelle', 'zustandstabelle': 'Zustands\u00fcbergangstabelle', '\u00fcbergangstabelle': 'Zustands\u00fcbergangstabelle',
+  'startzustand': 'Startzustand', 'startzust\u00e4nde': 'Startzustand', 'q\u2080': 'Startzustand',
+  'endzustand': 'Endzustand', 'endzust\u00e4nde': 'Endzustand', 'akzeptierender zustand': 'Endzustand', 'akzeptierende zust\u00e4nde': 'Endzustand',
+  'regul\u00e4re sprache': 'Regul\u00e4re Sprache', 'regul\u00e4re sprachen': 'Regul\u00e4re Sprache', 'typ-3-sprache': 'Regul\u00e4re Sprache', 'typ 3': 'Regul\u00e4re Sprache',
+  '\u00e4quivalenz': '\u00c4quivalenz', 'dea-nea-\u00e4quivalenz': '\u00c4quivalenz', 'potenzmengenkonstruktion': '\u00c4quivalenz', 'teilmengenkonstruktion': '\u00c4quivalenz'
 };
 
-window._glossaryCheckExplain = function() {
-  const input = document.getElementById('gl-explain-input');
-  if (!input) return;
-  const val = input.value.trim().toLowerCase();
-  if (val.length < 10) return;
-  const q = currentGlossaryTerm.questions.explain;
-  const foundKw = [];
-  const missingKw = [];
-  q.keywords.forEach(k => {
-    if (val.includes(k.toLowerCase())) foundKw.push(k); else missingKw.push(k);
-  });
-  const fb = document.getElementById('gl-explain-feedback');
-  let kwHtml = '<div style="margin-top:8px">';
-  foundKw.forEach(k => { kwHtml += `<span class="gl-keyword found">\u2713 ${k}</span>`; });
-  missingKw.forEach(k => { kwHtml += `<span class="gl-keyword missing">\u2717 ${k}</span>`; });
-  kwHtml += '</div>';
-  const ratio = foundKw.length / q.keywords.length;
-  if (ratio >= 0.5) {
-    fb.innerHTML = `<div class="gl-feedback success">\u2713 Gute Erkl\u00e4rung! ${foundKw.length}/${q.keywords.length} Schl\u00fcsselw\u00f6rter erkannt.${kwHtml}</div>`;
-    input.disabled = true;
-    setTimeout(() => window._glossaryNextPhase(), 2000);
-  } else {
-    fb.innerHTML = `<div class="gl-feedback error">\u2717 Versuche mehr Fachbegriffe einzubauen. ${foundKw.length}/${q.keywords.length} Schl\u00fcsselw\u00f6rter erkannt.${kwHtml}</div>`;
-    fb.innerHTML += `<div style="margin-top:8px"><button class="gl-btn primary" onclick="window._glossaryNextPhase()">Trotzdem weiter &rarr;</button></div>`;
-  }
-};
-
-// ===== TOOLTIP =====
-const tooltipEl = document.createElement('div');
-tooltipEl.className = 'glossary-tooltip';
-tooltipEl.innerHTML = '<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">Klicke zum Lernen</div>';
-document.body.appendChild(tooltipEl);
-
-function highlightGlossaryTerms() {
-  const selectors = ['.card p', '.card li', '.task-sub', '.summary-card p', 'header p', '.calc-wrap div', '.result-item .rl'];
-  const sortedKeys = Object.keys(termMap).sort((a, b) => b.length - a.length);
-  const escapedKeys = sortedKeys.map(k => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  if (escapedKeys.length === 0) return;
-  const regex = new RegExp('\\b(' + escapedKeys.join('|') + ')\\b', 'gi');
-
-  selectors.forEach(sel => {
-    document.querySelectorAll(sel).forEach(el => {
-      if (el.querySelector('.glossary-term')) return;
-      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
-      const textNodes = [];
-      while (walker.nextNode()) textNodes.push(walker.currentNode);
-      textNodes.forEach(node => {
-        const text = node.textContent;
-        if (!regex.test(text)) return;
-        regex.lastIndex = 0;
-        const frag = document.createDocumentFragment();
-        let lastIdx = 0;
-        let match;
-        while ((match = regex.exec(text)) !== null) {
-          if (match.index > lastIdx) frag.appendChild(document.createTextNode(text.slice(lastIdx, match.index)));
-          const span = document.createElement('span');
-          span.className = 'glossary-term';
-          span.textContent = match[0];
-          span.dataset.termId = termMap[match[0].toLowerCase()];
-          frag.appendChild(span);
-          lastIdx = regex.lastIndex;
-        }
-        if (lastIdx < text.length) frag.appendChild(document.createTextNode(text.slice(lastIdx)));
-        node.parentNode.replaceChild(frag, node);
-      });
-    });
-  });
-
-  document.querySelectorAll('.glossary-term').forEach(el => {
-    el.addEventListener('mouseenter', function(e) {
-      const tid = this.dataset.termId;
-      const t = glossaryTerms.find(x => x.id === tid);
-      if (!t) return;
-      tooltipEl.querySelector('.gt-name').textContent = t.icon + ' ' + t.term;
-      tooltipEl.querySelector('.gt-short').textContent = t.short;
-      tooltipEl.style.display = 'block';
-      const rect = this.getBoundingClientRect();
-      let top = rect.bottom + 8;
-      let left = rect.left;
-      if (left + 270 > window.innerWidth) left = window.innerWidth - 275;
-      if (left < 5) left = 5;
-      if (top + 120 > window.innerHeight) top = rect.top - 120;
-      tooltipEl.style.top = top + 'px';
-      tooltipEl.style.left = left + 'px';
-    });
-    el.addEventListener('mouseleave', function() {
-      tooltipEl.style.display = 'none';
-    });
-    el.addEventListener('click', function() {
-      tooltipEl.style.display = 'none';
-      const tid = this.dataset.termId;
-      window._glossaryOpen(tid);
-    });
-  });
-}
-
-// Init
-renderGlossaryGrid();
-setTimeout(highlightGlossaryTerms, 200);
-})();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card li, .task-sub, .summary-card p, header p, .calc-wrap div, .result-item .rl';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

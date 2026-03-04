@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EVA · Algorithmen · Kontrollstrukturen</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
   :root {
     --bg: #0c0e13;
@@ -260,72 +261,6 @@
   @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
 
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -585,18 +520,11 @@
     <div class="glossary-learn" id="glossary-learn">
       <div class="gl-header">
         <h3 id="gl-title"></h3>
-        <button class="gl-close" id="gl-close">&times;</button>
+        <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
       </div>
       <div class="gl-phase-indicator" id="gl-phases"></div>
       <div class="gl-content" id="gl-content"></div>
     </div>
-  </div>
-
-  <!-- Glossar-Tooltip (fixed, body level) -->
-  <div class="glossary-tooltip" id="glossary-tooltip">
-    <div class="gt-name" id="gt-name"></div>
-    <div class="gt-short" id="gt-short"></div>
-    <div class="gt-link">Klicken zum Lernen ↗</div>
   </div>
 
   <!-- ═══════════════════════════════════════
@@ -658,532 +586,247 @@ document.querySelectorAll('.ks-tab').forEach(tab => {
 });
 
 // ═══════════════════════════════════════════════════════════════
-//  GLOSSAR-LERNSYSTEM
+//  GLOSSAR-DATEN (Format A)
 // ═══════════════════════════════════════════════════════════════
-(function(){
-  const STORAGE_KEY = 'glossary-eva-algo';
+var TRAINER_ID = 'eva-algo-kontroll';
 
-  // ── 8 Glossar-Begriffe ──
-  const glossaryTerms = [
-    {
-      id: 'eva-prinzip',
-      term: 'EVA-Prinzip',
-      icon: '📥',
-      short: 'Eingabe-Verarbeitung-Ausgabe: Grundmodell jeder Datenverarbeitung.',
-      definition: 'Das EVA-Prinzip (Eingabe-Verarbeitung-Ausgabe) beschreibt das fundamentale Ablaufmodell der Datenverarbeitung. Jeder Computerprozess lässt sich in drei Phasen gliedern: Zuerst werden Daten erfasst (Eingabe), dann durch Algorithmen bearbeitet (Verarbeitung), und schließlich wird das Ergebnis dargestellt oder gespeichert (Ausgabe). Eingabegeräte sind z.\u00a0B. Tastatur und Maus, Verarbeitungseinheit ist die CPU, und Ausgabegeräte sind Monitor oder Drucker.',
-      analogy: 'Wie eine Küche: Zutaten kaufen (Eingabe), Kochen nach Rezept (Verarbeitung), fertiges Gericht servieren (Ausgabe). Ohne eine Phase fehlt etwas – Zutaten allein sind kein Essen, und ohne Servieren nützt das Kochen nichts.',
-      hints: [
-        'Das Prinzip hat genau drei Phasen – jede ist unentbehrlich.',
-        'Die Verarbeitungsphase enthält die eigentliche Logik (Algorithmen).',
-        'Typische Prüfungsfrage: Ordne Geräte den drei Phasen zu (z.\u00a0B. Scanner → E, CPU → V, Drucker → A).'
-      ],
-      questions: [
-        { type: 'choice', q: 'Welche drei Phasen umfasst das EVA-Prinzip?', choices: ['Eingabe, Verarbeitung, Ausgabe', 'Erfassung, Verknüpfung, Anzeige', 'Einlesen, Validieren, Archivieren', 'Empfang, Verschlüsselung, Absendung'], correct: 0, explanation: 'EVA steht für Eingabe-Verarbeitung-Ausgabe. Dies ist das Grundmodell jeder Datenverarbeitung.' },
-        { type: 'fill', q: 'Die CPU gehört zur Phase „___" im EVA-Prinzip.', answer: 'Verarbeitung', explanation: 'Die CPU (Central Processing Unit) ist die zentrale Verarbeitungseinheit und gehört damit zur Verarbeitungsphase (V).' },
-        { type: 'explain', q: 'Erkläre, warum das EVA-Prinzip auf nahezu jedes IT-System anwendbar ist.', keywords: ['Eingabe', 'Verarbeitung', 'Ausgabe', 'Daten', 'Grundmodell'], explanation: 'Das EVA-Prinzip ist so universell, weil jede Datenverarbeitung – ob Taschenrechner, Webserver oder KI – Daten aufnimmt, verarbeitet und ein Ergebnis liefert.' }
-      ],
-      difficulty: 1
-    },
-    {
-      id: 'algorithmus',
-      term: 'Algorithmus',
-      icon: '⚙️',
-      short: 'Endliche, eindeutige Handlungsvorschrift zur Problemlösung.',
-      definition: 'Ein Algorithmus ist eine endliche, eindeutige und ausführbare Handlungsvorschrift zur Lösung eines Problems oder einer Klasse von Problemen. Er muss sechs Eigenschaften erfüllen: Endlichkeit (endliche Beschreibung), Terminierung (endet nach endlich vielen Schritten), Determiniertheit (gleiche Eingabe → gleiches Ergebnis), Determinismus (nächster Schritt eindeutig festgelegt), Allgemeingültigkeit (löst eine Problemklasse) und Ausführbarkeit (jeder Schritt ist durchführbar).',
-      analogy: 'Ein Kochrezept ist ein Algorithmus: Es hat einen Anfang und ein Ende (Terminierung), die Schritte sind klar beschrieben (Eindeutigkeit), und bei gleichen Zutaten kommt immer das gleiche Gericht heraus (Determiniertheit).',
-      hints: [
-        'Merkhilfe für die 6 Eigenschaften: E-D-T-A-E-F (Endlichkeit, Determiniertheit, Terminierung, Allgemeingültigkeit, Eindeutigkeit/Determinismus, Finitheit/Ausführbarkeit).',
-        'Unterscheide Endlichkeit (endliche Beschreibung) von Terminierung (kommt zu einem Ende).',
-        'Ein Algorithmus kann als Pseudocode, Struktogramm, Flussdiagramm oder Programmcode dargestellt werden.'
-      ],
-      questions: [
-        { type: 'choice', q: 'Welche Eigenschaft garantiert, dass ein Algorithmus bei gleicher Eingabe immer das gleiche Ergebnis liefert?', choices: ['Terminierung', 'Determiniertheit', 'Allgemeingültigkeit', 'Endlichkeit'], correct: 1, explanation: 'Determiniertheit bedeutet: Bei identischen Eingabewerten produziert der Algorithmus stets dasselbe Ergebnis.' },
-        { type: 'fill', q: 'Ein Algorithmus, der nie aufhört zu laufen, verletzt die Eigenschaft der ___.', answer: 'Terminierung', explanation: 'Terminierung verlangt, dass der Algorithmus nach endlich vielen Schritten zu einem Ende kommt.' },
-        { type: 'explain', q: 'Nenne die 6 Eigenschaften eines Algorithmus und erkläre zwei davon.', keywords: ['Endlichkeit', 'Terminierung', 'Determiniertheit', 'Determinismus', 'Allgemeingültigkeit', 'Ausführbarkeit'], explanation: 'Die sechs Eigenschaften sind: Endlichkeit, Terminierung, Determiniertheit, Determinismus, Allgemeingültigkeit und Ausführbarkeit. Jede ist notwendig, damit eine Vorschrift als Algorithmus gilt.' }
-      ],
-      difficulty: 2
-    },
-    {
-      id: 'sequenz',
-      term: 'Sequenz',
-      icon: '▶',
-      short: 'Anweisungen werden der Reihe nach (linear) abgearbeitet.',
-      definition: 'Die Sequenz (Anweisungsfolge) ist die einfachste Kontrollstruktur. Anweisungen werden strikt nacheinander, von oben nach unten, ausgeführt. Jede Anweisung wird genau einmal durchlaufen, es gibt keine Sprünge, Verzweigungen oder Wiederholungen. Die Reihenfolge der Anweisungen bestimmt den Programmablauf direkt.',
-      analogy: 'Wie eine Einkaufsliste, die du Punkt für Punkt von oben nach unten abarbeitest – ohne etwas zu überspringen oder zurückzugehen.',
-      hints: [
-        'Im Struktogramm werden Sequenzblöcke als einfache Rechtecke untereinander gezeichnet.',
-        'Jedes Programm enthält mindestens eine Sequenz – sie ist die Basis aller Abläufe.',
-        'Auch innerhalb einer Schleife oder Verzweigung können Sequenzen stehen.'
-      ],
-      questions: [
-        { type: 'choice', q: 'Was kennzeichnet eine Sequenz?', choices: ['Anweisungen werden wiederholt', 'Anweisungen werden bedingt ausgeführt', 'Anweisungen werden nacheinander ausgeführt', 'Anweisungen werden parallel ausgeführt'], correct: 2, explanation: 'Bei einer Sequenz werden Anweisungen strikt nacheinander (linear, von oben nach unten) ausgeführt.' },
-        { type: 'fill', q: 'In einer Sequenz wird jede Anweisung genau ___ ausgeführt.', answer: 'einmal', explanation: 'In einer reinen Sequenz gibt es keine Wiederholungen – jede Anweisung wird exakt einmal durchlaufen.' },
-        { type: 'explain', q: 'Warum ist die Sequenz die grundlegendste Kontrollstruktur?', keywords: ['nacheinander', 'linear', 'Reihenfolge', 'Basis', 'einfach'], explanation: 'Die Sequenz ist die Grundlage, weil jedes Programm mindestens eine Folge von Anweisungen enthält. Ohne Sequenz gibt es keinen geordneten Ablauf.' }
-      ],
-      difficulty: 1
-    },
-    {
-      id: 'selektion',
-      term: 'Selektion',
-      icon: '◆',
-      short: 'Verzweigung: Programmfluss hängt von einer Bedingung ab (if/else).',
-      definition: 'Die Selektion (Verzweigung, bedingte Anweisung) ermöglicht es, den Programmablauf abhängig von einer Bedingung in verschiedene Pfade aufzuteilen. Es gibt drei Varianten: einseitig (nur if – Aktion nur bei wahrer Bedingung), zweiseitig (if/else – je ein Pfad für wahr und falsch) und mehrseitig (switch/case – mehrere Fälle). Nach der Verzweigung führen alle Pfade wieder zusammen.',
-      analogy: 'Wie eine Weggabelung: Du prüfst das Schild (Bedingung) und gehst entweder links oder rechts. Beide Wege führen am Ende wieder zusammen.',
-      hints: [
-        'Im Struktogramm wird die Selektion als Dreieck dargestellt, das den Block in zwei Hälften teilt.',
-        'Einseitig = nur if, Zweiseitig = if/else, Mehrseitig = switch/case.',
-        'Die Bedingung muss einen Wahrheitswert (true/false) ergeben.'
-      ],
-      questions: [
-        { type: 'choice', q: 'Welche Variante der Selektion hat keinen else-Zweig?', choices: ['Zweiseitige Selektion', 'Einseitige Selektion', 'Mehrseitige Selektion', 'Verschachtelte Selektion'], correct: 1, explanation: 'Bei der einseitigen Selektion (nur if) wird der Code nur ausgeführt, wenn die Bedingung wahr ist – es gibt keinen alternativen Pfad.' },
-        { type: 'fill', q: 'Bei einer zweiseitigen Selektion wird entweder der if-Zweig oder der ___-Zweig ausgeführt.', answer: 'else', explanation: 'Die zweiseitige Selektion besteht aus if und else – genau einer der beiden Zweige wird immer ausgeführt.' },
-        { type: 'explain', q: 'Erkläre den Unterschied zwischen einseitiger und zweiseitiger Selektion.', keywords: ['einseitig', 'zweiseitig', 'if', 'else', 'Bedingung', 'Verzweigung'], explanation: 'Bei der einseitigen Selektion wird nur bei wahrer Bedingung eine Aktion ausgeführt (kein else). Bei der zweiseitigen gibt es für beide Fälle (wahr/falsch) einen eigenen Codeblock.' }
-      ],
-      difficulty: 2
-    },
-    {
-      id: 'iteration',
-      term: 'Iteration',
-      icon: '↻',
-      short: 'Schleife: Ein Codeblock wird wiederholt ausgeführt.',
-      definition: 'Die Iteration (Schleife, Wiederholung) führt einen Codeblock mehrfach aus, solange oder bis eine Bedingung erfüllt ist. Es gibt drei Grundtypen: kopfgesteuerte Schleife (while – Bedingung wird vor jedem Durchlauf geprüft, evtl. 0 Durchläufe), fußgesteuerte Schleife (do-while – Bedingung wird nach dem Durchlauf geprüft, mindestens 1 Durchlauf) und Zählschleife (for – feste Anzahl von Durchläufen mit Laufvariable).',
-      analogy: 'Wie das Rühren eines Teigs: Du rührst so lange (while), bis der Teig glatt ist. Oder du rührst genau 50 Mal (for-Schleife). Mindestens einmal rühren musst du bei do-while.',
-      hints: [
-        'Kopfgesteuert (while): Prüfung VOR dem Durchlauf → kann 0-mal durchlaufen werden.',
-        'Fußgesteuert (do-while): Prüfung NACH dem Durchlauf → mindestens 1 Durchlauf garantiert.',
-        'Endlosschleifen entstehen, wenn die Abbruchbedingung nie erreicht wird – das verletzt die Terminierung.'
-      ],
-      questions: [
-        { type: 'choice', q: 'Welche Schleife garantiert mindestens einen Durchlauf?', choices: ['while-Schleife', 'for-Schleife', 'do-while-Schleife', 'foreach-Schleife'], correct: 2, explanation: 'Die do-while-Schleife (fußgesteuert) prüft die Bedingung erst nach dem ersten Durchlauf, daher wird der Schleifenkörper mindestens einmal ausgeführt.' },
-        { type: 'fill', q: 'Eine kopfgesteuerte Schleife prüft die Bedingung ___ jedem Durchlauf.', answer: 'vor', explanation: 'Bei der kopfgesteuerten Schleife (while) wird die Bedingung vor jedem Durchlauf geprüft. Ist sie von Anfang an falsch, wird der Schleifenkörper gar nicht ausgeführt.' },
-        { type: 'explain', q: 'Vergleiche kopfgesteuerte und fußgesteuerte Schleifen.', keywords: ['kopfgesteuert', 'fußgesteuert', 'while', 'do-while', 'Bedingung', 'Durchlauf', 'mindestens'], explanation: 'Bei der kopfgesteuerten Schleife (while) wird die Bedingung vor dem Durchlauf geprüft (kann 0-mal laufen). Bei der fußgesteuerten (do-while) wird sie erst nach dem Durchlauf geprüft (mindestens 1 Durchlauf).' }
-      ],
-      difficulty: 2
-    },
-    {
-      id: 'variable',
-      term: 'Variable',
-      icon: '📦',
-      short: 'Benannter Speicherplatz für veränderbare Werte.',
-      definition: 'Eine Variable ist ein benannter Speicherplatz im Arbeitsspeicher, der einen Wert aufnehmen kann. Variablen haben einen Namen (Bezeichner), einen Datentyp (z.\u00a0B. Integer, String, Boolean) und einen aktuellen Wert. Der Wert kann sich während der Programmausführung ändern (daher „variabel"). Variablen müssen in vielen Sprachen vor der Nutzung deklariert (Typ festlegen) und initialisiert (ersten Wert zuweisen) werden.',
-      analogy: 'Eine Variable ist wie eine beschriftete Box im Regal: Das Etikett ist der Name, der Inhalt ist der aktuelle Wert, und die Boxgröße entspricht dem Datentyp. Du kannst den Inhalt jederzeit austauschen.',
-      hints: [
-        'Deklaration = Variable anlegen (Name + Typ festlegen), Initialisierung = ersten Wert zuweisen.',
-        'Variablennamen sollten sprechend sein (z.\u00a0B. „alter" statt „x") und bestimmten Regeln folgen (keine Leerzeichen, nicht mit Zahl beginnen).',
-        'Konstanten sind „unveränderliche Variablen" – einmal gesetzt, bleibt der Wert fest.'
-      ],
-      questions: [
-        { type: 'choice', q: 'Was ist eine Variable in der Informatik?', choices: ['Ein fester Wert im Programm', 'Ein benannter Speicherplatz für veränderbare Werte', 'Eine mathematische Gleichung', 'Ein Befehl an die CPU'], correct: 1, explanation: 'Eine Variable ist ein benannter Speicherplatz, dessen Wert sich während der Programmausführung ändern kann.' },
-        { type: 'fill', q: 'Das erstmalige Zuweisen eines Wertes zu einer Variablen nennt man ___.', answer: 'Initialisierung', explanation: 'Die Initialisierung ist die erste Wertzuweisung an eine Variable nach ihrer Deklaration.' },
-        { type: 'explain', q: 'Erkläre den Unterschied zwischen Deklaration und Initialisierung einer Variablen.', keywords: ['Deklaration', 'Initialisierung', 'Name', 'Typ', 'Wert', 'Speicherplatz'], explanation: 'Deklaration legt Name und Typ der Variablen fest (reserviert Speicher). Initialisierung weist der Variablen ihren ersten Wert zu. Beides kann in vielen Sprachen auch in einem Schritt erfolgen.' }
-      ],
-      difficulty: 1
-    },
-    {
-      id: 'pseudocode',
-      term: 'Pseudocode',
-      icon: '📝',
-      short: 'Informelle Notation für Algorithmen in natürlicher Sprache.',
-      definition: 'Pseudocode ist eine informelle, sprachunabhängige Darstellungsform für Algorithmen. Er verwendet Elemente natürlicher Sprache kombiniert mit Kontrollstrukturen (if/else, while, for) und mathematischen Ausdrücken. Pseudocode ist nicht direkt ausführbar, dient aber der verständlichen Beschreibung der Programmlogik, bevor sie in einer konkreten Programmiersprache implementiert wird. Es gibt keine feste Syntax – Klarheit und Verständlichkeit stehen im Vordergrund.',
-      analogy: 'Wie eine Bauzeichnung im Vergleich zum echten Haus: Der Pseudocode zeigt die Logik und Struktur, ohne sich um Details einer bestimmten Programmiersprache zu kümmern – so wie eine Skizze die Idee zeigt, ohne jede Schraube zu spezifizieren.',
-      hints: [
-        'Pseudocode ist keine Programmiersprache – er ist nicht direkt compilierbar oder ausführbar.',
-        'Typische Schlüsselwörter: WENN/DANN/SONST, SOLANGE, FÜR, WIEDERHOLE, EINGABE, AUSGABE.',
-        'In Prüfungen wird häufig verlangt, einen Algorithmus in Pseudocode darzustellen.'
-      ],
-      questions: [
-        { type: 'choice', q: 'Was ist der Hauptzweck von Pseudocode?', choices: ['Direkte Ausführung auf dem Computer', 'Verständliche Beschreibung von Algorithmen', 'Kompilierung in Maschinencode', 'Dokumentation von Hardware'], correct: 1, explanation: 'Pseudocode dient der verständlichen, sprachunabhängigen Beschreibung von Algorithmen – er ist nicht direkt ausführbar.' },
-        { type: 'fill', q: 'Pseudocode ist ___ und kann nicht direkt vom Computer ausgeführt werden.', answer: 'sprachunabhängig', explanation: 'Pseudocode ist sprachunabhängig – er gehört zu keiner konkreten Programmiersprache und dient nur der Veranschaulichung der Logik.' },
-        { type: 'explain', q: 'Warum verwendet man Pseudocode statt direkt eine Programmiersprache?', keywords: ['verständlich', 'sprachunabhängig', 'Logik', 'Planung', 'Algorithmus'], explanation: 'Pseudocode erlaubt es, sich auf die Logik und Struktur eines Algorithmus zu konzentrieren, ohne sich mit der Syntax einer konkreten Sprache aufzuhalten. Er ist für Menschen leichter lesbar und eignet sich zur Planung und Kommunikation.' }
-      ],
-      difficulty: 1
-    },
-    {
-      id: 'struktogramm',
-      term: 'Struktogramm',
-      icon: '🧱',
-      short: 'Nassi-Shneiderman-Diagramm: grafische Darstellung von Algorithmen.',
-      definition: 'Ein Struktogramm (Nassi-Shneiderman-Diagramm) ist eine standardisierte, grafische Darstellungsform für Algorithmen nach DIN 66261. Es besteht aus verschachtelten Rechtecken, die die drei Kontrollstrukturen abbilden: Sequenz (einfache Blöcke untereinander), Selektion (Dreieck teilt Block in zwei Hälften für ja/nein) und Iteration (Block mit Einrückung und Schleifenbedingung). Struktogramme erzwingen strukturierte Programmierung – Sprunganweisungen (goto) sind nicht darstellbar.',
-      analogy: 'Wie ein Bauplan mit Stockwerken: Jedes Stockwerk (Block) enthält Räume (Anweisungen). Verzweigungen werden durch Trennwände dargestellt, Schleifen durch sich wiederholende Etagen. Man kann keinen „Geheimgang" (goto) einbauen.',
-      hints: [
-        'Sequenz = Rechtecke untereinander, Selektion = Dreieck mit zwei Hälften, Iteration = Block mit Schleifensymbol.',
-        'Der Name kommt von den Erfindern Isaac Nassi und Ben Shneiderman (1972).',
-        'In Prüfungen wird oft verlangt, Pseudocode in ein Struktogramm umzuwandeln oder umgekehrt.'
-      ],
-      questions: [
-        { type: 'choice', q: 'Welche Anweisung lässt sich in einem Struktogramm NICHT darstellen?', choices: ['if/else', 'while-Schleife', 'goto (Sprunganweisung)', 'for-Schleife'], correct: 2, explanation: 'Struktogramme erzwingen strukturierte Programmierung. Sprunganweisungen (goto) können darin nicht dargestellt werden – das ist ein bewusster Vorteil.' },
-        { type: 'fill', q: 'Struktogramme heißen auch ___-Diagramme, nach ihren Erfindern.', answer: 'Nassi-Shneiderman', explanation: 'Das Struktogramm wurde 1972 von Isaac Nassi und Ben Shneiderman entwickelt und ist nach DIN 66261 genormt.' },
-        { type: 'explain', q: 'Erkläre, wie die drei Kontrollstrukturen im Struktogramm dargestellt werden.', keywords: ['Sequenz', 'Selektion', 'Iteration', 'Rechteck', 'Dreieck', 'Schleife', 'Block'], explanation: 'Sequenz: einfache Rechtecke untereinander. Selektion: ein Dreieck teilt den Block in zwei Hälften (ja/nein). Iteration: ein Block mit Einrückung und Schleifenbedingung am Rand.' }
-      ],
-      difficulty: 2
-    }
-  ];
-
-  // ── termMap: Wörter im Text → Glossar-ID ──
-  const termMap = {
-    'EVA-Prinzip': 'eva-prinzip',
-    'EVA': 'eva-prinzip',
-    'Eingabe-Verarbeitung-Ausgabe': 'eva-prinzip',
-    'Algorithmus': 'algorithmus',
-    'Algorithmen': 'algorithmus',
-    'Algorithmusbegriff': 'algorithmus',
-    'Handlungsvorschrift': 'algorithmus',
-    'Sequenz': 'sequenz',
-    'Anweisungsfolge': 'sequenz',
-    'Selektion': 'selektion',
-    'Verzweigung': 'selektion',
-    'Bedingte Anweisung': 'selektion',
-    'if/else': 'selektion',
-    'Iteration': 'iteration',
-    'Schleife': 'iteration',
-    'Wiederholung': 'iteration',
-    'while': 'iteration',
-    'for': 'iteration',
-    'Variable': 'variable',
-    'Variablen': 'variable',
-    'Speicherplatz': 'variable',
-    'Pseudocode': 'pseudocode',
-    'Struktogramm': 'struktogramm',
-    'Nassi-Shneiderman': 'struktogramm',
-    'Struktogramme': 'struktogramm'
-  };
-
-  // ── State ──
-  let levels = {};   // { termId: 0|1|2|3 }
-  let activeTerm = null;
-  let currentPhase = 0;
-  let hintIndex = 0;
-
-  function loadState() {
-    try { levels = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch(e) { levels = {}; }
-    glossaryTerms.forEach(t => { if (!(t.id in levels)) levels[t.id] = 0; });
+var GLOSSARY = [
+  {
+    term: 'EVA-Prinzip',
+    short: 'Eingabe-Verarbeitung-Ausgabe: Grundmodell jeder Datenverarbeitung.',
+    definition: 'Das EVA-Prinzip (Eingabe-Verarbeitung-Ausgabe) beschreibt das fundamentale Ablaufmodell der Datenverarbeitung. Jeder Computerprozess l\u00e4sst sich in drei Phasen gliedern: Zuerst werden Daten erfasst (Eingabe), dann durch Algorithmen bearbeitet (Verarbeitung), und schlie\u00dflich wird das Ergebnis dargestellt oder gespeichert (Ausgabe). Eingabeger\u00e4te sind z.\u00a0B. Tastatur und Maus, Verarbeitungseinheit ist die CPU, und Ausgabeger\u00e4te sind Monitor oder Drucker.',
+    analogy: '\uD83D\uDCE5 Wie eine K\u00fcche: Zutaten kaufen (Eingabe), Kochen nach Rezept (Verarbeitung), fertiges Gericht servieren (Ausgabe). Ohne eine Phase fehlt etwas \u2013 Zutaten allein sind kein Essen, und ohne Servieren n\u00fctzt das Kochen nichts.',
+    hints: [
+      'Das Prinzip hat genau drei Phasen \u2013 jede ist unentbehrlich.',
+      'Die Verarbeitungsphase enth\u00e4lt die eigentliche Logik (Algorithmen).',
+      'Typische Pr\u00fcfungsfrage: Ordne Ger\u00e4te den drei Phasen zu (z.\u00a0B. Scanner \u2192 E, CPU \u2192 V, Drucker \u2192 A).'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die CPU geh\u00f6rt zur Phase \u201e___\u201c im EVA-Prinzip.', a: 'Verarbeitung', keywords: ['verarbeitung'] },
+      { type: 'choice', q: 'Welche drei Phasen umfasst das EVA-Prinzip?', options: ['Eingabe, Verarbeitung, Ausgabe', 'Erfassung, Verkn\u00fcpfung, Anzeige', 'Einlesen, Validieren, Archivieren', 'Empfang, Verschl\u00fcsselung, Absendung'], correct: 0 },
+      { type: 'explain', q: 'Erkl\u00e4re, warum das EVA-Prinzip auf nahezu jedes IT-System anwendbar ist.', keywords: ['Eingabe', 'Verarbeitung', 'Ausgabe', 'Daten', 'Grundmodell'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Algorithmus',
+    short: 'Endliche, eindeutige Handlungsvorschrift zur Probleml\u00f6sung.',
+    definition: 'Ein Algorithmus ist eine endliche, eindeutige und ausf\u00fchrbare Handlungsvorschrift zur L\u00f6sung eines Problems oder einer Klasse von Problemen. Er muss sechs Eigenschaften erf\u00fcllen: Endlichkeit (endliche Beschreibung), Terminierung (endet nach endlich vielen Schritten), Determiniertheit (gleiche Eingabe \u2192 gleiches Ergebnis), Determinismus (n\u00e4chster Schritt eindeutig festgelegt), Allgemeing\u00fcltigkeit (l\u00f6st eine Problemklasse) und Ausf\u00fchrbarkeit (jeder Schritt ist durchf\u00fchrbar).',
+    analogy: '\u2699\uFE0F Ein Kochrezept ist ein Algorithmus: Es hat einen Anfang und ein Ende (Terminierung), die Schritte sind klar beschrieben (Eindeutigkeit), und bei gleichen Zutaten kommt immer das gleiche Gericht heraus (Determiniertheit).',
+    hints: [
+      'Merkhilfe f\u00fcr die 6 Eigenschaften: E-D-T-A-E-F (Endlichkeit, Determiniertheit, Terminierung, Allgemeing\u00fcltigkeit, Eindeutigkeit/Determinismus, Finitheit/Ausf\u00fchrbarkeit).',
+      'Unterscheide Endlichkeit (endliche Beschreibung) von Terminierung (kommt zu einem Ende).',
+      'Ein Algorithmus kann als Pseudocode, Struktogramm, Flussdiagramm oder Programmcode dargestellt werden.'
+    ],
+    questions: [
+      { type: 'fill', q: 'Ein Algorithmus, der nie aufh\u00f6rt zu laufen, verletzt die Eigenschaft der ___.', a: 'Terminierung', keywords: ['terminierung'] },
+      { type: 'choice', q: 'Welche Eigenschaft garantiert, dass ein Algorithmus bei gleicher Eingabe immer das gleiche Ergebnis liefert?', options: ['Terminierung', 'Determiniertheit', 'Allgemeing\u00fcltigkeit', 'Endlichkeit'], correct: 1 },
+      { type: 'explain', q: 'Nenne die 6 Eigenschaften eines Algorithmus und erkl\u00e4re zwei davon.', keywords: ['Endlichkeit', 'Terminierung', 'Determiniertheit', 'Determinismus', 'Allgemeing\u00fcltigkeit', 'Ausf\u00fchrbarkeit'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Sequenz',
+    short: 'Anweisungen werden der Reihe nach (linear) abgearbeitet.',
+    definition: 'Die Sequenz (Anweisungsfolge) ist die einfachste Kontrollstruktur. Anweisungen werden strikt nacheinander, von oben nach unten, ausgef\u00fchrt. Jede Anweisung wird genau einmal durchlaufen, es gibt keine Spr\u00fcnge, Verzweigungen oder Wiederholungen. Die Reihenfolge der Anweisungen bestimmt den Programmablauf direkt.',
+    analogy: '\u25B6 Wie eine Einkaufsliste, die du Punkt f\u00fcr Punkt von oben nach unten abarbeitest \u2013 ohne etwas zu \u00fcberspringen oder zur\u00fcckzugehen.',
+    hints: [
+      'Im Struktogramm werden Sequenzbl\u00f6cke als einfache Rechtecke untereinander gezeichnet.',
+      'Jedes Programm enth\u00e4lt mindestens eine Sequenz \u2013 sie ist die Basis aller Abl\u00e4ufe.',
+      'Auch innerhalb einer Schleife oder Verzweigung k\u00f6nnen Sequenzen stehen.'
+    ],
+    questions: [
+      { type: 'fill', q: 'In einer Sequenz wird jede Anweisung genau ___ ausgef\u00fchrt.', a: 'einmal', keywords: ['einmal'] },
+      { type: 'choice', q: 'Was kennzeichnet eine Sequenz?', options: ['Anweisungen werden wiederholt', 'Anweisungen werden bedingt ausgef\u00fchrt', 'Anweisungen werden nacheinander ausgef\u00fchrt', 'Anweisungen werden parallel ausgef\u00fchrt'], correct: 2 },
+      { type: 'explain', q: 'Warum ist die Sequenz die grundlegendste Kontrollstruktur?', keywords: ['nacheinander', 'linear', 'Reihenfolge', 'Basis', 'einfach'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Selektion',
+    short: 'Verzweigung: Programmfluss h\u00e4ngt von einer Bedingung ab (if/else).',
+    definition: 'Die Selektion (Verzweigung, bedingte Anweisung) erm\u00f6glicht es, den Programmablauf abh\u00e4ngig von einer Bedingung in verschiedene Pfade aufzuteilen. Es gibt drei Varianten: einseitig (nur if \u2013 Aktion nur bei wahrer Bedingung), zweiseitig (if/else \u2013 je ein Pfad f\u00fcr wahr und falsch) und mehrseitig (switch/case \u2013 mehrere F\u00e4lle). Nach der Verzweigung f\u00fchren alle Pfade wieder zusammen.',
+    analogy: '\u25C6 Wie eine Weggabelung: Du pr\u00fcfst das Schild (Bedingung) und gehst entweder links oder rechts. Beide Wege f\u00fchren am Ende wieder zusammen.',
+    hints: [
+      'Im Struktogramm wird die Selektion als Dreieck dargestellt, das den Block in zwei H\u00e4lften teilt.',
+      'Einseitig = nur if, Zweiseitig = if/else, Mehrseitig = switch/case.',
+      'Die Bedingung muss einen Wahrheitswert (true/false) ergeben.'
+    ],
+    questions: [
+      { type: 'fill', q: 'Bei einer zweiseitigen Selektion wird entweder der if-Zweig oder der ___-Zweig ausgef\u00fchrt.', a: 'else', keywords: ['else'] },
+      { type: 'choice', q: 'Welche Variante der Selektion hat keinen else-Zweig?', options: ['Zweiseitige Selektion', 'Einseitige Selektion', 'Mehrseitige Selektion', 'Verschachtelte Selektion'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen einseitiger und zweiseitiger Selektion.', keywords: ['einseitig', 'zweiseitig', 'if', 'else', 'Bedingung', 'Verzweigung'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Iteration',
+    short: 'Schleife: Ein Codeblock wird wiederholt ausgef\u00fchrt.',
+    definition: 'Die Iteration (Schleife, Wiederholung) f\u00fchrt einen Codeblock mehrfach aus, solange oder bis eine Bedingung erf\u00fcllt ist. Es gibt drei Grundtypen: kopfgesteuerte Schleife (while \u2013 Bedingung wird vor jedem Durchlauf gepr\u00fcft, evtl. 0 Durchl\u00e4ufe), fu\u00dfgesteuerte Schleife (do-while \u2013 Bedingung wird nach dem Durchlauf gepr\u00fcft, mindestens 1 Durchlauf) und Z\u00e4hlschleife (for \u2013 feste Anzahl von Durchl\u00e4ufen mit Laufvariable).',
+    analogy: '\u21BB Wie das R\u00fchren eines Teigs: Du r\u00fchrst so lange (while), bis der Teig glatt ist. Oder du r\u00fchrst genau 50 Mal (for-Schleife). Mindestens einmal r\u00fchren musst du bei do-while.',
+    hints: [
+      'Kopfgesteuert (while): Pr\u00fcfung VOR dem Durchlauf \u2192 kann 0-mal durchlaufen werden.',
+      'Fu\u00dfgesteuert (do-while): Pr\u00fcfung NACH dem Durchlauf \u2192 mindestens 1 Durchlauf garantiert.',
+      'Endlosschleifen entstehen, wenn die Abbruchbedingung nie erreicht wird \u2013 das verletzt die Terminierung.'
+    ],
+    questions: [
+      { type: 'fill', q: 'Eine kopfgesteuerte Schleife pr\u00fcft die Bedingung ___ jedem Durchlauf.', a: 'vor', keywords: ['vor'] },
+      { type: 'choice', q: 'Welche Schleife garantiert mindestens einen Durchlauf?', options: ['while-Schleife', 'for-Schleife', 'do-while-Schleife', 'foreach-Schleife'], correct: 2 },
+      { type: 'explain', q: 'Vergleiche kopfgesteuerte und fu\u00dfgesteuerte Schleifen.', keywords: ['kopfgesteuert', 'fu\u00dfgesteuert', 'while', 'do-while', 'Bedingung', 'Durchlauf', 'mindestens'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Variable',
+    short: 'Benannter Speicherplatz f\u00fcr ver\u00e4nderbare Werte.',
+    definition: 'Eine Variable ist ein benannter Speicherplatz im Arbeitsspeicher, der einen Wert aufnehmen kann. Variablen haben einen Namen (Bezeichner), einen Datentyp (z.\u00a0B. Integer, String, Boolean) und einen aktuellen Wert. Der Wert kann sich w\u00e4hrend der Programmausf\u00fchrung \u00e4ndern (daher \u201evariabel\u201c). Variablen m\u00fcssen in vielen Sprachen vor der Nutzung deklariert (Typ festlegen) und initialisiert (ersten Wert zuweisen) werden.',
+    analogy: '\uD83D\uDCE6 Eine Variable ist wie eine beschriftete Box im Regal: Das Etikett ist der Name, der Inhalt ist der aktuelle Wert, und die Boxgr\u00f6\u00dfe entspricht dem Datentyp. Du kannst den Inhalt jederzeit austauschen.',
+    hints: [
+      'Deklaration = Variable anlegen (Name + Typ festlegen), Initialisierung = ersten Wert zuweisen.',
+      'Variablennamen sollten sprechend sein (z.\u00a0B. \u201ealter\u201c statt \u201ex\u201c) und bestimmten Regeln folgen (keine Leerzeichen, nicht mit Zahl beginnen).',
+      'Konstanten sind \u201eunver\u00e4nderliche Variablen\u201c \u2013 einmal gesetzt, bleibt der Wert fest.'
+    ],
+    questions: [
+      { type: 'fill', q: 'Das erstmalige Zuweisen eines Wertes zu einer Variablen nennt man ___.', a: 'Initialisierung', keywords: ['initialisierung'] },
+      { type: 'choice', q: 'Was ist eine Variable in der Informatik?', options: ['Ein fester Wert im Programm', 'Ein benannter Speicherplatz f\u00fcr ver\u00e4nderbare Werte', 'Eine mathematische Gleichung', 'Ein Befehl an die CPU'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re den Unterschied zwischen Deklaration und Initialisierung einer Variablen.', keywords: ['Deklaration', 'Initialisierung', 'Name', 'Typ', 'Wert', 'Speicherplatz'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Pseudocode',
+    short: 'Informelle Notation f\u00fcr Algorithmen in nat\u00fcrlicher Sprache.',
+    definition: 'Pseudocode ist eine informelle, sprachunabh\u00e4ngige Darstellungsform f\u00fcr Algorithmen. Er verwendet Elemente nat\u00fcrlicher Sprache kombiniert mit Kontrollstrukturen (if/else, while, for) und mathematischen Ausdr\u00fccken. Pseudocode ist nicht direkt ausf\u00fchrbar, dient aber der verst\u00e4ndlichen Beschreibung der Programmlogik, bevor sie in einer konkreten Programmiersprache implementiert wird.',
+    analogy: '\uD83D\uDCDD Wie eine Bauzeichnung im Vergleich zum echten Haus: Der Pseudocode zeigt die Logik und Struktur, ohne sich um Details einer bestimmten Programmiersprache zu k\u00fcmmern.',
+    hints: [
+      'Pseudocode ist keine Programmiersprache \u2013 er ist nicht direkt compilierbar oder ausf\u00fchrbar.',
+      'Typische Schl\u00fcsselw\u00f6rter: WENN/DANN/SONST, SOLANGE, F\u00dcR, WIEDERHOLE, EINGABE, AUSGABE.',
+      'In Pr\u00fcfungen wird h\u00e4ufig verlangt, einen Algorithmus in Pseudocode darzustellen.'
+    ],
+    questions: [
+      { type: 'fill', q: 'Pseudocode ist ___ und kann nicht direkt vom Computer ausgef\u00fchrt werden.', a: 'sprachunabh\u00e4ngig', keywords: ['sprachunabh\u00e4ngig'] },
+      { type: 'choice', q: 'Was ist der Hauptzweck von Pseudocode?', options: ['Direkte Ausf\u00fchrung auf dem Computer', 'Verst\u00e4ndliche Beschreibung von Algorithmen', 'Kompilierung in Maschinencode', 'Dokumentation von Hardware'], correct: 1 },
+      { type: 'explain', q: 'Warum verwendet man Pseudocode statt direkt eine Programmiersprache?', keywords: ['verst\u00e4ndlich', 'sprachunabh\u00e4ngig', 'Logik', 'Planung', 'Algorithmus'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Struktogramm',
+    short: 'Nassi-Shneiderman-Diagramm: grafische Darstellung von Algorithmen.',
+    definition: 'Ein Struktogramm (Nassi-Shneiderman-Diagramm) ist eine standardisierte, grafische Darstellungsform f\u00fcr Algorithmen nach DIN 66261. Es besteht aus verschachtelten Rechtecken, die die drei Kontrollstrukturen abbilden: Sequenz (einfache Bl\u00f6cke untereinander), Selektion (Dreieck teilt Block in zwei H\u00e4lften f\u00fcr ja/nein) und Iteration (Block mit Einr\u00fcckung und Schleifenbedingung). Struktogramme erzwingen strukturierte Programmierung \u2013 Sprunganweisungen (goto) sind nicht darstellbar.',
+    analogy: '\uD83E\uDDF1 Wie ein Bauplan mit Stockwerken: Jedes Stockwerk (Block) enth\u00e4lt R\u00e4ume (Anweisungen). Verzweigungen werden durch Trennw\u00e4nde dargestellt, Schleifen durch sich wiederholende Etagen.',
+    hints: [
+      'Sequenz = Rechtecke untereinander, Selektion = Dreieck mit zwei H\u00e4lften, Iteration = Block mit Schleifensymbol.',
+      'Der Name kommt von den Erfindern Isaac Nassi und Ben Shneiderman (1972).',
+      'In Pr\u00fcfungen wird oft verlangt, Pseudocode in ein Struktogramm umzuwandeln oder umgekehrt.'
+    ],
+    questions: [
+      { type: 'fill', q: 'Struktogramme hei\u00dfen auch ___-Diagramme, nach ihren Erfindern.', a: 'Nassi-Shneiderman', keywords: ['nassi', 'shneiderman'] },
+      { type: 'choice', q: 'Welche Anweisung l\u00e4sst sich in einem Struktogramm NICHT darstellen?', options: ['if/else', 'while-Schleife', 'goto (Sprunganweisung)', 'for-Schleife'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re, wie die drei Kontrollstrukturen im Struktogramm dargestellt werden.', keywords: ['Sequenz', 'Selektion', 'Iteration', 'Rechteck', 'Dreieck', 'Schleife', 'Block'], minKeywords: 3 }
+    ]
   }
-  function saveState() { localStorage.setItem(STORAGE_KEY, JSON.stringify(levels)); }
+];
 
-  // ── Progress ──
-  function updateProgress() {
-    const mastered = glossaryTerms.filter(t => levels[t.id] >= 3).length;
-    const pct = Math.round((mastered / glossaryTerms.length) * 100);
-    document.getElementById('glossary-fill').style.width = pct + '%';
-    document.getElementById('glossary-count').textContent = mastered + ' / ' + glossaryTerms.length + ' gemeistert';
+var GP_STORIES = {
+  'EVA-Prinzip': {
+    route: 'Du betrittst eine riesige Showk\u00fcche in einem Fernsehstudio.',
+    scenes: [
+      { kw: 'Eingabe', img: '\uD83D\uDCE5 Zutaten-Lieferung', text: 'Am Eingang steht ein riesiger K\u00fchlwagen \u2013 Berge von Zutaten werden abgeladen. Tastatur, Maus, Scanner \u2013 alles sind Eingabeger\u00e4te, die Daten in das System liefern.' },
+      { kw: 'Verarbeitung', img: '\uD83D\uDD25 Koch am Herd', text: 'In der Mitte der K\u00fcche steht ein Meisterkoch (die CPU) und verarbeitet die Zutaten nach einem genauen Rezept (Algorithmus). Er schneidet, w\u00fcrzt und kocht \u2013 die Verarbeitung!' },
+      { kw: 'Ausgabe', img: '\uD83C\uDF7D\uFE0F Fertige Gerichte', text: 'Am Ende des Flie\u00dfbands rollen fertige Teller heraus \u2013 perfekt angerichtet. Monitor, Drucker, Lautsprecher \u2013 sie pr\u00e4sentieren das Ergebnis.' },
+      { kw: 'drei Phasen', img: '\uD83D\uDD22 Drei gro\u00dfe Stationen', text: 'Die K\u00fcche hat genau DREI Stationen mit gro\u00dfen Neon-Schildern: E \u2013 V \u2013 A. Ohne eine Station funktioniert nichts.' },
+      { kw: 'Grundmodell', img: '\uD83C\uDFDB\uFE0F Fundament der K\u00fcche', text: 'Unter der K\u00fcche siehst du ein massives Betonfundament mit der Aufschrift "EVA \u2013 Grundmodell". Jede Datenverarbeitung baut auf diesem Prinzip auf.' }
+    ]
+  },
+  'Algorithmus': {
+    route: 'Du stehst in einer mittelalterlichen Alchemisten-Werkstatt.',
+    scenes: [
+      { kw: 'Endlichkeit', img: '\uD83C\uDFC1 Pergamentrolle', text: 'An der Wand h\u00e4ngt eine Pergamentrolle mit genau aufgelisteten Schritten. Sie hat einen klaren Anfang und ein klares Ende \u2013 die Beschreibung ist endlich.' },
+      { kw: 'Terminierung', img: '\u23F1 Sanduhr', text: 'Eine gro\u00dfe Sanduhr auf dem Tisch l\u00e4uft ab \u2013 der Algorithmus MUSS irgendwann zum Ende kommen. Die Sanduhr steht f\u00fcr Terminierung.' },
+      { kw: 'Determiniertheit', img: '\uD83C\uDFAF Identische Tr\u00e4nke', text: 'Zwei Alchemisten mischen exakt die gleichen Zutaten \u2013 und erhalten identische Tr\u00e4nke. Gleiche Eingabe f\u00fchrt IMMER zum gleichen Ergebnis.' },
+      { kw: 'Determinismus', img: '\uD83D\uDEE4\uFE0F Einbahnstra\u00dfe', text: 'Die Werkstatt hat nur Einbahnstra\u00dfen zwischen den Arbeitstischen \u2013 an jeder Stelle ist der n\u00e4chste Schritt eindeutig. Kein Abbiegen, kein Z\u00f6gern.' },
+      { kw: 'Allgemeing\u00fcltigkeit', img: '\uD83C\uDF0D Weltkugel', text: 'Eine leuchtende Weltkugel zeigt: Dieses Rezept funktioniert f\u00fcr JEDE Art von Zutat \u2013 es l\u00f6st eine ganze Klasse von Problemen, nicht nur einen Einzelfall.' }
+    ]
+  },
+  'Sequenz': {
+    route: 'Du stehst vor einem langen, geraden Flur mit nummerierten T\u00fcren.',
+    scenes: [
+      { kw: 'nacheinander', img: '\uD83D\uDEB6 Geradeaus laufen', text: 'Du l\u00e4ufst stur geradeaus durch den Flur \u2013 Schritt f\u00fcr Schritt, T\u00fcr f\u00fcr T\u00fcr. Keine Abzweigungen, kein Zur\u00fcckgehen. Rein sequenziell!' },
+      { kw: 'Reihenfolge', img: '\uD83D\uDD22 Nummerierte T\u00fcren', text: 'Jede T\u00fcr hat eine Nummer: 1, 2, 3, 4... Du musst sie in exakt dieser Reihenfolge \u00f6ffnen.' },
+      { kw: 'einmal', img: '\u2705 H\u00e4kchen an der T\u00fcr', text: 'Hinter jeder T\u00fcr machst du genau EINEN H\u00e4kchen \u2013 jede Anweisung wird exakt einmal ausgef\u00fchrt.' },
+      { kw: 'keine Spr\u00fcnge', img: '\uD83D\uDEAB Verbotsschilder', text: 'An den W\u00e4nden h\u00e4ngen Verbotsschilder: "Kein Zur\u00fcckgehen!", "Kein \u00dcberspringen!" \u2013 keine Spr\u00fcnge oder Verzweigungen erlaubt.' }
+    ]
+  },
+  'Selektion': {
+    route: 'Du stehst an einer gro\u00dfen Stra\u00dfenkreuzung mit Wegweisern.',
+    scenes: [
+      { kw: 'Bedingung', img: '\u2753 Ampel mit Fragezeichen', text: 'Vor dir steht eine Ampel, die statt Rot/Gr\u00fcn ein riesiges Fragezeichen zeigt: "Ist die Bedingung wahr?" Deine Antwort bestimmt den Weg.' },
+      { kw: 'if', img: '\u27A1\uFE0F Linker Weg', text: 'Wenn JA \u2013 nimmst du den linken Weg (if-Zweig). Dort wartet eine Aktion auf dich.' },
+      { kw: 'else', img: '\u2B05\uFE0F Rechter Weg', text: 'Wenn NEIN \u2013 nimmst du den rechten Weg (else-Zweig). Eine alternative Aktion.' },
+      { kw: 'Verzweigung', img: '\uD83D\uDD00 Y-f\u00f6rmige Gabel', text: 'Die Stra\u00dfe teilt sich in eine Y-Form \u2013 die klassische Verzweigung. Aber beide Wege f\u00fchren am Ende wieder zusammen!' },
+      { kw: 'switch/case', img: '\uD83D\uDEA6 Mehrspurige Kreuzung', text: 'An einer gr\u00f6\u00dferen Kreuzung siehst du nicht 2, sondern 5 Abfahrten \u2013 das ist switch/case, die mehrseitige Selektion.' }
+    ]
+  },
+  'Iteration': {
+    route: 'Du bist auf einem Rummelplatz mit Karussells.',
+    scenes: [
+      { kw: 'Schleife', img: '\uD83C\uDFA0 Karussell', text: 'Du sitzt auf einem bunten Karussell \u2013 es dreht sich immer wieder im Kreis. Jede Umdrehung ist ein Schleifendurchlauf!' },
+      { kw: 'while', img: '\uD83D\uDEA6 Ampel am Eingang', text: 'Am Karussell-Eingang steht eine Ampel: BEVOR du einsteigst, wird gepr\u00fcft "Noch eine Runde?" \u2013 das ist die while-Schleife (kopfgesteuert).' },
+      { kw: 'do-while', img: '\uD83C\uDFAB Ticket nach dem Fahren', text: 'Ein anderes Karussell l\u00e4sst dich ERST fahren und fragt DANACH: "Nochmal?" \u2013 mindestens eine Runde garantiert (do-while, fu\u00dfgesteuert).' },
+      { kw: 'for', img: '\uD83D\uDD22 Z\u00e4hler an der Wand', text: 'An der Wand h\u00e4ngt ein grosser Z\u00e4hler: "Runde 1 von 10, Runde 2 von 10..." \u2013 die for-Schleife z\u00e4hlt pr\u00e4zise die Durchl\u00e4ufe.' },
+      { kw: 'Abbruchbedingung', img: '\uD83D\uDED1 Notstopp-Knopf', text: 'Ein roter Notstopp-Knopf leuchtet \u2013 ohne Abbruchbedingung w\u00fcrde das Karussell ewig drehen (Endlosschleife = verletzt Terminierung!).' }
+    ]
+  },
+  'Variable': {
+    route: 'Du bist in einem riesigen Postregal mit beschrifteten F\u00e4chern.',
+    scenes: [
+      { kw: 'Speicherplatz', img: '\uD83D\uDCE6 Postfach', text: 'Jedes Fach im Regal ist ein Speicherplatz im Arbeitsspeicher \u2013 es kann genau einen Wert aufnehmen.' },
+      { kw: 'Name', img: '\uD83C\uDFF7\uFE0F Beschriftung', text: 'Jedes Fach hat ein Namensschild: "alter", "name", "summe" \u2013 der Bezeichner der Variablen.' },
+      { kw: 'Datentyp', img: '\uD83D\uDCCF Fachgr\u00f6\u00dfe', text: 'Die F\u00e4cher sind unterschiedlich gro\u00df: Kleine f\u00fcr Zahlen (Integer), mittlere f\u00fcr Texte (String), winzige f\u00fcr Ja/Nein (Boolean).' },
+      { kw: 'Deklaration', img: '\uD83D\uDCDD Neues Fach anlegen', text: 'Ein Mitarbeiter klebt ein neues Namensschild auf ein leeres Fach \u2013 das ist die Deklaration: Name und Typ werden festgelegt.' },
+      { kw: 'Initialisierung', img: '\uD83D\uDCE8 Erster Brief einlegen', text: 'Zum ersten Mal wird ein Brief (Wert) in das Fach gelegt \u2013 die Initialisierung. Vorher war das Fach leer.' }
+    ]
+  },
+  'Pseudocode': {
+    route: 'Du stehst in einem Architekturb\u00fcro voller Skizzen.',
+    scenes: [
+      { kw: 'sprachunabh\u00e4ngig', img: '\uD83C\uDF0D Internationale Skizzen', text: 'An den W\u00e4nden h\u00e4ngen Skizzen, die JEDER Architekt weltweit versteht \u2013 egal welche Sprache. Pseudocode ist sprachunabh\u00e4ngig!' },
+      { kw: 'nicht ausf\u00fchrbar', img: '\uD83D\uDEAB Kein Baukran', text: 'Drau\u00dfen steht KEIN Baukran \u2013 aus der Skizze allein kann man kein Haus bauen. Pseudocode ist nicht direkt ausf\u00fchrbar.' },
+      { kw: 'Logik', img: '\u2699\uFE0F Zahnr\u00e4der-Diagramm', text: 'Eine gro\u00dfe Tafel zeigt ineinandergreifende Zahnr\u00e4der \u2013 die Logik des Algorithmus, klar und verst\u00e4ndlich dargestellt.' },
+      { kw: 'Kontrollstrukturen', img: '\uD83D\uDD00 Pfeile auf der Tafel', text: 'Pfeile auf der Tafel zeigen WENN/DANN, SOLANGE, F\u00dcR \u2013 die Kontrollstrukturen, die auch im Pseudocode verwendet werden.' }
+    ]
+  },
+  'Struktogramm': {
+    route: 'Du betrittst ein Museum mit bunten Baupl\u00e4nen an den W\u00e4nden.',
+    scenes: [
+      { kw: 'Nassi-Shneiderman', img: '\uD83D\uDDBC\uFE0F Portr\u00e4ts der Erfinder', text: 'Am Eingang h\u00e4ngen zwei Portr\u00e4ts: Isaac Nassi und Ben Shneiderman, die Erfinder (1972). Ihr Name ist Programm!' },
+      { kw: 'Rechteck', img: '\u25AC Gro\u00dfe Rechtecke', text: 'Die einfachsten Baupl\u00e4ne bestehen aus Rechtecken untereinander \u2013 die Sequenz. Ein Block nach dem anderen.' },
+      { kw: 'Dreieck', img: '\u25B3 Dreieckige Teilung', text: 'Ein Bauplan zeigt ein Dreieck, das einen Block in zwei H\u00e4lften teilt: links JA, rechts NEIN \u2013 die Selektion!' },
+      { kw: 'Schleifensymbol', img: '\u21BB Pfeil zur\u00fcck', text: 'Ein Block mit einem gebogenen Pfeil, der zur\u00fcckzeigt \u2013 das Schleifensymbol f\u00fcr die Iteration.' },
+      { kw: 'goto verboten', img: '\uD83D\uDEAB Durchgestrichener Pfeil', text: 'Ein gro\u00dfes Verbotsschild: Ein durchgestrichener Sprungpfeil. Struktogramme erlauben KEIN goto \u2013 nur strukturierte Programmierung!' }
+    ]
   }
+};
 
-  // ── Grid rendern ──
-  function renderGrid() {
-    const grid = document.getElementById('glossary-grid');
-    grid.innerHTML = '';
-    glossaryTerms.forEach(t => {
-      const card = document.createElement('div');
-      card.className = 'glossary-card' + (activeTerm && activeTerm.id === t.id ? ' active' : '');
-      card.dataset.level = levels[t.id];
-      card.innerHTML = '<div class="gc-icon">' + t.icon + '</div>'
-        + '<div class="gc-term">' + t.term + '</div>'
-        + '<div class="gc-short">' + t.short + '</div>'
-        + '<div class="gc-level"></div>';
-      card.addEventListener('click', function() { openLearn(t); });
-      grid.appendChild(card);
-    });
-    updateProgress();
-  }
+var GLOSSARY_TERM_MAP = {
+  'eva-prinzip': 'EVA-Prinzip',
+  'eva': 'EVA-Prinzip',
+  'eingabe-verarbeitung-ausgabe': 'EVA-Prinzip',
+  'algorithmus': 'Algorithmus',
+  'algorithmen': 'Algorithmus',
+  'handlungsvorschrift': 'Algorithmus',
+  'sequenz': 'Sequenz',
+  'anweisungsfolge': 'Sequenz',
+  'selektion': 'Selektion',
+  'verzweigung': 'Selektion',
+  'iteration': 'Iteration',
+  'schleife': 'Iteration',
+  'wiederholung': 'Iteration',
+  'variable': 'Variable',
+  'variablen': 'Variable',
+  'pseudocode': 'Pseudocode',
+  'struktogramm': 'Struktogramm',
+  'nassi-shneiderman': 'Struktogramm',
+  'struktogramme': 'Struktogramm'
+};
 
-  // ── Lern-Panel ──
-  const phases = ['Analogie', 'Definition', 'Lückentext', 'Multiple-Choice', 'Erklärung'];
-
-  function openLearn(t) {
-    activeTerm = t;
-    currentPhase = 0;
-    hintIndex = 0;
-    document.getElementById('gl-title').textContent = t.icon + ' ' + t.term;
-    renderPhases();
-    renderPhaseContent();
-    document.getElementById('glossary-learn').classList.add('visible');
-    renderGrid();
-    document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }
-
-  function closeLearn() {
-    document.getElementById('glossary-learn').classList.remove('visible');
-    activeTerm = null;
-    renderGrid();
-  }
-
-  document.getElementById('gl-close').addEventListener('click', closeLearn);
-
-  function renderPhases() {
-    const cont = document.getElementById('gl-phases');
-    cont.innerHTML = '';
-    phases.forEach(function(p, i) {
-      const span = document.createElement('span');
-      span.className = 'gl-phase' + (i === currentPhase ? ' current' : '') + (i < currentPhase ? ' done' : '');
-      span.textContent = p;
-      if (i <= currentPhase) {
-        span.onclick = function() {
-          currentPhase = i;
-          renderPhases();
-          renderPhaseContent();
-        };
-      }
-      cont.appendChild(span);
-    });
-  }
-
-  function renderPhaseContent() {
-    const cont = document.getElementById('gl-content');
-    cont.innerHTML = '';
-    hintIndex = 0;
-
-    if (currentPhase === 0) renderAnalogy(cont);
-    else if (currentPhase === 1) renderDefinition(cont);
-    else if (currentPhase === 2) renderFill(cont);
-    else if (currentPhase === 3) renderChoice(cont);
-    else if (currentPhase === 4) renderExplain(cont);
-  }
-
-  function nextPhase() {
-    if (currentPhase < phases.length - 1) {
-      currentPhase++;
-      renderPhases();
-      renderPhaseContent();
-    } else {
-      // Abgeschlossen → Level erhöhen
-      if (levels[activeTerm.id] < 3) {
-        levels[activeTerm.id]++;
-        saveState();
-      }
-      renderGrid();
-      showCompletion();
-    }
-  }
-
-  // ── Phase 0: Analogie ──
-  function renderAnalogy(cont) {
-    cont.innerHTML = '<div class="gl-analogy">💡 ' + activeTerm.analogy + '</div>'
-      + '<button class="gl-btn primary" id="gl-next-analogy">Weiter → Definition</button>';
-    document.getElementById('gl-next-analogy').addEventListener('click', nextPhase);
-  }
-
-  // ── Phase 1: Definition ──
-  function renderDefinition(cont) {
-    let hintsHTML = '<div class="gl-hints" id="gl-hints">';
-    activeTerm.hints.forEach(function(h, i) {
-      hintsHTML += '<div class="gl-hint" id="gl-hint-' + i + '">💡 ' + h + '</div>';
-    });
-    hintsHTML += '</div>';
-
-    cont.innerHTML = '<div class="gl-definition">' + activeTerm.definition + '</div>'
-      + hintsHTML
-      + '<button class="gl-hint-btn" id="gl-hint-btn">Hinweis anzeigen</button><br>'
-      + '<button class="gl-btn primary" id="gl-next-def" style="margin-top:8px">Weiter → Fragen</button>';
-
-    document.getElementById('gl-hint-btn').addEventListener('click', function() {
-      if (hintIndex < activeTerm.hints.length) {
-        document.getElementById('gl-hint-' + hintIndex).classList.add('visible');
-        hintIndex++;
-        if (hintIndex >= activeTerm.hints.length) this.textContent = 'Alle Hinweise gezeigt';
-      }
-    });
-    document.getElementById('gl-next-def').addEventListener('click', nextPhase);
-  }
-
-  // ── Phase 2: Lückentext (fill) ──
-  function renderFill(cont) {
-    const q = activeTerm.questions.find(function(x) { return x.type === 'fill'; });
-    if (!q) { nextPhase(); return; }
-    cont.innerHTML = '<div class="gl-question">' + q.q + '</div>'
-      + '<input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben..." autocomplete="off">'
-      + '<button class="gl-btn primary" id="gl-fill-check">Prüfen</button>'
-      + '<div id="gl-fill-feedback"></div>';
-
-    document.getElementById('gl-fill-check').addEventListener('click', function() {
-      const input = document.getElementById('gl-fill-input').value.trim();
-      const fb = document.getElementById('gl-fill-feedback');
-      if (!input) { fb.innerHTML = '<div class="gl-feedback info">Bitte gib eine Antwort ein.</div>'; return; }
-      const correct = input.toLowerCase() === q.answer.toLowerCase();
-      if (correct) {
-        fb.innerHTML = '<div class="gl-feedback success">✓ Richtig! ' + q.explanation + '</div>';
-        setTimeout(nextPhase, 1800);
-      } else {
-        fb.innerHTML = '<div class="gl-feedback error">✗ Nicht ganz. Die Antwort ist: <strong>' + q.answer + '</strong>. ' + q.explanation + '</div>';
-        setTimeout(nextPhase, 3000);
-      }
-      this.disabled = true;
-    });
-
-    document.getElementById('gl-fill-input').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') document.getElementById('gl-fill-check').click();
-    });
-  }
-
-  // ── Phase 3: Multiple-Choice ──
-  function renderChoice(cont) {
-    const q = activeTerm.questions.find(function(x) { return x.type === 'choice'; });
-    if (!q) { nextPhase(); return; }
-    let choicesHTML = '<div class="gl-choices" id="gl-choices">';
-    q.choices.forEach(function(c, i) {
-      choicesHTML += '<button class="gl-choice" data-idx="' + i + '">' + c + '</button>';
-    });
-    choicesHTML += '</div>';
-    cont.innerHTML = '<div class="gl-question">' + q.q + '</div>'
-      + choicesHTML
-      + '<div id="gl-choice-feedback"></div>';
-
-    document.querySelectorAll('#gl-choices .gl-choice').forEach(function(btn) {
-      btn.addEventListener('click', function() {
-        const idx = parseInt(this.dataset.idx);
-        const fb = document.getElementById('gl-choice-feedback');
-        document.querySelectorAll('#gl-choices .gl-choice').forEach(function(b) { b.style.pointerEvents = 'none'; });
-        if (idx === q.correct) {
-          this.classList.add('correct');
-          fb.innerHTML = '<div class="gl-feedback success">✓ Richtig! ' + q.explanation + '</div>';
-          setTimeout(nextPhase, 1800);
-        } else {
-          this.classList.add('wrong');
-          document.querySelectorAll('#gl-choices .gl-choice')[q.correct].classList.add('correct');
-          fb.innerHTML = '<div class="gl-feedback error">✗ Falsch. ' + q.explanation + '</div>';
-          setTimeout(nextPhase, 3000);
-        }
-      });
-    });
-  }
-
-  // ── Phase 4: Erklärung (explain) ──
-  function renderExplain(cont) {
-    const q = activeTerm.questions.find(function(x) { return x.type === 'explain'; });
-    if (!q) { nextPhase(); return; }
-    cont.innerHTML = '<div class="gl-question">' + q.q + '</div>'
-      + '<textarea class="gl-input" id="gl-explain-input" placeholder="Deine Erklärung..."></textarea>'
-      + '<button class="gl-btn primary" id="gl-explain-check">Antwort prüfen</button>'
-      + '<div id="gl-explain-feedback"></div>';
-
-    document.getElementById('gl-explain-check').addEventListener('click', function() {
-      const input = document.getElementById('gl-explain-input').value.trim();
-      const fb = document.getElementById('gl-explain-feedback');
-      if (!input) { fb.innerHTML = '<div class="gl-feedback info">Bitte schreibe eine Erklärung.</div>'; return; }
-      const lower = input.toLowerCase();
-      const found = [];
-      const missing = [];
-      q.keywords.forEach(function(kw) {
-        if (lower.includes(kw.toLowerCase())) found.push(kw);
-        else missing.push(kw);
-      });
-      let kwHTML = '<div style="margin-top:8px">';
-      found.forEach(function(k) { kwHTML += '<span class="gl-keyword found">✓ ' + k + '</span>'; });
-      missing.forEach(function(k) { kwHTML += '<span class="gl-keyword missing">✗ ' + k + '</span>'; });
-      kwHTML += '</div>';
-      if (found.length >= Math.ceil(q.keywords.length * 0.5)) {
-        fb.innerHTML = '<div class="gl-feedback success">✓ Gute Erklärung! ' + found.length + '/' + q.keywords.length + ' Schlüsselbegriffe erkannt.' + kwHTML + '<br><br>' + q.explanation + '</div>';
-      } else {
-        fb.innerHTML = '<div class="gl-feedback error">✗ ' + found.length + '/' + q.keywords.length + ' Schlüsselbegriffe erkannt. Versuche mehr Fachbegriffe zu verwenden.' + kwHTML + '<br><br>Musterantwort: ' + q.explanation + '</div>';
-      }
-      this.disabled = true;
-      const doneBtn = document.createElement('button');
-      doneBtn.className = 'gl-btn primary';
-      doneBtn.style.marginTop = '12px';
-      doneBtn.textContent = 'Abschließen ✓';
-      doneBtn.addEventListener('click', nextPhase);
-      fb.appendChild(doneBtn);
-    });
-  }
-
-  // ── Abschluss-Ansicht ──
-  function showCompletion() {
-    const cont = document.getElementById('gl-content');
-    const lvl = levels[activeTerm.id];
-    const labels = ['Unbekannt', 'Gesehen', 'Geübt', 'Gemeistert'];
-    const colors = ['var(--muted)', 'var(--yellow)', 'var(--cyan)', 'var(--green)'];
-    cont.innerHTML = '<div style="text-align:center;padding:20px 0;">'
-      + '<div style="font-size:36px;margin-bottom:10px">' + (lvl >= 3 ? '🏆' : '📈') + '</div>'
-      + '<div style="font-size:16px;font-weight:700;margin-bottom:6px;color:' + colors[lvl] + '">' + labels[lvl] + '</div>'
-      + '<div style="font-size:13px;color:var(--muted);font-weight:300;margin-bottom:18px">Level ' + lvl + ' / 3 für „' + activeTerm.term + '"</div>'
-      + (lvl < 3 ? '<button class="gl-btn primary" id="gl-again">Nochmal üben</button> ' : '')
-      + '<button class="gl-btn" id="gl-back" style="border:1px solid var(--border);color:var(--muted)">Zurück zum Glossar</button>'
-      + '</div>';
-
-    if (lvl < 3) {
-      document.getElementById('gl-again').addEventListener('click', function() { openLearn(activeTerm); });
-    }
-    document.getElementById('gl-back').addEventListener('click', closeLearn);
-    renderPhases();
-  }
-
-  // ── Tooltip ──
-  const tooltip = document.getElementById('glossary-tooltip');
-  const gtName = document.getElementById('gt-name');
-  const gtShort = document.getElementById('gt-short');
-
-  function showTooltip(e, term) {
-    gtName.textContent = term.term;
-    gtShort.textContent = term.short;
-    tooltip.style.display = 'block';
-    const rect = tooltip.getBoundingClientRect();
-    let x = e.clientX + 12;
-    let y = e.clientY + 12;
-    if (x + rect.width > window.innerWidth) x = e.clientX - rect.width - 12;
-    if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - 12;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-  }
-  function hideTooltip() { tooltip.style.display = 'none'; }
-
-  // ── Text-Highlighting ──
-  function highlightTermsInPage() {
-    // Selektoren für Bereiche, in denen Begriffe hervorgehoben werden sollen
-    const selectors = [
-      '.eva-card .desc',
-      '.algo-def p',
-      '.algo-card p',
-      '.algo-card h4',
-      '.ks-info .ks-desc',
-      '.summary-card p',
-      '.summary-card h4'
-    ];
-
-    // Alle Wörter nach Länge sortieren (längste zuerst, um Überlappung zu vermeiden)
-    const sortedKeys = Object.keys(termMap).sort(function(a, b) { return b.length - a.length; });
-
-    selectors.forEach(function(sel) {
-      document.querySelectorAll(sel).forEach(function(el) {
-        // Nur Textknoten bearbeiten, keine bereits gewrappten
-        if (el.querySelector('.glossary-term')) return;
-        let html = el.innerHTML;
-        sortedKeys.forEach(function(key) {
-          // Nur ganzes Wort matchen (außer bei Sonderfällen wie if/else)
-          const escaped = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-          const regex = new RegExp('(?<![\\w-])(' + escaped + ')(?![\\w-])', 'g');
-          let replaced = false;
-          html = html.replace(regex, function(match) {
-            if (replaced) return match; // nur erstes Vorkommen pro Element
-            replaced = true;
-            return '<span class="glossary-term" data-glossary="' + termMap[key] + '">' + match + '</span>';
-          });
-        });
-        el.innerHTML = html;
-      });
-    });
-
-    // Events binden
-    document.querySelectorAll('.glossary-term').forEach(function(span) {
-      const termObj = glossaryTerms.find(function(t) { return t.id === span.dataset.glossary; });
-      if (!termObj) return;
-      span.addEventListener('mouseenter', function(e) { showTooltip(e, termObj); });
-      span.addEventListener('mousemove', function(e) { showTooltip(e, termObj); });
-      span.addEventListener('mouseleave', hideTooltip);
-      span.addEventListener('click', function(e) {
-        e.preventDefault();
-        hideTooltip();
-        openLearn(termObj);
-        document.getElementById('glossary-section').scrollIntoView({ behavior: 'smooth' });
-      });
-    });
-  }
-
-  // ── Init ──
-  loadState();
-  renderGrid();
-  highlightTermsInPage();
-
-})();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.eva-card .desc, .algo-def p, .algo-card p, .algo-card h4, .ks-info .ks-desc, .summary-card p, .summary-card h4';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

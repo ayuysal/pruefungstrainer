@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Formale Grammatiken & Chomsky</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;min-height:100vh;overflow-x:hidden}
@@ -48,72 +49,6 @@ header{text-align:center;margin-bottom:48px;animation:fadeDown .8s ease both}hea
 .summary{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px}.summary-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}.summary-card h4{font-size:13px;font-weight:700;margin-bottom:6px}.summary-card p{font-size:13px;font-weight:300;color:var(--muted);line-height:1.6}
 @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.detail-panel .dp-grid{grid-template-columns:1fr}}
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -350,7 +285,9 @@ genQuiz();
 // ════════════════════════════════════
 //  GLOSSARY LEARNING SYSTEM
 // ════════════════════════════════════
-const GLOSSARY = [
+var TRAINER_ID = 'grammatiken-chomsky';
+
+var GLOSSARY = [
   {
     term: 'Formale Grammatik',
     short: 'G = (N, T, P, S) – Regelsystem zur Erzeugung von Sprachen',
@@ -489,338 +426,118 @@ const GLOSSARY = [
   }
 ];
 
-// ── State Management ──
-const glossaryState = { levels: {}, current: null, hintIdx: 0 };
-
-function glossaryLoad() {
-  try {
-    const s = localStorage.getItem('glossary-grammatiken');
-    if (s) glossaryState.levels = JSON.parse(s);
-  } catch(e) {}
-  GLOSSARY.forEach(g => { if (!(g.term in glossaryState.levels)) glossaryState.levels[g.term] = 0; });
-}
-
-function glossarySave() {
-  localStorage.setItem('glossary-grammatiken', JSON.stringify(glossaryState.levels));
-}
-
-// ── Grid Rendering ──
-function glossaryRenderGrid() {
-  const grid = document.getElementById('glossary-grid');
-  grid.innerHTML = '';
-  const icons = ['\u2753', '\uD83D\uDCA1', '\uD83D\uDD0D', '\u2B50'];
-  GLOSSARY.forEach(g => {
-    const lv = glossaryState.levels[g.term] || 0;
-    const c = document.createElement('div');
-    c.className = 'glossary-card' + (glossaryState.current === g.term ? ' active' : '');
-    c.dataset.level = lv;
-    c.onclick = () => glossaryOpen(g.term);
-    c.innerHTML = '<div class="gc-icon">' + icons[lv] + '</div><div class="gc-term">' + g.term + '</div><div class="gc-short">' + g.short + '</div><div class="gc-level"></div>';
-    grid.appendChild(c);
-  });
-  glossaryUpdateProgress();
-}
-
-function glossaryUpdateProgress() {
-  const mastered = GLOSSARY.filter(g => glossaryState.levels[g.term] >= 3).length;
-  const total = GLOSSARY.length;
-  const pct = Math.round(mastered / total * 100);
-  document.getElementById('glossary-sub').textContent = mastered + ' / ' + total + ' gemeistert';
-  document.getElementById('glossary-fill').style.width = pct + '%';
-  document.getElementById('glossary-count').textContent = pct + '%';
-}
-
-// ── Open Term ──
-function glossaryOpen(term) {
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.current = term;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-
-  document.getElementById('gl-title').textContent = g.term;
-  glossaryRenderPhases(lv);
-
-  if (lv === 0) glossaryPhase1(g);
-  else if (lv === 1) glossaryPhase2(g);
-  else if (lv === 2) glossaryPhase3(g);
-  else glossaryMastered(g);
-
-  document.getElementById('glossary-learn').classList.add('visible');
-  glossaryRenderGrid();
-  document.getElementById('glossary-learn').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-}
-
-function glossaryRenderPhases(lv, activePhase) {
-  if (activePhase === undefined) activePhase = lv;
-  const names = ['\uD83D\uDCA1 Kennenlernen', '\uD83D\uDD0D \u00dcberpr\u00fcfen', '\u2B50 Beweisen'];
-  document.getElementById('gl-phases').innerHTML = names.map((n, i) => {
-    let cls = 'gl-phase';
-    if (i === activePhase) cls += ' current';
-    else if (i <= lv - 1 || lv === 3) cls += ' done';
-    let onclick = '';
-    if (i <= lv || lv === 3) onclick = ' onclick="glossaryGoToPhase(' + i + ')"';
-    return '<div class="' + cls + '"' + onclick + '>' + n + '</div>';
-  }).join('');
-}
-
-function glossaryGoToPhase(phaseIdx) {
-  const term = glossaryState.current;
-  const g = GLOSSARY.find(t => t.term === term);
-  if (!g) return;
-  glossaryState.hintIdx = 0;
-  const lv = glossaryState.levels[term] || 0;
-  glossaryRenderPhases(lv, phaseIdx);
-  if (phaseIdx === 0) glossaryPhase1(g);
-  else if (phaseIdx === 1) glossaryPhase2(g);
-  else if (phaseIdx === 2) glossaryPhase3(g);
-}
-
-// ── Phase 1: Kennenlernen ──
-function glossaryPhase1(g) {
-  const el = document.getElementById('gl-content');
-  let html = '<div class="gl-analogy">' + g.analogy + '</div>';
-  html += '<div class="gl-definition">' + g.definition + '</div>';
-  html += '<div class="gl-hints" id="gl-hints">';
-  g.hints.forEach((h, i) => {
-    html += '<div class="gl-hint' + (i === 0 ? ' visible' : '') + '" id="gh-' + i + '">' + h + '</div>';
-  });
-  html += '</div>';
-  if (g.hints.length > 1) html += '<button class="gl-hint-btn" id="gl-hint-btn" onclick="glossaryNextHint()">N\u00e4chster Hinweis \u2192</button>';
-  html += '<button class="gl-btn primary" onclick="glossaryLevelUp()">Verstanden! \u2713</button>';
-  el.innerHTML = html;
-}
-
-function glossaryNextHint() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  if (!g) return;
-  glossaryState.hintIdx++;
-  if (glossaryState.hintIdx < g.hints.length) {
-    document.getElementById('gh-' + glossaryState.hintIdx).classList.add('visible');
+var GP_STORIES = {
+  'Formale Grammatik': {
+    route: 'Du betrittst eine riesige Küche und willst ein Gericht kochen',
+    scenes: [
+      {kw: 'Nichtterminale', img: '📋 Rezeptschritte', text: 'Die Rezeptschritte an der Wand sind die Nichtterminale (N) – Platzhalter, die noch aufgelöst werden müssen.'},
+      {kw: 'Terminale', img: '🥕 Zutaten', text: 'Die fertigen Zutaten auf dem Tisch sind die Terminale (T) – sie landen direkt im Topf und werden nicht weiter verarbeitet.'},
+      {kw: 'Produktionsregeln', img: '👨‍🍳 Kochbuch', text: 'Das Kochbuch enthält die Produktionsregeln (P) – sie sagen, wie man jeden Schritt in konkrete Aktionen auflöst.'},
+      {kw: 'Startsymbol', img: '🔔 Startglocke', text: 'Die Küchenglocke läutet – das Startsymbol (S) gibt den Startschuss. Jede Ableitung beginnt hier.'},
+      {kw: 'Sprache', img: '🍽️ Fertige Gerichte', text: 'Alle fertigen Gerichte, die du kochen kannst, bilden die Sprache L(G) – nur Terminale auf dem Teller!'}
+    ]
+  },
+  'Chomsky-Hierarchie': {
+    route: 'Du erklimmst eine Pyramide mit vier Stockwerken',
+    scenes: [
+      {kw: 'Typ 0', img: '🌋 Fundament', text: 'Das riesige Fundament ist Typ 0 – unbeschränkt, alles ist erlaubt, die mächtigste aber wildeste Ebene.'},
+      {kw: 'Typ 3', img: '🏔️ Spitze', text: 'Die schmale Spitze ist Typ 3 – regulär, einfach, übersichtlich, aber am stärksten eingeschränkt.'},
+      {kw: 'Teilmenge', img: '🪆 Matrjoschka', text: 'Wie russische Puppen steckt jeder Typ im nächstgrößeren: Typ 3 ⊂ Typ 2 ⊂ Typ 1 ⊂ Typ 0.'},
+      {kw: 'Produktionsregeln', img: '📏 Regelschranken', text: 'An jeder Etage hängt ein Schild mit den erlaubten Regelformen – je höher, desto strenger die Einschränkung.'},
+      {kw: 'Automat', img: '🤖 Wächter-Roboter', text: 'Auf jedem Stockwerk steht ein anderer Roboter als Wächter: DEA, PDA, LBA, Turingmaschine – je einer pro Typ.'}
+    ]
+  },
+  'Reguläre Grammatik': {
+    route: 'Du fährst auf einer Einbahnstraße mit strengen Verkehrsregeln',
+    scenes: [
+      {kw: 'rechtslinear', img: '➡️ Rechtsfahrer', text: 'Alle Autos fahren nur nach rechts – rechtslinear: A → aB oder A → a. Das Nichtterminal steht immer rechts.'},
+      {kw: 'linkslinear', img: '⬅️ Linksfahrer', text: 'Oder alle fahren nur links – linkslinear: A → Ba oder A → a. Aber NIEMALS gemischt!'},
+      {kw: 'Typ 3', img: '3️⃣ Geschwindigkeitsschild', text: 'Am Straßenrand steht das Schild "Typ 3" – die einfachste und am stärksten beschränkte Grammatik.'},
+      {kw: 'DEA', img: '🚦 Ampel-Automat', text: 'Die Ampeln an der Straße sind wie DEA/NEA – endliche Automaten, die genau diese Sprachen erkennen.'},
+      {kw: 'abgeschlossen', img: '🔒 Sicherheitstor', text: 'Am Ende der Straße ein massives Tor – reguläre Sprachen sind unter ALLEN Operationen abgeschlossen (∪, ∩, ·, *, ¬).'}
+    ]
+  },
+  'Kontextfreie Grammatik': {
+    route: 'Du blätterst in einem magischen Wörterbuch',
+    scenes: [
+      {kw: 'Nichtterminal', img: '📖 Wort nachschlagen', text: 'Links im Wörterbuch steht immer genau EIN Nichtterminal – du schlägst es auf und findest die Definition.'},
+      {kw: 'Kontext', img: '🌐 Egal wo', text: 'Egal in welchem Satz das Wort steht – die Definition ist immer gleich. Der Kontext spielt KEINE Rolle!'},
+      {kw: 'Typ 2', img: '2️⃣ Seitenzahl', text: 'Auf jeder Seite steht "Typ 2" – kontextfrei, mächtiger als regulär, aber einfacher als kontextsensitiv.'},
+      {kw: 'Kellerautomat', img: '📚 Bücherstapel', text: 'Neben dem Buch liegt ein Stapel – der Kellerautomat (PDA) mit seinem Stack erkennt genau diese Sprachen.'},
+      {kw: 'Programmiersprachen', img: '💻 Code-Editor', text: 'Dein Laptop zeigt Code – Programmiersprachen nutzen kontextfreie Grammatiken für ihre Syntax!'}
+    ]
+  },
+  'Kontextsensitive Grammatik': {
+    route: 'Du bist auf einer Party mit strengen Benimmregeln',
+    scenes: [
+      {kw: 'Kontext', img: '👀 Umgebung beachten', text: 'Was du tun darfst, hängt davon ab, WER neben dir steht – der Kontext (α und β) bestimmt die Ersetzung.'},
+      {kw: 'αAβ', img: '🤝 Begleitung', text: 'Du (A) wirst immer von Begleitern (α links, β rechts) flankiert – die Regel lautet αAβ → αγβ.'},
+      {kw: 'monoton', img: '📈 Wachsende Gästeliste', text: 'Die Gästeliste wird nie kürzer – |γ| ≥ 1 bedeutet, die Satzform wächst oder bleibt gleich (monoton).'},
+      {kw: 'Typ 1', img: '1️⃣ VIP-Nummer', text: 'Dein VIP-Ausweis trägt die Nummer 1 – Typ 1, zwischen kontextfrei und unbeschränkt.'},
+      {kw: 'LBA', img: '📏 Begrenztes Band', text: 'Der DJ hat nur ein begrenztes Mischpult – wie die linear beschränkte Turingmaschine (LBA).'}
+    ]
+  },
+  'Produktionsregel': {
+    route: 'Du spielst ein Brettspiel mit Aktionskarten',
+    scenes: [
+      {kw: 'Ersetzung', img: '🔄 Kartentausch', text: 'Jede Aktionskarte sagt: "Ersetze das hier durch jenes" – α → β ist die Grundform jeder Regel.'},
+      {kw: 'linke Seite', img: '🃏 Alte Karte', text: 'Die alte Karte in deiner Hand (linke Seite α) enthält mindestens ein Nichtterminal – sie muss getauscht werden.'},
+      {kw: 'rechte Seite', img: '🎴 Neue Karte', text: 'Du ziehst eine neue Karte (rechte Seite β) vom Stapel – das ist die Ersetzung.'},
+      {kw: 'Typ', img: '🏷️ Farb-Label', text: 'Jede Karte hat ein Farb-Label – die FORM der Regel bestimmt den Chomsky-Typ der Grammatik.'},
+      {kw: 'Ableitung', img: '🎯 Spielziel', text: 'Durch geschicktes Spielen (Ableitung) erreichst du das Ziel – ein Wort nur aus Terminalen!'}
+    ]
+  },
+  'Terminal': {
+    route: 'Du bist in einer Druckerei und setzt Buchstaben',
+    scenes: [
+      {kw: 'Terminale', img: '🔤 Druckbuchstaben', text: 'Die kleinen Bleilettern (a, b, c) sind Terminale – fertige Buchstaben, die direkt aufs Papier kommen.'},
+      {kw: 'Nichtterminal', img: '📝 Platzhalter-Zettel', text: 'Die großen Post-its (S, A, B) sind Nichtterminale – Platzhalter, die noch durch Regeln aufgelöst werden müssen.'},
+      {kw: 'Alphabet', img: '🗂️ Setzkasten', text: 'Der Setzkasten mit allen verfügbaren Lettern ist das Alphabet T – die Grundbausteine der Sprache.'},
+      {kw: 'ersetzbar', img: '❌ Nicht austauschbar', text: 'Einmal gedruckt, kann man einen Buchstaben NICHT mehr ersetzen – Terminale sind das Endprodukt.'},
+      {kw: 'Wort', img: '📄 Fertiger Druck', text: 'Das fertige Dokument (w ∈ T*) besteht NUR aus Terminalen – kein einziger Platzhalter mehr übrig.'}
+    ]
+  },
+  'Ableitung': {
+    route: 'Du löst ein Rätsel durch Kettenreaktionen von Dominosteinen',
+    scenes: [
+      {kw: 'Startsymbol', img: '🎬 Erster Domino', text: 'Du stößt den ersten Dominostein S an – das Startsymbol setzt die Kette in Gang.'},
+      {kw: 'Nichtterminal', img: '🔲 Umklapp-Steine', text: 'Jeder umfallende Stein mit Buchstabe ist ein Nichtterminal, das durch eine Regel ersetzt wird.'},
+      {kw: 'Regel', img: '📐 Fallrichtung', text: 'Die Aufstellung der Steine (Produktionsregel) bestimmt, welche als nächstes umfallen.'},
+      {kw: 'Schritt', img: '🦶 Ein Stein kippt', text: 'Pro Schritt kippt genau EIN Stein um – eine einzige Regelanwendung pro Ableitungsschritt.'},
+      {kw: 'Terminal', img: '🏁 Letzter Stein', text: 'Am Ende liegen nur noch flache Steine (Terminale) – die Ableitung ist fertig, das Wort ist erzeugt!'}
+    ]
   }
-  if (glossaryState.hintIdx >= g.hints.length - 1) {
-    const btn = document.getElementById('gl-hint-btn');
-    if (btn) btn.style.display = 'none';
-  }
-}
+};
 
-// ── Phase 2: Überprüfen ──
-function glossaryPhase2(g) {
-  const q = g.questions.find(x => x.type === 'fill') || g.questions.find(x => x.type === 'choice') || g.questions[0];
-  const el = document.getElementById('gl-content');
-  if (q.type === 'fill') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-      '<input type="text" class="gl-input" id="gl-answer" placeholder="Deine Antwort..." onkeydown="if(event.key===\'Enter\')glossaryCheckFill()">' +
-      (q.hint ? '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Tipp: ' + q.hint + '</div>' : '') +
-      '<button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-  } else if (q.type === 'choice') {
-    el.innerHTML = '<div class="gl-question">' + q.q + '</div><div class="gl-choices">' +
-      q.options.map((o, i) => '<button class="gl-choice" onclick="glossaryCheckChoice(' + i + ')">' + o + '</button>').join('') +
-      '</div><div id="gl-feedback"></div>';
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'grammatik': 'Formale Grammatik',
+  'grammatiken': 'Formale Grammatik',
+  'formalen grammatik': 'Formale Grammatik',
+  'chomsky': 'Chomsky-Hierarchie',
+  'hierarchie': 'Chomsky-Hierarchie',
+  'reguläre grammatiken': 'Reguläre Grammatik',
+  'reguläre grammatik': 'Reguläre Grammatik',
+  'kontextfreie grammatiken': 'Kontextfreie Grammatik',
+  'kontextfreie grammatik': 'Kontextfreie Grammatik',
+  'kontextsensitive grammatiken': 'Kontextsensitive Grammatik',
+  'kontextsensitive grammatik': 'Kontextsensitive Grammatik',
+  'kontextsensitiv': 'Kontextsensitive Grammatik',
+  'kontextfrei': 'Kontextfreie Grammatik',
+  'regulär': 'Reguläre Grammatik',
+  'produktionsregeln': 'Produktionsregel',
+  'produktionsregel': 'Produktionsregel',
+  'ersetzungsregel': 'Produktionsregel',
+  'terminale': 'Terminal',
+  'terminalsymbole': 'Terminal',
+  'terminalsymbol': 'Terminal',
+  'nichtterminale': 'Terminal',
+  'nichtterminal': 'Terminal',
+  'ableitungen': 'Ableitung'
+};
 
-function glossaryCheckFill() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'fill');
-  const val = document.getElementById('gl-answer').value.trim();
-  const fb = document.getElementById('gl-feedback');
-  const ok = [q.a, ...(q.alt || [])].some(a => val.toLowerCase() === a.toLowerCase());
-  if (ok) {
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89 "' + q.a + '" ist korrekt.</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist: <strong>' + q.a + '</strong>. Versuch es nochmal!</div>';
-    document.getElementById('gl-answer').value = '';
-    document.getElementById('gl-answer').focus();
-  }
-}
-
-function glossaryCheckChoice(idx) {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'choice');
-  const btns = document.querySelectorAll('.gl-choice');
-  const fb = document.getElementById('gl-feedback');
-  btns.forEach(b => b.style.pointerEvents = 'none');
-  if (idx === q.correct) {
-    btns[idx].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback success">Richtig! \uD83C\uDF89</div>';
-    setTimeout(() => glossaryLevelUp(), 1200);
-  } else {
-    btns[idx].classList.add('wrong');
-    btns[q.correct].classList.add('correct');
-    fb.innerHTML = '<div class="gl-feedback error">Nicht ganz! Die richtige Antwort ist markiert.</div>';
-    setTimeout(() => {
-      btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('wrong', 'correct'); });
-      fb.innerHTML = '';
-    }, 2500);
-  }
-}
-
-// ── Phase 3: Beweisen ──
-function glossaryPhase3(g) {
-  const q = g.questions.find(x => x.type === 'explain');
-  if (!q) { glossaryLevelUp(); return; }
-  const el = document.getElementById('gl-content');
-  el.innerHTML = '<div class="gl-question">' + q.q + '</div>' +
-    '<textarea class="gl-input" id="gl-answer" placeholder="Erkl\u00e4re in eigenen Worten..." rows="4"></textarea>' +
-    '<div style="font-size:11px;color:var(--muted);margin-bottom:12px">\uD83D\uDCA1 Verwende Fachbegriffe \u2013 je mehr Schl\u00fcsselw\u00f6rter du nennst, desto besser!</div>' +
-    '<button class="gl-btn primary" onclick="glossaryCheckExplain()">Antwort pr\u00fcfen \u2192</button><div id="gl-feedback"></div>';
-}
-
-function glossaryCheckExplain() {
-  const g = GLOSSARY.find(t => t.term === glossaryState.current);
-  const q = g.questions.find(x => x.type === 'explain');
-  const val = document.getElementById('gl-answer').value.trim().toLowerCase();
-  const fb = document.getElementById('gl-feedback');
-  if (!val) { fb.innerHTML = '<div class="gl-feedback error">Bitte schreibe eine Erkl\u00e4rung!</div>'; return; }
-
-  const found = [], missing = [];
-  q.keywords.forEach(kw => {
-    if (val.includes(kw.toLowerCase())) found.push(kw); else missing.push(kw);
-  });
-  const kwHtml = found.map(k => '<span class="gl-keyword found">\u2713 ' + k + '</span>').join('') +
-                 missing.map(k => '<span class="gl-keyword missing">\u2717 ' + k + '</span>').join('');
-
-  if (found.length >= (q.minKeywords || 3)) {
-    fb.innerHTML = '<div class="gl-feedback success">Sehr gut! \uD83C\uDF89 Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt!<br>' + kwHtml + '</div>';
-    setTimeout(() => glossaryLevelUp(), 1800);
-  } else {
-    fb.innerHTML = '<div class="gl-feedback info">Du hast ' + found.length + '/' + q.keywords.length + ' Schl\u00fcsselbegriffe genannt (' + (q.minKeywords || 3) + ' ben\u00f6tigt):<br>' + kwHtml +
-      '<br><span style="font-size:12px;margin-top:6px;display:inline-block">Versuch es nochmal \u2013 nutze die fehlenden Begriffe!</span></div>';
-  }
-}
-
-// ── Mastered View ──
-function glossaryMastered(g) {
-  document.getElementById('gl-content').innerHTML =
-    '<div style="text-align:center;padding:20px 0">' +
-    '<div style="font-size:48px;margin-bottom:12px">\u2B50</div>' +
-    '<div style="font-size:18px;font-weight:700;color:var(--green);margin-bottom:8px">Gemeistert!</div>' +
-    '<div style="font-size:13px;color:var(--muted);font-weight:300;max-width:400px;margin:0 auto;line-height:1.6">' +
-    'Du hast <strong style="color:var(--text)">' + g.term + '</strong> vollst\u00e4ndig gelernt. ' + g.short + '</div>' +
-    '<button class="gl-btn" style="margin-top:16px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text)" onclick="glossaryReset(\'' + g.term + '\')">Nochmal lernen \u21BA</button></div>';
-}
-
-function glossaryLevelUp() {
-  const term = glossaryState.current;
-  let lv = (glossaryState.levels[term] || 0) + 1;
-  if (lv > 3) lv = 3;
-  glossaryState.levels[term] = lv;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryReset(term) {
-  glossaryState.levels[term] = 0;
-  glossarySave();
-  glossaryOpen(term);
-}
-
-function glossaryClose() {
-  document.getElementById('glossary-learn').classList.remove('visible');
-  glossaryState.current = null;
-  glossaryRenderGrid();
-}
-
-// ── Term Highlighting in Content ──
-function glossaryHighlightTerms() {
-  const termMap = {};
-  GLOSSARY.forEach(g => { termMap[g.term.toLowerCase()] = g.term; });
-  // German variants and plurals
-  termMap['grammatik'] = 'Formale Grammatik';
-  termMap['grammatiken'] = 'Formale Grammatik';
-  termMap['formalen grammatik'] = 'Formale Grammatik';
-  termMap['chomsky'] = 'Chomsky-Hierarchie';
-  termMap['hierarchie'] = 'Chomsky-Hierarchie';
-  termMap['reguläre grammatiken'] = 'Reguläre Grammatik';
-  termMap['reguläre grammatik'] = 'Reguläre Grammatik';
-  termMap['kontextfreie grammatiken'] = 'Kontextfreie Grammatik';
-  termMap['kontextfreie grammatik'] = 'Kontextfreie Grammatik';
-  termMap['kontextsensitive grammatiken'] = 'Kontextsensitive Grammatik';
-  termMap['kontextsensitive grammatik'] = 'Kontextsensitive Grammatik';
-  termMap['kontextsensitiv'] = 'Kontextsensitive Grammatik';
-  termMap['kontextfrei'] = 'Kontextfreie Grammatik';
-  termMap['regulär'] = 'Reguläre Grammatik';
-  termMap['produktionsregeln'] = 'Produktionsregel';
-  termMap['produktionsregel'] = 'Produktionsregel';
-  termMap['ersetzungsregel'] = 'Produktionsregel';
-  termMap['terminale'] = 'Terminal';
-  termMap['terminalsymbole'] = 'Terminal';
-  termMap['terminalsymbol'] = 'Terminal';
-  termMap['nichtterminale'] = 'Terminal';
-  termMap['nichtterminal'] = 'Terminal';
-  termMap['ableitungen'] = 'Ableitung';
-
-  const allTerms = Object.keys(termMap).sort((a, b) => b.length - a.length);
-  const escaped = allTerms.map(t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const pattern = new RegExp('\\b(' + escaped.join('|') + ')\\b', 'gi');
-
-  document.querySelectorAll('.card p, .summary-card p, .detail-panel .dp-val').forEach(el => {
-    if (el.dataset.glDone) return;
-    el.dataset.glDone = '1';
-    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    let n;
-    while (n = walker.nextNode()) nodes.push(n);
-
-    nodes.forEach(textNode => {
-      const txt = textNode.textContent;
-      pattern.lastIndex = 0;
-      if (!pattern.test(txt)) return;
-      pattern.lastIndex = 0;
-
-      const frag = document.createDocumentFragment();
-      let last = 0, m;
-      while (m = pattern.exec(txt)) {
-        if (m.index > last) frag.appendChild(document.createTextNode(txt.slice(last, m.index)));
-        const span = document.createElement('span');
-        span.className = 'glossary-term';
-        span.dataset.term = termMap[m[0].toLowerCase()] || m[0];
-        span.textContent = m[0];
-        frag.appendChild(span);
-        last = pattern.lastIndex;
-      }
-      if (last < txt.length) frag.appendChild(document.createTextNode(txt.slice(last)));
-      textNode.parentNode.replaceChild(frag, textNode);
-    });
-  });
-}
-
-// ── Floating Tooltip ──
-const glTooltip = document.createElement('div');
-glTooltip.className = 'glossary-tooltip';
-document.body.appendChild(glTooltip);
-
-document.addEventListener('mouseover', e => {
-  const t = e.target.closest('.glossary-term');
-  if (!t) { glTooltip.style.display = 'none'; return; }
-  const g = GLOSSARY.find(x => x.term === t.dataset.term);
-  if (!g) return;
-  const lv = glossaryState.levels[g.term] || 0;
-  const labels = ['Noch nicht gelernt', 'Kennengelernt', '\u00dcberpr\u00fcft', 'Gemeistert \u2B50'];
-  glTooltip.innerHTML = '<div class="gt-name">' + g.term + '</div><div class="gt-short">' + g.short + '</div><div class="gt-link">' + labels[lv] + ' \u00b7 Klicke zum Lernen \u2192</div>';
-  const r = t.getBoundingClientRect();
-  glTooltip.style.display = 'block';
-  glTooltip.style.left = Math.max(8, r.left + r.width / 2 - 130) + 'px';
-  glTooltip.style.top = (r.top - glTooltip.offsetHeight - 8) + 'px';
-  if (parseFloat(glTooltip.style.top) < 8) glTooltip.style.top = (r.bottom + 8) + 'px';
-});
-
-document.addEventListener('mouseout', e => {
-  if (!e.target.closest('.glossary-term')) glTooltip.style.display = 'none';
-});
-
-document.addEventListener('click', e => {
-  const t = e.target.closest('.glossary-term');
-  if (t) { e.preventDefault(); glossaryOpen(t.dataset.term); }
-});
-
-// ── Initialize Glossary ──
-glossaryLoad();
-glossaryRenderGrid();
-glossaryHighlightTerms();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .summary-card p, .detail-panel .dp-val';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

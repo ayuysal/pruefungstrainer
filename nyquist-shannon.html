@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Nyquist · Shannon-Hartley · Abtasttheorem</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
   :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
   *{margin:0;padding:0;box-sizing:border-box}
@@ -106,72 +107,6 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
   @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -365,7 +300,7 @@
     <div class="section-title">
       <div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green));">📖</div>
       <h2>Fachbegriffe lernen</h2>
-      <span class="sub">Glossar-Trainer</span>
+      <span class="sub">Begriffe lernen</span>
     </div>
 
     <div class="glossary-progress-bar">
@@ -376,7 +311,14 @@
 
     <div class="glossary-grid" id="glossary-grid"></div>
 
-    <div class="glossary-learn" id="glossary-learn"></div>
+    <div class="glossary-learn" id="glossary-learn">
+      <div class="gl-header">
+        <h3 id="gl-title"></h3>
+        <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+      </div>
+      <div class="gl-phase-indicator" id="gl-phases"></div>
+      <div class="gl-content" id="gl-content"></div>
+    </div>
   </div>
 </div>
 
@@ -685,636 +627,140 @@ function updateScore(){
 newTask();
 
 // ══════════════════════════════════════════
-//  GLOSSAR-LERNSYSTEM
-// ══════════════════════════════════════════
-(function(){
-  const STORAGE_KEY = 'glossary-nyquist-shannon';
 
-  const glossaryTerms = [
-    {
-      id:'abtasttheorem',
-      term:'Abtasttheorem',
-      icon:'📐',
-      short:'Minimale Abtastfrequenz zur verlustfreien Rekonstruktion eines Signals.',
-      definition:'Das Abtasttheorem (Nyquist-Shannon-Theorem) besagt, dass ein bandbegrenztes, zeitkontinuierliches Signal mit einer Abtastfrequenz von mindestens dem Doppelten seiner höchsten enthaltenen Frequenz abgetastet werden muss, um es aus den Abtastwerten exakt rekonstruieren zu können. Wird diese Bedingung verletzt, tritt Aliasing auf – das rekonstruierte Signal weicht vom Original ab.',
-      analogy:'Stell dir vor, du filmst ein sich drehendes Rad. Wenn die Kamera zu wenige Bilder pro Sekunde aufnimmt, scheint das Rad stillzustehen oder sich rückwärts zu drehen – das ist Aliasing. Erst mit genügend Bildern pro Sekunde (mindestens doppelt so viele wie die Umdrehungsfrequenz) siehst du die echte Bewegung.',
-      hints:[
-        'Die Formel lautet: fₛ ≥ 2 · f_max.',
-        'Wird die Bedingung verletzt, entsteht Aliasing – Frequenzen spiegeln sich in den Abtastwerten.',
-        'Beispiel Audio-CD: f_max = 20 kHz (Hörgrenze), daher fₛ = 44,1 kHz (etwas mehr als 2 × 20 kHz).'
-      ],
-      questions:{
-        fill:{
-          q:'Wie lautet die Bedingung des Abtasttheorems? fₛ ≥ ___ · f_max',
-          answer:'2',
-          explanation:'Die Abtastfrequenz muss mindestens das Doppelte der höchsten Signalfrequenz betragen: fₛ ≥ 2 · f_max.'
-        },
-        choice:{
-          q:'Was passiert, wenn die Abtastfrequenz kleiner als 2 · f_max ist?',
-          options:['Das Signal wird lauter wiedergegeben','Es tritt Aliasing auf – das Signal wird verfälscht','Die Bandbreite verdoppelt sich','Das Rauschen nimmt ab'],
-          correct:1,
-          explanation:'Bei Unterabtastung (fₛ < 2·f_max) entsteht Aliasing: Hohe Frequenzen werden als niedrigere Frequenzen fehlinterpretiert.'
-        },
-        explain:{
-          q:'Erkläre in eigenen Worten, warum man mindestens mit der doppelten Frequenz abtasten muss.',
-          keywords:['doppelt','frequenz','rekonstruktion','aliasing','verlustfrei'],
-          explanation:'Eine Schwingungsperiode hat zwei Extrempunkte (Maximum und Minimum). Um die Form der Welle eindeutig erfassen zu können, benötigt man pro Periode mindestens zwei Abtastpunkte. Andernfalls können verschiedene Frequenzen dieselben Abtastwerte erzeugen (Aliasing).'
-        }
-      },
-      difficulty:1
-    },
-    {
-      id:'abtastfrequenz',
-      term:'Abtastfrequenz',
-      icon:'🔄',
-      short:'Anzahl der Messungen eines analogen Signals pro Sekunde.',
-      definition:'Die Abtastfrequenz (englisch: Sampling Rate) gibt an, wie oft pro Sekunde ein analoges Signal gemessen (abgetastet) wird, um es in ein digitales Signal umzuwandeln. Die Einheit ist Hertz (Hz). Eine höhere Abtastfrequenz liefert eine genauere digitale Repräsentation, erfordert aber auch mehr Speicherplatz und Übertragungsbandbreite.',
-      analogy:'Die Abtastfrequenz ist wie die Bildrate einer Kamera: Je öfter du ein Foto von einer Szene machst, desto flüssiger und genauer kannst du die Bewegung später wiedergeben. Bei zu wenigen Fotos (= zu niedrige Abtastfrequenz) gehen schnelle Bewegungen verloren.',
-      hints:[
-        'Einheit: Hz (= Abtastungen pro Sekunde). Audio-CDs verwenden 44.100 Hz.',
-        'Auch als Sampling Rate oder Abtastrate bezeichnet.',
-        'Die Abtastfrequenz muss laut Abtasttheorem mindestens 2 · f_max betragen.'
-      ],
-      questions:{
-        fill:{
-          q:'Audio-CDs verwenden eine Abtastfrequenz von ___ Hz.',
-          answer:'44100',
-          explanation:'Die standardisierte Abtastfrequenz für Audio-CDs beträgt 44.100 Hz (44,1 kHz), etwas mehr als das Doppelte der menschlichen Hörgrenze von ca. 20 kHz.'
-        },
-        choice:{
-          q:'Was ist die Einheit der Abtastfrequenz?',
-          options:['Bit/s','dB','Hz','Baud'],
-          correct:2,
-          explanation:'Die Abtastfrequenz wird in Hertz (Hz) gemessen – sie gibt die Anzahl der Abtastungen pro Sekunde an.'
-        },
-        explain:{
-          q:'Erkläre den Zusammenhang zwischen Abtastfrequenz und Signalqualität.',
-          keywords:['höher','genauer','frequenz','digital','rekonstruktion'],
-          explanation:'Je höher die Abtastfrequenz, desto mehr Messpunkte stehen zur Verfügung und desto genauer kann das analoge Originalsignal aus den digitalen Werten rekonstruiert werden.'
-        }
-      },
-      difficulty:1
-    },
-    {
-      id:'nyquist-rate',
-      term:'Nyquist-Rate',
-      icon:'⚡',
-      short:'Maximale Datenrate auf einem rauschfreien Kanal.',
-      definition:'Die Nyquist-Rate (auch Nyquist-Datenrate) gibt die maximale symbolratenbezogene Datenrate an, die auf einem rauschfreien Kanal mit gegebener Bandbreite und Anzahl von Signalstufen erreicht werden kann. Die Formel lautet C = 2 · B · log₂(M), wobei B die Bandbreite in Hz und M die Anzahl der Signalstufen ist. Sie stellt eine obere Schranke für die theoretisch mögliche Übertragungsrate dar.',
-      analogy:'Denke an eine Autobahn: Die Bandbreite ist die Anzahl der Spuren, die Signalstufen sind wie viele Autos nebeneinander pro Spur passen. Mehr Spuren und mehr Autos pro Reihe = mehr Durchsatz. Aber ohne Rauschen (keine Unfälle, kein Stau) – ein Idealfall.',
-      hints:[
-        'Formel: C = 2 · B · log₂(M). C in Bit/s, B in Hz, M = Signalstufen.',
-        'Gilt nur für den idealisierten rauschfreien Kanal.',
-        'Mehr Signalstufen ermöglichen mehr Bit pro Symbol, aber in der Praxis begrenzt Rauschen die unterscheidbaren Stufen.'
-      ],
-      questions:{
-        fill:{
-          q:'Die Nyquist-Formel lautet: C = ___ · B · log₂(M)',
-          answer:'2',
-          explanation:'C = 2 · B · log₂(M). Der Faktor 2 kommt daher, dass pro Hertz Bandbreite maximal 2 Symbole pro Sekunde übertragen werden können.'
-        },
-        choice:{
-          q:'Welche Annahme trifft die Nyquist-Formel über den Kanal?',
-          options:['Der Kanal hat starkes Rauschen','Der Kanal ist rauschfrei','Der Kanal hat unendliche Bandbreite','Das Signal hat nur eine Frequenz'],
-          correct:1,
-          explanation:'Die Nyquist-Formel gilt für den idealisierten rauschfreien Kanal. Für reale (verrauschte) Kanäle verwendet man Shannon-Hartley.'
-        },
-        explain:{
-          q:'Warum kann man in der Praxis die Nyquist-Rate nicht immer erreichen?',
-          keywords:['rauschen','signalstufen','unterscheidbar','fehler','praxis'],
-          explanation:'In der Praxis ist jeder Kanal verrauscht. Rauschen macht es schwierig, viele Signalstufen zuverlässig zu unterscheiden. Daher ist die tatsächlich erreichbare Datenrate geringer als die Nyquist-Rate.'
-        }
-      },
-      difficulty:2
-    },
-    {
-      id:'shannon-hartley',
-      term:'Shannon-Hartley-Theorem',
-      icon:'📡',
-      short:'Theoretische Obergrenze der fehlerfreien Datenrate auf einem verrauschten Kanal.',
-      definition:'Das Shannon-Hartley-Theorem definiert die Kanalkapazität C als die maximal erreichbare Datenrate, bei der eine fehlerfreie Übertragung über einen verrauschten Kanal theoretisch noch möglich ist. Die Formel lautet C = B · log₂(1 + S/N), wobei B die Bandbreite in Hz und S/N das Signal-Rausch-Verhältnis (linear, nicht in dB) ist. Es handelt sich um eine absolute Obergrenze – kein Codierungsverfahren kann diese übertreffen.',
-      analogy:'Stell dir vor, du versuchst dich in einem lauten Raum zu unterhalten. Die Bandbreite ist wie die Lautstärke-Bandbreite deiner Stimme, und S/N ist wie laut du im Vergleich zum Lärm bist. Je lauter der Lärm (kleines S/N), desto weniger Informationen pro Zeiteinheit kannst du verständlich vermitteln.',
-      hints:[
-        'Formel: C = B · log₂(1 + S/N). Achtung: S/N muss linear sein, nicht in dB!',
-        'Shannon-Hartley liefert die absolute Obergrenze. Die tatsächliche Datenrate ist immer ≤ min(Nyquist, Shannon).',
-        'SNR_dB → linear: S/N = 10^(SNR_dB / 10). Häufiger Klausurfehler!'
-      ],
-      questions:{
-        fill:{
-          q:'Die Shannon-Formel lautet: C = B · log₂(1 + ___)',
-          answer:'S/N',
-          explanation:'C = B · log₂(1 + S/N). Das Signal-Rausch-Verhältnis S/N bestimmt, wie viel Information pro Hz Bandbreite übertragen werden kann.'
-        },
-        choice:{
-          q:'Was passiert mit der Kanalkapazität, wenn das Rauschen gegen Null geht (S/N → ∞)?',
-          options:['C wird Null','C geht gegen unendlich','C bleibt konstant','C halbiert sich'],
-          correct:1,
-          explanation:'Wenn S/N → ∞, dann log₂(1 + S/N) → ∞ und somit C → ∞. In der Praxis wird dies durch die Nyquist-Rate begrenzt (endliche Signalstufen).'
-        },
-        explain:{
-          q:'Erkläre, warum SNR in dB vor Einsetzen in die Shannon-Formel umgerechnet werden muss.',
-          keywords:['logarithmisch','linear','dB','umrechnung','10'],
-          explanation:'dB ist ein logarithmisches Maß (SNR_dB = 10·log₁₀(S/N)). Die Shannon-Formel erwartet das lineare Verhältnis S/N. Setzt man fälschlich dB-Werte ein, erhält man ein völlig falsches Ergebnis.'
-        }
-      },
-      difficulty:2
-    },
-    {
-      id:'kanalkapazitaet',
-      term:'Kanalkapazität',
-      icon:'📊',
-      short:'Maximale fehlerfreie Datenrate eines Übertragungskanals.',
-      definition:'Die Kanalkapazität C (in Bit/s) ist die theoretisch maximale Rate, mit der Information fehlerfrei über einen Übertragungskanal gesendet werden kann. Sie wird durch die physikalischen Eigenschaften des Kanals bestimmt – insbesondere Bandbreite und Rauschen. Die Kanalkapazität ist eine theoretische Obergrenze; reale Systeme erreichen sie nur annähernd durch fortschrittliche Codierungsverfahren.',
-      analogy:'Die Kanalkapazität ist wie der maximale Durchfluss eines Rohres: Egal wie clever du das Wasser hindurchpresst, mehr als die physikalische Kapazität des Rohres ist nicht möglich. Breite des Rohres = Bandbreite, Verstopfungen = Rauschen.',
-      hints:[
-        'Einheit: Bit/s. Die tatsächlich genutzte Datenrate ist immer kleiner oder gleich C.',
-        'Die Kanalkapazität wird durch Shannon-Hartley berechnet: C = B · log₂(1 + S/N).',
-        'Verdopplung der Bandbreite verdoppelt C. Verdopplung des SNR erhöht C nur um ca. 1 Bit/Hz.'
-      ],
-      questions:{
-        fill:{
-          q:'Die Einheit der Kanalkapazität ist ___ .',
-          answer:'Bit/s',
-          explanation:'Die Kanalkapazität wird in Bit pro Sekunde (Bit/s) gemessen. Sie gibt die maximale Informationsübertragungsrate an.'
-        },
-        choice:{
-          q:'Was begrenzt die Kanalkapazität eines realen Kanals?',
-          options:['Nur die Sendeleistung','Bandbreite und Rauschen','Nur die Kabellänge','Die Anzahl der Empfänger'],
-          correct:1,
-          explanation:'Die Kanalkapazität wird durch die verfügbare Bandbreite und das Signal-Rausch-Verhältnis bestimmt – beides physikalische Kanaleigenschaften.'
-        },
-        explain:{
-          q:'Erkläre, warum die tatsächliche Datenrate eines Systems immer unter der Kanalkapazität liegt.',
-          keywords:['overhead','codierung','fehlerkorrektur','protokoll','theoretisch'],
-          explanation:'Reale Systeme benötigen Overhead für Fehlerkorrektur, Synchronisation, Protokoll-Header und haben nicht-ideale Codierungsverfahren. Die Kanalkapazität ist ein theoretisches Maximum, das nur mit unendlich langen Codewörtern und perfekter Codierung erreichbar wäre.'
-        }
-      },
-      difficulty:2
-    },
-    {
-      id:'snr',
-      term:'Signal-Rausch-Verhältnis (SNR)',
-      icon:'📏',
-      short:'Verhältnis von Signalleistung zu Rauschleistung.',
-      definition:'Das Signal-Rausch-Verhältnis (Signal-to-Noise Ratio, SNR) ist das Verhältnis der Nutzleistung des Signals zur Störleistung des Rauschens. Als linearer Wert ist es dimensionslos (S/N = P_signal / P_rausch). In der Praxis wird es häufig in Dezibel (dB) angegeben: SNR_dB = 10 · log₁₀(S/N). Ein höherer SNR-Wert bedeutet ein „saubereres" Signal mit weniger Störungen.',
-      analogy:'Stell dir vor, du sprichst in einem Raum: Deine Stimme ist das Signal, der Hintergrundlärm ist das Rauschen. Je leiser der Lärm im Vergleich zu deiner Stimme (hohes SNR), desto besser wirst du verstanden.',
-      hints:[
-        'Umrechnung: SNR_dB = 10 · log₁₀(S/N). Rückwärts: S/N = 10^(SNR_dB / 10).',
-        'Für die Shannon-Formel muss SNR immer als linearer Wert eingesetzt werden!',
-        '30 dB entspricht einem linearen Verhältnis von 1000:1.'
-      ],
-      questions:{
-        fill:{
-          q:'30 dB SNR entspricht einem linearen Verhältnis von ___ .',
-          answer:'1000',
-          explanation:'S/N = 10^(30/10) = 10^3 = 1000. Jede 10 dB bedeuten eine Verzehnfachung des linearen Verhältnisses.'
-        },
-        choice:{
-          q:'Wie rechnet man SNR von dB in linear um?',
-          options:['S/N = SNR_dB / 10','S/N = 10^(SNR_dB / 10)','S/N = 2^(SNR_dB)','S/N = SNR_dB²'],
-          correct:1,
-          explanation:'Die Umrechnung lautet S/N = 10^(SNR_dB / 10). Dies ist die Umkehrung von SNR_dB = 10 · log₁₀(S/N).'
-        },
-        explain:{
-          q:'Warum wird das SNR häufig in dB statt als linearer Wert angegeben?',
-          keywords:['logarithmisch','große','werte','vergleich','übersichtlich'],
-          explanation:'Da das SNR in der Praxis Werte von 1 bis zu mehreren Millionen annehmen kann, ist die logarithmische dB-Skala übersichtlicher. Große Verhältnisse werden auf handliche Zahlen komprimiert (z.B. 1.000.000 = 60 dB).'
-        }
-      },
-      difficulty:1
-    },
-    {
-      id:'bandbreite',
-      term:'Bandbreite',
-      icon:'📶',
-      short:'Frequenzbereich, der für die Signalübertragung zur Verfügung steht.',
-      definition:'Die Bandbreite B (in Hz) ist die Differenz zwischen der höchsten und der niedrigsten Frequenz, die ein Übertragungskanal nutzen kann. Sie bestimmt maßgeblich, wie viel Information pro Zeiteinheit übertragen werden kann. In der Nachrichtentechnik ist die Bandbreite eine der zentralen Kanalparameter und geht sowohl in die Nyquist- als auch in die Shannon-Hartley-Formel ein.',
-      analogy:'Die Bandbreite ist wie die Breite einer Straße: Je breiter die Straße (mehr Fahrspuren), desto mehr Fahrzeuge (Daten) können gleichzeitig hindurchfahren. Eine schmale Straße (geringe Bandbreite) erzeugt einen Engpass.',
-      hints:[
-        'Einheit: Hertz (Hz). B = f_max - f_min des Kanals.',
-        'Bandbreite geht sowohl in Nyquist (C = 2·B·log₂M) als auch in Shannon (C = B·log₂(1+S/N)) ein.',
-        'Telefonleitung: B ≈ 3.100 Hz (300–3.400 Hz). WLAN 802.11n: B = 20 oder 40 MHz.'
-      ],
-      questions:{
-        fill:{
-          q:'Eine Telefonleitung hat eine Bandbreite von ca. ___ Hz.',
-          answer:'3100',
-          explanation:'Die klassische analoge Telefonleitung nutzt den Frequenzbereich von 300 bis 3.400 Hz, also eine Bandbreite von etwa 3.100 Hz.'
-        },
-        choice:{
-          q:'Was passiert mit der Kanalkapazität, wenn die Bandbreite verdoppelt wird (bei gleichem SNR)?',
-          options:['Sie vervierfacht sich','Sie verdoppelt sich','Sie bleibt gleich','Sie halbiert sich'],
-          correct:1,
-          explanation:'Da C = B · log₂(1 + S/N), führt eine Verdopplung von B direkt zur Verdopplung von C, solange das SNR konstant bleibt.'
-        },
-        explain:{
-          q:'Erkläre, warum die Bandbreite eines Kanals physikalisch begrenzt ist.',
-          keywords:['medium','frequenz','dämpfung','physikalisch','übertragung'],
-          explanation:'Jedes Übertragungsmedium (Kupferkabel, Glasfaser, Funk) kann nur einen begrenzten Frequenzbereich nutzen. Außerhalb dieses Bereichs werden Signale zu stark gedämpft, verzerrt oder es treten Interferenzen mit anderen Kanälen auf.'
-        }
-      },
-      difficulty:1
-    },
-    {
-      id:'quantisierung',
-      term:'Quantisierung',
-      icon:'🔢',
-      short:'Zuordnung kontinuierlicher Abtastwerte zu diskreten Stufen.',
-      definition:'Die Quantisierung ist der Schritt bei der Analog-Digital-Wandlung, bei dem die zeitdiskreten (abgetasteten) Signalwerte auf eine endliche Menge von Amplitudenstufen abgebildet werden. Die Anzahl der Stufen wird durch die Bit-Tiefe bestimmt: Bei n Bit stehen 2^n Stufen zur Verfügung. Dabei entsteht unvermeidlich ein Quantisierungsfehler (Quantisierungsrauschen), da die ursprünglichen Werte gerundet werden.',
-      analogy:'Stell dir eine Treppe vor: Ein kontinuierlicher Hang (analoges Signal) wird in diskrete Stufen umgewandelt. Je mehr Stufen (höhere Bit-Tiefe), desto feiner aufgelöst und desto näher an der echten Schräge. Aber es bleiben immer kleine Sprünge.',
-      hints:[
-        'Bei n Bit Auflösung gibt es 2^n Quantisierungsstufen. 8 Bit = 256, 16 Bit = 65.536 Stufen.',
-        'Der Quantisierungsfehler ist maximal eine halbe Stufenhöhe.',
-        'Quantisierung kommt NACH der Abtastung: Erst wird zeitlich diskretisiert (Abtastung), dann wertmäßig (Quantisierung).'
-      ],
-      questions:{
-        fill:{
-          q:'Bei einer Bit-Tiefe von 16 Bit stehen ___ Quantisierungsstufen zur Verfügung.',
-          answer:'65536',
-          explanation:'2^16 = 65.536 Stufen. Jedes zusätzliche Bit verdoppelt die Anzahl der verfügbaren Stufen.'
-        },
-        choice:{
-          q:'Was entsteht zwangsläufig bei der Quantisierung?',
-          options:['Aliasing','Quantisierungsrauschen','Bandbreitenverlust','Frequenzverschiebung'],
-          correct:1,
-          explanation:'Da die kontinuierlichen Amplitudenwerte auf diskrete Stufen gerundet werden, entsteht ein Quantisierungsfehler, der sich als Quantisierungsrauschen bemerkbar macht.'
-        },
-        explain:{
-          q:'Erkläre den Unterschied zwischen Abtastung und Quantisierung.',
-          keywords:['zeit','amplitude','diskret','stufen','abtastung'],
-          explanation:'Die Abtastung diskretisiert das Signal in der Zeit (kontinuierlich → zeitdiskret). Die Quantisierung diskretisiert die Amplitude (kontinuierliche Werte → endlich viele Stufen). Zusammen ergeben sie die vollständige Digitalisierung.'
-        }
-      },
-      difficulty:2
-    }
-  ];
+// ── Glossar-System (Shared) ──
+var TRAINER_ID = 'nyquist-shannon';
 
-  // ── State Management ──
-  function loadState(){
-    try{
-      const s = localStorage.getItem(STORAGE_KEY);
-      return s ? JSON.parse(s) : {};
-    }catch(e){return {}}
+var GLOSSARY = [
+  {
+    term: 'Abtasttheorem',
+    short: 'Minimale Abtastfrequenz zur verlustfreien Rekonstruktion eines Signals.',
+    definition: 'Das Abtasttheorem (Nyquist-Shannon-Theorem) besagt, dass ein bandbegrenztes Signal mit einer Abtastfrequenz von mindestens dem Doppelten seiner höchsten Frequenz abgetastet werden muss, um es exakt rekonstruieren zu können. Wird die Bedingung verletzt, tritt Aliasing auf.',
+    analogy: '📸 Stell dir vor, du filmst ein sich drehendes Rad. Wenn die Kamera zu wenige Bilder pro Sekunde aufnimmt, scheint das Rad rückwärts zu drehen – das ist Aliasing. Erst mit genügend Bildern siehst du die echte Bewegung.',
+    hints: ['Die Formel lautet: fₛ ≥ 2 · f_max.','Wird die Bedingung verletzt, entsteht Aliasing.','Beispiel Audio-CD: f_max = 20 kHz, daher fₛ = 44,1 kHz.'],
+    questions: [
+      {type:'fill', q:'Wie lautet die Bedingung des Abtasttheorems? fₛ ≥ ___ · f_max', a:'2', keywords:['2','doppelt']},
+      {type:'choice', q:'Was passiert, wenn die Abtastfrequenz kleiner als 2 · f_max ist?', options:['Das Signal wird lauter wiedergegeben','Es tritt Aliasing auf – das Signal wird verfälscht','Die Bandbreite verdoppelt sich','Das Rauschen nimmt ab'], correct:1},
+      {type:'explain', q:'Erkläre in eigenen Worten, warum man mindestens mit der doppelten Frequenz abtasten muss.', keywords:['doppelt','frequenz','rekonstruktion','aliasing','verlustfrei'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Abtastfrequenz',
+    short: 'Anzahl der Messungen eines analogen Signals pro Sekunde.',
+    definition: 'Die Abtastfrequenz (Sampling Rate) gibt an, wie oft pro Sekunde ein analoges Signal gemessen wird, um es in ein digitales Signal umzuwandeln. Die Einheit ist Hertz (Hz). Höhere Abtastfrequenz liefert genauere Repräsentation, erfordert aber mehr Speicherplatz.',
+    analogy: '🎬 Die Abtastfrequenz ist wie die Bildrate einer Kamera: Je öfter du ein Foto machst, desto flüssiger das Daumenkino.',
+    hints: ['Einheit: Hz (= Abtastungen pro Sekunde). Audio-CDs verwenden 44.100 Hz.','Auch als Sampling Rate oder Abtastrate bezeichnet.','Muss laut Abtasttheorem mindestens 2 · f_max betragen.'],
+    questions: [
+      {type:'fill', q:'Audio-CDs verwenden eine Abtastfrequenz von ___ Hz.', a:'44100', keywords:['44100','44.100']},
+      {type:'choice', q:'Was ist die Einheit der Abtastfrequenz?', options:['Bit/s','dB','Hz','Baud'], correct:2},
+      {type:'explain', q:'Erkläre den Zusammenhang zwischen Abtastfrequenz und Signalqualität.', keywords:['höher','genauer','frequenz','digital','rekonstruktion'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Nyquist-Rate',
+    short: 'Maximale Datenrate auf einem rauschfreien Kanal.',
+    definition: 'Die Nyquist-Rate gibt die maximale Datenrate an, die auf einem rauschfreien Kanal mit gegebener Bandbreite und Signalstufen erreicht werden kann. Formel: C = 2 · B · log₂(M), wobei B die Bandbreite in Hz und M die Signalstufen.',
+    analogy: '🏎️ Denke an eine Autobahn: Die Bandbreite ist die Anzahl der Spuren, die Signalstufen sind wie viele Autos pro Reihe passen. Aber ohne Rauschen – ein Idealfall.',
+    hints: ['Formel: C = 2 · B · log₂(M). C in Bit/s, B in Hz, M = Signalstufen.','Gilt nur für den idealisierten rauschfreien Kanal.','Mehr Signalstufen = mehr Bit pro Symbol, aber Rauschen begrenzt.'],
+    questions: [
+      {type:'fill', q:'Die Nyquist-Formel lautet: C = ___ · B · log₂(M)', a:'2', keywords:['2']},
+      {type:'choice', q:'Welche Annahme trifft die Nyquist-Formel über den Kanal?', options:['Der Kanal hat starkes Rauschen','Der Kanal ist rauschfrei','Der Kanal hat unendliche Bandbreite','Das Signal hat nur eine Frequenz'], correct:1},
+      {type:'explain', q:'Warum kann man in der Praxis die Nyquist-Rate nicht immer erreichen?', keywords:['rauschen','signalstufen','unterscheidbar','fehler','praxis'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Shannon-Hartley-Theorem',
+    short: 'Theoretische Obergrenze der fehlerfreien Datenrate auf einem verrauschten Kanal.',
+    definition: 'Das Shannon-Hartley-Theorem definiert die Kanalkapazität C als maximale Datenrate für fehlerfreie Übertragung. Formel: C = B · log₂(1 + S/N), wobei B die Bandbreite und S/N das Signal-Rausch-Verhältnis (linear, nicht dB!) ist.',
+    analogy: '🍽️ Stell dir vor, du versuchst dich in einem lauten Restaurant zu unterhalten. Die Bandbreite ist wie die Stimm-Bandbreite, S/N ist wie laut du im Vergleich zum Lärm bist.',
+    hints: ['Formel: C = B · log₂(1 + S/N). S/N muss linear sein, nicht in dB!','Shannon-Hartley liefert die absolute Obergrenze.','SNR_dB → linear: S/N = 10^(SNR_dB / 10). Häufiger Klausurfehler!'],
+    questions: [
+      {type:'fill', q:'Die Shannon-Formel lautet: C = B · log₂(1 + ___)', a:'S/N', keywords:['S/N','SNR']},
+      {type:'choice', q:'Was passiert mit der Kanalkapazität, wenn das Rauschen gegen Null geht (S/N → ∞)?', options:['C wird Null','C geht gegen unendlich','C bleibt konstant','C halbiert sich'], correct:1},
+      {type:'explain', q:'Erkläre, warum SNR in dB vor Einsetzen in die Shannon-Formel umgerechnet werden muss.', keywords:['logarithmisch','linear','dB','umrechnung','10'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Kanalkapazität',
+    short: 'Maximale fehlerfreie Datenrate eines Übertragungskanals.',
+    definition: 'Die Kanalkapazität C (in Bit/s) ist die theoretisch maximale Rate, mit der Information fehlerfrei über einen Kanal gesendet werden kann. Sie wird durch Bandbreite und Rauschen bestimmt. Reale Systeme erreichen sie nur annähernd.',
+    analogy: '🚿 Die Kanalkapazität ist wie der maximale Durchfluss eines Rohres: Egal wie clever du das Wasser hindurchpresst, mehr als die physikalische Kapazität ist nicht möglich.',
+    hints: ['Einheit: Bit/s.','Wird durch Shannon-Hartley berechnet: C = B · log₂(1 + S/N).','Verdopplung der Bandbreite verdoppelt C.'],
+    questions: [
+      {type:'fill', q:'Die Einheit der Kanalkapazität ist ___ .', a:'Bit/s', keywords:['Bit/s','bit/s']},
+      {type:'choice', q:'Wie verändert sich die Kanalkapazität bei Verdopplung der Bandbreite?', options:['Halbiert sich','Bleibt gleich','Verdoppelt sich','Vervierfacht sich'], correct:2},
+      {type:'explain', q:'Erkläre den Zusammenhang zwischen Bandbreite, SNR und Kanalkapazität.', keywords:['bandbreite','rauschen','SNR','shannon','formel','kapazität'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Signal-Rausch-Verhältnis (SNR)',
+    short: 'Verhältnis von Signalstärke zu Rauschstärke.',
+    definition: 'Das Signal-Rausch-Verhältnis (SNR) beschreibt das Verhältnis der Signalleistung zur Rauschleistung. In dB: SNR_dB = 10 · log₁₀(S/N). Höherer SNR bedeutet bessere Signalqualität. Für die Shannon-Formel muss der lineare Wert verwendet werden.',
+    analogy: '🎸 Bei einem Konzert: Die Band (Signal) spielt, das Publikum (Rauschen) murmelt. SNR misst, wie viel lauter die Band als das Publikum ist.',
+    hints: ['dB ist logarithmisch: SNR_dB = 10 · log₁₀(S/N).','Für Shannon braucht man linear: S/N = 10^(SNR_dB/10).','Höher = besser. 30 dB = gut, 10 dB = verrauscht.'],
+    questions: [
+      {type:'fill', q:'Die Umrechnung von dB in linear lautet: S/N = 10^(SNR_dB / ___)', a:'10', keywords:['10']},
+      {type:'choice', q:'Was bedeutet ein SNR von 0 dB?', options:['Kein Rauschen','Signal und Rauschen gleich stark','Kein Signal','Unendlich starkes Signal'], correct:1},
+      {type:'explain', q:'Warum ist es wichtig, SNR vor Einsetzen in die Shannon-Formel von dB in linear umzurechnen?', keywords:['logarithmisch','linear','falsch','ergebnis','formel','umrechnung'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Bandbreite',
+    short: 'Nutzbarer Frequenzbereich eines Übertragungskanals.',
+    definition: 'Die Bandbreite (in Hz) beschreibt den nutzbaren Frequenzbereich eines Kanals. Sie bestimmt direkt die maximal mögliche Datenrate. In beiden Formeln (Nyquist und Shannon) ist B ein zentraler Parameter. Verdopplung der Bandbreite verdoppelt die Kanalkapazität.',
+    analogy: '🎹 Die Bandbreite ist wie die Spannweite einer Klaviatur – von der tiefsten bis zur höchsten nutzbaren Frequenz.',
+    hints: ['In Hz gemessen, zentraler Parameter in Nyquist und Shannon.','Verdopplung verdoppelt C (linearer Zusammenhang).','Kann physikalisch (Hz) oder als Datenrate (bit/s) gemeint sein.'],
+    questions: [
+      {type:'fill', q:'In der Shannon-Formel steht B für die ____________ in Hz.', a:'Bandbreite', keywords:['bandbreite','frequenzbereich']},
+      {type:'choice', q:'Was passiert mit C bei Verdopplung von B (gleiches SNR)?', options:['C halbiert sich','C bleibt gleich','C verdoppelt sich','C vervierfacht sich'], correct:2},
+      {type:'explain', q:'Erkläre die Rolle der Bandbreite in den Formeln von Nyquist und Shannon.', keywords:['nyquist','shannon','hz','frequenz','kapazität','datenrate'], minKeywords:3}
+    ]
+  },
+  {
+    term: 'Quantisierung',
+    short: 'Zuordnung analoger Messwerte zu diskreten digitalen Stufen.',
+    definition: 'Quantisierung ist der Prozess, bei dem kontinuierliche (analoge) Abtastwerte auf diskrete Stufen abgebildet werden. Die Anzahl der Stufen wird durch die Bittiefe bestimmt: n Bit = 2ⁿ Stufen. Dabei entsteht unvermeidlich ein Quantisierungsfehler (Differenz zwischen Original und quantisiertem Wert).',
+    analogy: '🪜 Quantisierung ist wie eine Treppe statt einer Rampe: Statt glatt (analog) gibt es feste Stufen (digital). Je mehr Stufen, desto weniger merkt man den Unterschied.',
+    hints: ['n Bit = 2ⁿ Stufen. 8 Bit = 256, 16 Bit = 65.536 Stufen.','Quantisierungsfehler ist unvermeidbar, wird mit mehr Bits kleiner.','Folgt auf die Abtastung im ADC (Analog-Digital-Wandler).'],
+    questions: [
+      {type:'fill', q:'Bei einer Bittiefe von 8 Bit stehen ______ Quantisierungsstufen zur Verfügung.', a:'256', keywords:['256','2^8']},
+      {type:'choice', q:'Was passiert bei höherer Bittiefe?', options:['Mehr Quantisierungsfehler','Weniger Quantisierungsstufen','Feinere Abstufung, weniger Fehler','Die Abtastfrequenz steigt'], correct:2},
+      {type:'explain', q:'Erkläre den Zusammenhang zwischen Bittiefe, Quantisierungsstufen und Quantisierungsfehler.', keywords:['bit','stufen','fehler','genauer','analog','digital'], minKeywords:3}
+    ]
   }
-  function saveState(state){
-    try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state))}catch(e){}
-  }
-  function getLevel(termId){
-    const st = loadState();
-    return (st[termId] && st[termId].level) || 0;
-  }
-  function setLevel(termId, level){
-    const st = loadState();
-    if(!st[termId]) st[termId] = {};
-    st[termId].level = Math.min(3, Math.max(0, level));
-    saveState(st);
-  }
+];
 
-  // ── Progress Bar ──
-  function updateProgress(){
-    const mastered = glossaryTerms.filter(t => getLevel(t.id) >= 3).length;
-    const total = glossaryTerms.length;
-    const pct = Math.round((mastered / total) * 100);
-    const fill = document.getElementById('glossary-fill');
-    const count = document.getElementById('glossary-count');
-    if(fill) fill.style.width = pct + '%';
-    if(count) count.textContent = mastered + ' / ' + total + ' gemeistert';
-  }
+var GP_STORIES = {
+  'Abtasttheorem': {route: 'Ein Fotostudio für bewegte Objekte', scenes: [{kw:'fₛ ≥ 2·f_max', img:'📸 Doppelt so schnell knipsen', text:'Der Fotograf muss mindestens doppelt so oft knipsen wie das Objekt sich bewegt – fₛ ≥ 2·f_max!'},{kw:'Aliasing', img:'🎡 Rückwärts drehendes Rad', text:'Knipst er zu langsam, scheint das Rad rückwärts zu drehen – das ist Aliasing!'},{kw:'Rekonstruktion', img:'🖼️ Daumenkino', text:'Aus genügend Fotos entsteht ein perfektes Daumenkino – verlustfreie Rekonstruktion.'},{kw:'Audio-CD 44.1 kHz', img:'🎵 CD-Hülle', text:'Auf der CD-Hülle steht: 44.100 Bilder pro Sekunde – doppelt so viel wie die 20-kHz-Hörgrenze.'},{kw:'Bandbegrenzung', img:'🚧 Frequenzschranke', text:'Voraussetzung: Das Signal darf keine Frequenzen über f_max haben – es muss bandbegrenzt sein!'}]},
+  'Abtastfrequenz': {route: 'Eine Zeitrafferkamera', scenes: [{kw:'Messungen pro Sekunde', img:'⏱️ Stoppuhr tickt', text:'Die Kamera misst so oft pro Sekunde wie die Stoppuhr tickt – das ist die Abtastfrequenz.'},{kw:'Hertz (Hz)', img:'🏷️ Hz-Aufkleber', text:'Am Objektiv klebt ein Aufkleber: 44.100 Hz – Abtastungen pro Sekunde.'},{kw:'Höher = genauer', img:'📈 Mehr Fotos, schärferes Bild', text:'Je öfter geknipst wird, desto schärfer das Daumenkino – mehr Hz = genauere Digitalisierung.'},{kw:'Speicherplatz', img:'💾 Stapel Speicherkarten', text:'Aber: Mehr Fotos brauchen mehr Speicherkarten – höhere Abtastfrequenz = mehr Daten!'},{kw:'Nyquist-Bedingung', img:'✅ Mindestens 2x', text:'Die Qualitätskontrolle prüft: Ist fₛ ≥ 2·f_max? Wenn ja, Daumen hoch!'}]},
+  'Nyquist-Rate': {route: 'Eine perfekte Rennstrecke ohne Wind', scenes: [{kw:'C = 2·B·log₂(M)', img:'🏎️ Formel am Streckenrand', text:'Am Streckenrand leuchtet die Formel: C = 2·B·log₂(M) – die maximale Geschwindigkeit!'},{kw:'Bandbreite B', img:'🛣️ Streckenbreite', text:'B ist die Breite der Strecke in Hz – mehr Spuren erlauben mehr Durchsatz.'},{kw:'Signalstufen M', img:'🚗 Autos pro Spur', text:'M ist wie viele Autos nebeneinander in jede Spur passen – mehr Stufen = mehr Bits.'},{kw:'Rauschfrei', img:'☀️ Perfektes Wetter', text:'Die Formel gilt nur bei perfektem Wetter (rauschfrei) – ein Idealfall!'},{kw:'log₂(M) = Bits pro Symbol', img:'📊 Bit-Tafel', text:'log₂(M) zeigt, wie viele Bits jedes Symbol trägt: M=4 → 2 Bit, M=16 → 4 Bit.'}]},
+  'Shannon-Hartley-Theorem': {route: 'Ein lautes Restaurant mit Kellner', scenes: [{kw:'C = B·log₂(1+S/N)', img:'📋 Formel auf der Speisekarte', text:'Auf der Speisekarte steht: C = B·log₂(1+S/N) – wie viel Info der Kellner pro Sekunde übermitteln kann.'},{kw:'Rauschen', img:'🔊 Laute Hintergrundmusik', text:'Die Hintergrundmusik ist das Rauschen – je lauter, desto schwerer die Kommunikation.'},{kw:'S/N (linear!)', img:'⚖️ Waage: Signal vs. Lärm', text:'Auf einer Waage liegt links das Signal, rechts der Lärm. S/N muss linear sein, NICHT in dB!'},{kw:'dB → linear', img:'🧮 Umrechnungstabelle', text:'An der Wand hängt die Umrechnungstabelle: S/N = 10^(SNR_dB/10). Häufiger Klausurfehler!'},{kw:'Absolute Obergrenze', img:'🚫 Decke des Restaurants', text:'Die Decke ist die absolute Obergrenze – kein Codierungsverfahren kann darüber hinaus!'}]},
+  'Kanalkapazität': {route: 'Ein Wasserwerk mit Rohrsystem', scenes: [{kw:'Maximaler Durchfluss', img:'🚿 Wasserzähler', text:'Der Wasserzähler zeigt den maximalen Durchfluss in Bit/s – das ist die Kanalkapazität.'},{kw:'Bit/s', img:'🏷️ Einheitenschild am Rohr', text:'Am Rohr steht die Einheit: Bit pro Sekunde.'},{kw:'Bandbreite = Rohrdurchmesser', img:'📏 Breites vs. schmales Rohr', text:'Die Bandbreite bestimmt den Rohrdurchmesser – breiter = mehr Durchfluss.'},{kw:'Rauschen = Verstopfung', img:'🪨 Steine im Rohr', text:'Rauschen sind Steine im Rohr – sie reduzieren den möglichen Durchfluss.'},{kw:'Theoretisches Maximum', img:'⚡ Idealer Durchfluss', text:'Die Kanalkapazität ist das theoretische Maximum – reale Systeme erreichen es nur annähernd.'}]},
+  'Signal-Rausch-Verhältnis (SNR)': {route: 'Ein Konzertsaal mit Soundcheck', scenes: [{kw:'Signal vs. Rauschen', img:'🎸 Band vs. Publikumslärm', text:'Die Band (Signal) spielt, das Publikum (Rauschen) murmelt – SNR misst das Verhältnis.'},{kw:'dB (logarithmisch)', img:'📊 dB-Skala an der Wand', text:'Am Mischpult zeigt die dB-Skala den SNR an – logarithmisch!'},{kw:'Linear: S/N = 10^(dB/10)', img:'🧮 Taschenrechner', text:'Für Shannon braucht man den linearen Wert: S/N = 10^(SNR_dB/10). Taschenrechner bereit!'},{kw:'Höher = besser', img:'👍 Daumen hoch bei 30 dB', text:'Je höher der SNR, desto klarer das Signal. 30 dB = gut, 10 dB = verrauscht.'},{kw:'Begrenzt Signalstufen', img:'🎚️ Regler-Stufen', text:'Bei niedrigem SNR kann man weniger Signalstufen unterscheiden – das begrenzt die Nyquist-Rate.'}]},
+  'Bandbreite': {route: 'Ein Frequenz-Spielplatz', scenes: [{kw:'Frequenzbereich (Hz)', img:'🎹 Klaviatur', text:'Die Bandbreite ist wie die Spannweite der Klaviatur – von der tiefsten bis zur höchsten nutzbaren Frequenz.'},{kw:'Datenrate (bit/s)', img:'🚗 Spuren auf der Autobahn', text:'In der Netzwerktechnik bedeutet mehr Bandbreite = mehr bit/s = mehr Datenspuren.'},{kw:'B in Shannon/Nyquist', img:'📐 Variable B', text:'In beiden Formeln steckt B – die Bandbreite bestimmt direkt die maximale Kapazität.'},{kw:'Verdopplung = 2x Kapazität', img:'✖️ Doppelte Spuren', text:'Verdopple die Bandbreite und die Kanalkapazität verdoppelt sich – linearer Zusammenhang!'},{kw:'Hz vs. bit/s', img:'⚖️ Zwei Bedeutungen', text:'Achtung: Bandbreite kann physikalisch (Hz) oder als Datenrate (bit/s) gemeint sein – Kontext beachten!'}]},
+  'Quantisierung': {route: 'Eine Treppenfabrik', scenes: [{kw:'Stufenanzahl', img:'🪜 Treppe mit n Stufen', text:'Statt einer glatten Rampe (analog) baut die Fabrik Treppen mit festen Stufen (digital) – das ist Quantisierung.'},{kw:'Rundung', img:'🔄 Abrunden auf nächste Stufe', text:'Jeder Wert wird auf die nächste Stufe gerundet – dabei geht etwas Information verloren.'},{kw:'Quantisierungsfehler', img:'📉 Lücke zwischen Rampe und Stufe', text:'Die Differenz zwischen Rampe und Stufe ist der Quantisierungsfehler – unvermeidbar!'},{kw:'Bittiefe', img:'📊 Bits = Stufenzahl', text:'8 Bit = 256 Stufen, 16 Bit = 65.536 Stufen – mehr Bits = feinere Abstufung.'},{kw:'ADC', img:'🔧 Analog-Digital-Converter', text:'Der ADC (Analog-Digital-Wandler) macht die eigentliche Arbeit: Er misst und rundet jede Abtastung.'}]}
+};
 
-  // ── Render Grid ──
-  function renderGrid(){
-    const grid = document.getElementById('glossary-grid');
-    if(!grid) return;
-    grid.innerHTML = '';
-    glossaryTerms.forEach(t => {
-      const lv = getLevel(t.id);
-      const card = document.createElement('div');
-      card.className = 'glossary-card';
-      card.setAttribute('data-level', lv);
-      card.setAttribute('data-id', t.id);
-      card.innerHTML = `<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
-      card.addEventListener('click', () => openLearn(t.id));
-      grid.appendChild(card);
-    });
-    updateProgress();
-  }
 
-  // ── Learn Panel ──
-  let currentTerm = null;
-  let currentPhase = 0; // 0=analogy, 1=definition, 2=fill, 3=choice, 4=explain
-  let hintIndex = 0;
-  const phaseNames = ['Analogie','Definition','Lückentext','Multiple Choice','Erklären'];
+var GLOSSARY_TERM_MAP = {
+  'abtasttheorem': 'Abtasttheorem',
+  'nyquist-shannon': 'Abtasttheorem',
+  'abtastfrequenz': 'Abtastfrequenz',
+  'sampling rate': 'Abtastfrequenz',
+  'nyquist-rate': 'Nyquist-Rate',
+  'nyquist': 'Nyquist-Rate',
+  'shannon-hartley': 'Shannon-Hartley-Theorem',
+  'shannon': 'Shannon-Hartley-Theorem',
+  'kanalkapazität': 'Kanalkapazität',
+  'snr': 'Signal-Rausch-Verhältnis (SNR)',
+  'signal-rausch': 'Signal-Rausch-Verhältnis (SNR)',
+  'bandbreite': 'Bandbreite',
+  'quantisierung': 'Quantisierung'
+};
 
-  function openLearn(termId){
-    currentTerm = glossaryTerms.find(t => t.id === termId);
-    if(!currentTerm) return;
-    currentPhase = 0;
-    hintIndex = 0;
-    // Mark card active
-    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
-    const activeCard = document.querySelector(`.glossary-card[data-id="${termId}"]`);
-    if(activeCard) activeCard.classList.add('active');
-    const panel = document.getElementById('glossary-learn');
-    panel.classList.add('visible');
-    renderPhase();
-    panel.scrollIntoView({behavior:'smooth', block:'nearest'});
-  }
-
-  function closeLearn(){
-    const panel = document.getElementById('glossary-learn');
-    panel.classList.remove('visible');
-    document.querySelectorAll('.glossary-card').forEach(c => c.classList.remove('active'));
-    currentTerm = null;
-  }
-
-  function renderPhase(){
-    if(!currentTerm) return;
-    const panel = document.getElementById('glossary-learn');
-    const t = currentTerm;
-    let phaseHTML = '';
-    // Phase indicator
-    let piHTML = '<div class="gl-phase-indicator">';
-    phaseNames.forEach((name, i) => {
-      const cls = i < currentPhase ? 'gl-phase done' : (i === currentPhase ? 'gl-phase current' : 'gl-phase');
-      const clickable = i <= currentPhase;
-      const onclick = clickable ? ` onclick="window._glossaryGoPhase(${i})"` : '';
-      piHTML += `<div class="${cls}"${onclick}>${i < currentPhase ? '✓ ' : ''}${name}</div>`;
-    });
-    piHTML += '</div>';
-
-    if(currentPhase === 0){
-      // Analogie
-      phaseHTML = `<div class="gl-analogy">💡 <strong>Analogie:</strong> ${t.analogy}</div>
-        <button class="gl-btn primary" onclick="window._glossaryNext()">Weiter zur Definition →</button>`;
-    } else if(currentPhase === 1){
-      // Definition
-      phaseHTML = `<div class="gl-definition">${t.definition}</div>
-        <div class="gl-hints" id="gl-hints">${t.hints.map((h,i) => `<div class="gl-hint" id="gl-hint-${i}">💡 ${h}</div>`).join('')}</div>
-        <button class="gl-hint-btn" id="gl-hint-btn" onclick="window._glossaryHint()">Hinweis anzeigen (${t.hints.length} verfügbar)</button>
-        <button class="gl-btn primary" onclick="window._glossaryNext()">Weiter zum Quiz →</button>`;
-    } else if(currentPhase === 2){
-      // Lückentext (fill)
-      const q = t.questions.fill;
-      phaseHTML = `<div class="gl-question">${q.q}</div>
-        <input class="gl-input" id="gl-fill-input" type="text" placeholder="Antwort eingeben..." autocomplete="off">
-        <button class="gl-btn primary" id="gl-fill-check" onclick="window._glossaryCheckFill()">Prüfen</button>
-        <div id="gl-fill-feedback"></div>`;
-    } else if(currentPhase === 3){
-      // Multiple Choice
-      const q = t.questions.choice;
-      const shuffled = q.options.map((o,i) => ({text:o, idx:i}));
-      // Shuffle
-      for(let i = shuffled.length-1; i > 0; i--){
-        const j = Math.floor(Math.random()*(i+1));
-        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-      }
-      phaseHTML = `<div class="gl-question">${q.q}</div>
-        <div class="gl-choices" id="gl-choices">${shuffled.map(o => `<button class="gl-choice" data-idx="${o.idx}">${o.text}</button>`).join('')}</div>
-        <div id="gl-choice-feedback"></div>`;
-    } else if(currentPhase === 4){
-      // Erklären
-      const q = t.questions.explain;
-      phaseHTML = `<div class="gl-question">${q.q}</div>
-        <textarea class="gl-input" id="gl-explain-input" placeholder="Deine Erklärung in eigenen Worten..."></textarea>
-        <button class="gl-btn primary" id="gl-explain-check" onclick="window._glossaryCheckExplain()">Auswerten</button>
-        <div id="gl-explain-feedback"></div>`;
-    }
-
-    panel.innerHTML = `<div class="gl-header"><h3>${t.icon} ${t.term}</h3><button class="gl-close" onclick="window._glossaryClose()">✕</button></div>
-      ${piHTML}<div class="gl-content">${phaseHTML}</div>`;
-
-    // Attach choice listeners
-    if(currentPhase === 3){
-      document.querySelectorAll('.gl-choice').forEach(btn => {
-        btn.addEventListener('click', function(){
-          window._glossaryCheckChoice(parseInt(this.getAttribute('data-idx')));
-        });
-      });
-    }
-
-    // Auto-focus inputs
-    if(currentPhase === 2){
-      const inp = document.getElementById('gl-fill-input');
-      if(inp){
-        inp.focus();
-        inp.addEventListener('keydown', e => { if(e.key === 'Enter') window._glossaryCheckFill(); });
-      }
-    }
-    if(currentPhase === 4){
-      const ta = document.getElementById('gl-explain-input');
-      if(ta) ta.focus();
-    }
-  }
-
-  // ── Phase Navigation ──
-  window._glossaryNext = function(){
-    currentPhase++;
-    hintIndex = 0;
-    if(currentPhase > 4){
-      // Completed all phases, level up
-      const lv = getLevel(currentTerm.id);
-      setLevel(currentTerm.id, lv + 1);
-      renderGrid();
-      closeLearn();
-      return;
-    }
-    renderPhase();
-  };
-
-  window._glossaryGoPhase = function(idx){
-    if(idx > currentPhase) return; // only allow navigating to current or earlier phases
-    currentPhase = idx;
-    hintIndex = 0;
-    renderPhase();
-  };
-
-  window._glossaryClose = function(){ closeLearn(); };
-
-  window._glossaryHint = function(){
-    if(!currentTerm) return;
-    const hint = document.getElementById('gl-hint-' + hintIndex);
-    if(hint){
-      hint.classList.add('visible');
-      hintIndex++;
-    }
-    const btn = document.getElementById('gl-hint-btn');
-    const remaining = currentTerm.hints.length - hintIndex;
-    if(remaining <= 0){
-      if(btn) btn.style.display = 'none';
-    } else {
-      if(btn) btn.textContent = 'Nächster Hinweis (' + remaining + ' übrig)';
-    }
-  };
-
-  // ── Fill Check ──
-  window._glossaryCheckFill = function(){
-    if(!currentTerm) return;
-    const input = document.getElementById('gl-fill-input');
-    const fb = document.getElementById('gl-fill-feedback');
-    const q = currentTerm.questions.fill;
-    const val = input.value.trim().replace(/\s+/g,' ');
-    if(!val) return;
-    const correct = val.toLowerCase() === q.answer.toLowerCase() ||
-                    val.replace(/[.\s]/g,'') === q.answer.replace(/[.\s]/g,'');
-    if(correct){
-      input.style.borderColor = 'var(--green)';
-      fb.innerHTML = `<div class="gl-feedback success">✓ Richtig! ${q.explanation}</div>`;
-      setTimeout(() => window._glossaryNext(), 1800);
-    } else {
-      input.style.borderColor = 'var(--red)';
-      fb.innerHTML = `<div class="gl-feedback error">✗ Leider falsch. Richtige Antwort: <strong>${q.answer}</strong>. ${q.explanation}</div>`;
-      // Reduce level on wrong
-      const lv = getLevel(currentTerm.id);
-      if(lv > 0) setLevel(currentTerm.id, lv - 1);
-      renderGrid();
-      setTimeout(() => window._glossaryNext(), 3000);
-    }
-  };
-
-  // ── Choice Check ──
-  window._glossaryCheckChoice = function(idx){
-    if(!currentTerm) return;
-    const q = currentTerm.questions.choice;
-    const fb = document.getElementById('gl-choice-feedback');
-    const btns = document.querySelectorAll('.gl-choice');
-    btns.forEach(b => {
-      b.style.pointerEvents = 'none';
-      const bIdx = parseInt(b.getAttribute('data-idx'));
-      if(bIdx === q.correct) b.classList.add('correct');
-      if(bIdx === idx && idx !== q.correct) b.classList.add('wrong');
-    });
-    if(idx === q.correct){
-      fb.innerHTML = `<div class="gl-feedback success">✓ Richtig! ${q.explanation}</div>`;
-      setTimeout(() => window._glossaryNext(), 1800);
-    } else {
-      fb.innerHTML = `<div class="gl-feedback error">✗ Falsch. ${q.explanation}</div>`;
-      const lv = getLevel(currentTerm.id);
-      if(lv > 0) setLevel(currentTerm.id, lv - 1);
-      renderGrid();
-      setTimeout(() => window._glossaryNext(), 3000);
-    }
-  };
-
-  // ── Explain Check ──
-  window._glossaryCheckExplain = function(){
-    if(!currentTerm) return;
-    const ta = document.getElementById('gl-explain-input');
-    const fb = document.getElementById('gl-explain-feedback');
-    const q = currentTerm.questions.explain;
-    const val = ta.value.trim().toLowerCase();
-    if(val.length < 10){
-      fb.innerHTML = `<div class="gl-feedback info">Bitte schreibe mindestens einen kurzen Satz.</div>`;
-      return;
-    }
-    const found = [];
-    const missing = [];
-    q.keywords.forEach(kw => {
-      if(val.includes(kw.toLowerCase())) found.push(kw);
-      else missing.push(kw);
-    });
-    const ratio = found.length / q.keywords.length;
-    let kwHTML = '<div style="margin-top:8px">';
-    found.forEach(k => kwHTML += `<span class="gl-keyword found">✓ ${k}</span>`);
-    missing.forEach(k => kwHTML += `<span class="gl-keyword missing">✗ ${k}</span>`);
-    kwHTML += '</div>';
-
-    if(ratio >= 0.6){
-      fb.innerHTML = `<div class="gl-feedback success">✓ Gut erklärt! ${found.length}/${q.keywords.length} Schlüsselbegriffe erkannt.${kwHTML}<br><br><em>Musterlösung: ${q.explanation}</em></div>`;
-      setTimeout(() => window._glossaryNext(), 3000);
-    } else {
-      fb.innerHTML = `<div class="gl-feedback error">✗ Noch nicht vollständig. Nur ${found.length}/${q.keywords.length} Schlüsselbegriffe erkannt.${kwHTML}<br><br><em>Musterlösung: ${q.explanation}</em></div>`;
-      const lv = getLevel(currentTerm.id);
-      if(lv > 0) setLevel(currentTerm.id, lv - 1);
-      renderGrid();
-      setTimeout(() => window._glossaryNext(), 4000);
-    }
-  };
-
-  // ── Tooltip System ──
-  const tooltip = document.createElement('div');
-  tooltip.className = 'glossary-tooltip';
-  tooltip.innerHTML = '<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">Klicken zum Lernen ↓</div>';
-  document.body.appendChild(tooltip);
-
-  function highlightTermsInPage(){
-    // Selectors for content areas where terms should be highlighted
-    const contentSelectors = [
-      '.formula-card .f-desc',
-      '.calc-output',
-      '.viz-sub',
-      '.summary-card p',
-      '.task-sub',
-      '.calc-card h3'
-    ];
-    // Terms to highlight (map display forms to term ids)
-    const termMap = [
-      {patterns:['Abtasttheorem'], id:'abtasttheorem'},
-      {patterns:['Abtastfrequenz','Abtastrate','Sampling Rate'], id:'abtastfrequenz'},
-      {patterns:['Nyquist-Rate','Nyquist-Datenrate'], id:'nyquist-rate'},
-      {patterns:['Shannon-Hartley','Shannon-Hartley-Theorem'], id:'shannon-hartley'},
-      {patterns:['Kanalkapazität'], id:'kanalkapazitaet'},
-      {patterns:['Signal-Rausch-Verhältnis','SNR','S/N'], id:'snr'},
-      {patterns:['Bandbreite'], id:'bandbreite'},
-      {patterns:['Quantisierung','Quantisierungsfehler'], id:'quantisierung'}
-    ];
-
-    contentSelectors.forEach(sel => {
-      document.querySelectorAll(sel).forEach(el => {
-        // Skip if already processed
-        if(el.getAttribute('data-glossary-done')) return;
-        el.setAttribute('data-glossary-done','1');
-        let html = el.innerHTML;
-        termMap.forEach(tm => {
-          tm.patterns.forEach(pat => {
-            // Only match if not already inside a tag
-            const regex = new RegExp('(?<![<\\w/])(' + pat.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?![\\w>])', 'g');
-            html = html.replace(regex, `<span class="glossary-term" data-glossary-id="${tm.id}">$1</span>`);
-          });
-        });
-        el.innerHTML = html;
-      });
-    });
-
-    // Attach tooltip events
-    document.querySelectorAll('.glossary-term').forEach(span => {
-      span.addEventListener('mouseenter', function(e){
-        const id = this.getAttribute('data-glossary-id');
-        const t = glossaryTerms.find(x => x.id === id);
-        if(!t) return;
-        tooltip.querySelector('.gt-name').textContent = t.icon + ' ' + t.term;
-        tooltip.querySelector('.gt-short').textContent = t.short;
-        tooltip.style.display = 'block';
-        positionTooltip(e);
-      });
-      span.addEventListener('mousemove', positionTooltip);
-      span.addEventListener('mouseleave', function(){
-        tooltip.style.display = 'none';
-      });
-      span.addEventListener('click', function(){
-        const id = this.getAttribute('data-glossary-id');
-        tooltip.style.display = 'none';
-        openLearn(id);
-        document.getElementById('glossary-section').scrollIntoView({behavior:'smooth', block:'start'});
-      });
-    });
-  }
-
-  function positionTooltip(e){
-    let x = e.clientX + 16;
-    let y = e.clientY + 16;
-    const tw = 260;
-    if(x + tw > window.innerWidth) x = e.clientX - tw - 10;
-    if(y + 120 > window.innerHeight) y = e.clientY - 120;
-    tooltip.style.left = x + 'px';
-    tooltip.style.top = y + 'px';
-  }
-
-  // ── Init ──
-  renderGrid();
-  // Delay highlight to ensure page is fully rendered
-  setTimeout(highlightTermsInPage, 500);
-})();
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.formula-card .f-desc, .calc-output, .section-title h2';
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

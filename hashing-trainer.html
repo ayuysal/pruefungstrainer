@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hashing & Kollisionsbehandlung Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -102,72 +103,6 @@ tr:last-child td{border-bottom:none}
 @keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:600px){.container{padding:24px 16px 60px}.ht-slot{min-width:55px;padding:8px 10px}}
 
-  .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
-  .glossary-term:hover{color:var(--cyan)}
-  .glossary-tooltip{position:fixed;z-index:100;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4);pointer-events:none;display:none}
-  .glossary-tooltip .gt-name{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;color:var(--cyan);margin-bottom:4px}
-  .glossary-tooltip .gt-short{font-size:11px;color:var(--muted);font-weight:300;line-height:1.5}
-  .glossary-tooltip .gt-link{font-size:10px;color:var(--accent);margin-top:6px;font-weight:500}
-  .glossary-section{margin-top:48px;animation:fadeUp .6s ease .2s both}
-  .glossary-progress-bar{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:center;gap:14px}
-  .glossary-progress-bar .gp-text{font-size:13px;font-weight:500;white-space:nowrap}
-  .glossary-progress-bar .gp-bar{flex:1;height:8px;background:rgba(255,255,255,.04);border-radius:4px;overflow:hidden}
-  .glossary-progress-bar .gp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--yellow),var(--cyan),var(--green));transition:width .5s ease}
-  .glossary-progress-bar .gp-count{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)}
-  .glossary-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:16px}
-  .glossary-card{background:var(--surface);border:2px solid var(--border);border-radius:10px;padding:14px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-  .glossary-card:hover{transform:translateY(-2px);border-color:rgba(108,99,255,.3)}
-  .glossary-card.active{border-color:var(--accent);background:rgba(108,99,255,.05)}
-  .glossary-card .gc-icon{font-size:18px;margin-bottom:6px}
-  .glossary-card .gc-term{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;margin-bottom:3px}
-  .glossary-card .gc-short{font-size:10px;color:var(--muted);font-weight:300;line-height:1.4}
-  .glossary-card .gc-level{position:absolute;top:8px;right:8px;width:8px;height:8px;border-radius:50%}
-  .glossary-card[data-level="0"]{border-left:3px solid var(--border)}
-  .glossary-card[data-level="0"] .gc-level{background:var(--muted)}
-  .glossary-card[data-level="1"]{border-left:3px solid var(--yellow)}
-  .glossary-card[data-level="1"] .gc-level{background:var(--yellow)}
-  .glossary-card[data-level="2"]{border-left:3px solid var(--cyan)}
-  .glossary-card[data-level="2"] .gc-level{background:var(--cyan)}
-  .glossary-card[data-level="3"]{border-left:3px solid var(--green)}
-  .glossary-card[data-level="3"] .gc-level{background:var(--green)}
-  .glossary-learn{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;margin-top:12px;display:none;animation:fadeUp .3s ease both}
-  .glossary-learn.visible{display:block}
-  .gl-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
-  .gl-header h3{font-size:17px;font-weight:700}
-  .gl-close{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:none;color:var(--muted);cursor:pointer;font-size:16px;display:grid;place-items:center;transition:all .2s}
-  .gl-close:hover{border-color:var(--red);color:var(--red)}
-  .gl-phase-indicator{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap}
-  .gl-phase{font-family:'JetBrains Mono',monospace;font-size:10px;padding:4px 12px;border-radius:6px;border:1px solid var(--border);color:var(--muted);transition:all .2s}
-  .gl-phase.current{border-color:var(--accent);color:var(--text);background:rgba(108,99,255,.1);cursor:pointer}
-  .gl-phase.done{border-color:var(--green);color:var(--green);background:rgba(81,207,102,.05);cursor:pointer}
-  .gl-content{min-height:120px}
-  .gl-analogy{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.15);border-radius:10px;padding:16px;margin-bottom:14px;font-size:13px;font-weight:300;color:var(--text);line-height:1.7}
-  .gl-definition{font-size:13px;color:var(--muted);font-weight:300;line-height:1.7;margin-bottom:14px}
-  .gl-hints{margin-bottom:16px}
-  .gl-hint{font-size:12px;color:var(--muted);font-weight:300;line-height:1.6;padding:8px 12px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:6px;display:none}
-  .gl-hint.visible{display:block;animation:fadeUp .2s ease}
-  .gl-hint-btn{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:none;border:1px solid rgba(108,99,255,.3);padding:6px 14px;border-radius:6px;cursor:pointer;transition:all .2s;margin-bottom:12px}
-  .gl-hint-btn:hover{background:rgba(108,99,255,.1)}
-  .gl-btn{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;padding:10px 24px;border-radius:10px;border:none;cursor:pointer;transition:all .25s}
-  .gl-btn:hover{transform:translateY(-1px)}
-  .gl-btn.primary{background:var(--accent);color:#fff}
-  .gl-btn.primary:hover{background:#7c74ff}
-  .gl-question{font-size:14px;font-weight:500;margin-bottom:14px;line-height:1.6}
-  .gl-input{font-family:'JetBrains Mono',monospace;font-size:14px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text);outline:none;width:100%;transition:border .2s;margin-bottom:12px}
-  .gl-input:focus{border-color:var(--accent)}
-  textarea.gl-input{min-height:80px;resize:vertical}
-  .gl-choices{display:grid;gap:6px;margin-bottom:14px}
-  .gl-choice{font-size:13px;padding:12px 16px;background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s;text-align:left;color:var(--text);font-weight:300;font-family:inherit}
-  .gl-choice:hover{border-color:rgba(108,99,255,.4);background:rgba(108,99,255,.05)}
-  .gl-choice.correct{border-color:var(--green);background:rgba(81,207,102,.08);color:var(--green)}
-  .gl-choice.wrong{border-color:var(--red);background:rgba(255,107,107,.08);color:var(--red)}
-  .gl-feedback{font-size:13px;padding:14px;border-radius:10px;margin-top:12px;line-height:1.6;font-weight:300;animation:fadeUp .2s ease}
-  .gl-feedback.success{background:rgba(81,207,102,.08);border:1px solid rgba(81,207,102,.2);color:var(--green)}
-  .gl-feedback.error{background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);color:var(--red)}
-  .gl-feedback.info{background:rgba(56,189,248,.08);border:1px solid rgba(56,189,248,.2);color:var(--cyan)}
-  .gl-keyword{font-family:'JetBrains Mono',monospace;font-size:11px;display:inline-block;padding:2px 8px;border-radius:4px;margin:2px}
-  .gl-keyword.found{background:rgba(81,207,102,.12);color:var(--green)}
-  .gl-keyword.missing{background:rgba(255,107,107,.12);color:var(--red)}
 </style>
 </head>
 <body>
@@ -519,403 +454,232 @@ function showSolution(){const s=document.getElementById('sol');s.textContent=cur
 function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
 newTask();
 
+
 /* ═══════════════════════════════════════════
    GLOSSAR – Begriffe-Lernsystem
    ═══════════════════════════════════════════ */
-const GLOSSARY_KEY='glossary-hashing';
-const glossaryTerms=[
+var TRAINER_ID = 'hashing-trainer';
+
+var GLOSSARY = [
   {
-    id:'hashfunktion',term:'Hashfunktion',icon:'🔢',short:'Bildet Schlüssel auf Tabellenindizes ab',
+    term:'Hashfunktion',
+    short:'Bildet Schlüssel auf Tabellenindizes ab',
     definition:'Eine Hashfunktion h(k) bildet einen Schlüssel k auf einen Index im Bereich 0 bis m−1 ab, wobei m die Tabellengröße ist. Das gebräuchlichste Verfahren ist das Divisionsrestverfahren: h(k) = k mod m. Eine gute Hashfunktion verteilt Schlüssel möglichst gleichmäßig über alle Positionen, um Kollisionen zu minimieren. Idealerweise wählt man m als Primzahl, die nicht nahe an einer Zweierpotenz liegt.',
-    analogy:'Stell dir vor, du verteilst Schüler auf Klassenzimmer anhand ihrer Matrikelnummer: Nummer mod Anzahl_Räume ergibt die Raumnummer. Eine gute Verteilung sorgt dafür, dass kein Raum überfüllt und keiner leer ist – genau wie eine gute Hashfunktion die Schlüssel gleichmäßig auf Tabellenplätze verteilt.',
+    analogy:'🔢 Stell dir vor, du verteilst Schüler auf Klassenzimmer anhand ihrer Matrikelnummer: Nummer mod Anzahl_Räume ergibt die Raumnummer. Eine gute Verteilung sorgt dafür, dass kein Raum überfüllt und keiner leer ist – genau wie eine gute Hashfunktion die Schlüssel gleichmäßig auf Tabellenplätze verteilt.',
     hints:['Das Divisionsrestverfahren berechnet h(k) = k mod m.','m sollte eine Primzahl sein, die nicht nahe an einer Zweierpotenz liegt.','Eine gute Hashfunktion minimiert Kollisionen durch gleichmäßige Verteilung.'],
     questions:[
-      {type:'fill',q:'Beim Divisionsrestverfahren berechnet sich der Hashwert durch h(k) = k ____ m.',a:'mod',hint:'Die mathematische Operation, die den Rest einer Division liefert'},
+      {type:'fill',q:'Beim Divisionsrestverfahren berechnet sich der Hashwert durch h(k) = k ____ m.',a:'mod',keywords:['mod']},
       {type:'choice',q:'Warum sollte die Tabellengröße m idealerweise eine Primzahl sein?',options:['Weil Primzahlen schneller zu berechnen sind','Weil dadurch Schlüssel gleichmäßiger verteilt werden','Weil Primzahlen weniger Speicher benötigen','Weil nur Primzahlen als Modulo-Operand funktionieren'],correct:1},
       {type:'explain',q:'Erkläre, was eine Hashfunktion macht und welche Eigenschaften sie haben sollte.',keywords:['Schlüssel','Index','Tabellengröße','gleichmäßig','Kollision','mod','Primzahl'],minKeywords:3}
-    ],difficulty:1
+    ]
   },
   {
-    id:'hashtabelle',term:'Hashtabelle',icon:'📋',short:'Datenstruktur mit direktem Zugriff über Hashwerte',
+    term:'Hashtabelle',
+    short:'Datenstruktur mit direktem Zugriff über Hashwerte',
     definition:'Eine Hashtabelle (auch Hashmap oder Streuwerttabelle) ist eine Datenstruktur, die Schlüssel-Wert-Paare speichert. Die Position eines Elements wird durch eine Hashfunktion bestimmt, was im Idealfall einen Zugriff in O(1) ermöglicht. Die Tabelle besteht aus m Slots (Buckets), in die Elemente eingefügt werden. Bei Kollisionen kommen Strategien wie Chaining oder Open Addressing zum Einsatz.',
-    analogy:'Wie ein Schließfachsystem am Bahnhof: Jedes Gepäckstück bekommt anhand seiner Nummer ein bestimmtes Fach zugewiesen. Du musst nicht alle Fächer durchsuchen – du rechnest einfach aus, in welchem Fach dein Gepäck liegt, und gehst direkt dorthin.',
+    analogy:'📋 Wie ein Schließfachsystem am Bahnhof: Jedes Gepäckstück bekommt anhand seiner Nummer ein bestimmtes Fach zugewiesen. Du musst nicht alle Fächer durchsuchen – du rechnest einfach aus, in welchem Fach dein Gepäck liegt, und gehst direkt dorthin.',
     hints:['Im Idealfall ermöglicht eine Hashtabelle Zugriff, Einfügen und Löschen in O(1).','Die Tabelle besteht aus m Slots, die durch die Hashfunktion adressiert werden.','Die Effizienz hängt stark von der Qualität der Hashfunktion und dem Belegungsfaktor ab.'],
     questions:[
-      {type:'fill',q:'Eine Hashtabelle ermöglicht im Idealfall einen Zugriff in O(____).',a:'1',hint:'Konstante Laufzeit – direkter Zugriff'},
+      {type:'fill',q:'Eine Hashtabelle ermöglicht im Idealfall einen Zugriff in O(____).',a:'1',keywords:['1']},
       {type:'choice',q:'Was bestimmt, in welchem Slot ein Element gespeichert wird?',options:['Die Reihenfolge des Einfügens','Ein Zufallsgenerator','Die Hashfunktion','Die Größe des Elements'],correct:2},
       {type:'explain',q:'Beschreibe den Aufbau einer Hashtabelle und warum sie effizienten Zugriff ermöglicht.',keywords:['Slots','Hashfunktion','Schlüssel','Index','O(1)','Kollision'],minKeywords:3}
-    ],difficulty:1
+    ]
   },
   {
-    id:'kollision',term:'Kollision',icon:'💥',short:'Zwei Schlüssel erhalten denselben Hashwert',
+    term:'Kollision',
+    short:'Zwei Schlüssel erhalten denselben Hashwert',
     definition:'Eine Kollision (Hash-Kollision) tritt auf, wenn zwei verschiedene Schlüssel k₁ und k₂ denselben Hashwert erhalten, also h(k₁) = h(k₂). Kollisionen sind bei endlicher Tabellengröße unvermeidlich (Schubfachprinzip), da der Schlüsselraum typischerweise viel größer ist als die Anzahl der Slots. Deshalb sind Kollisionsbehandlungsstrategien wie Chaining oder Open Addressing notwendig.',
-    analogy:'Stell dir vor, zwei Schüler berechnen mit der gleichen Formel dasselbe Klassenzimmer – beide stehen vor derselben Tür. Jetzt braucht man eine Regel: Entweder stellt man einen zweiten Stuhl rein (Chaining) oder schickt einen Schüler zum nächsten freien Raum (Open Addressing).',
+    analogy:'💥 Stell dir vor, zwei Schüler berechnen mit der gleichen Formel dasselbe Klassenzimmer – beide stehen vor derselben Tür. Jetzt braucht man eine Regel: Entweder stellt man einen zweiten Stuhl rein (Chaining) oder schickt einen Schüler zum nächsten freien Raum (Open Addressing).',
     hints:['Kollisionen sind bei endlicher Tabellengröße unvermeidlich (Schubfachprinzip / Pigeonhole Principle).','Je höher der Belegungsfaktor, desto wahrscheinlicher sind Kollisionen.','Gute Hashfunktionen minimieren Kollisionen, können sie aber nie vollständig verhindern.'],
     questions:[
-      {type:'fill',q:'Eine Kollision tritt auf, wenn zwei verschiedene Schlüssel denselben ____ erhalten.',a:'hashwert',hint:'Das Ergebnis der Hashfunktion'},
+      {type:'fill',q:'Eine Kollision tritt auf, wenn zwei verschiedene Schlüssel denselben ____ erhalten.',a:'hashwert',keywords:['hashwert']},
       {type:'choice',q:'Warum sind Kollisionen in Hashtabellen unvermeidlich?',options:['Weil Hashfunktionen fehlerhaft arbeiten','Weil der Schlüsselraum größer als die Tabelle ist (Schubfachprinzip)','Weil Computer nicht genau rechnen können','Weil die Tabelle zu groß ist'],correct:1},
       {type:'explain',q:'Erkläre, was eine Kollision ist und warum sie in Hashtabellen unvermeidlich ist.',keywords:['Schlüssel','Hashwert','gleich','Schubfachprinzip','Tabellengröße','unvermeidlich'],minKeywords:3}
-    ],difficulty:1
+    ]
   },
   {
-    id:'chaining',term:'Verkettung (Chaining)',icon:'🔗',short:'Kollisionsbehandlung durch verkettete Listen',
+    term:'Verkettung (Chaining)',
+    short:'Kollisionsbehandlung durch verkettete Listen',
     definition:'Beim Chaining (Verkettung) enthält jeder Slot der Hashtabelle einen Zeiger auf eine verkettete Liste. Kollidieren mehrere Schlüssel auf denselben Index, werden sie einfach an die entsprechende Liste angehängt. Vorteil: Die Tabelle kann beliebig viele Elemente aufnehmen (α > 1 möglich). Nachteil: Zusätzlicher Speicher für die Zeiger. Durchschnittliche Suchzeit: O(1 + α).',
-    analogy:'Wie Garderoben-Haken in einer Umkleidekabine: An jedem Haken (Slot) können mehrere Kleidungsstücke übereinander hängen. Wenn ein Haken voll ist, hängst du einfach noch etwas dran – du brauchst keinen neuen Haken zu suchen.',
+    analogy:'🔗 Wie Garderoben-Haken in einer Umkleidekabine: An jedem Haken (Slot) können mehrere Kleidungsstücke übereinander hängen. Wenn ein Haken voll ist, hängst du einfach noch etwas dran – du brauchst keinen neuen Haken zu suchen.',
     hints:['Beim Chaining enthält jeder Slot eine verkettete Liste.','Der Lastfaktor α kann beim Chaining auch größer als 1 sein.','Die durchschnittliche Suchzeit beträgt O(1 + α), wobei α = n/m ist.'],
     questions:[
-      {type:'fill',q:'Beim Chaining enthält jeder Slot einen Zeiger auf eine verkettete ____.',a:'liste',hint:'Eine dynamische Datenstruktur, die Elemente nacheinander verknüpft'},
+      {type:'fill',q:'Beim Chaining enthält jeder Slot einen Zeiger auf eine verkettete ____.',a:'liste',keywords:['liste']},
       {type:'choice',q:'Welchen Vorteil hat Chaining gegenüber Open Addressing?',options:['Es braucht weniger Speicher','Der Lastfaktor α kann auch größer als 1 sein','Es hat keine Kollisionen','Es ist immer schneller'],correct:1},
       {type:'explain',q:'Beschreibe, wie Chaining Kollisionen behandelt und welche Vor- und Nachteile es hat.',keywords:['verkettete Liste','Slot','Kollision','anhängen','Speicher','Lastfaktor'],minKeywords:3}
-    ],difficulty:2
+    ]
   },
   {
-    id:'openaddressing',term:'Offene Adressierung',icon:'🔍',short:'Kollisionsbehandlung durch Sondierungsfolgen',
+    term:'Offene Adressierung',
+    short:'Kollisionsbehandlung durch Sondierungsfolgen',
     definition:'Bei der offenen Adressierung (Open Addressing) werden alle Elemente direkt in der Hashtabelle gespeichert, ohne zusätzliche Listen. Bei einer Kollision wird nach einer Sondierungsfolge ein alternativer freier Slot gesucht. Verfahren: Lineares Sondieren, Quadratisches Sondieren, Double Hashing. Der Lastfaktor α muss kleiner 1 bleiben. Vorteil: Kein zusätzlicher Speicher für Zeiger. Nachteil: Clustering-Probleme und aufwendigeres Löschen.',
-    analogy:'Wie die Parkplatzsuche in einem Parkhaus: Dein berechneter Platz ist besetzt, also fährst du systematisch weiter (linear zum nächsten, quadratisch mit wachsendem Abstand) bis du einen freien Platz findest. Das gesamte Parkhaus ist deine Tabelle – es gibt keine Ausweich-Parkplätze außerhalb.',
+    analogy:'🔍 Wie die Parkplatzsuche in einem Parkhaus: Dein berechneter Platz ist besetzt, also fährst du systematisch weiter (linear zum nächsten, quadratisch mit wachsendem Abstand) bis du einen freien Platz findest. Das gesamte Parkhaus ist deine Tabelle – es gibt keine Ausweich-Parkplätze außerhalb.',
     hints:['Bei Open Addressing müssen alle Elemente in der Tabelle selbst Platz finden (α < 1).','Es gibt drei Hauptverfahren: Lineares, Quadratisches Sondieren und Double Hashing.','Das Löschen erfordert spezielle Markierungen (Tombstones), da einfaches Löschen Suchketten unterbricht.'],
     questions:[
-      {type:'fill',q:'Bei der offenen Adressierung muss der Lastfaktor α stets kleiner als ____ bleiben.',a:'1',hint:'Die Tabelle darf nie ganz voll sein'},
+      {type:'fill',q:'Bei der offenen Adressierung muss der Lastfaktor α stets kleiner als ____ bleiben.',a:'1',keywords:['1']},
       {type:'choice',q:'Was ist ein Problem der offenen Adressierung beim Löschen?',options:['Elemente können nicht gelöscht werden','Einfaches Löschen unterbricht Suchketten','Die Tabelle wird automatisch kleiner','Der Hashwert ändert sich nach dem Löschen'],correct:1},
       {type:'explain',q:'Erkläre das Prinzip der offenen Adressierung und nenne die Hauptverfahren.',keywords:['Sondierung','Slot','Kollision','linear','quadratisch','Double Hashing','Clustering'],minKeywords:3}
-    ],difficulty:2
+    ]
   },
   {
-    id:'linearsondieren',term:'Lineares Sondieren',icon:'➡️',short:'Sondierung mit konstanter Schrittweite 1',
+    term:'Lineares Sondieren',
+    short:'Sondierung mit konstanter Schrittweite 1',
     definition:'Beim linearen Sondieren (Linear Probing) wird bei einer Kollision der nächste Slot sequenziell geprüft: h(k,i) = (h(k) + i) mod m mit i = 0, 1, 2, ... Das Verfahren ist einfach zu implementieren und hat gute Cache-Lokalität, leidet aber unter Primary Clustering: Besetzte Bereiche wachsen zusammen und bilden lange Ketten, was die Suchzeit verschlechtert.',
-    analogy:'Wie das Suchen eines Sitzplatzes in einer langen Reihe im Kino: Dein Wunschplatz ist besetzt, also gehst du einfach einen Platz weiter, dann noch einen, bis du einen freien findest. Das Problem: Es bilden sich große besetzte Blöcke, und wer dort landen soll, muss noch weiter laufen.',
+    analogy:'➡️ Wie das Suchen eines Sitzplatzes in einer langen Reihe im Kino: Dein Wunschplatz ist besetzt, also gehst du einfach einen Platz weiter, dann noch einen, bis du einen freien findest. Das Problem: Es bilden sich große besetzte Blöcke, und wer dort landen soll, muss noch weiter laufen.',
     hints:['Die Sondierungsformel lautet h(k,i) = (h(k) + i) mod m.','Primary Clustering bedeutet, dass besetzte Bereiche zusammenwachsen.','Gute Cache-Lokalität, da aufeinanderfolgende Speicherplätze geprüft werden.'],
     questions:[
-      {type:'fill',q:'Beim linearen Sondieren entsteht das Problem des Primary ____.',a:'clustering',hint:'Besetzte Bereiche wachsen zu langen Ketten zusammen'},
+      {type:'fill',q:'Beim linearen Sondieren entsteht das Problem des Primary ____.',a:'clustering',keywords:['clustering']},
       {type:'choice',q:'Was ist die Sondierungsformel beim Linear Probing?',options:['h(k,i) = (h(k) + i²) mod m','h(k,i) = (h(k) + i) mod m','h(k,i) = (h(k) · i) mod m','h(k,i) = (h(k) + c·i) mod m'],correct:1},
       {type:'explain',q:'Erkläre lineares Sondieren und warum es zu Primary Clustering führt.',keywords:['Sondierung','sequenziell','Schrittweite','Primary Clustering','Ketten','besetzte Bereiche','Cache'],minKeywords:3}
-    ],difficulty:2
+    ]
   },
   {
-    id:'quadratischsondieren',term:'Quadratisches Sondieren',icon:'📐',short:'Sondierung mit quadratisch wachsenden Sprüngen',
+    term:'Quadratisches Sondieren',
+    short:'Sondierung mit quadratisch wachsenden Sprüngen',
     definition:'Beim quadratischen Sondieren (Quadratic Probing) wächst der Abstand zum ursprünglichen Hashwert quadratisch: h(k,i) = (h(k) + c₁·i + c₂·i²) mod m. Dies verringert Primary Clustering, da Elemente mit gleichem Hashwert unterschiedlich weit springen. Es kann aber zu Secondary Clustering kommen, wenn viele Schlüssel denselben initialen Hashwert haben. Außerdem werden möglicherweise nicht alle Slots besucht.',
-    analogy:'Statt im Kino Platz für Platz weiterzugehen, springst du immer weiter: erst 1, dann 4, dann 9 Plätze. So verteilst du dich besser, aber Leute mit demselben Startplatz springen trotzdem den gleichen Weg – das ist Secondary Clustering.',
+    analogy:'📐 Statt im Kino Platz für Platz weiterzugehen, springst du immer weiter: erst 1, dann 4, dann 9 Plätze. So verteilst du dich besser, aber Leute mit demselben Startplatz springen trotzdem den gleichen Weg – das ist Secondary Clustering.',
     hints:['Die Sondierungsformel lautet h(k,i) = (h(k) + c₁·i + c₂·i²) mod m.','Secondary Clustering entsteht, wenn Schlüssel mit gleichem h(k) dieselbe Sondierungsfolge durchlaufen.','Nicht alle Slots werden zwangsläufig besucht – abhängig von m und den Konstanten c₁, c₂.'],
     questions:[
-      {type:'fill',q:'Quadratisches Sondieren vermeidet Primary Clustering, kann aber zu ____ Clustering führen.',a:'secondary',hint:'Eine schwächere Form des Clustering, bei der gleiche Anfangshashwerte gleiche Folgen erzeugen'},
+      {type:'fill',q:'Quadratisches Sondieren vermeidet Primary Clustering, kann aber zu ____ Clustering führen.',a:'secondary',keywords:['secondary']},
       {type:'choice',q:'Wie wächst der Sondierungsabstand beim Quadratic Probing?',options:['Konstant (linear)','Quadratisch','Exponentiell','Logarithmisch'],correct:1},
       {type:'explain',q:'Vergleiche lineares und quadratisches Sondieren hinsichtlich Clustering.',keywords:['Primary Clustering','Secondary Clustering','Schrittweite','quadratisch','linear','Sondierungsfolge'],minKeywords:3}
-    ],difficulty:2
+    ]
   },
   {
-    id:'belegungsfaktor',term:'Belegungsfaktor (Load Factor)',icon:'📊',short:'Verhältnis von Elementen zu Tabellenslots',
+    term:'Belegungsfaktor (Load Factor)',
+    short:'Verhältnis von Elementen zu Tabellenslots',
     definition:'Der Belegungsfaktor (Lastfaktor, Load Factor) α = n/m gibt das Verhältnis der gespeicherten Elemente n zur Tabellengröße m an. Er ist ein Maß für die Auslastung der Hashtabelle. Bei Open Addressing muss α < 1 gelten, bei Chaining kann α auch größer als 1 sein. Steigt α zu hoch (typisch > 0,7 bei Open Addressing), wird ein Rehashing (Vergrößerung der Tabelle und Neueinfügen aller Elemente) nötig.',
-    analogy:'Wie die Auslastung eines Parkhauses: α = 0,5 heißt, das Parkhaus ist halb voll – Parkplatzsuche ist einfach. Bei α = 0,9 ist es fast voll und man braucht lange zum Suchen. Bei α = 1,0 ist kein Platz mehr frei. Ab einer gewissen Schwelle muss man ein größeres Parkhaus bauen (Rehashing).',
+    analogy:'📊 Wie die Auslastung eines Parkhauses: α = 0,5 heißt, das Parkhaus ist halb voll – Parkplatzsuche ist einfach. Bei α = 0,9 ist es fast voll und man braucht lange zum Suchen. Bei α = 1,0 ist kein Platz mehr frei. Ab einer gewissen Schwelle muss man ein größeres Parkhaus bauen (Rehashing).',
     hints:['α = n/m, wobei n die Anzahl der Elemente und m die Tabellengröße ist.','Bei Open Addressing sollte α idealerweise unter 0,7 bleiben.','Rehashing verdoppelt typischerweise die Tabellengröße und fügt alle Elemente neu ein.'],
     questions:[
-      {type:'fill',q:'Der Belegungsfaktor berechnet sich durch α = n / ____.',a:'m',hint:'Die Anzahl der verfügbaren Tabellenplätze'},
+      {type:'fill',q:'Der Belegungsfaktor berechnet sich durch α = n / ____.',a:'m',keywords:['m']},
       {type:'choice',q:'Was passiert typischerweise, wenn der Belegungsfaktor bei Open Addressing zu hoch wird?',options:['Die Tabelle wird automatisch kleiner','Ein Rehashing wird durchgeführt','Die ältesten Elemente werden gelöscht','Die Hashfunktion wird geändert'],correct:1},
       {type:'explain',q:'Erkläre den Belegungsfaktor und warum er für die Effizienz einer Hashtabelle entscheidend ist.',keywords:['Lastfaktor','n/m','Auslastung','Rehashing','Kollision','Open Addressing','Chaining'],minKeywords:3}
-    ],difficulty:1
+    ]
   }
 ];
 
-/* ── Term-Map für Highlighting ── */
-const glossaryTermMap={};
-glossaryTerms.forEach(t=>{
-  const variants=[t.term.toLowerCase()];
-  if(t.id==='hashfunktion')variants.push('hashfunktion','hashfunktionen','hash-funktion','divisionsrestverfahren','h(k)');
-  if(t.id==='hashtabelle')variants.push('hashtabelle','hash-tabelle','hashmap','hash-tabellen','hashtabellen','streuwerttabelle');
-  if(t.id==='kollision')variants.push('kollision','kollisionen','hash-kollision','hash-kollisionen','kollidieren');
-  if(t.id==='chaining')variants.push('chaining','verkettung','verkettete liste','verketteten listen');
-  if(t.id==='openaddressing')variants.push('open addressing','offene adressierung','offener adressierung','sondierung','sondierungsfolge');
-  if(t.id==='linearsondieren')variants.push('lineares sondieren','linear probing','linear probing','linearem sondieren');
-  if(t.id==='quadratischsondieren')variants.push('quadratisches sondieren','quadratic probing','quadratischem sondieren');
-  if(t.id==='belegungsfaktor')variants.push('belegungsfaktor','lastfaktor','load factor','alpha','rehashing');
-  variants.forEach(v=>{glossaryTermMap[v]=t.id;});
-});
-
-/* ── State ── */
-let glossaryState={};
-let glossaryActiveTerm=null;
-let glossaryPhase=0;
-let glossaryHintIdx=0;
-
-function glossaryLoadState(){
-  try{glossaryState=JSON.parse(localStorage.getItem(GLOSSARY_KEY))||{};}catch(e){glossaryState={};}
-}
-function glossarySaveState(){
-  localStorage.setItem(GLOSSARY_KEY,JSON.stringify(glossaryState));
-}
-function glossaryGetLevel(id){return(glossaryState[id]&&glossaryState[id].level)||0;}
-function glossarySetLevel(id,lvl){
-  if(!glossaryState[id])glossaryState[id]={level:0,phases:[]};
-  glossaryState[id].level=Math.min(3,Math.max(0,lvl));
-  glossarySaveState();glossaryUpdateProgress();glossaryRenderGrid();
-}
-function glossaryCompletePhase(id,phase){
-  if(!glossaryState[id])glossaryState[id]={level:0,phases:[]};
-  if(!glossaryState[id].phases.includes(phase))glossaryState[id].phases.push(phase);
-  const done=glossaryState[id].phases.length;
-  if(done>=4)glossaryState[id].level=3;
-  else if(done>=3)glossaryState[id].level=2;
-  else if(done>=1)glossaryState[id].level=1;
-  glossarySaveState();glossaryUpdateProgress();glossaryRenderGrid();
-}
-
-/* ── Progress ── */
-function glossaryUpdateProgress(){
-  const total=glossaryTerms.length;
-  const mastered=glossaryTerms.filter(t=>glossaryGetLevel(t.id)>=3).length;
-  const pct=Math.round(mastered/total*100);
-  document.getElementById('glossary-sub').textContent=`${mastered} / ${total} gemeistert`;
-  document.getElementById('glossary-fill').style.width=pct+'%';
-  document.getElementById('glossary-count').textContent=pct+'%';
-}
-
-/* ── Grid ── */
-function glossaryRenderGrid(){
-  const grid=document.getElementById('glossary-grid');grid.innerHTML='';
-  glossaryTerms.forEach(t=>{
-    const lvl=glossaryGetLevel(t.id);
-    const card=document.createElement('div');
-    card.className='glossary-card'+(glossaryActiveTerm===t.id?' active':'');
-    card.dataset.level=lvl;
-    card.innerHTML=`<div class="gc-icon">${t.icon}</div><div class="gc-term">${t.term}</div><div class="gc-short">${t.short}</div><div class="gc-level"></div>`;
-    card.onclick=()=>glossaryOpen(t.id);
-    grid.appendChild(card);
-  });
-}
-
-/* ── Open / Close ── */
-function glossaryOpen(id){
-  glossaryActiveTerm=id;glossaryPhase=0;glossaryHintIdx=0;
-  glossaryRenderGrid();
-  const panel=document.getElementById('glossary-learn');
-  panel.classList.add('visible');
-  const term=glossaryTerms.find(t=>t.id===id);
-  document.getElementById('gl-title').textContent=term.icon+' '+term.term;
-  glossaryRenderPhases();glossaryRenderContent();
-  panel.scrollIntoView({behavior:'smooth',block:'start'});
-}
-function glossaryClose(){
-  glossaryActiveTerm=null;glossaryPhase=0;
-  document.getElementById('glossary-learn').classList.remove('visible');
-  glossaryRenderGrid();
-}
-
-/* ── Phases ── */
-const PHASES=['Analogie','Definition','Lückentext','Multiple Choice','Erklärung'];
-function glossaryRenderPhases(){
-  const cont=document.getElementById('gl-phases');cont.innerHTML='';
-  const termState=glossaryState[glossaryActiveTerm]||{phases:[]};
-  PHASES.forEach((p,i)=>{
-    const el=document.createElement('span');
-    const isDone=termState.phases&&termState.phases.includes(i);
-    const isCurrent=i===glossaryPhase;
-    el.className='gl-phase'+(isCurrent?' current':'')+(isDone?' done':'');
-    el.textContent=p;
-    if(isDone||isCurrent){el.onclick=()=>glossaryGoToPhase(i);}
-    cont.appendChild(el);
-  });
-}
-function glossaryGoToPhase(phaseIdx){
-  if(phaseIdx===glossaryPhase)return;
-  const termState=glossaryState[glossaryActiveTerm]||{phases:[]};
-  const isDone=termState.phases&&termState.phases.includes(phaseIdx);
-  if(!isDone&&phaseIdx!==glossaryPhase)return;
-  glossaryPhase=phaseIdx;
-  glossaryHintIdx=0;
-  glossaryRenderPhases();glossaryRenderContent();
-}
-
-/* ── Content Rendering ── */
-function glossaryRenderContent(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const cont=document.getElementById('gl-content');cont.innerHTML='';
-  glossaryHintIdx=0;
-
-  if(glossaryPhase===0){
-    cont.innerHTML=`<div class="gl-analogy">\u{1F4A1} ${term.analogy}</div><button class="gl-btn primary" onclick="glossaryNext()">Verstanden \u2192 weiter</button>`;
-  }else if(glossaryPhase===1){
-    let hintsHTML='<div class="gl-hints" id="gl-hints">';
-    term.hints.forEach((h,i)=>{hintsHTML+=`<div class="gl-hint" id="gl-hint-${i}">\u{1F4A1} ${h}</div>`;});
-    hintsHTML+='</div>';
-    cont.innerHTML=`<div class="gl-definition">${term.definition}</div>${hintsHTML}<button class="gl-hint-btn" onclick="glossaryShowHint()">\u{1F4A1} Hinweis anzeigen</button><br><button class="gl-btn primary" onclick="glossaryNext()">Verstanden \u2192 weiter</button>`;
-  }else if(glossaryPhase===2){
-    glossaryRenderFill(term);
-  }else if(glossaryPhase===3){
-    glossaryRenderChoice(term);
-  }else if(glossaryPhase===4){
-    glossaryRenderExplain(term);
+var GP_STORIES = {
+  'Hashfunktion': {
+    route: 'Durch eine Poststelle mit automatischer Sortieranlage',
+    scenes: [
+      {kw:'h(k) = k mod m', img:'Am Eingang der Poststelle steht eine riesige Sortiermaschine mit der Aufschrift "h(k) = k mod m". Pakete fliegen hinein und werden auf Fächer verteilt.', text:'Die Standard-Hashfunktion ist das Divisionsrestverfahren: h(k) = k mod m.'},
+      {kw:'Schlüssel auf Index', img:'Jedes Paket hat eine Nummer (den Schlüssel k). Die Maschine berechnet den Rest bei Division durch m und spuckt eine Fachnummer (Index) aus.', text:'Eine Hashfunktion bildet einen Schlüssel auf einen Tabellenindex im Bereich 0 bis m−1 ab.'},
+      {kw:'gleichmäßige Verteilung', img:'Ein Kontrolleur prüft die Fächer: Alle sind etwa gleich voll. "Perfekte Verteilung!", ruft er zufrieden. Kein Fach ist überfüllt.', text:'Eine gute Hashfunktion verteilt Schlüssel gleichmäßig, um Kollisionen zu minimieren.'},
+      {kw:'Primzahl für m', img:'An der Wand hängt ein Schild: "m MUSS eine Primzahl sein! Keine Zweierpotenzen!" Daneben eine Tabelle mit empfohlenen Werten: 7, 11, 13, 17, 23...', text:'Die Tabellengröße m sollte eine Primzahl sein, die nicht nahe an einer Zweierpotenz liegt.'}
+    ]
+  },
+  'Hashtabelle': {
+    route: 'Durch ein futuristisches Schließfachsystem am Hauptbahnhof',
+    scenes: [
+      {kw:'Schlüssel-Wert-Paare', img:'Hunderte Schließfächer in einer langen Reihe, jedes mit einer Nummer. Reisende geben ihr Gepäck (Wert) mit ihrer Ticketnummer (Schlüssel) ab.', text:'Eine Hashtabelle speichert Schlüssel-Wert-Paare in m Slots (Buckets).'},
+      {kw:'O(1) Zugriff', img:'Ein Reisender tippt seine Nummer ein – PING! Das richtige Fach öffnet sich sofort, ohne Suche. "Zugriff in O(1)!" steht auf dem Display.', text:'Im Idealfall ermöglicht eine Hashtabelle Zugriff, Einfügen und Löschen in O(1).'},
+      {kw:'Hashfunktion bestimmt Position', img:'Über dem Eingabefeld rattert eine Rechenmaschine: Ticketnummer mod Anzahl_Fächer = Fachnummer. So wird die Position berechnet.', text:'Die Hashfunktion bestimmt, in welchem Slot ein Element gespeichert wird.'},
+      {kw:'Kollisionsbehandlung', img:'Zwei Reisende stehen vor demselben Fach – Kollision! Ein Schild bietet Lösungen: "Kette anhängen oder nächstes freies Fach suchen."', text:'Bei Kollisionen kommen Chaining oder Open Addressing zum Einsatz.'}
+    ]
+  },
+  'Kollision': {
+    route: 'Durch ein chaotisches Klassenzimmer-Zuweisungsbüro',
+    scenes: [
+      {kw:'gleicher Hashwert', img:'Zwei Schüler stehen verwirrt vor derselben Tür: "Raum 3!" sagen beide. Ihre Matrikelnummern ergeben denselben Hash – h(k₁) = h(k₂).', text:'Eine Kollision tritt auf, wenn h(k₁) = h(k₂) für verschiedene Schlüssel k₁ und k₂.'},
+      {kw:'Schubfachprinzip', img:'Eine riesige Schublade mit 7 Fächern und 100 Briefe. "Unmöglich, alle in eigene Fächer zu stecken!", ruft der Postbote. Das Schubfachprinzip in Aktion.', text:'Kollisionen sind unvermeidlich (Schubfachprinzip): mehr Schlüssel als Slots.'},
+      {kw:'Belegungsfaktor steigt', img:'Ein Thermometer zeigt den Belegungsfaktor α: Je höher er steigt, desto roter wird die Anzeige und desto mehr Kollisionen blitzen auf dem Monitor auf.', text:'Je höher der Belegungsfaktor, desto wahrscheinlicher sind Kollisionen.'},
+      {kw:'Behandlungsstrategien', img:'Am Ausgang zwei Türen: Links "Chaining – Ketten bilden", rechts "Open Addressing – weitersuchen". Beide führen zur Lösung des Kollisionsproblems.', text:'Kollisionsbehandlung erfolgt durch Chaining oder Open Addressing.'}
+    ]
+  },
+  'Verkettung (Chaining)': {
+    route: 'Durch eine Garderobe mit endlos langen Hakenketten',
+    scenes: [
+      {kw:'verkettete Liste pro Slot', img:'An jedem Garderoben-Haken hängt eine Kette. Jedes neue Kleidungsstück wird einfach ans Ende der Kette gehängt – eine verkettete Liste pro Slot.', text:'Beim Chaining enthält jeder Slot eine verkettete Liste für kollidierte Elemente.'},
+      {kw:'α > 1 möglich', img:'Die Garderobe ist übervoll – an manchen Haken hängen 5 Mäntel! Der Lastfaktor α steht auf 1,5. "Kein Problem beim Chaining!", sagt der Garderobier.', text:'Vorteil: Der Lastfaktor α kann auch größer als 1 sein.'},
+      {kw:'O(1 + α) Suchzeit', img:'Ein Gast sucht seinen Mantel: Er geht zum richtigen Haken (O(1)) und durchsucht dann die Kette (α Elemente im Schnitt). Formel an der Wand: O(1 + α).', text:'Die durchschnittliche Suchzeit beträgt O(1 + α).'},
+      {kw:'extra Speicher für Zeiger', img:'Neben den Mänteln hängen überall kleine Schilder mit Pfeilen – die Zeiger der verketteten Liste. "Zusätzlicher Speicher!", beschwert sich der Hausmeister.', text:'Nachteil: Zusätzlicher Speicher für die Zeiger der Listen.'}
+    ]
+  },
+  'Offene Adressierung': {
+    route: 'Durch ein Parkhaus mit strengen Regeln',
+    scenes: [
+      {kw:'alle Elemente in der Tabelle', img:'Am Eingang des Parkhauses ein Schild: "ALLE Autos MÜSSEN im Haus parken! Keine externen Parkplätze!" Jeder Platz ist direkt in der Tabelle.', text:'Bei Open Addressing werden alle Elemente direkt in der Hashtabelle gespeichert.'},
+      {kw:'α < 1', img:'Ein Ampelsystem zeigt den Füllstand: Grün bei α=0,5, Gelb bei α=0,7, Rot bei α=0,9. "α muss IMMER unter 1 bleiben!", warnt ein Schild.', text:'Der Lastfaktor α muss bei Open Addressing strikt kleiner 1 bleiben.'},
+      {kw:'Sondierungsfolge', img:'Ein Auto findet seinen berechneten Platz besetzt. Es folgt einer vorgegebenen Route: linear, quadratisch oder per Double Hashing zum nächsten freien Platz.', text:'Bei Kollision wird nach einer Sondierungsfolge ein alternativer freier Slot gesucht.'},
+      {kw:'Tombstones beim Löschen', img:'Ein verlassener Parkplatz hat einen Grabstein: "GELÖSCHT – aber bitte weitersuchen!" Ohne diesen Tombstone würden Suchketten unterbrochen.', text:'Löschen erfordert Tombstone-Markierungen, um Suchketten nicht zu unterbrechen.'},
+      {kw:'Clustering', img:'Im Parkhaus haben sich alle Autos in einer Ecke zusammengeballt – ein riesiger Cluster. Neue Autos müssen immer weiter fahren, um einen freien Platz zu finden.', text:'Problem: Clustering – besetzte Bereiche wachsen zusammen und verschlechtern die Performance.'}
+    ]
+  },
+  'Lineares Sondieren': {
+    route: 'Durch eine endlose Kinoreihe mit strenger Sitzplatzsuche',
+    scenes: [
+      {kw:'h(k,i) = (h(k) + i) mod m', img:'Über der Kinoreihe leuchtet die Formel: h(k,i) = (h(k) + i) mod m. Jeder Schritt geht genau EINEN Platz weiter: i = 0, 1, 2, 3...', text:'Lineares Sondieren prüft sequenziell: h(k,i) = (h(k) + i) mod m.'},
+      {kw:'Schrittweite 1', img:'Ein Kinobesucher geht Platz für Platz weiter – immer genau einen Sitz. Konstante Schrittweite von 1, kein Überspringen.', text:'Die Schrittweite ist konstant 1 – man prüft immer den nächsten Nachbarn.'},
+      {kw:'Primary Clustering', img:'Ein riesiger Block besetzter Sitze von Platz 3 bis 15. Jeder neue Besucher, der in diesen Bereich fällt, muss bis Platz 16 laufen. Der Cluster wächst immer weiter!', text:'Primary Clustering: Besetzte Bereiche wachsen zusammen und bilden lange Ketten.'},
+      {kw:'Cache-Lokalität', img:'Ein Schild am Kino: "Vorteil: Alle Plätze nebeneinander! Perfekt für den CPU-Cache!" Sequenzielle Speicherzugriffe sind schnell.', text:'Vorteil: Gute Cache-Lokalität, da aufeinanderfolgende Speicherplätze geprüft werden.'}
+    ]
+  },
+  'Quadratisches Sondieren': {
+    route: 'Durch einen Sportplatz mit immer größeren Sprüngen',
+    scenes: [
+      {kw:'quadratisch wachsende Sprünge', img:'Ein Sportler springt: erst 1 Feld, dann 4, dann 9, dann 16. Die Sprünge wachsen quadratisch. An der Anzeigetafel: c₁·i + c₂·i².', text:'Quadratisches Sondieren springt quadratisch weiter: h(k,i) = (h(k) + c₁·i + c₂·i²) mod m.'},
+      {kw:'kein Primary Clustering', img:'Im Gegensatz zur Kinoreihe verteilen sich die Sportler weit über das Feld. "Primary Clustering vermieden!", steht auf der Ergebnistafel.', text:'Vorteil: Primary Clustering wird vermieden, da die Sprünge immer größer werden.'},
+      {kw:'Secondary Clustering', img:'Aber zwei Sportler mit demselben Startpunkt springen exakt denselben Weg! Sie folgen einander wie Schatten – das ist Secondary Clustering.', text:'Nachteil: Secondary Clustering, wenn Schlüssel denselben initialen Hashwert haben.'},
+      {kw:'nicht alle Slots besucht', img:'Einige Felder bleiben unbesucht – die quadratischen Sprünge überspringen sie systematisch. Ein Schild warnt: "Nicht alle m Slots erreichbar!"', text:'Nicht alle Slots werden zwangsläufig besucht – abhängig von m und c₁, c₂.'}
+    ]
+  },
+  'Belegungsfaktor (Load Factor)': {
+    route: 'Durch die Kontrollzentrale eines intelligenten Parkhauses',
+    scenes: [
+      {kw:'α = n/m', img:'Ein riesiges Dashboard zeigt: α = n/m. n = Anzahl geparkter Autos, m = Gesamtplätze. Aktuell: 7/10 = 0,7. Die Formel blinkt golden.', text:'Der Belegungsfaktor α = n/m misst die Auslastung der Hashtabelle.'},
+      {kw:'α < 0,7 ideal', img:'Eine Ampel am Dashboard: Grün bis α=0,5, Gelb ab α=0,7, Rot ab α=0,9. "Idealerweise unter 0,7 bei Open Addressing!" steht auf dem Monitor.', text:'Bei Open Addressing sollte α idealerweise unter 0,7 bleiben.'},
+      {kw:'Chaining toleriert α > 1', img:'Nebenan ein zweites Parkhaus mit Ketten-System: Hier zeigt das Display α=1,3 und alles läuft noch. "Chaining kann auch α > 1!", jubelt der Betreiber.', text:'Bei Chaining kann α auch größer als 1 sein – die Listen wachsen einfach.'},
+      {kw:'Rehashing', img:'Alarm! α hat 0,8 erreicht! Die Kontrollzentrale startet "REHASHING": Ein doppelt so großes Parkhaus wird gebaut und alle Autos werden umgeparkt.', text:'Bei zu hohem α wird Rehashing nötig: Tabelle vergrößern und alle Elemente neu einfügen.'},
+      {kw:'Performance-Einfluss', img:'Zwei Graphen an der Wand: Bei α=0,3 ist die Suchzeit fast O(1). Bei α=0,95 schießt die Kurve steil nach oben – fast O(n)!', text:'Der Belegungsfaktor bestimmt direkt die Effizienz: je höher α, desto mehr Kollisionen.'}
+    ]
   }
-  glossaryRenderPhases();
-}
+};
 
-function glossaryShowHint(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  if(glossaryHintIdx<term.hints.length){
-    document.getElementById('gl-hint-'+glossaryHintIdx).classList.add('visible');
-    glossaryHintIdx++;
-  }
-}
+var GLOSSARY_TERM_MAP = {
+  'hashfunktion': 'Hashfunktion',
+  'hashfunktionen': 'Hashfunktion',
+  'hash-funktion': 'Hashfunktion',
+  'divisionsrestverfahren': 'Hashfunktion',
+  'h(k)': 'Hashfunktion',
+  'hashtabelle': 'Hashtabelle',
+  'hash-tabelle': 'Hashtabelle',
+  'hashmap': 'Hashtabelle',
+  'hash-tabellen': 'Hashtabelle',
+  'hashtabellen': 'Hashtabelle',
+  'streuwerttabelle': 'Hashtabelle',
+  'kollision': 'Kollision',
+  'kollisionen': 'Kollision',
+  'hash-kollision': 'Kollision',
+  'hash-kollisionen': 'Kollision',
+  'kollidieren': 'Kollision',
+  'chaining': 'Verkettung (Chaining)',
+  'verkettung': 'Verkettung (Chaining)',
+  'verkettung (chaining)': 'Verkettung (Chaining)',
+  'verkettete liste': 'Verkettung (Chaining)',
+  'verketteten listen': 'Verkettung (Chaining)',
+  'open addressing': 'Offene Adressierung',
+  'offene adressierung': 'Offene Adressierung',
+  'offener adressierung': 'Offene Adressierung',
+  'sondierung': 'Offene Adressierung',
+  'sondierungsfolge': 'Offene Adressierung',
+  'lineares sondieren': 'Lineares Sondieren',
+  'linear probing': 'Lineares Sondieren',
+  'linearem sondieren': 'Lineares Sondieren',
+  'quadratisches sondieren': 'Quadratisches Sondieren',
+  'quadratic probing': 'Quadratisches Sondieren',
+  'quadratischem sondieren': 'Quadratisches Sondieren',
+  'belegungsfaktor': 'Belegungsfaktor (Load Factor)',
+  'belegungsfaktor (load factor)': 'Belegungsfaktor (Load Factor)',
+  'lastfaktor': 'Belegungsfaktor (Load Factor)',
+  'load factor': 'Belegungsfaktor (Load Factor)',
+  'rehashing': 'Belegungsfaktor (Load Factor)'
+};
 
-function glossaryNext(){
-  glossaryCompletePhase(glossaryActiveTerm,glossaryPhase);
-  glossaryPhase++;
-  if(glossaryPhase>=PHASES.length){
-    glossaryClose();return;
-  }
-  glossaryRenderContent();
-}
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card h3, .card ul, .summary-card p, .summary-card h4, td';
 
-/* ── Fill (Lückentext) ── */
-function glossaryRenderFill(term){
-  const q=term.questions.find(x=>x.type==='fill');
-  const cont=document.getElementById('gl-content');
-  cont.innerHTML=`<div class="gl-question">${q.q}</div><input class="gl-input" id="gl-fill-input" placeholder="Antwort eingeben\u2026" autocomplete="off"><div style="display:flex;gap:8px;align-items:center"><button class="gl-btn primary" onclick="glossaryCheckFill()">Pr\u00fcfen</button><button class="gl-hint-btn" onclick="glossaryFillHint()">\u{1F4A1} Hinweis</button></div><div id="gl-fill-feedback"></div>`;
-  document.getElementById('gl-fill-input').addEventListener('keydown',e=>{if(e.key==='Enter')glossaryCheckFill();});
-}
-function glossaryFillHint(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const q=term.questions.find(x=>x.type==='fill');
-  document.getElementById('gl-fill-feedback').innerHTML=`<div class="gl-feedback info">\u{1F4A1} ${q.hint}</div>`;
-}
-function glossaryCheckFill(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const q=term.questions.find(x=>x.type==='fill');
-  const input=document.getElementById('gl-fill-input').value.trim().toLowerCase();
-  const correct=q.a.toLowerCase();
-  const fb=document.getElementById('gl-fill-feedback');
-  if(input===correct){
-    fb.innerHTML=`<div class="gl-feedback success">\u2713 Richtig! Die Antwort ist "${q.a}".</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Weiter \u2192</button>`;
-  }else{
-    fb.innerHTML=`<div class="gl-feedback error">\u2717 Leider falsch. Versuche es nochmal oder schau dir den Hinweis an.</div>`;
-  }
-}
-
-/* ── Choice (Multiple Choice) ── */
-function glossaryRenderChoice(term){
-  const q=term.questions.find(x=>x.type==='choice');
-  const cont=document.getElementById('gl-content');
-  let choicesHTML='<div class="gl-choices">';
-  q.options.forEach((opt,i)=>{
-    choicesHTML+=`<button class="gl-choice" data-idx="${i}" onclick="glossaryCheckChoice(this,${i},${q.correct})">${opt}</button>`;
-  });
-  choicesHTML+='</div>';
-  cont.innerHTML=`<div class="gl-question">${q.q}</div>${choicesHTML}<div id="gl-choice-feedback"></div>`;
-}
-function glossaryCheckChoice(btn,idx,correct){
-  const buttons=document.querySelectorAll('.gl-choice');
-  const already=document.querySelector('.gl-choice.correct,.gl-choice.wrong');
-  if(already)return;
-  buttons.forEach((b,i)=>{
-    if(i===correct)b.classList.add('correct');
-    else if(i===idx)b.classList.add('wrong');
-    b.style.pointerEvents='none';
-  });
-  const fb=document.getElementById('gl-choice-feedback');
-  if(idx===correct){
-    fb.innerHTML=`<div class="gl-feedback success">\u2713 Richtig!</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Weiter \u2192</button>`;
-  }else{
-    fb.innerHTML=`<div class="gl-feedback error">\u2717 Falsch. Die richtige Antwort ist markiert.</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Trotzdem weiter \u2192</button>`;
-  }
-}
-
-/* ── Explain (Erklärung) ── */
-function glossaryRenderExplain(term){
-  const q=term.questions.find(x=>x.type==='explain');
-  const cont=document.getElementById('gl-content');
-  cont.innerHTML=`<div class="gl-question">${q.q}</div><textarea class="gl-input" id="gl-explain-input" placeholder="Erkl\u00e4re in eigenen Worten\u2026"></textarea><button class="gl-btn primary" onclick="glossaryCheckExplain()">Pr\u00fcfen</button><div id="gl-explain-feedback"></div>`;
-}
-function glossaryCheckExplain(){
-  const term=glossaryTerms.find(t=>t.id===glossaryActiveTerm);
-  const q=term.questions.find(x=>x.type==='explain');
-  const input=document.getElementById('gl-explain-input').value.trim().toLowerCase();
-  const fb=document.getElementById('gl-explain-feedback');
-  if(input.length<10){
-    fb.innerHTML=`<div class="gl-feedback error">Bitte schreibe eine ausf\u00fchrlichere Erkl\u00e4rung (mindestens ein paar W\u00f6rter).</div>`;
-    return;
-  }
-  const found=[];const missing=[];
-  q.keywords.forEach(kw=>{
-    if(input.includes(kw.toLowerCase()))found.push(kw);else missing.push(kw);
-  });
-  let kwHTML='<div style="margin-top:8px">';
-  found.forEach(k=>{kwHTML+=`<span class="gl-keyword found">\u2713 ${k}</span>`;});
-  missing.forEach(k=>{kwHTML+=`<span class="gl-keyword missing">\u2717 ${k}</span>`;});
-  kwHTML+='</div>';
-  if(found.length>=q.minKeywords){
-    fb.innerHTML=`<div class="gl-feedback success">\u2713 Gute Erkl\u00e4rung! ${found.length}/${q.keywords.length} Schl\u00fcsselbegriffe erkannt.${kwHTML}</div><button class="gl-btn primary" style="margin-top:10px" onclick="glossaryNext()">Abschlie\u00dfen \u2713</button>`;
-  }else{
-    fb.innerHTML=`<div class="gl-feedback error">Versuche, mehr Fachbegriffe einzubauen (${found.length}/${q.minKeywords} ben\u00f6tigt).${kwHTML}</div>`;
-  }
-}
-
-/* ── Tooltip ── */
-let glossaryTooltipEl=null;
-function glossaryInitTooltip(){
-  glossaryTooltipEl=document.createElement('div');
-  glossaryTooltipEl.className='glossary-tooltip';
-  glossaryTooltipEl.innerHTML='<div class="gt-name"></div><div class="gt-short"></div><div class="gt-link">\u25B8 Klicken zum Lernen</div>';
-  document.body.appendChild(glossaryTooltipEl);
-}
-function glossaryShowTooltip(e,termId){
-  const term=glossaryTerms.find(t=>t.id===termId);if(!term)return;
-  glossaryTooltipEl.querySelector('.gt-name').textContent=term.term;
-  glossaryTooltipEl.querySelector('.gt-short').textContent=term.short;
-  glossaryTooltipEl.style.display='block';
-  const rect=e.target.getBoundingClientRect();
-  let left=rect.left;let top=rect.bottom+8;
-  if(left+270>window.innerWidth)left=window.innerWidth-280;
-  if(top+100>window.innerHeight)top=rect.top-110;
-  glossaryTooltipEl.style.left=left+'px';glossaryTooltipEl.style.top=top+'px';
-}
-function glossaryHideTooltip(){if(glossaryTooltipEl)glossaryTooltipEl.style.display='none';}
-
-/* ── Highlighting ── */
-function glossaryHighlightTerms(){
-  const selectors='.card p, .card h3, .card ul, .summary-card p, .summary-card h4, td';
-  const elements=document.querySelectorAll(selectors);
-  elements.forEach(el=>{
-    if(el.querySelector('.glossary-term'))return;
-    if(el.closest('.glossary-section'))return;
-    const walker=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null,false);
-    const textNodes=[];
-    while(walker.nextNode())textNodes.push(walker.currentNode);
-    textNodes.forEach(node=>{
-      const text=node.textContent;
-      const sortedKeys=Object.keys(glossaryTermMap).sort((a,b)=>b.length-a.length);
-      const regex=new RegExp('\\b('+sortedKeys.map(k=>k.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')+')\\b','gi');
-      if(!regex.test(text))return;
-      const frag=document.createDocumentFragment();
-      let last=0;
-      text.replace(regex,(match,_,offset)=>{
-        if(offset>last)frag.appendChild(document.createTextNode(text.slice(last,offset)));
-        const termId=glossaryTermMap[match.toLowerCase()];
-        if(termId){
-          const span=document.createElement('span');
-          span.className='glossary-term';span.textContent=match;
-          span.dataset.termId=termId;
-          span.addEventListener('mouseenter',e=>glossaryShowTooltip(e,termId));
-          span.addEventListener('mouseleave',glossaryHideTooltip);
-          span.addEventListener('click',()=>{glossaryHideTooltip();glossaryOpen(termId);});
-          frag.appendChild(span);
-        }else{
-          frag.appendChild(document.createTextNode(match));
-        }
-        last=offset+match.length;
-      });
-      if(last<text.length)frag.appendChild(document.createTextNode(text.slice(last)));
-      if(frag.childNodes.length>0)node.parentNode.replaceChild(frag,node);
-    });
-  });
-}
-
-/* ── Init ── */
-function glossaryInit(){
-  glossaryLoadState();
-  glossaryInitTooltip();
-  glossaryRenderGrid();
-  glossaryUpdateProgress();
-  setTimeout(glossaryHighlightTerms,200);
-}
-glossaryInit();
 </script>
+<script src="shared/glossary.js"></script>
 <script src="nav-companion.js"></script>
 </body>
 </html>

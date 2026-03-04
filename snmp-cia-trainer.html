@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SNMP, CIA-Triade & Netzwerkmanagement Trainer</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Outfit:wght@300;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/glossary.css">
 <style>
 :root{--bg:#0c0e13;--surface:#14171e;--border:#1e2230;--text:#e2e4ea;--muted:#6b7084;--accent:#6c63ff;--green:#51cf66;--red:#ff6b6b;--yellow:#fbbf24;--cyan:#38bdf8;--pink:#f472b6;--purple:#a78bfa;--orange:#fb923c}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -227,6 +228,24 @@ tr:last-child td{border-bottom:none}
 <div class="summary-card"><h4>🎯 Prüfungstipp</h4><p>SNMPv3 ist die einzige Version mit Verschlüsselung und Authentifizierung! TRAP geht vom Agent zum Manager (ohne Anfrage). GET-BULK gibt es erst ab SNMPv2c.</p></div>
 <div class="summary-card"><h4>🧩 FCAPS merken</h4><p>Eselsbrücke: <strong>F</strong>ünf <strong>C</strong>levere <strong>A</strong>dministratoren <strong>P</strong>flegen <strong>S</strong>icherheit. Fault, Configuration, Accounting, Performance, Security – das ISO-Modell für Netzwerkmanagement.</p></div>
 </div>
+<!-- ═══ GLOSSAR-LERNSYSTEM ═══ -->
+<div class="glossary-section" id="glossary-section">
+  <div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--green))">&#128214;</div><h2>Glossar-Trainer</h2></div>
+  <div class="glossary-progress-bar">
+    <div class="gp-text">Fortschritt</div>
+    <div class="gp-bar"><div class="gp-fill" id="glossary-fill" style="width:0%"></div></div>
+    <div class="gp-count" id="glossary-count">0 / 0 gemeistert</div>
+  </div>
+  <div class="glossary-grid" id="glossary-grid"></div>
+  <div class="glossary-learn" id="glossary-learn">
+    <div class="gl-header">
+      <h3 id="gl-title"></h3>
+      <button class="gl-close" onclick="glossaryClose()">&#x2715;</button>
+    </div>
+    <div class="gl-phase-indicator" id="gl-phases"></div>
+    <div class="gl-content" id="gl-content"></div>
+  </div>
+</div>
 </div>
 
 <script>
@@ -399,5 +418,254 @@ function showSolution(){const s=document.getElementById('sol');s.textContent=cur
 function updateScore(){document.getElementById('s-correct').textContent=score.correct;document.getElementById('s-wrong').textContent=score.wrong;document.getElementById('s-streak').textContent=score.streak;}
 newTask();
 </script>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// ── GLOSSAR-DATEN ──
+// ═══════════════════════════════════════════════════════════
+
+var TRAINER_ID = 'snmp-cia';
+
+var GLOSSARY = [
+  {
+    term: 'CIA-Triade',
+    short: 'Drei Schutzziele: Vertraulichkeit, Integrit\u00e4t, Verf\u00fcgbarkeit',
+    definition: 'Die CIA-Triade beschreibt die drei grundlegenden Schutzziele der IT-Sicherheit: Confidentiality (Vertraulichkeit) \u2013 nur Berechtigte haben Zugriff. Integrity (Integrit\u00e4t) \u2013 Daten bleiben unver\u00e4ndert und korrekt. Availability (Verf\u00fcgbarkeit) \u2013 Systeme sind jederzeit erreichbar. Jede Sicherheitsma\u00dfnahme sch\u00fctzt mindestens eines dieser drei Ziele.',
+    analogy: '\uD83D\uDCA1 Wie ein Tresor in einer Bank: Vertraulichkeit = nur der Inhaber darf rein (Schl\u00fcssel). Integrit\u00e4t = niemand darf den Inhalt ver\u00e4ndern (Siegel). Verf\u00fcgbarkeit = der Tresor muss immer zug\u00e4nglich sein (keine Wartungsarbeiten w\u00e4hrend der \u00d6ffnungszeiten).',
+    hints: [
+      'C = Confidentiality (Vertraulichkeit), I = Integrity (Integrit\u00e4t), A = Availability (Verf\u00fcgbarkeit)',
+      'Sniffing verletzt Vertraulichkeit, Manipulation verletzt Integrit\u00e4t, DoS verletzt Verf\u00fcgbarkeit',
+      'Jede Sicherheitsma\u00dfnahme l\u00e4sst sich einem oder mehreren CIA-Zielen zuordnen'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die drei Schutzziele der CIA-Triade sind Confidentiality, Integrity und ___.', a: 'Availability', alt: ['Verf\u00fcgbarkeit'], keywords: ['Confidentiality', 'Integrity', 'Availability'] },
+      { type: 'choice', q: 'Welches Schutzziel wird durch einen DDoS-Angriff verletzt?', options: ['Vertraulichkeit', 'Integrit\u00e4t', 'Verf\u00fcgbarkeit', 'Authentizit\u00e4t'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re die drei Schutzziele der CIA-Triade mit je einem Beispiel.', keywords: ['Vertraulichkeit', 'Integrit\u00e4t', 'Verf\u00fcgbarkeit', 'Zugriff', 'Manipulation', 'erreichbar', 'Verschl\u00fcsselung', 'Schutzziel'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Vertraulichkeit',
+    short: 'Confidentiality \u2013 nur Berechtigte haben Zugriff',
+    definition: 'Vertraulichkeit (Confidentiality) bedeutet, dass Informationen nur f\u00fcr autorisierte Personen und Systeme zug\u00e4nglich sind. Bedrohungen: Sniffing, Man-in-the-Middle, unbefugter Zugriff, Social Engineering. Gegenma\u00dfnahmen: Verschl\u00fcsselung (AES, TLS, VPN), Zugriffskontrollen (ACLs, RBAC), Authentifizierung (MFA), SNMPv3.',
+    analogy: '\uD83D\uDCA1 Wie ein versiegelter Brief: Nur der Empf\u00e4nger darf ihn \u00f6ffnen und lesen. Verschl\u00fcsselung ist das Siegel \u2013 selbst wenn jemand den Brief abf\u00e4ngt, kann er den Inhalt nicht lesen.',
+    hints: [
+      'Sniffing/Abh\u00f6ren verletzt die Vertraulichkeit \u2192 Gegenma\u00dfnahme: Verschl\u00fcsselung',
+      'Zugriffskontrollen (ACLs, RBAC) stellen sicher, dass nur Berechtigte zugreifen',
+      'SNMPv1/v2c sind unsicher (Klartext-Community-Strings) \u2192 SNMPv3 sch\u00fctzt die Vertraulichkeit'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die wichtigste Ma\u00dfnahme zum Schutz der Vertraulichkeit ist ___.', a: 'Verschl\u00fcsselung', keywords: ['Verschl\u00fcsselung', 'Vertraulichkeit'] },
+      { type: 'choice', q: 'Welche Bedrohung verletzt die Vertraulichkeit?', options: ['DoS-Angriff', 'Sniffing', 'Hardwareausfall', 'SQL-Injection'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re Vertraulichkeit, nenne Bedrohungen und Gegenma\u00dfnahmen.', keywords: ['Vertraulichkeit', 'autorisiert', 'Sniffing', 'Verschl\u00fcsselung', 'ACL', 'Zugriff', 'TLS', 'MFA'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Integrit\u00e4t',
+    short: 'Integrity \u2013 Daten bleiben unver\u00e4ndert',
+    definition: 'Integrit\u00e4t (Integrity) stellt sicher, dass Daten nicht unbemerkt ver\u00e4ndert werden. Jede \u00c4nderung muss nachvollziehbar sein. Bedrohungen: Datenmanipulation, SQL-Injection, Malware, unautorisierte Konfigurations\u00e4nderungen. Gegenma\u00dfnahmen: Hashfunktionen (SHA-256), digitale Signaturen, Pr\u00fcfsummen, Versionierung und Audit-Logs.',
+    analogy: '\uD83D\uDCA1 Wie ein notariell beglaubigtes Dokument: Jede \u00c4nderung w\u00fcrde das Siegel brechen und sofort auffallen. Hashfunktionen sind die digitalen Notarsiegel \u2013 sie beweisen, dass nichts ver\u00e4ndert wurde.',
+    hints: [
+      'Hashfunktionen (SHA-256, MD5) pr\u00fcfen, ob Daten unver\u00e4ndert sind',
+      'Digitale Signaturen garantieren zus\u00e4tzlich die Authentizit\u00e4t des Absenders',
+      'SQL-Injection und Malware k\u00f6nnen die Integrit\u00e4t von Datenbanken zerst\u00f6ren'
+    ],
+    questions: [
+      { type: 'fill', q: '___ werden verwendet, um die Integrit\u00e4t von Daten zu pr\u00fcfen.', a: 'Hashfunktionen', alt: ['Pr\u00fcfsummen', 'Hashes'], keywords: ['Hashfunktionen', 'Integrit\u00e4t'] },
+      { type: 'choice', q: 'Was sch\u00fctzt die Integrit\u00e4t von \u00fcbertragenen Daten?', options: ['Verschl\u00fcsselung', 'Firewall', 'Digitale Signaturen', 'Load Balancing'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re Integrit\u00e4t und nenne Bedrohungen und Gegenma\u00dfnahmen.', keywords: ['Integrit\u00e4t', 'unver\u00e4ndert', 'Manipulation', 'Hashfunktion', 'SHA-256', 'Signatur', 'Pr\u00fcfsumme', 'nachvollziehbar'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'Verf\u00fcgbarkeit',
+    short: 'Availability \u2013 Systeme sind erreichbar',
+    definition: 'Verf\u00fcgbarkeit (Availability) bedeutet, dass Systeme und Daten jederzeit f\u00fcr berechtigte Nutzer erreichbar und nutzbar sein m\u00fcssen. Bedrohungen: DoS/DDoS-Angriffe, Hardwareausf\u00e4lle, Stromausfall, Naturkatastrophen. Gegenma\u00dfnahmen: Redundanz (RAID, Cluster, Failover), Backup-Strategien (3-2-1-Regel), USV, Load Balancing.',
+    analogy: '\uD83D\uDCA1 Wie ein Krankenhaus: Es muss immer ge\u00f6ffnet sein, 24/7. Notstromgeneratoren (USV), Ersatzger\u00e4te (Redundanz) und Notfallpl\u00e4ne (Backups) sorgen daf\u00fcr, dass der Betrieb nie stillsteht.',
+    hints: [
+      'DoS/DDoS-Angriffe zielen direkt auf die Verf\u00fcgbarkeit ab',
+      'Redundanz (RAID, Cluster, Failover) ist die wichtigste Gegenma\u00dfnahme',
+      '3-2-1-Backup-Regel: 3 Kopien, 2 verschiedene Medien, 1 extern'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die Abk\u00fcrzung USV steht f\u00fcr Unterbrechungsfreie ___.', a: 'Stromversorgung', keywords: ['USV', 'Stromversorgung', 'Verf\u00fcgbarkeit'] },
+      { type: 'choice', q: 'Welche Ma\u00dfnahme sch\u00fctzt die Verf\u00fcgbarkeit bei Hardwareausfall?', options: ['Verschl\u00fcsselung', 'Hashfunktionen', 'Redundanz/RAID', 'ACLs'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re Verf\u00fcgbarkeit und nenne Bedrohungen und Gegenma\u00dfnahmen.', keywords: ['Verf\u00fcgbarkeit', 'erreichbar', 'DoS', 'Redundanz', 'RAID', 'Backup', 'USV', 'Failover'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'SNMP',
+    short: 'Simple Network Management Protocol \u2013 Netzwerk\u00fcberwachung',
+    definition: 'SNMP (Simple Network Management Protocol) dient zur \u00dcberwachung und Verwaltung von Netzwerkger\u00e4ten. Komponenten: Manager (steuert), Agent (auf dem Ger\u00e4t), MIB (Datenbank). Operationen: GET (abfragen), SET (\u00e4ndern), TRAP (Agent meldet Ereignis), INFORM (TRAP mit Best\u00e4tigung). Ports: 161 (Agent empf\u00e4ngt Anfragen), 162 (Manager empf\u00e4ngt Traps).',
+    analogy: '\uD83D\uDCA1 Wie ein Hausmeister (Manager) mit Meldesystem: Er schickt Rundg\u00e4nge (GET), stellt Heizungen ein (SET), und wenn ein Rohr platzt, schrillt automatisch der Alarm (TRAP) \u2013 ohne dass er danach fragen muss.',
+    hints: [
+      'Port 161 = Agent (empf\u00e4ngt GET/SET), Port 162 = Manager (empf\u00e4ngt TRAPs)',
+      'TRAP geht vom Agent zum Manager (ohne Anfrage!), INFORM ist TRAP mit Best\u00e4tigung',
+      'GET-BULK gibt es erst ab SNMPv2c f\u00fcr Massenabfragen'
+    ],
+    questions: [
+      { type: 'fill', q: 'Der SNMP-Agent empf\u00e4ngt Anfragen auf Port ___.', a: '161', keywords: ['Port', '161', 'Agent'] },
+      { type: 'choice', q: 'Welche SNMP-Operation geht vom Agent zum Manager ohne Anfrage?', options: ['GET', 'SET', 'TRAP', 'GET-NEXT'], correct: 2 },
+      { type: 'explain', q: 'Erkl\u00e4re SNMP mit seinen Komponenten und Operationen.', keywords: ['Manager', 'Agent', 'MIB', 'GET', 'SET', 'TRAP', 'Port 161', 'Port 162'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'SNMPv3',
+    short: 'Einzige SNMP-Version mit Verschl\u00fcsselung',
+    definition: 'SNMPv3 ist die einzige SNMP-Version, die Authentifizierung und Verschl\u00fcsselung unterst\u00fctzt. SNMPv1 und v2c nutzen unsichere Community Strings (Klartext). SNMPv3 bietet drei Sicherheitsstufen: noAuthNoPriv (keine Sicherheit), authNoPriv (Authentifizierung), authPriv (Authentifizierung + Verschl\u00fcsselung). GET-BULK wurde mit SNMPv2c eingef\u00fchrt.',
+    analogy: '\uD83D\uDCA1 Wie drei Generations-Update eines Sicherheitssystems: v1 = offene T\u00fcr mit Schild "Bitte nicht eintreten". v2c = offene T\u00fcr mit besserem Schild. v3 = Panzert\u00fcr mit Fingerabdruck-Scanner und Verschl\u00fcsselung!',
+    hints: [
+      'SNMPv1/v2c: Community Strings im Klartext \u2013 v\u00f6llig unsicher!',
+      'SNMPv3 authPriv = Authentifizierung (wer bist du?) + Verschl\u00fcsselung (keiner liest mit)',
+      'GET-BULK gibt es ab SNMPv2c, aber Sicherheit erst ab SNMPv3'
+    ],
+    questions: [
+      { type: 'fill', q: 'Die einzige SNMP-Version mit Verschl\u00fcsselung ist ___.', a: 'SNMPv3', keywords: ['SNMPv3', 'Verschl\u00fcsselung'] },
+      { type: 'choice', q: 'Was nutzt SNMPv1 zur Authentifizierung?', options: ['Zertifikate', 'Community Strings', 'Kerberos', 'OAuth'], correct: 1 },
+      { type: 'explain', q: 'Vergleiche die drei SNMP-Versionen hinsichtlich Sicherheit.', keywords: ['SNMPv1', 'SNMPv2c', 'SNMPv3', 'Community String', 'Klartext', 'Verschl\u00fcsselung', 'Authentifizierung', 'authPriv'], minKeywords: 3 }
+    ]
+  },
+  {
+    term: 'FCAPS',
+    short: 'ISO-Modell f\u00fcr Netzwerkmanagement',
+    definition: 'FCAPS ist das ISO-Modell f\u00fcr Netzwerkmanagement mit f\u00fcnf Bereichen: Fault Management (Fehlererkennung und -behebung), Configuration Management (Ger\u00e4tekonfiguration), Accounting Management (Nutzungsverfolgung, Abrechnung), Performance Management (Leistungs\u00fcberwachung), Security Management (Zugriffskontrolle, Sicherheit). Merkhilfe: "F\u00fcnf Clevere Administratoren Pflegen Sicherheit."',
+    analogy: '\uD83D\uDCA1 Wie die f\u00fcnf Abteilungen einer IT-Firma: Fehler-Feuerwehr (Fault), Konfigurations-K\u00fcche (Configuration), Buchhaltung (Accounting), Qualit\u00e4tskontrolle (Performance) und der Sicherheitsdienst (Security). Zusammen decken sie alles ab!',
+    hints: [
+      'F = Fault, C = Configuration, A = Accounting, P = Performance, S = Security',
+      'Merkhilfe: "F\u00fcnf Clevere Administratoren Pflegen Sicherheit"',
+      'SNMP-Traps geh\u00f6ren zum Fault Management (automatische Fehlererkennung)'
+    ],
+    questions: [
+      { type: 'fill', q: 'Das A in FCAPS steht f\u00fcr ___ Management.', a: 'Accounting', keywords: ['Accounting', 'FCAPS'] },
+      { type: 'choice', q: 'Welcher FCAPS-Bereich umfasst Firmware-Updates?', options: ['Fault', 'Configuration', 'Accounting', 'Performance'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re das FCAPS-Modell und benenne alle f\u00fcnf Bereiche.', keywords: ['Fault', 'Configuration', 'Accounting', 'Performance', 'Security', 'Netzwerkmanagement', 'ISO'], minKeywords: 4 }
+    ]
+  },
+  {
+    term: 'MIB',
+    short: 'Management Information Base \u2013 Ger\u00e4te-Datenbank',
+    definition: 'Die MIB (Management Information Base) ist eine hierarchische Datenbank aller verwaltbaren Objekte auf einem Netzwerkger\u00e4t. Jedes Objekt hat eine eindeutige OID (Object Identifier), z.B. 1.3.6.1.2.1.1.1 f\u00fcr sysDescr. Der SNMP-Manager nutzt OIDs, um gezielt Werte abzufragen (GET) oder zu \u00e4ndern (SET). Die MIB ist als Baumstruktur organisiert.',
+    analogy: '\uD83D\uDCA1 Wie ein Dateisystem auf einem Computer: Die MIB ist wie ein Ordnerbaum. Jede Datei (verwaltbares Objekt) hat einen vollst\u00e4ndigen Pfad (OID). Du navigierst durch Ordner und Unterordner, um an die gew\u00fcnschte Information zu gelangen.',
+    hints: [
+      'MIB = hierarchische Datenbank, wie ein Dateibaum auf einem Ger\u00e4t',
+      'OID = Object Identifier, z.B. 1.3.6.1.2.1.1.1 (sysDescr)',
+      'GET-NEXT traversiert die MIB sequenziell durch den Baum'
+    ],
+    questions: [
+      { type: 'fill', q: 'Jedes Objekt in der MIB hat eine eindeutige ___.', a: 'OID', alt: ['Object Identifier'], keywords: ['OID', 'Object Identifier', 'MIB'] },
+      { type: 'choice', q: 'Wie ist die MIB organisiert?', options: ['Als flache Liste', 'Als Baumstruktur', 'Als Ring', 'Alphabetisch'], correct: 1 },
+      { type: 'explain', q: 'Erkl\u00e4re die MIB und ihre Rolle in SNMP.', keywords: ['Management Information Base', 'hierarchisch', 'Baumstruktur', 'OID', 'Objekt', 'GET', 'SET', 'verwaltbar'], minKeywords: 3 }
+    ]
+  }
+];
+
+var GP_STORIES = {
+  'CIA-Triade': {
+    route: 'Ein Bankgeb\u00e4ude',
+    scenes: [
+      { kw: 'Vertraulichkeit', img: '\uD83D\uDD12 Tresor mit Zahlenschloss', text: 'Du betrittst die Bank und siehst den riesigen Tresor mit einem Zahlenschloss \u2013 nur wer den Code kennt, darf rein. Das ist Vertraulichkeit: Nur Berechtigte haben Zugriff!' },
+      { kw: 'Integrit\u00e4t', img: '\uD83D\uDCDC Versiegelter Vertrag', text: 'Auf dem Tresen liegt ein Vertrag mit einem Wachssiegel. Wenn jemand den Text \u00e4ndert, bricht das Siegel \u2013 sofort erkennbar. Das ist Integrit\u00e4t: Daten bleiben unver\u00e4ndert und nachpr\u00fcfbar.' },
+      { kw: 'Verf\u00fcgbarkeit', img: '\u23F0 24/7-Schild am Geldautomaten', text: 'Drau\u00dfen steht ein Geldautomat mit dem Schild "24 Stunden, 7 Tage" \u2013 er muss immer funktionieren. Verf\u00fcgbarkeit: Systeme m\u00fcssen jederzeit erreichbar sein.' },
+      { kw: 'Schutzziel', img: '\uD83C\uDFAF Drei Zielscheiben an der Wand', text: 'Im Konferenzraum h\u00e4ngen drei Zielscheiben: C, I, A. Jede Sicherheitsma\u00dfnahme trifft mindestens eine \u2013 das sind die drei Schutzziele.' },
+      { kw: 'Verschl\u00fcsselung', img: '\uD83D\uDD11 Goldener Schl\u00fcssel am Schalter', text: 'Der Bankberater h\u00e4lt einen goldenen Schl\u00fcssel hoch: "Ohne Verschl\u00fcsselung ist alles wie eine offene Postkarte!" Der Schl\u00fcssel sch\u00fctzt die Vertraulichkeit.' }
+    ]
+  },
+  'Vertraulichkeit': {
+    route: 'Ein Geheimlabor',
+    scenes: [
+      { kw: 'autorisiert', img: '\uD83E\uDDBF Retina-Scanner am Eingang', text: 'Vor dem Labor ist ein Retina-Scanner installiert \u2013 nur autorisierte Personen d\u00fcrfen eintreten. Ohne Berechtigung bleibt die T\u00fcr verschlossen.' },
+      { kw: 'Sniffing', img: '\uD83D\uDC7B Unsichtbarer Lauscher', text: 'Im Flur steht ein unsichtbarer Lauscher mit riesigen Ohren und notiert alles mit \u2013 das ist Sniffing, das Abh\u00f6ren von Netzwerkverkehr.' },
+      { kw: 'Verschl\u00fcsselung', img: '\uD83E\uDDF3 Koffer mit Zahlenschloss', text: 'Ein Forscher tr\u00e4gt einen Koffer mit Zahlenschloss \u2013 selbst wenn jemand den Koffer stiehlt, kommt er nicht an den Inhalt. Verschl\u00fcsselung sch\u00fctzt die Daten.' },
+      { kw: 'ACL', img: '\uD83D\uDCCB Liste am Eingang', text: 'Neben der T\u00fcr h\u00e4ngt eine Namensliste: "Zugelassen: Dr. M\u00fcller, Prof. Schmidt" \u2013 eine ACL (Access Control List), die den Zugang regelt.' },
+      { kw: 'TLS', img: '\uD83D\uDD10 Leuchtender Tunnel', text: 'Zwischen zwei R\u00e4umen verl\u00e4uft ein leuchtender, undurchsichtiger Tunnel \u2013 TLS verschl\u00fcsselt die gesamte Kommunikation, sodass niemand mitlesen kann.' }
+    ]
+  },
+  'Integrit\u00e4t': {
+    route: 'Ein Gerichtssaal',
+    scenes: [
+      { kw: 'unver\u00e4ndert', img: '\uD83D\uDCDC Beweismittel unter Glas', text: 'Im Gerichtssaal liegen Beweisstücke unter Glas \u2013 sie dürfen nicht angefasst oder ver\u00e4ndert werden. Integrit\u00e4t bedeutet: Daten bleiben exakt so, wie sie waren.' },
+      { kw: 'Hashfunktion', img: '\uD83D\uDD0D Fingerabdruck auf dem Beweis', text: 'Jedes Beweismittel hat einen eindeutigen Fingerabdruck (Hash). \u00c4ndert jemand auch nur ein Komma, \u00e4ndert sich der gesamte Abdruck \u2013 die Manipulation fliegt auf!' },
+      { kw: 'Signatur', img: '\u270D\uFE0F Richter unterschreibt Urteil', text: 'Der Richter unterschreibt das Urteil mit seiner pers\u00f6nlichen Signatur \u2013 eine digitale Signatur beweist, wer das Dokument erstellt hat und dass es unver\u00e4ndert ist.' },
+      { kw: 'Manipulation', img: '\u2702\uFE0F Jemand schneidet Text aus', text: 'Ein Verd\u00e4chtiger versucht mit einer Schere, Text aus einem Dokument zu schneiden \u2013 Datenmanipulation, die Integrit\u00e4tsverletzung!' },
+      { kw: 'Audit-Log', img: '\uD83D\uDCD3 Protokollbuch des Schreibers', text: 'Der Gerichtsschreiber notiert jede einzelne Handlung im Protokollbuch \u2013 ein Audit-Log, das alle \u00c4nderungen l\u00fcckenlos dokumentiert.' }
+    ]
+  },
+  'Verf\u00fcgbarkeit': {
+    route: 'Ein Krankenhaus',
+    scenes: [
+      { kw: 'erreichbar', img: '\uD83C\uDFE5 Leuchtschild "Notaufnahme 24/7"', text: 'Das Krankenhaus hat ein riesiges Leuchtschild: "Notaufnahme 24/7 ge\u00f6ffnet". Systeme m\u00fcssen immer erreichbar sein \u2013 genau wie die Notaufnahme.' },
+      { kw: 'DoS', img: '\uD83D\uDE91 Hunderte Krankenwagen blockieren Einfahrt', text: 'Pl\u00f6tzlich blockieren hunderte Krankenwagen die Einfahrt \u2013 ein DoS-Angriff! Echte Patienten kommen nicht mehr durch.' },
+      { kw: 'Redundanz', img: '\u2695\uFE0F Zweiter OP-Saal bereit', text: 'Neben dem Haupt-OP steht ein zweiter, vollst\u00e4ndig ausgestatteter OP-Saal bereit \u2013 Redundanz! Wenn einer ausf\u00e4llt, \u00fcbernimmt der andere sofort.' },
+      { kw: 'USV', img: '\uD83D\uDD0B Riesige Batterie im Keller', text: 'Im Keller steht eine riesige Batterie \u2013 die USV (Unterbrechungsfreie Stromversorgung). Bei Stromausfall \u00fcbernimmt sie sofort.' },
+      { kw: 'Backup', img: '\uD83D\uDCBE Kopien aller Patientenakten', text: 'Im Archiv lagern Kopien aller Patientenakten \u2013 das Backup. Selbst bei Brand gehen keine Daten verloren (3-2-1-Regel).' }
+    ]
+  },
+  'SNMP': {
+    route: 'Eine Fabrikhalle mit Kontrollraum',
+    scenes: [
+      { kw: 'Manager', img: '\uD83D\uDCBB Ingenieur am Kontrollpult', text: 'Im Kontrollraum sitzt ein Ingenieur an einem gro\u00dfen Bildschirm mit \u00dcbersicht \u00fcber alle Maschinen \u2013 der SNMP-Manager, der alles \u00fcberwacht und steuert.' },
+      { kw: 'Agent', img: '\uD83E\uDD16 Kleiner Sensor an der Maschine', text: 'An jeder Maschine klebt ein kleiner intelligenter Sensor \u2013 der Agent. Er sammelt Daten und antwortet auf Anfragen des Managers.' },
+      { kw: 'GET', img: '\uD83D\uDCE1 Ingenieur fragt Temperatur ab', text: 'Der Ingenieur dr\u00fcckt einen Knopf: "Wie hei\u00df ist Maschine 3?" Der Sensor antwortet: "42\u00b0C" \u2013 das ist eine GET-Anfrage.' },
+      { kw: 'TRAP', img: '\uD83D\uDEA8 Sirene heult los', text: 'Pl\u00f6tzlich heult eine Sirene: Maschine 7 ist \u00fcberhitzt! Der Sensor hat OHNE Anfrage Alarm geschlagen \u2013 ein TRAP, eine unaufgeforderte Meldung.' },
+      { kw: 'Port 161', img: '\uD83D\uDD22 T\u00fcrnummer 161 am Sensor', text: 'An jedem Sensor klebt ein Schild mit der Nummer 161 \u2013 Port 161, \u00fcber den der Agent Anfragen empf\u00e4ngt. TRAPs gehen an Port 162 beim Manager.' }
+    ]
+  },
+  'SNMPv3': {
+    route: 'Drei Generationen einer Alarmanlage',
+    scenes: [
+      { kw: 'SNMPv1', img: '\uD83D\uDEAA Offene T\u00fcr mit Schild "Privat"', text: 'Im ersten Haus h\u00e4ngt nur ein Schild "Privat" an der offenen T\u00fcr \u2013 SNMPv1 mit Community String im Klartext. Jeder kann eintreten, der das Passwort liest.' },
+      { kw: 'SNMPv2c', img: '\uD83D\uDEAA Besseres Schild, aber immer noch offen', text: 'Im zweiten Haus gibt es ein gr\u00f6\u00dferes Schild und eine Klingel \u2013 SNMPv2c hat GET-BULK, aber die Community Strings sind immer noch im Klartext.' },
+      { kw: 'Verschl\u00fcsselung', img: '\uD83D\uDD10 Panzert\u00fcr mit Codeschloss', text: 'Im dritten Haus ist eine massive Panzert\u00fcr mit Codeschloss \u2013 SNMPv3 mit Verschl\u00fcsselung. Ohne den richtigen Code kommt niemand rein oder kann mith\u00f6ren.' },
+      { kw: 'Authentifizierung', img: '\uD83E\uDDBF Fingerabdruck-Scanner', text: 'Zus\u00e4tzlich zum Codeschloss gibt es einen Fingerabdruck-Scanner \u2013 Authentifizierung. SNMPv3 pr\u00fcft nicht nur "was wei\u00dft du?" sondern "wer BIST du?"' },
+      { kw: 'Community String', img: '\uD83D\uDCDD Passwort auf Post-It', text: 'Im ersten Haus klebt ein Post-It mit dem Passwort "public" am Monitor \u2013 der Community String. Bei SNMPv1/v2c wird er im Klartext \u00fcbers Netz geschickt!' }
+    ]
+  },
+  'FCAPS': {
+    route: 'Eine IT-Firma mit f\u00fcnf Abteilungen',
+    scenes: [
+      { kw: 'Fault', img: '\uD83D\uDD25 Feuerwehrmann mit Alarmglocke', text: 'Im Erdgeschoss sitzt ein Feuerwehrmann neben einer Alarmglocke \u2013 Fault Management. Sobald etwas kaputtgeht, schrillt die Glocke und er r\u00fcckt aus.' },
+      { kw: 'Configuration', img: '\uD83D\uDD27 Techniker mit Schraubenschl\u00fcssel', text: 'Im 1. Stock schraubt ein Techniker an Ger\u00e4ten und spielt Updates ein \u2013 Configuration Management. Firmware-Updates, Einstellungen, Inventar.' },
+      { kw: 'Accounting', img: '\uD83D\uDCCA Buchhalter mit Taschenrechner', text: 'Im 2. Stock sitzt ein Buchhalter und z\u00e4hlt den Traffic pro Abteilung \u2013 Accounting Management. Wer nutzt wie viel? Was kostet das?' },
+      { kw: 'Performance', img: '\uD83C\uDFCE\uFE0F Tachometer an der Wand', text: 'Im 3. Stock h\u00e4ngt ein riesiger Tachometer an der Wand: Bandbreite, Latenz, CPU-Last \u2013 Performance Management \u00fcberwacht die Leistung.' },
+      { kw: 'Security', img: '\uD83D\uDD10 Sicherheitsbeamter mit Schl\u00fcsselbund', text: 'Im 4. Stock steht ein Sicherheitsbeamter mit einem riesigen Schl\u00fcsselbund \u2013 Security Management. Wer darf rein? Sind die Firewalls aktiv?' }
+    ]
+  },
+  'MIB': {
+    route: 'Ein riesiges Aktenlager',
+    scenes: [
+      { kw: 'hierarchisch', img: '\uD83D\uDDC2\uFE0F Verschachtelte Ordner', text: 'Du betrittst ein riesiges Aktenlager mit Regalreihen voller Ordner. Jeder Ordner enth\u00e4lt Unterordner, die wieder Unterordner enthalten \u2013 eine hierarchische Struktur, wie die MIB.' },
+      { kw: 'OID', img: '\uD83D\uDD22 Nummerncode am Ordner', text: 'Jeder Ordner hat einen langen Nummerncode: 1.3.6.1.2.1... \u2013 die OID (Object Identifier). Damit findest du jedes einzelne Objekt im Baum.' },
+      { kw: 'Baumstruktur', img: '\uD83C\uDF33 Stammbaum an der Wand', text: 'An der Wand h\u00e4ngt ein riesiger Stammbaum mit Verzweigungen \u2013 die MIB-Baumstruktur. Von der Wurzel aus verzweigt sich alles in immer feinere \u00c4ste.' },
+      { kw: 'GET', img: '\uD83D\uDC46 Finger zeigt auf Ordner', text: 'Ein Bibliothekar zeigt auf einen bestimmten Ordner: "Diesen bitte!" \u2013 ein GET-Befehl, der den Wert eines bestimmten OID abfragt.' },
+      { kw: 'verwaltbar', img: '\u2699\uFE0F Zahnrad neben dem Ordner', text: 'Neben jedem Ordner ist ein kleines Zahnrad \u2013 das Objekt ist verwaltbar. CPU-Last, Netzwerkstatus, Uptime \u2013 alles, was man \u00fcberwachen oder \u00e4ndern kann.' }
+    ]
+  }
+};
+
+var GLOSSARY_TERM_MAP = {
+  'cia': 'CIA-Triade',
+  'cia-triade': 'CIA-Triade',
+  'schutzziele': 'CIA-Triade',
+  'vertraulichkeit': 'Vertraulichkeit',
+  'confidentiality': 'Vertraulichkeit',
+  'integrit\u00e4t': 'Integrit\u00e4t',
+  'integrity': 'Integrit\u00e4t',
+  'verf\u00fcgbarkeit': 'Verf\u00fcgbarkeit',
+  'availability': 'Verf\u00fcgbarkeit',
+  'snmp': 'SNMP',
+  'snmpv3': 'SNMPv3',
+  'snmpv1': 'SNMPv3',
+  'snmpv2c': 'SNMPv3',
+  'community string': 'SNMPv3',
+  'fcaps': 'FCAPS',
+  'mib': 'MIB',
+  'oid': 'MIB',
+  'object identifier': 'MIB',
+  'trap': 'SNMP',
+  'get-bulk': 'SNMP'
+};
+
+var GLOSSARY_HIGHLIGHT_SELECTORS = '.card p, .card ul, .summary-card p, .cia-detail p, .cia-detail ul';
+</script>
+<script src="shared/glossary.js"></script>
+<script src="nav-companion.js"></script>
 </body>
 </html>
