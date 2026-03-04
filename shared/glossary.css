@@ -3,6 +3,10 @@
    Glossar, Freies Erinnern, Scaffold/Stütze, Gedächtnispalast
    ══════════════════════════════════════════════════════════════ */
 
+/* ── Back-Navigation ── */
+.back{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);text-decoration:none;margin-bottom:24px;transition:color .2s}
+.back:hover{color:var(--accent)}
+
 /* ── Glossar Grundlagen ── */
 .glossary-term{border-bottom:1.5px dotted var(--cyan);cursor:pointer;transition:color .2s}
 .glossary-term:hover{color:var(--cyan)}
