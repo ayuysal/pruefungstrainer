@@ -151,6 +151,17 @@ textarea.gl-input{min-height:80px;resize:vertical}
 .sc-anchor-key{color:var(--cyan);font-weight:500}
 .sc-anchor-ref{color:var(--green);font-weight:400}
 
+/* ── Stütze Hint-Box (Freies Erinnern) ── */
+.sc-hint{background:rgba(108,99,255,.06);border:1px solid rgba(108,99,255,.2);border-radius:10px;padding:0;margin-bottom:10px;font-size:14px;line-height:1.6;color:var(--muted)}
+.sc-hint summary{cursor:pointer;padding:10px 14px;font-weight:600;color:var(--accent);list-style:none;display:flex;align-items:center;gap:6px}
+.sc-hint summary::-webkit-details-marker{display:none}
+.sc-hint summary::after{content:'▸';margin-left:auto;transition:transform .2s}
+.sc-hint[open] summary::after{transform:rotate(90deg)}
+.sc-hint-body{padding:0 14px 12px;color:var(--text);opacity:.85}
+.sc-hint-body .sc-anchor-term{color:var(--accent);font-weight:600}
+.sc-hint-body .sc-anchor-key{color:var(--cyan);font-weight:600}
+.sc-hint-body .sc-anchor-ref{color:var(--green);font-weight:500}
+
 /* ── Gedächtnispalast ── */
 .gp-btn{font-family:'Outfit',sans-serif;font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid rgba(251,146,60,.3);background:rgba(251,146,60,.08);color:var(--orange,#fb923c);cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .gp-btn:hover{background:rgba(251,146,60,.18);border-color:rgba(251,146,60,.5)}

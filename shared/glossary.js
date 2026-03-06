@@ -506,12 +506,14 @@ function feSize(px) {
     b.classList.toggle('active', parseInt(b.getAttribute('data-size')) === px);
   });
   scSyncFontSize('fe-text', px);
+  var feColor = document.getElementById('fe-text-color');
+  if (feColor) feColor.style.fontSize = px + 'px';
 }
 function feClear() {
   document.getElementById('fe-text').value = '';
   document.getElementById('fe-check-result').innerHTML = '';
   feEditId = null;
-  scUpdate('fe-text');
+  feScOnInput();
 }
 
 function feGetEntries() {
@@ -623,6 +625,8 @@ function scSetLevel(n) {
   var feQ = document.getElementById('fe-sc-questions');
   if (feQ) feQ.style.display = n > 0 ? 'flex' : 'none';
   Object.keys(scActiveInputs).forEach(function(id) { scUpdate(id); });
+  feScUpdateHint();
+  feScOnInput();
 }
 
 function scAttach(inputId, modelAnswer, keywords) {
@@ -805,12 +809,76 @@ function feScPopulate() {
 function feScSelectQuestion() {
   var sel = document.getElementById('fe-sc-select');
   var term = sel.value;
-  if (!term) { scDetach('fe-text'); return; }
+  if (!term) { feScClearKeywords(); feScUpdateHint(); return; }
   var g = GLOSSARY.find(function(x) { return x.term === term; });
   if (g) {
     var eq = g.questions.find(function(q) { return q.type === 'explain'; });
     var otherTerms = GLOSSARY.filter(function(x) { return x.term !== g.term; }).map(function(x) { return x.term; });
-    scAttach('fe-text', g.definition, { term: g.term, keys: eq ? eq.keywords : [], refs: otherTerms });
+    feScKeywords = { term: g.term, keys: eq ? eq.keywords : [], refs: otherTerms };
+    feScModel = g.definition;
+  }
+  feScUpdateHint();
+  feScOnInput();
+}
+
+var feScKeywords = null;
+var feScModel = '';
+
+function feScClearKeywords() {
+  feScKeywords = null;
+  feScModel = '';
+  var wrap = document.querySelector('#fe-text');
+  if (wrap) wrap.closest('.sc-wrap').classList.remove('sc-coloring');
+  var color = document.getElementById('fe-text-color');
+  if (color) color.innerHTML = '';
+}
+
+function feScUpdateHint() {
+  var hint = document.getElementById('fe-text-hint');
+  var body = document.getElementById('fe-text-hint-body');
+  if (!hint || !body) return;
+  if (!feScModel || scLevel === 0) { hint.style.display = 'none'; return; }
+  var text = scTruncate(feScModel, scLevel, false);
+  if (feScKeywords) {
+    body.innerHTML = scColorize(text, feScKeywords);
+  } else {
+    body.textContent = text;
+  }
+  hint.style.display = '';
+  hint.open = (scLevel === 3);
+}
+
+function feScOnInput() {
+  var input = document.getElementById('fe-text');
+  if (!input) return;
+  var wrap = input.closest('.sc-wrap');
+  var color = document.getElementById('fe-text-color');
+  if (!color && wrap) {
+    color = document.createElement('div');
+    color.id = 'fe-text-color';
+    color.className = 'sc-color-layer';
+    var cs = getComputedStyle(input);
+    Object.assign(color.style, {
+      fontFamily: cs.fontFamily, fontSize: cs.fontSize,
+      fontWeight: cs.fontWeight, lineHeight: cs.lineHeight,
+      paddingTop: cs.paddingTop, paddingRight: cs.paddingRight,
+      paddingBottom: cs.paddingBottom, paddingLeft: cs.paddingLeft,
+      borderTop: cs.borderTopWidth + ' solid transparent',
+      borderRight: cs.borderRightWidth + ' solid transparent',
+      borderBottom: cs.borderBottomWidth + ' solid transparent',
+      borderLeft: cs.borderLeftWidth + ' solid transparent',
+      borderRadius: cs.borderRadius, boxSizing: 'border-box'
+    });
+    wrap.appendChild(color);
+    input.addEventListener('scroll', function() { color.scrollTop = input.scrollTop; });
+  }
+  var text = input.value;
+  if (feScKeywords && text.length > 0 && scLevel > 0) {
+    if (wrap) wrap.classList.add('sc-coloring');
+    color.innerHTML = scColorize(text, feScKeywords);
+  } else {
+    if (color) color.innerHTML = '';
+    if (wrap) wrap.classList.remove('sc-coloring');
   }
 }
 
@@ -856,9 +924,12 @@ function glossaryInjectHTML() {
         '<div class="sc-questions" id="fe-sc-questions" style="display:none"><label>\uD83D\uDCCB Beispielfrage:</label>' +
           '<select id="fe-sc-select" onchange="feScSelectQuestion()"><option value="">\u2014 Keine (frei schreiben) \u2014</option></select>' +
         '</div>' +
+        '<details class="sc-hint" id="fe-text-hint" style="display:none">' +
+          '<summary>\uD83D\uDCA1 St\u00fctze anzeigen</summary>' +
+          '<div class="sc-hint-body" id="fe-text-hint-body"></div>' +
+        '</details>' +
         '<div class="sc-wrap">' +
-          '<div class="sc-ghost-layer" id="fe-text-ghost"></div>' +
-          '<textarea class="fe-textarea" id="fe-text" placeholder="Was weisst du noch? Schreibe frei drauf los..." oninput="scUpdate(\'fe-text\')"></textarea>' +
+          '<textarea class="fe-textarea" id="fe-text" placeholder="Was weisst du noch? Schreibe frei drauf los..." oninput="feScOnInput()"></textarea>' +
         '</div>' +
         '<div class="fe-actions">' +
           '<button class="fe-btn fe-btn-save" onclick="feSave()">\uD83D\uDCBE Speichern</button>' +
