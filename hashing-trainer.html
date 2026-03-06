@@ -121,7 +121,7 @@ tr:last-child td{border-bottom:none}
 <div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--cyan),var(--purple))">&#128218;</div><h2>Referenz</h2></div>
 <div class="cards">
 <div class="card c1"><h3>&#128290; Hashfunktion</h3><p><strong>Divisionsrestverfahren:</strong> h(k) = k mod m</p><ul><li>k = Schlüssel (Key)</li><li>m = Tabellengröße (idealerweise Primzahl)</li><li>Ergebnis: Index 0 bis m&minus;1</li><li>Ziel: Gleichmäßige Verteilung der Schlüssel</li></ul></div>
-<div class="card c2"><h3>&#128279; Chaining (Verkettung)</h3><p>Jeder Slot enthält eine verkettete Liste.</p><ul><li>Kollisionen: Neues Element wird an die Liste angehaengt</li><li>Vorteil: Einfach, kein Ueberlauf der Tabelle</li><li>Nachteil: Zusätzlicher Speicher für Zeiger</li><li>Suche: O(1+&alpha;) im Durchschnitt</li></ul></div>
+<div class="card c2"><h3>&#128279; Chaining (Verkettung)</h3><p>Jeder Slot enthält eine verkettete Liste.</p><ul><li>Kollisionen: Neues Element wird an die Liste angehängt</li><li>Vorteil: Einfach, kein Überlauf der Tabelle</li><li>Nachteil: Zusätzlicher Speicher für Zeiger</li><li>Suche: O(1+&alpha;) im Durchschnitt</li></ul></div>
 <div class="card c3"><h3>&#128269; Open Addressing</h3><p>Alle Elemente direkt in der Tabelle gespeichert.</p><ul><li><strong>Linear Probing:</strong> h(k,i) = (h(k)+i) mod m</li><li><strong>Quadratic Probing:</strong> h(k,i) = (h(k)+c&#8321;&middot;i+c&#8322;&middot;i&sup2;) mod m</li><li><strong>Double Hashing:</strong> h(k,i) = (h&#8321;(k)+i&middot;h&#8322;(k)) mod m</li><li>Problem: Clustering bei Linear Probing</li></ul></div>
 <div class="card c4"><h3>&#128200; Lastfaktor &amp; Komplexität</h3><p><strong>Lastfaktor:</strong> &alpha; = n/m (n=Elemente, m=Slots)</p><ul><li>&alpha; &lt; 1 nötig bei Open Addressing</li><li>Durchschnitt: O(1) bei gutem Hashing</li><li>Worst Case: O(n) bei vielen Kollisionen</li><li>Rehashing nötig wenn &alpha; zu gross</li></ul></div>
 </div>
@@ -172,7 +172,7 @@ tr:last-child td{border-bottom:none}
 </div>
 
 <!-- COMPLEXITY TABLE -->
-<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#128203;</div><h2>Komplexität im Ueberblick</h2></div>
+<div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--purple),var(--pink))">&#128203;</div><h2>Komplexität im Überblick</h2></div>
 <div class="table-wrap">
 <table>
 <thead><tr><th>Verfahren</th><th>Suche (avg)</th><th>Suche (worst)</th><th>Einfügen (avg)</th><th>Bemerkung</th></tr></thead>
@@ -293,7 +293,7 @@ function htInsert(){
     htChains[h0].push(k);
     const isCollision=htChains[h0].length>1;
     logEntry=`h(${k}) = ${k} mod ${m} = ${h0}`;
-    if(isCollision)logEntry+=` [Kollision! Ans Ende der Kette bei [${h0}] angehaengt]`;
+    if(isCollision)logEntry+=` [Kollision! Ans Ende der Kette bei [${h0}] angehängt]`;
     htLog.push(logEntry);
     htRender(null,null,h0);
   } else {

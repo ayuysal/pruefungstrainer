@@ -191,7 +191,7 @@ tr:last-child td{border-bottom:none}
 <div class="section-title"><div class="ic" style="background:linear-gradient(135deg,var(--yellow),var(--orange))">&#127947;</div><h2>Übungsmodus</h2></div>
 <div class="tabs">
 <div class="tab active" data-mode="devices" onclick="setMode('devices')">Geräte zuordnen</div>
-<div class="tab" data-mode="domains" onclick="setMode('domains')">Domains zaehlen</div>
+<div class="tab" data-mode="domains" onclick="setMode('domains')">Domains zählen</div>
 <div class="tab" data-mode="stp" onclick="setMode('stp')">STP</div>
 <div class="tab" data-mode="vlan" onclick="setMode('vlan')">VLAN</div>
 </div>
@@ -496,80 +496,80 @@ var GLOSSARY = [
   {
     term: 'Switch',
     short: 'Layer-2-Geraet, leitet Frames anhand von MAC-Adressen weiter',
-    definition: 'Ein Switch ist ein Netzwerkgeraet auf OSI-Layer 2 (Data Link Layer). Er lernt MAC-Adressen ueber eingehende Frames und baut eine MAC-Address-Table auf. Dadurch kann er Frames gezielt an den richtigen Port weiterleiten (Forwarding), anstatt sie wie ein Hub an alle Ports zu senden. Jeder Switch-Port bildet eine eigene Collision Domain, aber ohne VLANs gibt es nur eine Broadcast Domain.',
+    definition: 'Ein Switch ist ein Netzwerkgeraet auf OSI-Layer 2 (Data Link Layer). Er lernt MAC-Adressen über eingehende Frames und baut eine MAC-Address-Table auf. Dadurch kann er Frames gezielt an den richtigen Port weiterleiten (Forwarding), anstatt sie wie ein Hub an alle Ports zu senden. Jeder Switch-Port bildet eine eigene Collision Domain, aber ohne VLANs gibt es nur eine Broadcast Domain.',
     analogy: '\uD83D\uDD00 Stell dir einen Switch wie einen intelligenten Postboten vor: Er kennt die Adressen (MAC) aller Empfaenger und liefert Briefe (Frames) direkt an den richtigen Briefkasten (Port), anstatt Kopien an jeden Haushalt zu verteilen.',
     hints: ['Arbeitet auf Layer 2 mit MAC-Adressen','Erstellt eine MAC-Address-Table dynamisch durch Lernen','Jeder Port = eigene Collision Domain, aber nur 1 Broadcast Domain (ohne VLAN)'],
     questions: [
       { type: 'fill', q: 'Ein Switch arbeitet auf OSI-Layer ___ und nutzt ___-Adressen zur Weiterleitung.', a: '2, MAC', keywords: ['2','MAC'] },
       { type: 'choice', q: 'Was passiert, wenn ein Switch die Ziel-MAC-Adresse nicht in seiner Tabelle findet?', options: ['Er flutet das Frame an alle Ports (ausser Quellport)','Er verwirft das Frame','Er sendet ein ICMP-Error','Er leitet es an den Router weiter'], correct: 0 },
-      { type: 'explain', q: 'Erklaere den Unterschied zwischen Store-and-Forward und Cut-Through bei Switches.', keywords: ['Store-and-Forward','CRC','ganzes Frame','Cut-Through','Ziel-MAC','schneller','Fehlerpruefung'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre den Unterschied zwischen Store-and-Forward und Cut-Through bei Switches.', keywords: ['Store-and-Forward','CRC','ganzes Frame','Cut-Through','Ziel-MAC','schneller','Fehlerprüfung'], minKeywords: 3 }
     ]
   },
   {
     term: 'Router',
     short: 'Layer-3-Geraet, verbindet Netzwerke und routet per IP',
-    definition: 'Ein Router ist ein Netzwerkgeraet auf OSI-Layer 3 (Network Layer). Er verbindet verschiedene Netzwerke miteinander und trifft Routing-Entscheidungen anhand von IP-Adressen und einer Routing-Tabelle. Jedes Router-Interface bildet eine eigene Broadcast Domain. Router koennen NAT/PAT durchfuehren und ermoeglichen Inter-VLAN-Routing.',
-    analogy: '\uD83C\uDF10 Ein Router ist wie ein Verkehrspolizist an einer grossen Kreuzung: Er kennt alle Strassen (Netzwerke) und leitet den Verkehr (Pakete) in die richtige Richtung, basierend auf dem Zielort (IP-Adresse). Ohne ihn bleibt der Verkehr in seiner Nachbarschaft (Broadcast Domain) gefangen.',
-    hints: ['Arbeitet auf Layer 3 mit IP-Adressen','Trennt Broadcast Domains \u2013 jedes Interface ist eine eigene BD','Nutzt eine Routing-Tabelle fuer Weiterleitungsentscheidungen'],
+    definition: 'Ein Router ist ein Netzwerkgeraet auf OSI-Layer 3 (Network Layer). Er verbindet verschiedene Netzwerke miteinander und trifft Routing-Entscheidungen anhand von IP-Adressen und einer Routing-Tabelle. Jedes Router-Interface bildet eine eigene Broadcast Domain. Router können NAT/PAT durchführen und ermöglichen Inter-VLAN-Routing.',
+    analogy: '\uD83C\uDF10 Ein Router ist wie ein Verkehrspolizist an einer grossen Kreuzung: Er kennt alle Straßen (Netzwerke) und leitet den Verkehr (Pakete) in die richtige Richtung, basierend auf dem Zielort (IP-Adresse). Ohne ihn bleibt der Verkehr in seiner Nachbarschaft (Broadcast Domain) gefangen.',
+    hints: ['Arbeitet auf Layer 3 mit IP-Adressen','Trennt Broadcast Domains \u2013 jedes Interface ist eine eigene BD','Nutzt eine Routing-Tabelle für Weiterleitungsentscheidungen'],
     questions: [
       { type: 'fill', q: 'Ein Router arbeitet auf Layer ___ und trennt ___-Domains.', a: '3, Broadcast', keywords: ['3','Broadcast'] },
-      { type: 'choice', q: 'Was ist die Hauptfunktion eines Routers?', options: ['Netzwerke verbinden und Broadcast Domains trennen','MAC-Adressen lernen','Signale verstaerken','VLANs erstellen'], correct: 0 },
+      { type: 'choice', q: 'Was ist die Hauptfunktion eines Routers?', options: ['Netzwerke verbinden und Broadcast Domains trennen','MAC-Adressen lernen','Signale verstärken','VLANs erstellen'], correct: 0 },
       { type: 'explain', q: 'Warum trennt ein Router Broadcast Domains, ein Switch aber nicht?', keywords: ['Layer 3','IP','Broadcast','weiterleiten','verwerfen','Netzgrenze'], minKeywords: 3 }
     ]
   },
   {
     term: 'VLAN',
     short: 'Virtual LAN \u2013 logische Trennung auf Layer 2',
-    definition: 'Ein VLAN (Virtual Local Area Network) ist eine logische Segmentierung eines physischen Netzwerks auf Layer 2. Ein einzelner Switch kann durch VLANs mehrere getrennte Broadcast Domains bilden. Geraete in verschiedenen VLANs koennen ohne Router oder Layer-3-Switch nicht miteinander kommunizieren. VLANs werden ueber VLAN-IDs (12 Bit, 0\u20134095) identifiziert.',
-    analogy: '\uD83C\uDFF7\uFE0F VLANs sind wie verschiedene Stockwerke in einem Buerogebaeude: Obwohl alle im selben Gebaeude (Switch) sind, koennen die Mitarbeiter auf verschiedenen Stockwerken (VLANs) nur ueber den Aufzug (Router) miteinander sprechen.',
-    hints: ['Logische Trennung auf Layer 2 \u2013 ein Switch, mehrere Broadcast Domains','VLAN-ID hat 12 Bit \u2192 bis zu 4096 moegliche VLANs','Kommunikation zwischen VLANs braucht einen Router oder L3-Switch'],
+    definition: 'Ein VLAN (Virtual Local Area Network) ist eine logische Segmentierung eines physischen Netzwerks auf Layer 2. Ein einzelner Switch kann durch VLANs mehrere getrennte Broadcast Domains bilden. Geraete in verschiedenen VLANs können ohne Router oder Layer-3-Switch nicht miteinander kommunizieren. VLANs werden über VLAN-IDs (12 Bit, 0\u20134095) identifiziert.',
+    analogy: '\uD83C\uDFF7\uFE0F VLANs sind wie verschiedene Stockwerke in einem Buerogebaeude: Obwohl alle im selben Gebaeude (Switch) sind, können die Mitarbeiter auf verschiedenen Stockwerken (VLANs) nur über den Aufzug (Router) miteinander sprechen.',
+    hints: ['Logische Trennung auf Layer 2 \u2013 ein Switch, mehrere Broadcast Domains','VLAN-ID hat 12 Bit \u2192 bis zu 4096 mögliche VLANs','Kommunikation zwischen VLANs braucht einen Router oder L3-Switch'],
     questions: [
-      { type: 'fill', q: 'VLANs ermoeglichen die logische Trennung von ___-Domains auf einem einzigen ___.', a: 'Broadcast, Switch', keywords: ['Broadcast','Switch'] },
-      { type: 'choice', q: 'Wie viele VLANs sind mit 802.1Q theoretisch moeglich?', options: ['4096','256','1024','65536'], correct: 0 },
-      { type: 'explain', q: 'Warum koennen Geraete in verschiedenen VLANs nicht direkt kommunizieren?', keywords: ['Broadcast Domain','getrennt','Layer 2','Router','Layer 3','Inter-VLAN'], minKeywords: 3 }
+      { type: 'fill', q: 'VLANs ermöglichen die logische Trennung von ___-Domains auf einem einzigen ___.', a: 'Broadcast, Switch', keywords: ['Broadcast','Switch'] },
+      { type: 'choice', q: 'Wie viele VLANs sind mit 802.1Q theoretisch möglich?', options: ['4096','256','1024','65536'], correct: 0 },
+      { type: 'explain', q: 'Warum können Geraete in verschiedenen VLANs nicht direkt kommunizieren?', keywords: ['Broadcast Domain','getrennt','Layer 2','Router','Layer 3','Inter-VLAN'], minKeywords: 3 }
     ]
   },
   {
     term: 'Trunk',
-    short: 'Tagged Port fuer mehrere VLANs (802.1Q)',
-    definition: 'Ein Trunk Port (auch Tagged Port) ist ein Switch-Port, der Frames mehrerer VLANs gleichzeitig transportiert. Dazu wird der 802.1Q-Standard verwendet: Ein 4-Byte-Tag wird in den Ethernet-Frame eingefuegt, das die VLAN-ID enthaelt. So kann der empfangende Switch erkennen, zu welchem VLAN ein Frame gehoert. Das Native VLAN sendet Frames ohne Tag.',
-    analogy: '\uD83D\uDD17 Ein Trunk ist wie eine mehrspurige Autobahn zwischen zwei Staedten (Switches): Jede Spur ist fuer bestimmte Fahrzeuge (VLANs) markiert. Ohne die Markierung (802.1Q-Tag) wuesste niemand, auf welche Spur ein Fahrzeug gehoert.',
+    short: 'Tagged Port für mehrere VLANs (802.1Q)',
+    definition: 'Ein Trunk Port (auch Tagged Port) ist ein Switch-Port, der Frames mehrerer VLANs gleichzeitig transportiert. Dazu wird der 802.1Q-Standard verwendet: Ein 4-Byte-Tag wird in den Ethernet-Frame eingefuegt, das die VLAN-ID enthält. So kann der empfangende Switch erkennen, zu welchem VLAN ein Frame gehört. Das Native VLAN sendet Frames ohne Tag.',
+    analogy: '\uD83D\uDD17 Ein Trunk ist wie eine mehrspurige Autobahn zwischen zwei Staedten (Switches): Jede Spur ist für bestimmte Fahrzeuge (VLANs) markiert. Ohne die Markierung (802.1Q-Tag) wuesste niemand, auf welche Spur ein Fahrzeug gehört.',
     hints: ['802.1Q fuegt einen 4-Byte-Tag mit VLAN-ID in den Ethernet-Frame ein','Native VLAN: Frames ohne Tag auf dem Trunk','Access Port = 1 VLAN (untagged), Trunk = mehrere VLANs (tagged)'],
     questions: [
       { type: 'fill', q: 'Ein Trunk Port nutzt den Standard ___ und fuegt einen ___-Byte-Tag ein.', a: '802.1Q, 4', keywords: ['802.1Q','4'] },
-      { type: 'choice', q: 'Was ist das Native VLAN?', options: ['Das VLAN, dessen Frames auf dem Trunk ohne Tag gesendet werden','Das VLAN mit der hoechsten Prioritaet','Das Standard-Management-VLAN','Das VLAN fuer Gaeste'], correct: 0 },
-      { type: 'explain', q: 'Erklaere den Unterschied zwischen einem Access Port und einem Trunk Port.', keywords: ['Access','ein VLAN','untagged','Trunk','mehrere VLANs','tagged','802.1Q'], minKeywords: 3 }
+      { type: 'choice', q: 'Was ist das Native VLAN?', options: ['Das VLAN, dessen Frames auf dem Trunk ohne Tag gesendet werden','Das VLAN mit der höchsten Prioritaet','Das Standard-Management-VLAN','Das VLAN für Gaeste'], correct: 0 },
+      { type: 'explain', q: 'Erkläre den Unterschied zwischen einem Access Port und einem Trunk Port.', keywords: ['Access','ein VLAN','untagged','Trunk','mehrere VLANs','tagged','802.1Q'], minKeywords: 3 }
     ]
   },
   {
     term: 'Routing-Tabelle',
-    short: 'Enthaelt Netzrouten fuer Weiterleitungsentscheidungen',
-    definition: 'Die Routing-Tabelle ist eine Datenstruktur im Router, die Informationen ueber erreichbare Netzwerke enthaelt. Jeder Eintrag besteht typischerweise aus Zielnetz, Subnetzmaske, Next Hop (naechster Router), ausgehendem Interface und Metrik. Routen koennen statisch konfiguriert oder dynamisch durch Routing-Protokolle (OSPF, RIP, BGP) gelernt werden. Der Router waehlt die Route mit dem laengsten Praefix-Match.',
-    analogy: '\uD83D\uDCCB Die Routing-Tabelle ist wie ein Wegweiser an einer Kreuzung: Fuer jedes Ziel (Netzwerk) zeigt sie die beste Richtung (Next Hop/Interface) und die Entfernung (Metrik) an. Der Router schaut bei jedem Paket auf diesen Wegweiser.',
-    hints: ['Enthaelt Zielnetz, Subnetzmaske, Next Hop, Interface und Metrik','Routen koennen statisch oder dynamisch (OSPF, RIP, BGP) sein','Longest Prefix Match bestimmt die beste Route'],
+    short: 'Enthält Netzrouten für Weiterleitungsentscheidungen',
+    definition: 'Die Routing-Tabelle ist eine Datenstruktur im Router, die Informationen über erreichbare Netzwerke enthält. Jeder Eintrag besteht typischerweise aus Zielnetz, Subnetzmaske, Next Hop (nächster Router), ausgehendem Interface und Metrik. Routen können statisch konfiguriert oder dynamisch durch Routing-Protokolle (OSPF, RIP, BGP) gelernt werden. Der Router wählt die Route mit dem längsten Praefix-Match.',
+    analogy: '\uD83D\uDCCB Die Routing-Tabelle ist wie ein Wegweiser an einer Kreuzung: Für jedes Ziel (Netzwerk) zeigt sie die beste Richtung (Next Hop/Interface) und die Entfernung (Metrik) an. Der Router schaut bei jedem Paket auf diesen Wegweiser.',
+    hints: ['Enthält Zielnetz, Subnetzmaske, Next Hop, Interface und Metrik','Routen können statisch oder dynamisch (OSPF, RIP, BGP) sein','Longest Prefix Match bestimmt die beste Route'],
     questions: [
-      { type: 'fill', q: 'Die Routing-Tabelle enthaelt fuer jede Route u.a. Zielnetz, ___ und ___.', a: 'Next Hop, Metrik', keywords: ['Next Hop','Metrik'] },
+      { type: 'fill', q: 'Die Routing-Tabelle enthält für jede Route u.a. Zielnetz, ___ und ___.', a: 'Next Hop, Metrik', keywords: ['Next Hop','Metrik'] },
       { type: 'choice', q: 'Welches Prinzip nutzt der Router zur Routenauswahl?', options: ['Longest Prefix Match','First Come First Served','Round Robin','Shortest Path Bridging'], correct: 0 },
       { type: 'explain', q: 'Was ist der Unterschied zwischen statischen und dynamischen Routen?', keywords: ['statisch','manuell','konfiguriert','dynamisch','Protokoll','automatisch','OSPF','RIP'], minKeywords: 3 }
     ]
   },
   {
     term: 'Default Gateway',
-    short: 'Standardroute fuer Pakete ausserhalb des lokalen Netzes',
-    definition: 'Das Default Gateway ist die IP-Adresse des Routers, an den ein Host alle Pakete sendet, deren Ziel nicht im lokalen Netzwerk liegt. Es ist die \u201eTuer nach draussen\u201c fuer jedes Geraet im LAN. Ohne konfiguriertes Default Gateway kann ein Host nur mit Geraeten im selben Subnetz kommunizieren. Das Default Gateway muss im selben Subnetz wie der Host liegen.',
+    short: 'Standardroute für Pakete ausserhalb des lokalen Netzes',
+    definition: 'Das Default Gateway ist die IP-Adresse des Routers, an den ein Host alle Pakete sendet, deren Ziel nicht im lokalen Netzwerk liegt. Es ist die \u201eTuer nach draussen\u201c für jedes Geraet im LAN. Ohne konfiguriertes Default Gateway kann ein Host nur mit Geraeten im selben Subnetz kommunizieren. Das Default Gateway muss im selben Subnetz wie der Host liegen.',
     analogy: '\uD83D\uDEAA Das Default Gateway ist wie die Eingangstuer deines Hauses: Wenn du jemanden besuchen willst, der nicht in deinem Haus (lokales Netz) wohnt, musst du durch die Tuer (Gateway) gehen. Ohne Tuer bist du im Haus gefangen.',
-    hints: ['IP-Adresse des Routers im lokalen Subnetz','Wird fuer alle Pakete verwendet, deren Ziel nicht lokal ist','Muss im selben Subnetz wie der Host konfiguriert sein'],
+    hints: ['IP-Adresse des Routers im lokalen Subnetz','Wird für alle Pakete verwendet, deren Ziel nicht lokal ist','Muss im selben Subnetz wie der Host konfiguriert sein'],
     questions: [
       { type: 'fill', q: 'Das Default Gateway ist die ___-Adresse des ___ im lokalen Netz.', a: 'IP, Router', keywords: ['IP','Router'] },
-      { type: 'choice', q: 'Was passiert, wenn kein Default Gateway konfiguriert ist?', options: ['Der Host kann nur mit Geraeten im selben Subnetz kommunizieren','Der Host kann gar nicht kommunizieren','Der Host sendet Broadcasts ins Internet','Der Switch uebernimmt das Routing'], correct: 0 },
+      { type: 'choice', q: 'Was passiert, wenn kein Default Gateway konfiguriert ist?', options: ['Der Host kann nur mit Geraeten im selben Subnetz kommunizieren','Der Host kann gar nicht kommunizieren','Der Host sendet Broadcasts ins Internet','Der Switch übernimmt das Routing'], correct: 0 },
       { type: 'explain', q: 'Warum muss das Default Gateway im selben Subnetz wie der Host liegen?', keywords: ['direkt erreichbar','Layer 2','ARP','MAC','lokal','Subnetz'], minKeywords: 3 }
     ]
   },
   {
     term: 'Spanning Tree Protocol',
     short: 'Verhindert Schleifen in redundanten L2-Topologien',
-    definition: 'Das Spanning Tree Protocol (STP, IEEE 802.1D) verhindert Schleifen (Loops) in redundanten Layer-2-Netzwerken. Ohne STP wuerden Broadcast-Frames endlos im Kreis laufen (Broadcast Storm). STP waehlt eine Root Bridge (niedrigste Bridge Priority + MAC), bestimmt Root Ports und Designated Ports und blockiert redundante Pfade. Port-Zustaende: Blocking \u2192 Listening \u2192 Learning \u2192 Forwarding.',
-    analogy: '\uD83C\uDF33 STP ist wie ein Verkehrsleitsystem bei einer Strasse mit mehreren parallelen Wegen: Es sperrt einige Wege (Blocking), damit niemand im Kreis faehrt, haelt aber Umleitungen bereit, falls der Hauptweg ausfaellt.',
+    definition: 'Das Spanning Tree Protocol (STP, IEEE 802.1D) verhindert Schleifen (Loops) in redundanten Layer-2-Netzwerken. Ohne STP würden Broadcast-Frames endlos im Kreis laufen (Broadcast Storm). STP wählt eine Root Bridge (niedrigste Bridge Priority + MAC), bestimmt Root Ports und Designated Ports und blockiert redundante Pfade. Port-Zustaende: Blocking \u2192 Listening \u2192 Learning \u2192 Forwarding.',
+    analogy: '\uD83C\uDF33 STP ist wie ein Verkehrsleitsystem bei einer Straße mit mehreren parallelen Wegen: Es sperrt einige Wege (Blocking), damit niemand im Kreis faehrt, haelt aber Umleitungen bereit, falls der Hauptweg ausfällt.',
     hints: ['Verhindert Broadcast Storms durch Blockieren redundanter Pfade','Root Bridge = niedrigste Priority (Default 32768) + niedrigste MAC','Port-Zustaende: Blocking \u2192 Listening \u2192 Learning \u2192 Forwarding'],
     questions: [
       { type: 'fill', q: 'STP verhindert ___ in redundanten Layer-2-Netzen. Die Default Bridge Priority ist ___.', a: 'Schleifen, 32768', keywords: ['Schleifen','32768'] },
@@ -579,8 +579,8 @@ var GLOSSARY = [
   },
   {
     term: 'ARP',
-    short: 'Aufloesung von IP-Adressen zu MAC-Adressen',
-    definition: 'Das Address Resolution Protocol (ARP) loest IP-Adressen in MAC-Adressen auf. Wenn ein Host ein Paket an eine IP im selben Subnetz senden will, aber die zugehoerige MAC-Adresse nicht kennt, sendet er einen ARP-Request als Broadcast. Der Host mit der passenden IP antwortet mit einem ARP-Reply (Unicast), der seine MAC-Adresse enthaelt. Das Ergebnis wird im ARP-Cache gespeichert.',
+    short: 'Auflösung von IP-Adressen zu MAC-Adressen',
+    definition: 'Das Address Resolution Protocol (ARP) loest IP-Adressen in MAC-Adressen auf. Wenn ein Host ein Paket an eine IP im selben Subnetz senden will, aber die zugehörige MAC-Adresse nicht kennt, sendet er einen ARP-Request als Broadcast. Der Host mit der passenden IP antwortet mit einem ARP-Reply (Unicast), der seine MAC-Adresse enthält. Das Ergebnis wird im ARP-Cache gespeichert.',
     analogy: '\uD83D\uDD0D ARP ist wie ein Rufen in einem Raum: \u201eWer hat die IP 192.168.1.5?\u201c (Broadcast). Die Person mit dieser IP antwortet: \u201eDas bin ich, hier ist meine MAC-Adresse!\u201c (Unicast). Du merkst dir die Antwort (ARP-Cache), damit du nicht jedes Mal erneut fragen musst.',
     hints: ['ARP-Request = Broadcast (an alle), ARP-Reply = Unicast (gezielt)','Loest IP \u2192 MAC auf, Ergebnis wird im ARP-Cache gespeichert','Funktioniert nur innerhalb eines Subnetzes (Layer 2)'],
     questions: [
@@ -595,21 +595,21 @@ var GP_STORIES = {
   'Switch': {
     route: 'Ein Postamt',
     scenes: [
-      { kw: 'Layer 2', img: '\uD83C\uDFE4 Postamt mit 2 Stockwerken', text: 'Du betrittst ein zweistoeckiges Postamt. Ueber dem Eingang steht gross "Layer 2". Der Switch arbeitet auf der zweiten Etage des OSI-Modells!' },
-      { kw: 'MAC-Adresse', img: '\uD83D\uDCEB Briefkaesten mit Namensschildern', text: 'An der Wand haengen Briefkaesten mit individuellen Namensschildern \u2013 das sind die MAC-Adressen. Der Postbote (Switch) schaut auf das Schild und weiss genau, wohin der Brief gehoert.' },
+      { kw: 'Layer 2', img: '\uD83C\uDFE4 Postamt mit 2 Stockwerken', text: 'Du betrittst ein zweistoeckiges Postamt. Über dem Eingang steht gross "Layer 2". Der Switch arbeitet auf der zweiten Etage des OSI-Modells!' },
+      { kw: 'MAC-Adresse', img: '\uD83D\uDCEB Briefkaesten mit Namensschildern', text: 'An der Wand haengen Briefkaesten mit individuellen Namensschildern \u2013 das sind die MAC-Adressen. Der Postbote (Switch) schaut auf das Schild und weiss genau, wohin der Brief gehört.' },
       { kw: 'MAC-Address-Table', img: '\uD83D\uDCD6 Grosses Adressbuch', text: 'Hinter dem Schalter liegt ein dickes Adressbuch aufgeschlagen \u2013 die MAC-Address-Table. Jeder neue Absender wird automatisch eingetragen: MAC-Adresse \u2192 Port.' },
       { kw: 'Collision Domain', img: '\uD83D\uDEAA Einzelne Schalter-Kabinen', text: 'Jeder Schalter hat seine eigene Kabine mit Tuer \u2013 jeder Port ist eine eigene Collision Domain. Keine Draengelei mehr wie beim Hub!' },
-      { kw: 'Flooding', img: '\uD83C\uDF0A Wasser fliesst ueberall hin', text: 'Ein Brief ohne bekannte Adresse? Der Postbote kopiert ihn und wirft ihn in ALLE Briefkaesten \u2013 das ist Flooding. Nur der richtige Empfaenger antwortet.' }
+      { kw: 'Flooding', img: '\uD83C\uDF0A Wasser fliesst überall hin', text: 'Ein Brief ohne bekannte Adresse? Der Postbote kopiert ihn und wirft ihn in ALLE Briefkaesten \u2013 das ist Flooding. Nur der richtige Empfaenger antwortet.' }
     ]
   },
   'Router': {
     route: 'Eine Grenzstation',
     scenes: [
-      { kw: 'Layer 3', img: '\uD83C\uDFD7\uFE0F Dreistoeckiger Grenzturm', text: 'An der Landesgrenze steht ein dreistoeckiger Wachturm \u2013 Layer 3. Der Router arbeitet auf der dritten Ebene und prueft IP-Paesse statt MAC-Ausweise.' },
+      { kw: 'Layer 3', img: '\uD83C\uDFD7\uFE0F Dreistoeckiger Grenzturm', text: 'An der Landesgrenze steht ein dreistoeckiger Wachturm \u2013 Layer 3. Der Router arbeitet auf der dritten Ebene und prüft IP-Paesse statt MAC-Ausweise.' },
       { kw: 'IP-Adresse', img: '\uD83D\uDCDB Reisepass mit IP-Nummer', text: 'Jeder Reisende zeigt seinen Pass mit einer IP-Adresse. Der Grenzbeamte (Router) liest die IP und entscheidet: "Ab nach Netzwerk B!"' },
-      { kw: 'Broadcast Domain', img: '\uD83D\uDEA7 Schranke zwischen Laendern', text: 'Die Schranke trennt zwei Laender \u2013 zwei Broadcast Domains. Broadcasts koennen die Grenze nicht passieren. Jedes Router-Interface ist ein eigenes Land.' },
-      { kw: 'Routing-Tabelle', img: '\uD83D\uDDFA\uFE0F Landkarte an der Wand', text: 'An der Wand haengt eine riesige Landkarte mit Pfeilen \u2013 die Routing-Tabelle. Fuer jedes Zielland steht der beste Weg und die naechste Station (Next Hop).' },
-      { kw: 'NAT', img: '\uD83C\uDFAD Verkleidungskabine', text: 'Neben dem Grenzposten steht eine Verkleidungskabine \u2013 NAT! Private IP-Adressen ziehen sich eine oeffentliche Jacke an, bevor sie die Grenze ueberqueren.' }
+      { kw: 'Broadcast Domain', img: '\uD83D\uDEA7 Schranke zwischen Ländern', text: 'Die Schranke trennt zwei Länder \u2013 zwei Broadcast Domains. Broadcasts können die Grenze nicht passieren. Jedes Router-Interface ist ein eigenes Land.' },
+      { kw: 'Routing-Tabelle', img: '\uD83D\uDDFA\uFE0F Landkarte an der Wand', text: 'An der Wand hängt eine riesige Landkarte mit Pfeilen \u2013 die Routing-Tabelle. Für jedes Zielland steht der beste Weg und die nächste Station (Next Hop).' },
+      { kw: 'NAT', img: '\uD83C\uDFAD Verkleidungskabine', text: 'Neben dem Grenzposten steht eine Verkleidungskabine \u2013 NAT! Private IP-Adressen ziehen sich eine oeffentliche Jacke an, bevor sie die Grenze überqueren.' }
     ]
   },
   'VLAN': {
@@ -617,49 +617,49 @@ var GP_STORIES = {
     scenes: [
       { kw: 'logische Trennung', img: '\uD83C\uDFE2 Farbige Stockwerke', text: 'Du betrittst ein Buerogebaeude. Obwohl es nur einen Aufzugschacht hat, sind die Stockwerke mit verschiedenen Farben markiert \u2013 logisch getrennte VLANs auf einem physischen Switch!' },
       { kw: 'Broadcast Domain', img: '\uD83D\uDCE2 Lautsprecher pro Stockwerk', text: 'Jedes Stockwerk hat seinen eigenen Lautsprecher. Eine Durchsage im 2. Stock (VLAN 20) hoert man im 1. Stock (VLAN 10) nicht \u2013 separate Broadcast Domains!' },
-      { kw: 'VLAN-ID', img: '\uD83C\uDFF7\uFE0F Farbige Zugangsausweise', text: 'Jeder Mitarbeiter traegt einen farbigen Ausweis mit einer Nummer \u2013 die VLAN-ID (12 Bit, bis 4096). Nur gleiche Farben koennen miteinander reden.' },
+      { kw: 'VLAN-ID', img: '\uD83C\uDFF7\uFE0F Farbige Zugangsausweise', text: 'Jeder Mitarbeiter trägt einen farbigen Ausweis mit einer Nummer \u2013 die VLAN-ID (12 Bit, bis 4096). Nur gleiche Farben können miteinander reden.' },
       { kw: 'Router', img: '\uD83D\uDEBB Aufzug zwischen Stockwerken', text: 'Der einzige Weg zwischen den Stockwerken ist der Aufzug \u2013 ein Router oder L3-Switch. Ohne ihn bleibt jedes VLAN isoliert.' },
-      { kw: 'Access Port', img: '\uD83D\uDEAA Einzelne Buerotuer', text: 'Jede Buerotuer (Access Port) gehoert zu genau einem Stockwerk (VLAN). Der Mitarbeiter dahinter sieht nur sein eigenes VLAN \u2013 untagged, einfach und klar.' }
+      { kw: 'Access Port', img: '\uD83D\uDEAA Einzelne Buerotuer', text: 'Jede Buerotuer (Access Port) gehört zu genau einem Stockwerk (VLAN). Der Mitarbeiter dahinter sieht nur sein eigenes VLAN \u2013 untagged, einfach und klar.' }
     ]
   },
   'Trunk': {
     route: 'Eine Autobahn',
     scenes: [
-      { kw: '802.1Q', img: '\uD83D\uDEE3\uFE0F Autobahnschild: 802.1Q', text: 'Du faehrst auf die Autobahn. Am Eingang steht ein grosses Schild: "802.1Q \u2013 Standard fuer VLAN-Tagging". Hier fahren Frames aus vielen VLANs gemeinsam!' },
-      { kw: 'Tag', img: '\uD83C\uDFF7\uFE0F Aufkleber auf jedem Auto', text: 'Jedes Auto (Frame) auf der Autobahn hat einen Aufkleber (4-Byte-Tag) mit der VLAN-Nummer. So weiss die Ausfahrt (empfangender Switch), wohin jedes Auto gehoert.' },
-      { kw: 'mehrere VLANs', img: '\uD83D\uDEE4\uFE0F Mehrspurige Fahrbahn', text: 'Die Autobahn hat viele Spuren \u2013 eine fuer jedes VLAN. Alle fahren auf demselben Kabel, aber dank der Tags bleiben sie getrennt.' },
-      { kw: 'Native VLAN', img: '\uD83D\uDE97 Auto ohne Aufkleber', text: 'Ein Auto faehrt ohne Aufkleber \u2013 es gehoert zum Native VLAN! Frames ohne Tag werden automatisch dem Native VLAN zugeordnet.' },
-      { kw: 'Access Port', img: '\u26FD Tankstelle als Endpunkt', text: 'An der Tankstelle (Access Port) gibt es nur eine Spur und keine Aufkleber noetig \u2013 hier gehoert alles zu einem einzigen VLAN. Der Trunk dagegen ist die grosse Autobahn dazwischen.' }
+      { kw: '802.1Q', img: '\uD83D\uDEE3\uFE0F Autobahnschild: 802.1Q', text: 'Du faehrst auf die Autobahn. Am Eingang steht ein grosses Schild: "802.1Q \u2013 Standard für VLAN-Tagging". Hier fahren Frames aus vielen VLANs gemeinsam!' },
+      { kw: 'Tag', img: '\uD83C\uDFF7\uFE0F Aufkleber auf jedem Auto', text: 'Jedes Auto (Frame) auf der Autobahn hat einen Aufkleber (4-Byte-Tag) mit der VLAN-Nummer. So weiss die Ausfahrt (empfangender Switch), wohin jedes Auto gehört.' },
+      { kw: 'mehrere VLANs', img: '\uD83D\uDEE4\uFE0F Mehrspurige Fahrbahn', text: 'Die Autobahn hat viele Spuren \u2013 eine für jedes VLAN. Alle fahren auf demselben Kabel, aber dank der Tags bleiben sie getrennt.' },
+      { kw: 'Native VLAN', img: '\uD83D\uDE97 Auto ohne Aufkleber', text: 'Ein Auto faehrt ohne Aufkleber \u2013 es gehört zum Native VLAN! Frames ohne Tag werden automatisch dem Native VLAN zugeordnet.' },
+      { kw: 'Access Port', img: '\u26FD Tankstelle als Endpunkt', text: 'An der Tankstelle (Access Port) gibt es nur eine Spur und keine Aufkleber noetig \u2013 hier gehört alles zu einem einzigen VLAN. Der Trunk dagegen ist die grosse Autobahn dazwischen.' }
     ]
   },
   'Routing-Tabelle': {
-    route: 'Ein Strassenatlas',
+    route: 'Ein Straßenatlas',
     scenes: [
-      { kw: 'Zielnetz', img: '\uD83D\uDDFA\uFE0F Stadtnamen auf der Karte', text: 'Du oeffnest einen Strassenatlas. Jede Stadt ist ein Zielnetz. Der Router schlaegt hier nach, wohin jedes Paket muss.' },
-      { kw: 'Next Hop', img: '\u27A1\uFE0F Naechste Kreuzung', text: 'Bei jeder Stadt steht ein Pfeil zur naechsten Kreuzung \u2013 der Next Hop. Der Router muss nicht den ganzen Weg kennen, nur den naechsten Schritt!' },
-      { kw: 'Metrik', img: '\u2696\uFE0F Entfernungsangabe', text: 'Neben jedem Weg steht eine Zahl \u2013 die Metrik. Niedrigere Zahl = besserer Weg. Der Router waehlt immer die Route mit der kleinsten Metrik.' },
+      { kw: 'Zielnetz', img: '\uD83D\uDDFA\uFE0F Stadtnamen auf der Karte', text: 'Du öffnest einen Straßenatlas. Jede Stadt ist ein Zielnetz. Der Router schlaegt hier nach, wohin jedes Paket muss.' },
+      { kw: 'Next Hop', img: '\u27A1\uFE0F Nächste Kreuzung', text: 'Bei jeder Stadt steht ein Pfeil zur nächsten Kreuzung \u2013 der Next Hop. Der Router muss nicht den ganzen Weg kennen, nur den nächsten Schritt!' },
+      { kw: 'Metrik', img: '\u2696\uFE0F Entfernungsangabe', text: 'Neben jedem Weg steht eine Zahl \u2013 die Metrik. Niedrigere Zahl = besserer Weg. Der Router wählt immer die Route mit der kleinsten Metrik.' },
       { kw: 'Longest Prefix Match', img: '\uD83D\uDD0D Lupe auf die genauste Adresse', text: 'Mit einer Lupe schaut der Router auf die genauste Adresse: /28 passt besser als /24! Das ist der Longest Prefix Match \u2013 je spezifischer, desto besser.' },
-      { kw: 'dynamisch', img: '\uD83D\uDD04 Karte aktualisiert sich selbst', text: 'Manche Karten aktualisieren sich automatisch \u2013 dynamische Routen via OSPF oder RIP. Statische Routen sind dagegen handgeschrieben und aendern sich nie von allein.' }
+      { kw: 'dynamisch', img: '\uD83D\uDD04 Karte aktualisiert sich selbst', text: 'Manche Karten aktualisieren sich automatisch \u2013 dynamische Routen via OSPF oder RIP. Statische Routen sind dagegen handgeschrieben und ändern sich nie von allein.' }
     ]
   },
   'Default Gateway': {
     route: 'Eine Haustuer',
     scenes: [
       { kw: 'IP-Adresse', img: '\uD83D\uDEAA Tuer mit Nummer', text: 'An deiner Haustuer steht eine IP-Adresse \u2013 das ist das Default Gateway. Es ist die Adresse des Routers, der dich nach draussen bringt.' },
-      { kw: 'lokales Netz', img: '\uD83C\uDFE0 Dein Haus = dein Subnetz', text: 'Alles innerhalb deines Hauses ist dein lokales Netz. Du kannst von Zimmer zu Zimmer gehen (lokale Kommunikation) ohne die Tuer zu oeffnen.' },
+      { kw: 'lokales Netz', img: '\uD83C\uDFE0 Dein Haus = dein Subnetz', text: 'Alles innerhalb deines Hauses ist dein lokales Netz. Du kannst von Zimmer zu Zimmer gehen (lokale Kommunikation) ohne die Tuer zu öffnen.' },
       { kw: 'Router', img: '\uD83D\uDE8C Bus vor der Tuer', text: 'Vor der Tuer steht ein Bus (Router). Willst du ins Nachbarviertel (anderes Netz)? Dann MUSST du durch die Tuer und den Bus nehmen!' },
-      { kw: 'Subnetz', img: '\uD83C\uDFD8\uFE0F Nachbarschaft', text: 'Das Gateway muss in deiner Nachbarschaft (gleiches Subnetz) liegen. Ein Gateway in einer anderen Stadt wuerde nicht funktionieren \u2013 du koenntest es per Layer 2 nicht erreichen.' },
+      { kw: 'Subnetz', img: '\uD83C\uDFD8\uFE0F Nachbarschaft', text: 'Das Gateway muss in deiner Nachbarschaft (gleiches Subnetz) liegen. Ein Gateway in einer anderen Stadt würde nicht funktionieren \u2013 du könntest es per Layer 2 nicht erreichen.' },
       { kw: 'ohne Gateway', img: '\uD83D\uDD12 Eingesperrt ohne Tuer', text: 'Ohne Tuer (kein Default Gateway) bist du eingesperrt! Du kannst nur mit Nachbarn im selben Subnetz reden, aber nie nach draussen.' }
     ]
   },
   'Spanning Tree Protocol': {
     route: 'Ein Labyrinth',
     scenes: [
-      { kw: 'Schleifen', img: '\uD83C\uDF00 Endlos-Kreisverkehr', text: 'Du betrittst ein Labyrinth mit Kreisverkehren. Ohne STP wuerden Nachrichten ewig im Kreis laufen \u2013 ein Broadcast Storm! Alles steht still vor lauter Drehen.' },
-      { kw: 'Root Bridge', img: '\uD83C\uDFE1 Zentrales Baumhaus', text: 'In der Mitte des Labyrinths steht ein Baumhaus \u2013 die Root Bridge. Sie hat die niedrigste Nummer (Priority 32768 + niedrigste MAC) und ist der Referenzpunkt fuer alle.' },
+      { kw: 'Schleifen', img: '\uD83C\uDF00 Endlos-Kreisverkehr', text: 'Du betrittst ein Labyrinth mit Kreisverkehren. Ohne STP würden Nachrichten ewig im Kreis laufen \u2013 ein Broadcast Storm! Alles steht still vor lauter Drehen.' },
+      { kw: 'Root Bridge', img: '\uD83C\uDFE1 Zentrales Baumhaus', text: 'In der Mitte des Labyrinths steht ein Baumhaus \u2013 die Root Bridge. Sie hat die niedrigste Nummer (Priority 32768 + niedrigste MAC) und ist der Referenzpunkt für alle.' },
       { kw: 'Blocking', img: '\uD83D\uDEA7 Gesperrte Wege', text: 'Einige Wege sind mit Absperrbaken blockiert \u2013 STP sperrt redundante Pfade (Blocking). Dadurch entsteht ein schleifenfreier Baum.' },
       { kw: 'BPDU', img: '\uD83D\uDCEC Brieftauben zwischen Switches', text: 'Brieftauben (BPDUs) fliegen zwischen den Kreuzungen und teilen mit: "Ich kenne den Weg zur Root Bridge!" So finden alle den besten Pfad.' },
-      { kw: 'Forwarding', img: '\u2705 Offener Hauptweg', text: 'Nach dem Aufbau sind die Hauptwege offen (Forwarding). Faellt ein Weg aus, oeffnet STP automatisch einen gesperrten Alternativweg \u2013 Redundanz ohne Schleifen!' }
+      { kw: 'Forwarding', img: '\u2705 Offener Hauptweg', text: 'Nach dem Aufbau sind die Hauptwege offen (Forwarding). Fällt ein Weg aus, öffnet STP automatisch einen gesperrten Alternativweg \u2013 Redundanz ohne Schleifen!' }
     ]
   },
   'ARP': {
@@ -667,9 +667,9 @@ var GP_STORIES = {
     scenes: [
       { kw: 'IP zu MAC', img: '\uD83D\uDCDB Namensliste und Sitzplaetze', text: 'Du stehst im Hoersaal und hast eine Namensliste (IP-Adressen), aber keine Sitzplatznummern (MAC-Adressen). ARP hilft dir, die Zuordnung zu finden!' },
       { kw: 'Broadcast', img: '\uD83D\uDCE2 Laut in den Saal rufen', text: 'Du rufst laut: "Wer hat die IP 192.168.1.5?" \u2013 das ist der ARP-Request als Broadcast. Alle im Saal hoeren die Frage!' },
-      { kw: 'Unicast', img: '\u270B Eine Hand geht hoch', text: 'Eine Person hebt die Hand und antwortet leise zurueck: "Das bin ich, meine MAC ist AA:BB:CC..." \u2013 der ARP-Reply als Unicast, nur an dich gerichtet.' },
-      { kw: 'ARP-Cache', img: '\uD83D\uDCDD Notizblock', text: 'Du schreibst dir die Antwort auf deinen Notizblock \u2013 den ARP-Cache. Naechstes Mal musst du nicht mehr rufen, du schaust einfach nach!' },
-      { kw: 'Subnetz', img: '\uD83C\uDFDB\uFE0F Nur im eigenen Hoersaal', text: 'Dein Rufen reicht nur bis zu den Waenden des Hoersaals \u2013 ARP funktioniert nur im eigenen Subnetz. Fuer andere Netze fragst du den Router (Default Gateway).' }
+      { kw: 'Unicast', img: '\u270B Eine Hand geht hoch', text: 'Eine Person hebt die Hand und antwortet leise zurück: "Das bin ich, meine MAC ist AA:BB:CC..." \u2013 der ARP-Reply als Unicast, nur an dich gerichtet.' },
+      { kw: 'ARP-Cache', img: '\uD83D\uDCDD Notizblock', text: 'Du schreibst dir die Antwort auf deinen Notizblock \u2013 den ARP-Cache. Nächstes Mal musst du nicht mehr rufen, du schaust einfach nach!' },
+      { kw: 'Subnetz', img: '\uD83C\uDFDB\uFE0F Nur im eigenen Hoersaal', text: 'Dein Rufen reicht nur bis zu den Waenden des Hoersaals \u2013 ARP funktioniert nur im eigenen Subnetz. Für andere Netze fragst du den Router (Default Gateway).' }
     ]
   }
 };

@@ -535,34 +535,34 @@ var TRAINER_ID = 'logik-addierer';
 var GLOSSARY = [
   {
     term: 'AND-Gatter',
-    short: 'Ausgang 1 nur wenn alle Eingaenge 1',
-    definition: 'Das AND-Gatter (Konjunktion) ist ein logisches Gatter mit zwei oder mehr Eingaengen und einem Ausgang. Der Ausgang liefert genau dann eine logische 1, wenn saemtliche Eingaenge gleichzeitig auf 1 liegen. Liegt auch nur ein Eingang auf 0, ist der Ausgang 0. Das Schaltsymbol ist das kaufmaennische Und-Zeichen bzw. der Punkt in der Booleschen Algebra: Y = A \u2227 B.',
+    short: 'Ausgang 1 nur wenn alle Eingänge 1',
+    definition: 'Das AND-Gatter (Konjunktion) ist ein logisches Gatter mit zwei oder mehr Eingängen und einem Ausgang. Der Ausgang liefert genau dann eine logische 1, wenn saemtliche Eingänge gleichzeitig auf 1 liegen. Liegt auch nur ein Eingang auf 0, ist der Ausgang 0. Das Schaltsymbol ist das kaufmaennische Und-Zeichen bzw. der Punkt in der Booleschen Algebra: Y = A \u2227 B.',
     analogy: '\ud83d\udca1 Wie eine Reihenschaltung zweier Lichtschalter: Nur wenn beide Schalter AN sind, leuchtet die Lampe. Sobald einer AUS ist, bleibt es dunkel.',
     hints: [
-      'Denke an das Wort "UND" \u2013 A UND B muessen beide wahr sein.',
+      'Denke an das Wort "UND" \u2013 A UND B müssen beide wahr sein.',
       'Die Wahrheitstabelle hat nur in der letzten Zeile (1,1) eine 1 am Ausgang.',
       'In der Booleschen Algebra schreibt man Y = A \u00b7 B oder Y = A \u2227 B.'
     ],
     questions: [
-      { type: 'fill', q: 'Wie lautet die Boolesche Formel fuer das AND-Gatter? Y = A ___ B', a: '\u2227', alt: ['AND', 'und', '\u00b7', '*', 'and'], hint: 'Logisches UND-Zeichen' },
-      { type: 'choice', q: 'Wann liefert ein AND-Gatter den Ausgang 1?', options: ['Wenn mindestens ein Eingang 1 ist', 'Wenn alle Eingaenge 1 sind', 'Wenn die Eingaenge unterschiedlich sind', 'Wenn alle Eingaenge 0 sind'], correct: 1 },
-      { type: 'explain', q: 'Erklaere in eigenen Worten, was ein AND-Gatter macht und wofuer es im Halbaddierer verwendet wird.', keywords: ['alle', 'eingang', '1', 'uebertrag', 'carry', 'konjunktion', 'halbaddierer', 'beide'], minKeywords: 3 }
+      { type: 'fill', q: 'Wie lautet die Boolesche Formel für das AND-Gatter? Y = A ___ B', a: '\u2227', alt: ['AND', 'und', '\u00b7', '*', 'and'], hint: 'Logisches UND-Zeichen' },
+      { type: 'choice', q: 'Wann liefert ein AND-Gatter den Ausgang 1?', options: ['Wenn mindestens ein Eingang 1 ist', 'Wenn alle Eingänge 1 sind', 'Wenn die Eingänge unterschiedlich sind', 'Wenn alle Eingänge 0 sind'], correct: 1 },
+      { type: 'explain', q: 'Erkläre in eigenen Worten, was ein AND-Gatter macht und wofür es im Halbaddierer verwendet wird.', keywords: ['alle', 'eingang', '1', 'übertrag', 'carry', 'konjunktion', 'halbaddierer', 'beide'], minKeywords: 3 }
     ],
     difficulty: 1
   },
   {
     term: 'OR-Gatter',
     short: 'Ausgang 1 wenn mindestens ein Eingang 1',
-    definition: 'Das OR-Gatter (Disjunktion) liefert am Ausgang eine 1, sobald mindestens einer seiner Eingaenge auf 1 liegt. Nur wenn alle Eingaenge 0 sind, ist auch der Ausgang 0. In der Booleschen Algebra: Y = A \u2228 B. Das OR-Gatter ist ein Grundbaustein digitaler Schaltungen.',
+    definition: 'Das OR-Gatter (Disjunktion) liefert am Ausgang eine 1, sobald mindestens einer seiner Eingänge auf 1 liegt. Nur wenn alle Eingänge 0 sind, ist auch der Ausgang 0. In der Booleschen Algebra: Y = A \u2228 B. Das OR-Gatter ist ein Grundbaustein digitaler Schaltungen.',
     analogy: '\ud83d\udca1 Wie eine Parallelschaltung zweier Lichtschalter: Sobald mindestens ein Schalter AN ist, leuchtet die Lampe. Nur wenn beide AUS sind, bleibt es dunkel.',
     hints: [
-      'Denke an "ODER" \u2013 A ODER B (oder beide) muessen wahr sein.',
+      'Denke an "ODER" \u2013 A ODER B (oder beide) müssen wahr sein.',
       'Die Wahrheitstabelle hat nur in der ersten Zeile (0,0) eine 0 am Ausgang.',
-      'Im Volladdierer verbindet ein OR-Gatter die Uebertraege der beiden Halbaddierer.'
+      'Im Volladdierer verbindet ein OR-Gatter die Übertraege der beiden Halbaddierer.'
     ],
     questions: [
-      { type: 'fill', q: 'Wann ist der Ausgang eines OR-Gatters 0? Nur wenn ___ Eingaenge 0 sind.', a: 'alle', alt: ['beide', 'saemtliche'], hint: 'Wie viele muessen 0 sein?' },
-      { type: 'choice', q: 'Welche Rolle spielt das OR-Gatter im Volladdierer?', options: ['Es berechnet die Summe S', 'Es invertiert den Eingang', 'Es verknuepft die Uebertraege der zwei Halbaddierer zu Cout', 'Es hat im Volladdierer keine Funktion'], correct: 2 },
+      { type: 'fill', q: 'Wann ist der Ausgang eines OR-Gatters 0? Nur wenn ___ Eingänge 0 sind.', a: 'alle', alt: ['beide', 'saemtliche'], hint: 'Wie viele müssen 0 sein?' },
+      { type: 'choice', q: 'Welche Rolle spielt das OR-Gatter im Volladdierer?', options: ['Es berechnet die Summe S', 'Es invertiert den Eingang', 'Es verknüpft die Übertraege der zwei Halbaddierer zu Cout', 'Es hat im Volladdierer keine Funktion'], correct: 2 },
       { type: 'explain', q: 'Beschreibe die Funktion eines OR-Gatters und nenne den Unterschied zum AND-Gatter.', keywords: ['mindestens', 'eingang', '1', 'disjunktion', 'oder', 'parallel', 'unterschied'], minKeywords: 3 }
     ],
     difficulty: 1
@@ -570,7 +570,7 @@ var GLOSSARY = [
   {
     term: 'NOT-Gatter (Inverter)',
     short: 'Invertiert den Eingang: 0 wird 1, 1 wird 0',
-    definition: 'Das NOT-Gatter (Negation, Inverter) besitzt genau einen Eingang und einen Ausgang. Es kehrt den logischen Zustand um: Liegt am Eingang eine 1 an, liefert der Ausgang 0 \u2013 und umgekehrt. In der Booleschen Algebra schreibt man Y = \u00acA oder Y = A\u0305. Der Inverter ist elementar fuer den Aufbau von NAND- und NOR-Gattern.',
+    definition: 'Das NOT-Gatter (Negation, Inverter) besitzt genau einen Eingang und einen Ausgang. Es kehrt den logischen Zustand um: Liegt am Eingang eine 1 an, liefert der Ausgang 0 \u2013 und umgekehrt. In der Booleschen Algebra schreibt man Y = \u00acA oder Y = A\u0305. Der Inverter ist elementar für den Aufbau von NAND- und NOR-Gattern.',
     analogy: '\ud83d\udca1 Wie ein Umkehr-Spiegel: Was reinkommt, wird ins Gegenteil verwandelt. Licht rein \u2192 Dunkel raus, Dunkel rein \u2192 Licht raus.',
     hints: [
       'NOT hat nur EINEN Eingang \u2013 das unterscheidet es von allen anderen Grundgattern.',
@@ -578,77 +578,77 @@ var GLOSSARY = [
       'Die Wahrheitstabelle hat nur zwei Zeilen: 0\u21921 und 1\u21920.'
     ],
     questions: [
-      { type: 'fill', q: 'Ein NOT-Gatter wird auch ___ genannt.', a: 'Inverter', alt: ['negation', 'nicht-gatter', 'nicht'], hint: 'Anderes Wort fuer Umkehrer' },
-      { type: 'choice', q: 'Wie viele Eingaenge hat ein NOT-Gatter?', options: ['Keinen Eingang', 'Genau einen Eingang', 'Genau zwei Eingaenge', 'Beliebig viele Eingaenge'], correct: 1 },
-      { type: 'explain', q: 'Erklaere, was ein NOT-Gatter macht und warum es fuer NAND- und NOR-Gatter wichtig ist.', keywords: ['invertiert', 'negation', 'eingang', 'ausgang', 'umkehrt', 'nand', 'nor', 'gegenteil'], minKeywords: 3 }
+      { type: 'fill', q: 'Ein NOT-Gatter wird auch ___ genannt.', a: 'Inverter', alt: ['negation', 'nicht-gatter', 'nicht'], hint: 'Anderes Wort für Umkehrer' },
+      { type: 'choice', q: 'Wie viele Eingänge hat ein NOT-Gatter?', options: ['Keinen Eingang', 'Genau einen Eingang', 'Genau zwei Eingänge', 'Beliebig viele Eingänge'], correct: 1 },
+      { type: 'explain', q: 'Erkläre, was ein NOT-Gatter macht und warum es für NAND- und NOR-Gatter wichtig ist.', keywords: ['invertiert', 'negation', 'eingang', 'ausgang', 'umkehrt', 'nand', 'nor', 'gegenteil'], minKeywords: 3 }
     ],
     difficulty: 1
   },
   {
     term: 'XOR-Gatter',
-    short: 'Ausgang 1 wenn Eingaenge unterschiedlich',
-    definition: 'Das XOR-Gatter (Exklusiv-ODER, Antivalenz) liefert genau dann eine 1 am Ausgang, wenn die beiden Eingaenge unterschiedliche Werte haben (einer 0 und einer 1). Bei gleichen Eingaengen (beide 0 oder beide 1) ist der Ausgang 0. Formel: Y = A \u2295 B. Das XOR-Gatter bildet die Summenberechnung im Halb- und Volladdierer.',
-    analogy: '\ud83d\udca1 Wie ein Wechselschalter im Flur: Das Licht aendert seinen Zustand nur, wenn genau EINER der beiden Schalter betaetigt wird. Beide gleichzeitig \u2192 keine Aenderung.',
+    short: 'Ausgang 1 wenn Eingänge unterschiedlich',
+    definition: 'Das XOR-Gatter (Exklusiv-ODER, Antivalenz) liefert genau dann eine 1 am Ausgang, wenn die beiden Eingänge unterschiedliche Werte haben (einer 0 und einer 1). Bei gleichen Eingängen (beide 0 oder beide 1) ist der Ausgang 0. Formel: Y = A \u2295 B. Das XOR-Gatter bildet die Summenberechnung im Halb- und Volladdierer.',
+    analogy: '\ud83d\udca1 Wie ein Wechselschalter im Flur: Das Licht ändert seinen Zustand nur, wenn genau EINER der beiden Schalter betaetigt wird. Beide gleichzeitig \u2192 keine Änderung.',
     hints: [
       'XOR = "entweder A oder B, aber nicht beide" \u2013 Exklusiv-ODER.',
       'Im Halbaddierer berechnet XOR die Summe S = A \u2295 B.',
-      'XOR ist wie Addition ohne Uebertrag: 1+1=0 (der Uebertrag geht ans AND-Gatter).'
+      'XOR ist wie Addition ohne Übertrag: 1+1=0 (der Übertrag geht ans AND-Gatter).'
     ],
     questions: [
       { type: 'fill', q: 'Im Halbaddierer berechnet das XOR-Gatter die ___.', a: 'Summe', alt: ['summe s', 's'], hint: 'Das Ergebnis der Addition' },
-      { type: 'choice', q: 'Was ist der Ausgang eines XOR-Gatters bei Eingaengen A=1 und B=1?', options: ['1, weil beide Eingaenge aktiv sind', '0, weil die Eingaenge gleich sind', '1, weil mindestens ein Eingang aktiv ist', 'Undefiniert'], correct: 1 },
-      { type: 'explain', q: 'Erklaere den Unterschied zwischen XOR und OR und die Rolle von XOR im Addierer.', keywords: ['unterschiedlich', 'exklusiv', 'summe', 'halbaddierer', 'gleich', 'entweder'], minKeywords: 3 }
+      { type: 'choice', q: 'Was ist der Ausgang eines XOR-Gatters bei Eingängen A=1 und B=1?', options: ['1, weil beide Eingänge aktiv sind', '0, weil die Eingänge gleich sind', '1, weil mindestens ein Eingang aktiv ist', 'Undefiniert'], correct: 1 },
+      { type: 'explain', q: 'Erkläre den Unterschied zwischen XOR und OR und die Rolle von XOR im Addierer.', keywords: ['unterschiedlich', 'exklusiv', 'summe', 'halbaddierer', 'gleich', 'entweder'], minKeywords: 3 }
     ],
     difficulty: 2
   },
   {
     term: 'Halbaddierer',
     short: 'Addiert 2 Bits, erzeugt Summe und Carry',
-    definition: 'Der Halbaddierer (Half Adder, HA) ist eine Schaltung, die zwei einstellige Binaerzahlen A und B addiert. Er besitzt zwei Ausgaenge: die Summe S = A \u2295 B (XOR) und den Uebertrag C = A \u2227 B (AND). Er kann keinen eingehenden Uebertrag verarbeiten und wird daher nur fuer das niederwertigste Bit (LSB) eingesetzt.',
+    definition: 'Der Halbaddierer (Half Adder, HA) ist eine Schaltung, die zwei einstellige Binärzahlen A und B addiert. Er besitzt zwei Ausgänge: die Summe S = A \u2295 B (XOR) und den Übertrag C = A \u2227 B (AND). Er kann keinen eingehenden Übertrag verarbeiten und wird daher nur für das niederwertigste Bit (LSB) eingesetzt.',
     analogy: '\ud83d\udca1 Wie ein einfacher Taschenrechner, der nur zwei einzelne Ziffern addieren kann, aber nicht weiss, ob von einer vorherigen Rechnung noch etwas "uebrig" ist.',
     hints: [
-      'Der HA besteht aus genau zwei Gattern: XOR (fuer S) und AND (fuer C).',
-      '"Halb", weil er keinen Carry-Eingang hat \u2013 er kann keinen eingehenden Uebertrag verarbeiten.',
-      'Fuer ein n-Bit-Addierwerk braucht man 1 HA (LSB) + (n\u22121) Volladdierer.'
+      'Der HA besteht aus genau zwei Gattern: XOR (für S) und AND (für C).',
+      '"Halb", weil er keinen Carry-Eingang hat \u2013 er kann keinen eingehenden Übertrag verarbeiten.',
+      'Für ein n-Bit-Addierwerk braucht man 1 HA (LSB) + (n\u22121) Volladdierer.'
     ],
     questions: [
       { type: 'fill', q: 'Ein Halbaddierer besteht intern aus einem ___-Gatter und einem AND-Gatter.', a: 'XOR', alt: ['xor'], hint: 'Welches Gatter berechnet die Summe?' },
-      { type: 'choice', q: 'Warum heisst der Halbaddierer "halb"?', options: ['Weil er nur einen Ausgang hat', 'Weil er nur halbe Bits verarbeiten kann', 'Weil er keinen eingehenden Uebertrag (Carry-In) verarbeiten kann', 'Weil er doppelt so langsam ist wie ein Volladdierer'], correct: 2 },
-      { type: 'explain', q: 'Beschreibe den Aufbau und die Funktion eines Halbaddierers. Welche Gatter werden verwendet und welche Ausgaenge entstehen?', keywords: ['xor', 'and', 'summe', 'uebertrag', 'carry', 'zwei', 'bit', 'gatter'], minKeywords: 3 }
+      { type: 'choice', q: 'Warum heißt der Halbaddierer "halb"?', options: ['Weil er nur einen Ausgang hat', 'Weil er nur halbe Bits verarbeiten kann', 'Weil er keinen eingehenden Übertrag (Carry-In) verarbeiten kann', 'Weil er doppelt so langsam ist wie ein Volladdierer'], correct: 2 },
+      { type: 'explain', q: 'Beschreibe den Aufbau und die Funktion eines Halbaddierers. Welche Gatter werden verwendet und welche Ausgänge entstehen?', keywords: ['xor', 'and', 'summe', 'übertrag', 'carry', 'zwei', 'bit', 'gatter'], minKeywords: 3 }
     ],
     difficulty: 2
   },
   {
     term: 'Volladdierer',
     short: 'Addiert 3 Bits (A, B, Carry-In)',
-    definition: 'Der Volladdierer (Full Adder, VA) addiert drei Bits: zwei Summanden A und B sowie einen eingehenden Uebertrag Cin. Er liefert eine Summe S = A \u2295 B \u2295 Cin und einen ausgehenden Uebertrag Cout = (A \u2227 B) \u2228 (Cin \u2227 (A \u2295 B)). Intern besteht er aus zwei Halbaddierern und einem OR-Gatter. Durch Kaskadierung mehrerer VA entsteht ein Ripple-Carry-Addierer fuer beliebig lange Binaerzahlen.',
-    analogy: '\ud83d\udca1 Wie ein Kassierer, der zwei neue Betraege plus einen Rest von der letzten Runde zusammenzaehlt. Er kann den "Uebertrag" von vorherigen Berechnungen mitverarbeiten.',
+    definition: 'Der Volladdierer (Full Adder, VA) addiert drei Bits: zwei Summanden A und B sowie einen eingehenden Übertrag Cin. Er liefert eine Summe S = A \u2295 B \u2295 Cin und einen ausgehenden Übertrag Cout = (A \u2227 B) \u2228 (Cin \u2227 (A \u2295 B)). Intern besteht er aus zwei Halbaddierern und einem OR-Gatter. Durch Kaskadierung mehrerer VA entsteht ein Ripple-Carry-Addierer für beliebig lange Binärzahlen.',
+    analogy: '\ud83d\udca1 Wie ein Kassierer, der zwei neue Betraege plus einen Rest von der letzten Runde zusammenzählt. Er kann den "Übertrag" von vorherigen Berechnungen mitverarbeiten.',
     hints: [
       'VA = 2 Halbaddierer + 1 OR-Gatter.',
       'Der erste HA addiert A und B, der zweite addiert das Ergebnis mit Cin.',
-      'Das OR-Gatter verknuepft die Uebertraege beider HAs zum Gesamt-Carry Cout.'
+      'Das OR-Gatter verknüpft die Übertraege beider HAs zum Gesamt-Carry Cout.'
     ],
     questions: [
       { type: 'fill', q: 'Ein Volladdierer besteht intern aus ___ Halbaddierern und einem OR-Gatter.', a: '2', alt: ['zwei'], hint: 'Wie viele Halbaddierer?' },
-      { type: 'choice', q: 'Wie viele Eingaenge hat ein Volladdierer?', options: ['2 Eingaenge (A, B)', '3 Eingaenge (A, B, Cin)', '4 Eingaenge (A, B, Cin, Cout)', '1 Eingang (A)'], correct: 1 },
-      { type: 'explain', q: 'Erklaere den inneren Aufbau eines Volladdierers und warum er fuer mehrstellige Binaeraddition unverzichtbar ist.', keywords: ['halbaddierer', 'or', 'uebertrag', 'cin', 'cout', 'kaskad', 'drei', 'bit'], minKeywords: 3 }
+      { type: 'choice', q: 'Wie viele Eingänge hat ein Volladdierer?', options: ['2 Eingänge (A, B)', '3 Eingänge (A, B, Cin)', '4 Eingänge (A, B, Cin, Cout)', '1 Eingang (A)'], correct: 1 },
+      { type: 'explain', q: 'Erkläre den inneren Aufbau eines Volladdierers und warum er für mehrstellige Binäraddition unverzichtbar ist.', keywords: ['halbaddierer', 'or', 'übertrag', 'cin', 'cout', 'kaskad', 'drei', 'bit'], minKeywords: 3 }
     ],
     difficulty: 3
   },
   {
     term: 'Wahrheitstabelle',
     short: 'Tabelle aller Ein-/Ausgabekombinationen',
-    definition: 'Eine Wahrheitstabelle (Truth Table) listet systematisch alle moeglichen Kombinationen der Eingangsvariablen und die jeweils resultierenden Ausgangswerte einer logischen Schaltung auf. Bei n Eingaengen gibt es 2^n Zeilen. Sie ist das zentrale Werkzeug zur vollstaendigen Beschreibung und Analyse digitaler Schaltungen und Boolescher Funktionen.',
-    analogy: '\ud83d\udca1 Wie ein vollstaendiger Fahrplan: Fuer jede denkbare Abfahrtszeit (Eingabe) steht die Ankunftszeit (Ausgabe) schwarz auf weiss. Nichts bleibt unklar, weil jede Moeglichkeit abgedeckt ist.',
+    definition: 'Eine Wahrheitstabelle (Truth Table) listet systematisch alle möglichen Kombinationen der Eingangsvariablen und die jeweils resultierenden Ausgangswerte einer logischen Schaltung auf. Bei n Eingängen gibt es 2^n Zeilen. Sie ist das zentrale Werkzeug zur vollstaendigen Beschreibung und Analyse digitaler Schaltungen und Boolescher Funktionen.',
+    analogy: '\ud83d\udca1 Wie ein vollstaendiger Fahrplan: Für jede denkbare Abfahrtszeit (Eingabe) steht die Ankunftszeit (Ausgabe) schwarz auf weiss. Nichts bleibt unklar, weil jede Möglichkeit abgedeckt ist.',
     hints: [
-      'Bei 2 Eingaengen: 2\u00b2 = 4 Zeilen, bei 3 Eingaengen: 2\u00b3 = 8 Zeilen.',
-      'Die Eingangskombinationen werden oft in aufsteigender Binaer-Reihenfolge aufgelistet (00, 01, 10, 11).',
+      'Bei 2 Eingängen: 2\u00b2 = 4 Zeilen, bei 3 Eingängen: 2\u00b3 = 8 Zeilen.',
+      'Die Eingangskombinationen werden oft in aufsteigender Binär-Reihenfolge aufgelistet (00, 01, 10, 11).',
       'Mit einer Wahrheitstabelle kann man jede beliebige Boolesche Funktion eindeutig beschreiben.'
     ],
     questions: [
-      { type: 'fill', q: 'Bei n Eingaengen hat eine Wahrheitstabelle ___ Zeilen.', a: '2^n', alt: ['2 hoch n', '2n', '2**n'], hint: 'Zweierpotenz' },
-      { type: 'choice', q: 'Wie viele Zeilen hat die Wahrheitstabelle eines Volladdierers (3 Eingaenge)?', options: ['3 Zeilen', '6 Zeilen', '8 Zeilen', '16 Zeilen'], correct: 2 },
-      { type: 'explain', q: 'Erklaere, was eine Wahrheitstabelle ist und warum sie fuer logische Schaltungen so wichtig ist.', keywords: ['kombination', 'eingang', 'ausgang', 'zeile', 'vollstaendig', 'logisch', 'boolesch'], minKeywords: 3 }
+      { type: 'fill', q: 'Bei n Eingängen hat eine Wahrheitstabelle ___ Zeilen.', a: '2^n', alt: ['2 hoch n', '2n', '2**n'], hint: 'Zweierpotenz' },
+      { type: 'choice', q: 'Wie viele Zeilen hat die Wahrheitstabelle eines Volladdierers (3 Eingänge)?', options: ['3 Zeilen', '6 Zeilen', '8 Zeilen', '16 Zeilen'], correct: 2 },
+      { type: 'explain', q: 'Erkläre, was eine Wahrheitstabelle ist und warum sie für logische Schaltungen so wichtig ist.', keywords: ['kombination', 'eingang', 'ausgang', 'zeile', 'vollstaendig', 'logisch', 'boolesch'], minKeywords: 3 }
     ],
     difficulty: 1
   },
@@ -678,15 +678,15 @@ var GP_STORIES = {
       {kw: 'Konjunktion', img: '\ud83d\udc51 Zwei Ritter am Tor', text: 'Vor dem Burgtor stehen zwei Ritter \u2013 die Konjunktion verlangt, dass BEIDE gleichzeitig den Riegel ziehen, sonst bleibt das Tor verschlossen.'},
       {kw: 'alle', img: '\ud83d\udea8 Alarmanlage am Eingang', text: 'Die Alarmanlage piept nur dann NICHT, wenn alle Sensoren gleichzeitig gruen leuchten. Einer rot? Alarm!'},
       {kw: 'Reihenschaltung', img: '\ud83d\udd17 Zwei Kettenglieder', text: 'Die Lichterkette im Burgsaal hat zwei Schalter in Reihe \u2013 eine Reihenschaltung: Nur wenn beide geschlossen sind, fliesst der Strom.'},
-      {kw: 'Uebertrag', img: '\ud83d\udcb0 Goldmuenze als Carry', text: 'Im Halbaddierer liefert das AND-Gatter die Goldmuenze des Uebertrags \u2013 sie faellt nur, wenn beide Bits eine 1 sind.'},
-      {kw: 'Wahrheitstabelle', img: '\ud83d\udcdc Pergamentrolle', text: 'An der Wand haengt eine Pergamentrolle mit 4 Zeilen \u2013 die Wahrheitstabelle. Nur in der letzten Zeile (1,1) steht eine 1.'}
+      {kw: 'Übertrag', img: '\ud83d\udcb0 Goldmünze als Carry', text: 'Im Halbaddierer liefert das AND-Gatter die Goldmünze des Übertrags \u2013 sie fällt nur, wenn beide Bits eine 1 sind.'},
+      {kw: 'Wahrheitstabelle', img: '\ud83d\udcdc Pergamentrolle', text: 'An der Wand hängt eine Pergamentrolle mit 4 Zeilen \u2013 die Wahrheitstabelle. Nur in der letzten Zeile (1,1) steht eine 1.'}
     ]
   },
   'OR-Gatter': {
-    route: 'Ein grosses Fussballstadion mit mehreren Eingaengen',
+    route: 'Ein grosses Fussballstadion mit mehreren Eingängen',
     scenes: [
       {kw: 'Disjunktion', img: '\u26bd Tor bei jedem Eingang', text: 'Das Stadion hat mehrere Tore \u2013 Disjunktion bedeutet: Sobald IRGENDEIN Tor offen ist, kommen die Fans rein.'},
-      {kw: 'mindestens', img: '\u261d\ufe0f Ein Finger genuegt', text: 'Der Tuerwechter hebt einen Finger: mindestens ein Eingang muss 1 sein, dann oeffnet sich das Drehkreuz.'},
+      {kw: 'mindestens', img: '\u261d\ufe0f Ein Finger genügt', text: 'Der Tuerwechter hebt einen Finger: mindestens ein Eingang muss 1 sein, dann öffnet sich das Drehkreuz.'},
       {kw: 'Parallelschaltung', img: '\ud83d\udee4\ufe0f Zwei Wege', text: 'Zwei Wege fuehren parallel zum Spielfeld \u2013 eine Parallelschaltung. Egal welchen du nimmst, du kommst an.'},
       {kw: 'Volladdierer', img: '\u2795 OR am Ende', text: 'Im Volladdierer steht das OR-Gatter ganz am Ende und verbindet die beiden Carry-Leitungen der Halbaddierer.'},
       {kw: 'Null', img: '\ud83d\udeab Leeres Stadion', text: 'Nur wenn ALLE Tore geschlossen sind, ist das Stadion leer \u2013 Ausgang Null. Sonst immer 1.'}
@@ -696,18 +696,18 @@ var GP_STORIES = {
     route: 'Ein magischer Spiegel in einer Geisterhoehle',
     scenes: [
       {kw: 'invertiert', img: '\ud83e\ude9e Spiegelbild verkehrt', text: 'Du schaust in den Spiegel und siehst das Gegenteil: Licht wird Dunkelheit, 1 wird 0 \u2013 alles invertiert!'},
-      {kw: 'Negation', img: '\u274c Rotes X', text: 'Ueber dem Spiegel leuchtet ein rotes X \u2013 das Symbol der Negation. Was rein geht, wird verneint.'},
+      {kw: 'Negation', img: '\u274c Rotes X', text: 'Über dem Spiegel leuchtet ein rotes X \u2013 das Symbol der Negation. Was rein geht, wird verneint.'},
       {kw: 'ein Eingang', img: '\ud83d\udeb6 Einzelner Wanderer', text: 'Nur EIN Wanderer passt durch die enge Hoehle \u2013 das NOT-Gatter hat genau ein Eingang.'},
       {kw: 'NAND', img: '\ud83d\udd28 Hammer zerschlaegt AND', text: 'Ein Hammer zerschlaegt das AND-Symbol an der Wand und malt ein NOT davor \u2013 so entsteht NAND!'},
-      {kw: 'NOR', img: '\ud83c\udf0a Welle ueberspuelt OR', text: 'Eine Welle ueberspuelt das OR-Zeichen und dreht es um \u2013 NOR = NOT + OR.'}
+      {kw: 'NOR', img: '\ud83c\udf0a Welle überspuelt OR', text: 'Eine Welle überspuelt das OR-Zeichen und dreht es um \u2013 NOR = NOT + OR.'}
     ]
   },
   'XOR-Gatter': {
     route: 'Ein Flur mit zwei Wechselschaltern',
     scenes: [
-      {kw: 'unterschiedlich', img: '\ud83d\udd00 Zwei verschiedene Schuhe', text: 'Am Flurende stehen zwei verschiedene Schuhe \u2013 nur wenn die Eingaenge unterschiedlich sind, leuchtet die Flurlampe.'},
-      {kw: 'Exklusiv', img: '\ud83c\udfc6 Nur EINER gewinnt', text: 'Ein Pokal steht auf dem Schrank: Exklusiv heisst \u2013 entweder A oder B, aber nicht beide!'},
-      {kw: 'Summe', img: '\u2795 Taschenrechner', text: 'Auf dem Flurtisch liegt ein Taschenrechner \u2013 XOR berechnet die Summe ohne Uebertrag.'},
+      {kw: 'unterschiedlich', img: '\ud83d\udd00 Zwei verschiedene Schuhe', text: 'Am Flurende stehen zwei verschiedene Schuhe \u2013 nur wenn die Eingänge unterschiedlich sind, leuchtet die Flurlampe.'},
+      {kw: 'Exklusiv', img: '\ud83c\udfc6 Nur EINER gewinnt', text: 'Ein Pokal steht auf dem Schrank: Exklusiv heißt \u2013 entweder A oder B, aber nicht beide!'},
+      {kw: 'Summe', img: '\u2795 Taschenrechner', text: 'Auf dem Flurtisch liegt ein Taschenrechner \u2013 XOR berechnet die Summe ohne Übertrag.'},
       {kw: 'Antivalenz', img: '\u2260 Ungleichzeichen an der Wand', text: 'An der Wand prangt ein riesiges \u2260 \u2013 Antivalenz bedeutet: Der Ausgang ist 1, wenn die Werte NICHT gleich sind.'},
       {kw: 'Halbaddierer', img: '\ud83e\udde9 Puzzleteil im HA', text: 'Das XOR-Gatter ist wie ein Puzzleteil, das perfekt in den Halbaddierer passt \u2013 es liefert die Summe S.'}
     ]
@@ -716,40 +716,40 @@ var GP_STORIES = {
     route: 'Eine kleine Werkstatt mit zwei Maschinen',
     scenes: [
       {kw: 'XOR', img: '\u2699\ufe0f Erste Maschine', text: 'Links steht die erste Maschine \u2013 das XOR-Gatter. Es nimmt A und B und spuckt die Summe S aus.'},
-      {kw: 'AND', img: '\u2699\ufe0f Zweite Maschine', text: 'Rechts steht die zweite Maschine \u2013 das AND-Gatter. Es prueft, ob beide Eingaenge 1 sind und erzeugt den Carry.'},
-      {kw: 'Summe', img: '\ud83d\udce6 Paket mit S', text: 'Aus der XOR-Maschine faellt ein Paket mit dem Buchstaben S \u2013 die Summe der Addition.'},
-      {kw: 'Carry', img: '\ud83d\udcb5 Uebertrag-Muenze', text: 'Aus der AND-Maschine rollt eine goldene Muenze \u2013 der Carry (Uebertrag), der weitergereicht wird.'},
-      {kw: 'halb', img: '\u00bd Halbes Brot', text: 'Auf dem Tisch liegt ein halbes Brot \u2013 der Addierer ist "halb", weil er keinen eingehenden Uebertrag annehmen kann.'},
-      {kw: 'LSB', img: '\u261d\ufe0f Erster Platz', text: 'An der Wand haengt ein Poster: Platz 1! Der HA kommt immer nur am niederwertigsten Bit (LSB) zum Einsatz.'}
+      {kw: 'AND', img: '\u2699\ufe0f Zweite Maschine', text: 'Rechts steht die zweite Maschine \u2013 das AND-Gatter. Es prüft, ob beide Eingänge 1 sind und erzeugt den Carry.'},
+      {kw: 'Summe', img: '\ud83d\udce6 Paket mit S', text: 'Aus der XOR-Maschine fällt ein Paket mit dem Buchstaben S \u2013 die Summe der Addition.'},
+      {kw: 'Carry', img: '\ud83d\udcb5 Übertrag-Münze', text: 'Aus der AND-Maschine rollt eine goldene Münze \u2013 der Carry (Übertrag), der weitergereicht wird.'},
+      {kw: 'halb', img: '\u00bd Halbes Brot', text: 'Auf dem Tisch liegt ein halbes Brot \u2013 der Addierer ist "halb", weil er keinen eingehenden Übertrag annehmen kann.'},
+      {kw: 'LSB', img: '\u261d\ufe0f Erster Platz', text: 'An der Wand hängt ein Poster: Platz 1! Der HA kommt immer nur am niederwertigsten Bit (LSB) zum Einsatz.'}
     ]
   },
   'Volladdierer': {
-    route: 'Eine groessere Fabrik mit drei Fliessbandlinien',
+    route: 'Eine größere Fabrik mit drei Fliessbandlinien',
     scenes: [
       {kw: 'drei Bits', img: '\ud83d\udd22 Drei Ziffern', text: 'Am Eingang der Fabrik stehen drei leuchtende Ziffern: A, B und Cin \u2013 der Volladdierer verarbeitet drei Bits.'},
       {kw: 'zwei Halbaddierer', img: '\ud83c\udfed Zwei kleine Werkstaetten', text: 'In der Fabrik stehen zwei kleine Werkstaetten nebeneinander \u2013 das sind die zwei Halbaddierer im Inneren.'},
-      {kw: 'OR-Gatter', img: '\ud83d\udd0c Zusammenfuehrung', text: 'Am Ende laufen zwei Leitungen in eine Verbindungsbox \u2013 das OR-Gatter, das die Uebertraege zusammenfuehrt.'},
-      {kw: 'Kaskadierung', img: '\ud83d\udd17 Kette von Fabriken', text: 'Durch das Fenster siehst du eine endlose Kette weiterer Fabriken \u2013 Kaskadierung ermoeglicht beliebig lange Addition.'},
-      {kw: 'Cout', img: '\ud83d\udce4 Ausgangsbox', text: 'Aus der Fabrik kommt eine Ausgangsbox mit Cout \u2013 dem Uebertrag, der an die naechste Fabrik weitergereicht wird.'}
+      {kw: 'OR-Gatter', img: '\ud83d\udd0c Zusammenfuehrung', text: 'Am Ende laufen zwei Leitungen in eine Verbindungsbox \u2013 das OR-Gatter, das die Übertraege zusammenfuehrt.'},
+      {kw: 'Kaskadierung', img: '\ud83d\udd17 Kette von Fabriken', text: 'Durch das Fenster siehst du eine endlose Kette weiterer Fabriken \u2013 Kaskadierung ermöglicht beliebig lange Addition.'},
+      {kw: 'Cout', img: '\ud83d\udce4 Ausgangsbox', text: 'Aus der Fabrik kommt eine Ausgangsbox mit Cout \u2013 dem Übertrag, der an die nächste Fabrik weitergereicht wird.'}
     ]
   },
   'Wahrheitstabelle': {
     route: 'Ein Bibliotheksraum voller Kataloge',
     scenes: [
-      {kw: 'Kombination', img: '\ud83d\udd10 Zahlenschloss', text: 'Am Eingang haengt ein Zahlenschloss \u2013 jede Kombination der Eingaenge ist wie ein Code, der einen bestimmten Ausgang erzeugt.'},
-      {kw: 'Eingangsvariablen', img: '\ud83d\udcda Buchreihen', text: 'Im Regal stehen Buchreihen fuer jede Eingangsvariable \u2013 A und B haben je ein eigenes Fach.'},
-      {kw: '2^n', img: '\ud83d\udcc8 Exponentialkurve', text: 'An der Wand haengt eine Exponentialkurve: 2^n Zeilen \u2013 bei 2 Eingaengen 4, bei 3 schon 8!'},
+      {kw: 'Kombination', img: '\ud83d\udd10 Zahlenschloss', text: 'Am Eingang hängt ein Zahlenschloss \u2013 jede Kombination der Eingänge ist wie ein Code, der einen bestimmten Ausgang erzeugt.'},
+      {kw: 'Eingangsvariablen', img: '\ud83d\udcda Buchreihen', text: 'Im Regal stehen Buchreihen für jede Eingangsvariable \u2013 A und B haben je ein eigenes Fach.'},
+      {kw: '2^n', img: '\ud83d\udcc8 Exponentialkurve', text: 'An der Wand hängt eine Exponentialkurve: 2^n Zeilen \u2013 bei 2 Eingängen 4, bei 3 schon 8!'},
       {kw: 'vollstaendig', img: '\u2705 Gruener Haken', text: 'Jeder Katalog hat einen gruenen Haken \u2013 er ist vollstaendig, keine Kombination fehlt.'},
-      {kw: 'Analyse', img: '\ud83d\udd0d Lupe', text: 'Ein Bibliothekar untersucht mit einer Lupe jede Zeile \u2013 die Analyse einer Schaltung wird moeglich.'}
+      {kw: 'Analyse', img: '\ud83d\udd0d Lupe', text: 'Ein Bibliothekar untersucht mit einer Lupe jede Zeile \u2013 die Analyse einer Schaltung wird möglich.'}
     ]
   },
   'Boolesche Algebra': {
     route: 'Ein Mathematik-Labor im Keller',
     scenes: [
       {kw: '0 und 1', img: '\ud83d\udca1 Zwei Gluehbirnen', text: 'Im Labor haengen nur zwei Gluehbirnen: eine leuchtet (1), eine ist dunkel (0) \u2013 die einzigen Werte der Booleschen Algebra.'},
-      {kw: 'AND', img: '\u2227 Goldenes Symbol', text: 'An der linken Wand prangt ein goldenes \u2227 \u2013 die Konjunktion, die UND-Verknuepfung.'},
-      {kw: 'OR', img: '\u2228 Silbernes Symbol', text: 'An der rechten Wand haengt ein silbernes \u2228 \u2013 die Disjunktion, die ODER-Verknuepfung.'},
-      {kw: 'NOT', img: '\u00ac Rotes Schild', text: 'Ueber der Tuer blinkt ein rotes \u00ac \u2013 die Negation, die alles umkehrt.'},
+      {kw: 'AND', img: '\u2227 Goldenes Symbol', text: 'An der linken Wand prangt ein goldenes \u2227 \u2013 die Konjunktion, die UND-Verknüpfung.'},
+      {kw: 'OR', img: '\u2228 Silbernes Symbol', text: 'An der rechten Wand hängt ein silbernes \u2228 \u2013 die Disjunktion, die ODER-Verknüpfung.'},
+      {kw: 'NOT', img: '\u00ac Rotes Schild', text: 'Über der Tuer blinkt ein rotes \u00ac \u2013 die Negation, die alles umkehrt.'},
       {kw: 'De Morgan', img: '\ud83e\uddd9 Zauberer', text: 'In der Ecke steht ein Zauberer namens De Morgan \u2013 er verwandelt AND in OR und umgekehrt, indem er alles negiert.'},
       {kw: 'Grundlage', img: '\ud83c\udfe0 Fundament', text: 'Das gesamte Labor steht auf einem massiven Fundament \u2013 die Boolesche Algebra ist die Grundlage aller digitalen Schaltungen.'}
     ]

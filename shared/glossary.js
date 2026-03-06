@@ -961,6 +961,24 @@ function glossaryInjectHTML() {
     document.body.appendChild(tt);
   }
 
+  // Inject theme toggle button
+  if (!document.getElementById('theme-toggle')) {
+    var saved = localStorage.getItem('theme');
+    if (saved === 'light') document.body.classList.add('light');
+    var toggle = document.createElement('button');
+    toggle.className = 'theme-toggle';
+    toggle.id = 'theme-toggle';
+    toggle.title = 'Hell/Dunkel umschalten';
+    toggle.textContent = document.body.classList.contains('light') ? '\u2600\uFE0F' : '\uD83C\uDF19';
+    toggle.onclick = function() {
+      document.body.classList.toggle('light');
+      var isLight = document.body.classList.contains('light');
+      toggle.textContent = isLight ? '\u2600\uFE0F' : '\uD83C\uDF19';
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    };
+    document.body.appendChild(toggle);
+  }
+
   // Inject GP button into gl-header if missing
   var glHeader = document.querySelector('.gl-header');
   if (glHeader && typeof GP_STORIES !== 'undefined' && !glHeader.querySelector('.gp-btn')) {

@@ -482,10 +482,10 @@ function genPDASim(){
 function genTMSim(){
   const configs=[
     {state:'q0',read:'0',next:'q1',write:'X',move:'R',explain:'Erste 0 markieren: (q0,0)->(q1,X,R)'},
-    {state:'q1',read:'0',next:'q1',write:'0',move:'R',explain:'Ueber restliche 0en laufen: (q1,0)->(q1,0,R)'},
+    {state:'q1',read:'0',next:'q1',write:'0',move:'R',explain:'Über restliche 0en laufen: (q1,0)->(q1,0,R)'},
     {state:'q1',read:'1',next:'q2',write:'Y',move:'L',explain:'Erste 1 markieren: (q1,1)->(q2,Y,L)'},
     {state:'q2',read:'X',next:'q0',write:'X',move:'R',explain:'Zurück zum Start: (q2,X)->(q0,X,R)'},
-    {state:'q1',read:'Y',next:'q1',write:'Y',move:'R',explain:'Ueber Y laufen: (q1,Y)->(q1,Y,R)'},
+    {state:'q1',read:'Y',next:'q1',write:'Y',move:'R',explain:'Über Y laufen: (q1,Y)->(q1,Y,R)'},
     {state:'q0',read:'Y',next:'q3',write:'Y',move:'R',explain:'Alle 0en verbraucht: (q0,Y)->(q3,Y,R)'}
   ];
   const c=configs[rand(0,configs.length-1)];
@@ -506,7 +506,7 @@ function genSprachen(){
     {l:'a^n b^n c^n',ans:'TM',why:'Kontextsensitiv: zwei verschraenkte Zähler, PDA reicht nicht'},
     {l:'{ww | w in {a,b}*}',ans:'TM',why:'Nicht kontextfrei: Kopie erkennen braucht Wahlzugriff'},
     {l:'Korrekte Klammerung (Dyck)',ans:'PDA',why:'Kontextfrei: Stack zählt offene Klammern'},
-    {l:'{a^(2^n) | n >= 0}',ans:'TM',why:'Nicht kontextfrei: exponentielle Länge pruefbar nur mit TM'},
+    {l:'{a^(2^n) | n >= 0}',ans:'TM',why:'Nicht kontextfrei: exponentielle Länge prüfbar nur mit TM'},
     {l:'a(a|b)*b (beginnt mit a, endet mit b)',ans:'DEA',why:'Regulär: nur Anfang und Ende prüfen'},
     {l:'{a^i b^j c^k | i=j oder j=k}',ans:'PDA',why:'Kontextfrei: NPDA kann nichtdeterministisch i=j oder j=k prüfen (DPDA reicht nicht!)'}
   ];
@@ -592,19 +592,19 @@ var GLOSSARY = [
     definition: 'Ein Kellerautomat (Pushdown Automaton, PDA) ist ein 7-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F). Er erweitert einen endlichen Automaten um einen Stack (Keller) und kann dadurch kontextfreie Sprachen (Typ 2) erkennen. Akzeptanz erfolgt per Endzustand oder leerem Keller.',
     analogy: '\u2699\uFE0F Wie ein Cafeteria-Tablettstapel: Du kannst immer nur das oberste Tablett nehmen oder ein neues oben drauflegen (LIFO). Der Automat merkt sich so z.B. wie viele Klammern offen sind \u2013 aber er kann nie in die Mitte schauen!',
     hints: [
-      '7-Tupel: (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F) \u2013 Q=Zustaende, \u03A3=Eingabe, \u0393=Kelleralphabet, \u03B4=Uebergangsfunktion',
+      '7-Tupel: (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F) \u2013 Q=Zustaende, \u03A3=Eingabe, \u0393=Kelleralphabet, \u03B4=Übergangsfunktion',
       'DPDA \u2282 NPDA: Der nichtdeterministische PDA ist maechtiger (erkennt z.B. Palindrome)',
       'Typische kontextfreie Sprachen: a\u207fb\u207f, korrekte Klammerung, Palindrome mit Mittesymbol'
     ],
     questions: [
       { type: 'fill', q: 'Ein Kellerautomat ist ein ___-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, Z\u2080, F).', a: '7', keywords: ['7','sieben'] },
       { type: 'choice', q: 'Welchen Sprachtyp erkennt ein Kellerautomat?', options: ['Typ 0 \u2013 rekursiv aufzaehlbar', 'Typ 1 \u2013 kontextsensitiv', 'Typ 2 \u2013 kontextfrei', 'Typ 3 \u2013 regulaer'], correct: 2 },
-      { type: 'explain', q: 'Erklaere den Kellerautomaten und seine Bestandteile. Warum ist er maechtiger als ein DEA?', keywords: ['Stack', 'Keller', 'kontextfrei', 'Typ 2', 'Uebergangsfunktion', 'LIFO', 'Endzustand', 'PDA'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre den Kellerautomaten und seine Bestandteile. Warum ist er maechtiger als ein DEA?', keywords: ['Stack', 'Keller', 'kontextfrei', 'Typ 2', 'Übergangsfunktion', 'LIFO', 'Endzustand', 'PDA'], minKeywords: 3 }
     ]
   },
   {
     term: 'Keller',
-    short: 'Stack des PDA \u2013 LIFO-Speicher fuer unbegrenzte Information',
+    short: 'Stack des PDA \u2013 LIFO-Speicher für unbegrenzte Information',
     definition: 'Der Keller (Stack) ist der zentrale Speicher des Kellerautomaten. Er arbeitet nach dem LIFO-Prinzip (Last In, First Out): Es kann nur das oberste Element gelesen, entfernt (pop) oder ein neues Element oben abgelegt (push) werden. Das Startkellersymbol Z\u2080 liegt zu Beginn als einziges Element auf dem Stack.',
     analogy: '\uD83D\uDCA1 Wie ein Stapel Teller: Du kannst nur den obersten Teller nehmen oder einen neuen oben drauflegen. An den untersten Teller kommst du erst, wenn alle dar\u00fcber weg sind \u2013 genau das ist LIFO!',
     hints: [
@@ -613,89 +613,89 @@ var GLOSSARY = [
       'Z\u2080 ist das Startkellersymbol \u2013 liegt zu Beginn als einziges auf dem Stack'
     ],
     questions: [
-      { type: 'fill', q: 'Der Keller arbeitet nach dem ___-Prinzip (Last In, First Out).', a: 'LIFO', keywords: ['LIFO','lifo'], hint: 'Abkuerzung fuer Last In, First Out' },
+      { type: 'fill', q: 'Der Keller arbeitet nach dem ___-Prinzip (Last In, First Out).', a: 'LIFO', keywords: ['LIFO','lifo'], hint: 'Abkürzung für Last In, First Out' },
       { type: 'choice', q: 'Was passiert bei einer pop-Operation auf dem Keller?', options: ['Ein Element wird unten eingefuegt', 'Das oberste Element wird entfernt', 'Der gesamte Stack wird geleert', 'Ein Element wird in der Mitte eingefuegt'], correct: 1 },
-      { type: 'explain', q: 'Erklaere das LIFO-Prinzip des Kellers und warum es die Maechtigkeit des PDA begrenzt.', keywords: ['LIFO', 'push', 'pop', 'oberstes Element', 'Startkellersymbol', 'Z\u2080', 'kein wahlfreier Zugriff'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre das LIFO-Prinzip des Kellers und warum es die Maechtigkeit des PDA begrenzt.', keywords: ['LIFO', 'push', 'pop', 'oberstes Element', 'Startkellersymbol', 'Z\u2080', 'kein wahlfreier Zugriff'], minKeywords: 3 }
     ]
   },
   {
     term: 'Kontextfreie Sprache',
     short: 'Typ 2 \u2013 von Kellerautomaten erkannt, links nur ein Nichtterminal',
     definition: 'Eine kontextfreie Sprache (Typ 2 in der Chomsky-Hierarchie) wird von einer kontextfreien Grammatik erzeugt und von einem Kellerautomaten (PDA) erkannt. Ihre Grammatikregeln haben die Form A \u2192 \u03B3, wobei links genau ein Nichtterminal steht. Typische Beispiele sind a\u207fb\u207f, korrekte Klammerung und Palindrome.',
-    analogy: '\uD83D\uDCE6 Wie verschachtelte Schachteln: Jede Schachtel (Nichtterminal) kann unabhaengig vom Kontext geoeffnet werden und enthaelt immer das Gleiche. Perfekt fuer Klammerstrukturen in Programmiersprachen!',
+    analogy: '\uD83D\uDCE6 Wie verschachtelte Schachteln: Jede Schachtel (Nichtterminal) kann unabhängig vom Kontext geöffnet werden und enthält immer das Gleiche. Perfekt für Klammerstrukturen in Programmiersprachen!',
     hints: [
       'Grammatikregel: A \u2192 \u03B3 \u2013 links steht immer genau EIN Nichtterminal',
-      'Pumping-Lemma fuer kontextfreie Sprachen: Nachweis, dass eine Sprache NICHT kontextfrei ist',
+      'Pumping-Lemma für kontextfreie Sprachen: Nachweis, dass eine Sprache NICHT kontextfrei ist',
       'DPDA-Sprachen \u2282 NPDA-Sprachen \u2013 nicht jede kontextfreie Sprache ist deterministisch erkennbar'
     ],
     questions: [
       { type: 'fill', q: 'Bei einer kontextfreien Grammatik steht auf der linken Seite immer genau ein ___.', a: 'Nichtterminal', alt: ['NT', 'Variable'], keywords: ['Nichtterminal','NT','Variable'], hint: 'Ein einzelner grosser Buchstabe wie A, B oder S' },
       { type: 'choice', q: 'Welche Sprache ist kontextfrei?', options: ['a\u207fb\u207fc\u207f', 'a\u207fb\u207f', '{ww | w \u2208 {a,b}*}', 'a^(2^n)'], correct: 1 },
-      { type: 'explain', q: 'Erklaere kontextfreie Sprachen und nenne Beispiele, die kontextfrei bzw. nicht kontextfrei sind.', keywords: ['Typ 2', 'Kellerautomat', 'Nichtterminal', 'a\u207fb\u207f', 'Klammerung', 'Pumping-Lemma', 'Grammatik'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre kontextfreie Sprachen und nenne Beispiele, die kontextfrei bzw. nicht kontextfrei sind.', keywords: ['Typ 2', 'Kellerautomat', 'Nichtterminal', 'a\u207fb\u207f', 'Klammerung', 'Pumping-Lemma', 'Grammatik'], minKeywords: 3 }
     ]
   },
   {
     term: 'Turingmaschine',
     short: 'TM \u2013 universelles Berechnungsmodell mit unendlichem Band',
-    definition: 'Eine Turingmaschine (TM) ist ein 7-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) mit einem beidseitig unendlichen Band, einem Lese-/Schreibkopf und einer Uebergangsfunktion. Sie kann lesen, schreiben und den Kopf in beide Richtungen bewegen. Die TM erkennt rekursiv aufzaehlbare Sprachen (Typ 0) und gilt als universelles Berechnungsmodell.',
-    analogy: '\uD83D\uDCDD Wie ein Mensch mit einem unendlich langen Notizzettel und einem Stift: Du kannst jede Stelle lesen, ueberschreiben und dich frei hin- und herbewegen. Damit kannst du ALLES berechnen, was ueberhaupt berechenbar ist!',
+    definition: 'Eine Turingmaschine (TM) ist ein 7-Tupel (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) mit einem beidseitig unendlichen Band, einem Lese-/Schreibkopf und einer Übergangsfunktion. Sie kann lesen, schreiben und den Kopf in beide Richtungen bewegen. Die TM erkennt rekursiv aufzaehlbare Sprachen (Typ 0) und gilt als universelles Berechnungsmodell.',
+    analogy: '\uD83D\uDCDD Wie ein Mensch mit einem unendlich langen Notizzettel und einem Stift: Du kannst jede Stelle lesen, überschreiben und dich frei hin- und herbewegen. Damit kannst du ALLES berechnen, was überhaupt berechenbar ist!',
     hints: [
       '7-Tupel: (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) \u2013 \u25A1 ist das Blank-Symbol',
       'Kopfbewegung: L (links), R (rechts), N (stehen bleiben) \u2013 wahlfreier Zugriff aufs Band',
       'DTM = NTM in der Maechtigkeit \u2013 anders als bei PDA (DPDA < NPDA)!'
     ],
     questions: [
-      { type: 'fill', q: 'Das Blank-Symbol der Turingmaschine wird als ___ geschrieben.', a: '\u25A1', alt: ['B', 'blank', 'Blank'], keywords: ['\u25A1','B','blank','Blank'], hint: 'Ein leeres Quadrat oder B fuer Blank' },
+      { type: 'fill', q: 'Das Blank-Symbol der Turingmaschine wird als ___ geschrieben.', a: '\u25A1', alt: ['B', 'blank', 'Blank'], keywords: ['\u25A1','B','blank','Blank'], hint: 'Ein leeres Quadrat oder B für Blank' },
       { type: 'choice', q: 'Was kann eine Turingmaschine, was ein PDA nicht kann?', options: ['Eingabe lesen', 'Zustaende wechseln', 'Kopf nach links UND rechts bewegen', 'Symbole speichern'], correct: 2 },
-      { type: 'explain', q: 'Erklaere die Turingmaschine und warum sie maechtiger ist als ein Kellerautomat.', keywords: ['Band', 'unendlich', 'Lese-/Schreibkopf', 'Typ 0', 'wahlfreier Zugriff', 'universell', 'Kopfbewegung', 'DTM'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre die Turingmaschine und warum sie maechtiger ist als ein Kellerautomat.', keywords: ['Band', 'unendlich', 'Lese-/Schreibkopf', 'Typ 0', 'wahlfreier Zugriff', 'universell', 'Kopfbewegung', 'DTM'], minKeywords: 3 }
     ]
   },
   {
     term: 'Band',
     short: 'Unendliches Speichermedium der Turingmaschine',
-    definition: 'Das Band (Turing-Band) ist ein beidseitig unendliches Speichermedium, das in Zellen unterteilt ist. Jede Zelle enthaelt genau ein Symbol aus dem Bandalphabet \u0393 oder das Blank-Symbol \u25A1. Der Lese-/Schreibkopf kann jede Zelle lesen, ueberschreiben und sich nach links oder rechts bewegen \u2013 im Gegensatz zum Stack des PDA bietet das Band wahlfreien Zugriff.',
-    analogy: '\uD83D\uDCFC Wie ein unendlich langes Klebeband mit Kaestchen: In jedes Kaestchen passt genau ein Buchstabe. Du kannst dich frei hin- und herbewegen und jedes Kaestchen lesen oder ueberschreiben. Der Stack ist dagegen wie ein Turm \u2013 du siehst nur die Spitze!',
+    definition: 'Das Band (Turing-Band) ist ein beidseitig unendliches Speichermedium, das in Zellen unterteilt ist. Jede Zelle enthält genau ein Symbol aus dem Bandalphabet \u0393 oder das Blank-Symbol \u25A1. Der Lese-/Schreibkopf kann jede Zelle lesen, überschreiben und sich nach links oder rechts bewegen \u2013 im Gegensatz zum Stack des PDA bietet das Band wahlfreien Zugriff.',
+    analogy: '\uD83D\uDCFC Wie ein unendlich langes Klebeband mit Kaestchen: In jedes Kaestchen passt genau ein Buchstabe. Du kannst dich frei hin- und herbewegen und jedes Kaestchen lesen oder überschreiben. Der Stack ist dagegen wie ein Turm \u2013 du siehst nur die Spitze!',
     hints: [
       'Beidseitig unendlich: Es gibt immer noch eine Zelle weiter links und weiter rechts',
-      'Jede Zelle enthaelt ein Symbol aus \u0393 oder \u25A1 (Blank = leere Zelle)',
+      'Jede Zelle enthält ein Symbol aus \u0393 oder \u25A1 (Blank = leere Zelle)',
       'Wahlfreier Zugriff (vs. LIFO beim Stack) \u2013 deshalb ist die TM maechtiger als der PDA'
     ],
     questions: [
       { type: 'fill', q: 'Das Band der Turingmaschine ist beidseitig ___ lang.', a: 'unendlich', alt: ['infinit', 'unbegrenzt'], keywords: ['unendlich','infinit','unbegrenzt'], hint: 'Es gibt kein Ende in beide Richtungen' },
       { type: 'choice', q: 'Was steht in einer leeren Zelle des Turing-Bands?', options: ['Nichts (null)', 'Das Blank-Symbol \u25A1', 'Das Startsymbol', 'Eine 0'], correct: 1 },
-      { type: 'explain', q: 'Erklaere den Unterschied zwischen dem Band der TM und dem Stack des PDA.', keywords: ['Band', 'Stack', 'wahlfreier Zugriff', 'LIFO', 'unendlich', 'Zelle', 'Blank', 'Lese-/Schreibkopf'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre den Unterschied zwischen dem Band der TM und dem Stack des PDA.', keywords: ['Band', 'Stack', 'wahlfreier Zugriff', 'LIFO', 'unendlich', 'Zelle', 'Blank', 'Lese-/Schreibkopf'], minKeywords: 3 }
     ]
   },
   {
     term: 'Halteproblem',
-    short: 'Nicht entscheidbar \u2013 keine TM kann fuer jede TM+Eingabe sagen, ob sie haelt',
-    definition: 'Das Halteproblem fragt: Gibt es eine Turingmaschine H, die fuer jede beliebige TM M und Eingabe w entscheidet, ob M bei Eingabe w anhaelt? Alan Turing bewies 1936 durch Diagonalisierung, dass dies NICHT moeglich ist. Das Halteproblem ist semi-entscheidbar (rekursiv aufzaehlbar), aber nicht entscheidbar.',
-    analogy: '\uD83D\uDD2E Wie ein allwissender Wahrsager, den es nicht geben kann: Stell dir vor, jemand behauptet, er koenne fuer jedes Programm vorhersagen, ob es fertig wird. Dann baust du ein Programm, das genau das Gegenteil tut \u2013 Widerspruch! (Diagonalisierung)',
+    short: 'Nicht entscheidbar \u2013 keine TM kann für jede TM+Eingabe sagen, ob sie haelt',
+    definition: 'Das Halteproblem fragt: Gibt es eine Turingmaschine H, die für jede beliebige TM M und Eingabe w entscheidet, ob M bei Eingabe w anhaelt? Alan Turing bewies 1936 durch Diagonalisierung, dass dies NICHT möglich ist. Das Halteproblem ist semi-entscheidbar (rekursiv aufzaehlbar), aber nicht entscheidbar.',
+    analogy: '\uD83D\uDD2E Wie ein allwissender Wahrsager, den es nicht geben kann: Stell dir vor, jemand behauptet, er koenne für jedes Programm vorhersagen, ob es fertig wird. Dann baust du ein Programm, das genau das Gegenteil tut \u2013 Widerspruch! (Diagonalisierung)',
     hints: [
-      'Beweis durch Diagonalisierung: Annahme einer Loesungs-TM H fuehrt zum Widerspruch',
+      'Beweis durch Diagonalisierung: Annahme einer Lösungs-TM H fuehrt zum Widerspruch',
       'Semi-entscheidbar: Wenn M haelt, kann man das erkennen. Wenn nicht, wartet man ewig.',
-      'Standardfrage in der Pruefung: Unterschied zwischen entscheidbar und semi-entscheidbar!'
+      'Standardfrage in der Prüfung: Unterschied zwischen entscheidbar und semi-entscheidbar!'
     ],
     questions: [
       { type: 'fill', q: 'Das Halteproblem wurde durch ___ als nicht entscheidbar bewiesen.', a: 'Diagonalisierung', alt: ['Widerspruch', 'Diagonalargument'], keywords: ['Diagonalisierung','Widerspruch','Diagonalargument'], hint: 'Eine Beweismethode, die einen Widerspruch konstruiert' },
       { type: 'choice', q: 'Welche Aussage zum Halteproblem ist korrekt?', options: ['Es ist entscheidbar', 'Es ist nicht entscheidbar, aber semi-entscheidbar', 'Es ist weder entscheidbar noch semi-entscheidbar', 'Es wurde noch nicht bewiesen'], correct: 1 },
-      { type: 'explain', q: 'Erklaere das Halteproblem und warum es nicht entscheidbar ist.', keywords: ['Turingmaschine', 'Eingabe', 'haelt', 'Diagonalisierung', 'Widerspruch', 'nicht entscheidbar', 'semi-entscheidbar', 'Turing'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre das Halteproblem und warum es nicht entscheidbar ist.', keywords: ['Turingmaschine', 'Eingabe', 'haelt', 'Diagonalisierung', 'Widerspruch', 'nicht entscheidbar', 'semi-entscheidbar', 'Turing'], minKeywords: 3 }
     ]
   },
   {
     term: 'Berechenbarkeit',
-    short: 'Was kann (und was kann nicht) algorithmisch geloest werden?',
-    definition: 'Berechenbarkeit befasst sich mit der Frage, welche Probleme durch einen Algorithmus (= Turingmaschine) geloest werden koennen. Eine Funktion ist berechenbar (Turing-berechenbar), wenn es eine TM gibt, die sie fuer jede gueltige Eingabe korrekt berechnet und haelt. Nicht alle Probleme sind berechenbar \u2013 das Halteproblem ist das bekannteste Beispiel.',
-    analogy: '\uD83D\uDEA7 Wie die Grenzen eines Taschenrechners \u2013 aber fundamental: Nicht alles, was man sich als mathematische Frage vorstellen kann, laesst sich durch einen Computer beantworten. Es gibt prinzipielle Grenzen, nicht nur praktische!',
+    short: 'Was kann (und was kann nicht) algorithmisch gelöst werden?',
+    definition: 'Berechenbarkeit befasst sich mit der Frage, welche Probleme durch einen Algorithmus (= Turingmaschine) gelöst werden können. Eine Funktion ist berechenbar (Turing-berechenbar), wenn es eine TM gibt, die sie für jede gueltige Eingabe korrekt berechnet und haelt. Nicht alle Probleme sind berechenbar \u2013 das Halteproblem ist das bekannteste Beispiel.',
+    analogy: '\uD83D\uDEA7 Wie die Grenzen eines Taschenrechners \u2013 aber fundamental: Nicht alles, was man sich als mathematische Frage vorstellen kann, lässt sich durch einen Computer beantworten. Es gibt prinzipielle Grenzen, nicht nur praktische!',
     hints: [
-      'Berechenbar = es existiert eine TM, die fuer jede Eingabe haelt und die richtige Antwort gibt',
+      'Berechenbar = es existiert eine TM, die für jede Eingabe haelt und die richtige Antwort gibt',
       'Entscheidbar: TM haelt immer (Ja oder Nein). Semi-entscheidbar: TM haelt nur bei Ja.',
       'Das Halteproblem zeigt: Es gibt Probleme, die kein Algorithmus loesen kann!'
     ],
     questions: [
-      { type: 'fill', q: 'Eine Funktion ist ___, wenn eine Turingmaschine sie fuer jede Eingabe korrekt berechnet.', a: 'berechenbar', alt: ['Turing-berechenbar', 'turing-berechenbar'], keywords: ['berechenbar','Turing-berechenbar'], hint: 'Der zentrale Begriff dieses Themas' },
-      { type: 'choice', q: 'Was ist der Unterschied zwischen entscheidbar und semi-entscheidbar?', options: ['Kein Unterschied', 'Entscheidbar = TM haelt immer; semi-entscheidbar = haelt nur bei Ja', 'Semi-entscheidbar = TM haelt immer; entscheidbar = haelt nur bei Ja', 'Entscheidbar = kein Algorithmus moeglich'], correct: 1 },
-      { type: 'explain', q: 'Erklaere den Begriff Berechenbarkeit und nenne ein nicht berechenbares Problem.', keywords: ['Turingmaschine', 'Algorithmus', 'berechenbar', 'entscheidbar', 'semi-entscheidbar', 'Halteproblem', 'haelt'], minKeywords: 3 }
+      { type: 'fill', q: 'Eine Funktion ist ___, wenn eine Turingmaschine sie für jede Eingabe korrekt berechnet.', a: 'berechenbar', alt: ['Turing-berechenbar', 'turing-berechenbar'], keywords: ['berechenbar','Turing-berechenbar'], hint: 'Der zentrale Begriff dieses Themas' },
+      { type: 'choice', q: 'Was ist der Unterschied zwischen entscheidbar und semi-entscheidbar?', options: ['Kein Unterschied', 'Entscheidbar = TM haelt immer; semi-entscheidbar = haelt nur bei Ja', 'Semi-entscheidbar = TM haelt immer; entscheidbar = haelt nur bei Ja', 'Entscheidbar = kein Algorithmus möglich'], correct: 1 },
+      { type: 'explain', q: 'Erkläre den Begriff Berechenbarkeit und nenne ein nicht berechenbares Problem.', keywords: ['Turingmaschine', 'Algorithmus', 'berechenbar', 'entscheidbar', 'semi-entscheidbar', 'Halteproblem', 'haelt'], minKeywords: 3 }
     ]
   },
   {
@@ -704,14 +704,14 @@ var GLOSSARY = [
     definition: 'Die Church-Turing-These (1936) besagt, dass die Klasse der intuitiv berechenbaren Funktionen genau der Klasse der Turing-berechenbaren Funktionen entspricht. Jeder denkbare Algorithmus kann durch eine Turingmaschine simuliert werden. Dies ist keine bewiesene Aussage, sondern eine allgemein akzeptierte These, die bisher nie widerlegt wurde.',
     analogy: '\u2696\uFE0F Wie ein Naturgesetz der Informatik: So wie die Physik annimmt, dass Energie erhalten bleibt, nimmt die Informatik an, dass alles Berechenbare auch von einer TM berechnet werden kann. Nie bewiesen \u2013 aber auch nie widerlegt!',
     hints: [
-      'Aufgestellt von Alonzo Church und Alan Turing unabhaengig voneinander (1936)',
-      'Keine mathematische Aussage (kein Beweis moeglich), sondern eine These/Hypothese',
-      'Aequivalente Modelle: Turingmaschine = Lambda-Kalkuel = rekursive Funktionen = alle gleich maechtig'
+      'Aufgestellt von Alonzo Church und Alan Turing unabhängig voneinander (1936)',
+      'Keine mathematische Aussage (kein Beweis möglich), sondern eine These/Hypothese',
+      'Äquivalente Modelle: Turingmaschine = Lambda-Kalkuel = rekursive Funktionen = alle gleich maechtig'
     ],
     questions: [
-      { type: 'fill', q: 'Die Church-Turing-These ist keine bewiesene Aussage, sondern eine ___.', a: 'These', alt: ['Hypothese', 'Annahme'], keywords: ['These','Hypothese','Annahme'], hint: 'Ein anderes Wort fuer eine unbewiesene, aber akzeptierte Annahme' },
+      { type: 'fill', q: 'Die Church-Turing-These ist keine bewiesene Aussage, sondern eine ___.', a: 'These', alt: ['Hypothese', 'Annahme'], keywords: ['These','Hypothese','Annahme'], hint: 'Ein anderes Wort für eine unbewiesene, aber akzeptierte Annahme' },
       { type: 'choice', q: 'Was besagt die Church-Turing-These?', options: ['Turingmaschinen sind das schwaechste Berechnungsmodell', 'Alles intuitiv Berechenbare ist Turing-berechenbar', 'Es gibt maechtigere Modelle als die TM', 'Jedes Problem ist entscheidbar'], correct: 1 },
-      { type: 'explain', q: 'Erklaere die Church-Turing-These und warum sie keine mathematisch bewiesene Aussage ist.', keywords: ['Church', 'Turing', 'berechenbar', 'These', 'intuitiv', 'nicht bewiesen', 'Algorithmus', 'universell'], minKeywords: 3 }
+      { type: 'explain', q: 'Erkläre die Church-Turing-These und warum sie keine mathematisch bewiesene Aussage ist.', keywords: ['Church', 'Turing', 'berechenbar', 'These', 'intuitiv', 'nicht bewiesen', 'Algorithmus', 'universell'], minKeywords: 3 }
     ]
   }
 ];
@@ -720,7 +720,7 @@ var GP_STORIES = {
   'Kellerautomat': {
     route: 'Du betrittst eine magische Cafeteria, in der ein riesiger Tablettstapel bis zur Decke reicht und ein Roboter-Kellner die Bestellungen verarbeitet.',
     scenes: [
-      { kw: 'PDA', img: '\u2699\uFE0F', text: 'Am Eingang haengt ein Schild: "PDA \u2013 Pushdown Automaton". Der Roboter-Kellner traegt eine Schuerze mit der Aufschrift "7-Tupel".' },
+      { kw: 'PDA', img: '\u2699\uFE0F', text: 'Am Eingang hängt ein Schild: "PDA \u2013 Pushdown Automaton". Der Roboter-Kellner trägt eine Schürze mit der Aufschrift "7-Tupel".' },
       { kw: 'Stack', img: '\uD83D\uDCDA', text: 'In der Mitte steht der riesige Tablettstapel \u2013 der Stack. Oben liegt ein goldenes Tablett mit "Z\u2080" graviert: das Startkellersymbol.' },
       { kw: 'LIFO', img: '\u2B06\uFE0F', text: 'Ein Schild warnt: "LIFO \u2013 Last In, First Out! Nur das oberste Tablett anfassen!" Der Kellner legt (push) und nimmt (pop) immer nur oben.' },
       { kw: 'kontextfrei', img: '\uD83D\uDCE6', text: 'Auf jedem Tablett steht eine kontextfreie Sprache: a\u207fb\u207f auf dem obersten, korrekte Klammerung darunter \u2013 alles Typ 2!' },
@@ -728,7 +728,7 @@ var GP_STORIES = {
     ]
   },
   'Keller': {
-    route: 'Du stehst vor einem tiefen Brunnen (Keller/Schacht), in dem Teller uebereinander gestapelt sind.',
+    route: 'Du stehst vor einem tiefen Brunnen (Keller/Schacht), in dem Teller übereinander gestapelt sind.',
     scenes: [
       { kw: 'LIFO', img: '\uD83E\uDD3F', text: 'Du schaust in den Brunnen: Nur der oberste Teller ist sichtbar \u2013 LIFO-Prinzip. Last In, First Out!' },
       { kw: 'push', img: '\u2B07\uFE0F', text: 'Du legst einen neuen Teller oben drauf (push). Er gleitet sanft auf den Stapel.' },
@@ -740,19 +740,19 @@ var GP_STORIES = {
   'Kontextfreie Sprache': {
     route: 'Du betrittst eine Werkstatt voller ineinander verschachtelter Schachteln, jede mit einem Buchstaben beschriftet.',
     scenes: [
-      { kw: 'Typ 2', img: '\uD83C\uDFE0', text: 'Ueber der Werkstatt steht: "Typ 2 \u2013 Kontextfreie Sprachen". Ein grosses Schild in der Chomsky-Hierarchie.' },
-      { kw: 'Nichtterminal', img: '\uD83D\uDCE6', text: 'Jede Schachtel hat einen Grossbuchstaben: A, B, S \u2013 die Nichtterminale. Die Regel A \u2192 \u03B3 oeffnet jede Schachtel kontextfrei.' },
+      { kw: 'Typ 2', img: '\uD83C\uDFE0', text: 'Über der Werkstatt steht: "Typ 2 \u2013 Kontextfreie Sprachen". Ein grosses Schild in der Chomsky-Hierarchie.' },
+      { kw: 'Nichtterminal', img: '\uD83D\uDCE6', text: 'Jede Schachtel hat einen Grossbuchstaben: A, B, S \u2013 die Nichtterminale. Die Regel A \u2192 \u03B3 öffnet jede Schachtel kontextfrei.' },
       { kw: 'Kellerautomat', img: '\u2699\uFE0F', text: 'In der Ecke rattert ein Kellerautomat und sortiert Schachteln \u2013 er erkennt alle kontextfreien Sprachen!' },
-      { kw: 'a\u207fb\u207f', img: '\uD83D\uDD22', text: 'Auf dem Tisch liegen Karten: aabb, aaabbb \u2013 die Sprache a\u207fb\u207f, ein Paradebeispiel fuer kontextfrei.' },
-      { kw: 'Pumping-Lemma', img: '\uD83D\uDCA8', text: 'An der Wand haengt eine Pumpe mit dem Schild "Pumping-Lemma": Damit beweist man, dass eine Sprache NICHT kontextfrei ist.' }
+      { kw: 'a\u207fb\u207f', img: '\uD83D\uDD22', text: 'Auf dem Tisch liegen Karten: aabb, aaabbb \u2013 die Sprache a\u207fb\u207f, ein Paradebeispiel für kontextfrei.' },
+      { kw: 'Pumping-Lemma', img: '\uD83D\uDCA8', text: 'An der Wand hängt eine Pumpe mit dem Schild "Pumping-Lemma": Damit beweist man, dass eine Sprache NICHT kontextfrei ist.' }
     ]
   },
   'Turingmaschine': {
     route: 'Du betrittst Alan Turings geheimes Labor \u2013 ein riesiger Raum mit einem endlosen Band, das durch eine Maschine laeuft.',
     scenes: [
       { kw: 'Band', img: '\uD83D\uDCDC', text: 'Ein endloses Papierband zieht sich durch den Raum \u2013 beidseitig unendlich, in Zellen unterteilt, jede mit einem Symbol oder \u25A1 (Blank).' },
-      { kw: 'Lese-/Schreibkopf', img: '\u270D\uFE0F', text: 'Ueber dem Band schwebt ein leuchtender Kopf: Er liest, schreibt und bewegt sich frei nach links (L), rechts (R) oder bleibt stehen (N).' },
-      { kw: '7-Tupel', img: '\uD83D\uDD27', text: 'An der Wand haengt die Bauanleitung: (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) \u2013 das 7-Tupel der Turingmaschine.' },
+      { kw: 'Lese-/Schreibkopf', img: '\u270D\uFE0F', text: 'Über dem Band schwebt ein leuchtender Kopf: Er liest, schreibt und bewegt sich frei nach links (L), rechts (R) oder bleibt stehen (N).' },
+      { kw: '7-Tupel', img: '\uD83D\uDD27', text: 'An der Wand hängt die Bauanleitung: (Q, \u03A3, \u0393, \u03B4, q\u2080, \u25A1, F) \u2013 das 7-Tupel der Turingmaschine.' },
       { kw: 'Typ 0', img: '\uD83C\uDFC6', text: 'Eine Trophae leuchtet: "Typ 0 \u2013 Rekursiv aufzaehlbar". Die TM ist das maechtigste Automatenmodell der Chomsky-Hierarchie!' },
       { kw: 'DTM = NTM', img: '\u2696\uFE0F', text: 'Zwei identische Maschinen stehen nebeneinander: DTM und NTM \u2013 gleich maechtig! Anders als DPDA vs. NPDA.' }
     ]
@@ -761,28 +761,28 @@ var GP_STORIES = {
     route: 'Du wanderst auf einem unendlich langen Klebeband, das sich in beide Richtungen bis zum Horizont erstreckt.',
     scenes: [
       { kw: 'beidseitig unendlich', img: '\u267E\uFE0F', text: 'Du blickst nach links, dann nach rechts: Das Band hat kein Ende in beide Richtungen \u2013 beidseitig unendlich!' },
-      { kw: 'Zelle', img: '\u2B1C', text: 'Unter deinen Fuessen ist ein Kaestchen (Zelle). Jede Zelle enthaelt genau ein Symbol aus dem Bandalphabet \u0393.' },
+      { kw: 'Zelle', img: '\u2B1C', text: 'Unter deinen Fuessen ist ein Kaestchen (Zelle). Jede Zelle enthält genau ein Symbol aus dem Bandalphabet \u0393.' },
       { kw: 'Blank', img: '\u25A1', text: 'Die meisten Zellen sind leer \u2013 sie enthalten das Blank-Symbol \u25A1. Nur die beschriebenen Zellen tragen andere Symbole.' },
-      { kw: 'wahlfreier Zugriff', img: '\uD83D\uDD04', text: 'Du kannst dich frei bewegen: jede Zelle lesen, ueberschreiben, hin und her laufen \u2013 wahlfreier Zugriff!' },
+      { kw: 'wahlfreier Zugriff', img: '\uD83D\uDD04', text: 'Du kannst dich frei bewegen: jede Zelle lesen, überschreiben, hin und her laufen \u2013 wahlfreier Zugriff!' },
       { kw: 'vs. Stack', img: '\u2194\uFE0F', text: 'Neben dem Band steht ein enger Turm (Stack) zum Vergleich: Dort siehst du nur die Spitze. Das Band ist viel maechtiger \u2013 deshalb TM > PDA.' }
     ]
   },
   'Halteproblem': {
-    route: 'Du stehst in einem Gerichtssaal, wo ein Wahrsager vor dem Richter behauptet, jede Berechnung vorhersagen zu koennen.',
+    route: 'Du stehst in einem Gerichtssaal, wo ein Wahrsager vor dem Richter behauptet, jede Berechnung vorhersagen zu können.',
     scenes: [
       { kw: 'Turingmaschine M', img: '\u2699\uFE0F', text: 'Auf der Anklagebank sitzt eine Turingmaschine M mit Eingabe w. Die Frage: "Haelt M bei Eingabe w?"' },
       { kw: 'Diagonalisierung', img: '\u274C', text: 'Der Richter konstruiert einen Widerspruch: Eine TM, die das Gegenteil tut \u2013 Diagonalisierung! Der Wahrsager wird als Luegner entlarvt.' },
-      { kw: 'nicht entscheidbar', img: '\uD83D\uDEAB', text: 'Urteil: "NICHT ENTSCHEIDBAR!" \u2013 Es gibt keine TM H, die fuer JEDE TM+Eingabe korrekt entscheidet, ob sie haelt.' },
+      { kw: 'nicht entscheidbar', img: '\uD83D\uDEAB', text: 'Urteil: "NICHT ENTSCHEIDBAR!" \u2013 Es gibt keine TM H, die für JEDE TM+Eingabe korrekt entscheidet, ob sie haelt.' },
       { kw: 'semi-entscheidbar', img: '\u23F3', text: 'Ein Trostpreis: Das Problem ist semi-entscheidbar. Wenn M haelt, erkennt man es. Wenn nicht, wartet man ewig...' },
-      { kw: 'Turing 1936', img: '\uD83D\uDCC5', text: 'An der Wand haengt ein historisches Dokument: "Alan Turing, 1936" \u2013 das Jahr des Beweises, der die Informatik fuer immer veraenderte.' }
+      { kw: 'Turing 1936', img: '\uD83D\uDCC5', text: 'An der Wand hängt ein historisches Dokument: "Alan Turing, 1936" \u2013 das Jahr des Beweises, der die Informatik für immer veränderte.' }
     ]
   },
   'Berechenbarkeit': {
     route: 'Du stehst an einer Kreuzung im Land der Algorithmen. Ein Wegweiser zeigt: "Berechenbar \u2192" und "Nicht berechenbar \u2190".',
     scenes: [
-      { kw: 'Turingmaschine', img: '\u2699\uFE0F', text: 'Rechts steht eine Turingmaschine: "Alles was ICH berechnen kann, ist berechenbar!" Sie haelt fuer jede gueltige Eingabe mit der richtigen Antwort.' },
+      { kw: 'Turingmaschine', img: '\u2699\uFE0F', text: 'Rechts steht eine Turingmaschine: "Alles was ICH berechnen kann, ist berechenbar!" Sie haelt für jede gueltige Eingabe mit der richtigen Antwort.' },
       { kw: 'entscheidbar', img: '\u2705', text: 'Ein gruenes Schild: "Entscheidbar \u2013 TM haelt IMMER". Egal ob Ja oder Nein \u2013 die TM gibt eine Antwort und stoppt.' },
-      { kw: 'semi-entscheidbar', img: '\uD83D\uDFE1', text: 'Ein gelbes Schild: "Semi-entscheidbar \u2013 TM haelt nur bei Ja". Bei Nein laeuft sie moeglicherweise endlos weiter.' },
+      { kw: 'semi-entscheidbar', img: '\uD83D\uDFE1', text: 'Ein gelbes Schild: "Semi-entscheidbar \u2013 TM haelt nur bei Ja". Bei Nein laeuft sie möglicherweise endlos weiter.' },
       { kw: 'Halteproblem', img: '\uD83D\uDEAB', text: 'Links im dunklen Wald steht ein Warnschild: "Halteproblem \u2013 NICHT berechenbar!" Kein Algorithmus kann es loesen.' },
       { kw: 'Grenzen', img: '\uD83E\uDDF1', text: 'Eine hohe Mauer markiert die Grenze: "Es gibt prinzipielle Grenzen der Berechenbarkeit \u2013 nicht nur praktische!"' }
     ]
@@ -790,11 +790,11 @@ var GP_STORIES = {
   'Church-Turing-These': {
     route: 'Du betrittst eine Akademie der Informatik, wo zwei Gelehrte debattieren: Alonzo Church und Alan Turing.',
     scenes: [
-      { kw: 'Church und Turing', img: '\uD83D\uDC68\u200D\uD83C\uDFEB', text: 'Zwei Gelehrte sitzen sich gegenueber: Church mit seinem Lambda-Kalkuel, Turing mit seiner Maschine. Beide kamen 1936 unabhaengig zum gleichen Schluss!' },
+      { kw: 'Church und Turing', img: '\uD83D\uDC68\u200D\uD83C\uDFEB', text: 'Zwei Gelehrte sitzen sich gegenüber: Church mit seinem Lambda-Kalkuel, Turing mit seiner Maschine. Beide kamen 1936 unabhängig zum gleichen Schluss!' },
       { kw: 'intuitiv berechenbar', img: '\uD83D\uDCA1', text: 'An der Tafel steht: "Alles, was wir intuitiv als berechenbar betrachten, kann von einer TM berechnet werden."' },
-      { kw: 'These', img: '\uD83D\uDCDC', text: 'Achtung: An der Wand haengt kein Beweis, sondern eine These! Sie ist nicht mathematisch beweisbar, aber auch nie widerlegt worden.' },
-      { kw: 'aequivalente Modelle', img: '\uD83D\uDD17', text: 'Drei Tueren fuehren zum gleichen Raum: Turingmaschine, Lambda-Kalkuel, rekursive Funktionen \u2013 alle gleich maechtig!' },
-      { kw: 'universell', img: '\uD83C\uDF0D', text: 'Eine Weltkugel leuchtet: Die TM ist das universelle Berechnungsmodell. Alles Berechenbare \u2013 egal in welcher Sprache \u2013 kann sie ausfuehren.' }
+      { kw: 'These', img: '\uD83D\uDCDC', text: 'Achtung: An der Wand hängt kein Beweis, sondern eine These! Sie ist nicht mathematisch beweisbar, aber auch nie widerlegt worden.' },
+      { kw: 'äquivalente Modelle', img: '\uD83D\uDD17', text: 'Drei Tueren fuehren zum gleichen Raum: Turingmaschine, Lambda-Kalkuel, rekursive Funktionen \u2013 alle gleich maechtig!' },
+      { kw: 'universell', img: '\uD83C\uDF0D', text: 'Eine Weltkugel leuchtet: Die TM ist das universelle Berechnungsmodell. Alles Berechenbare \u2013 egal in welcher Sprache \u2013 kann sie ausführen.' }
     ]
   }
 };

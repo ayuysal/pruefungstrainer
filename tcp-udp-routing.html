@@ -274,7 +274,7 @@ tr:last-child td{border-bottom:none}
 
 <!-- ===== ZUSAMMENFASSUNG ===== -->
 <div class="summary">
-<div class="summary-card"><h4>&#128161; Merke</h4><p>TCP = zuverlässig, aber langsamer (Overhead durch Handshake, ACKs). UDP = schnell, aber ohne Garantie. Wahl haengt vom Anwendungsfall ab.</p></div>
+<div class="summary-card"><h4>&#128161; Merke</h4><p>TCP = zuverlässig, aber langsamer (Overhead durch Handshake, ACKs). UDP = schnell, aber ohne Garantie. Wahl hängt vom Anwendungsfall ab.</p></div>
 <div class="summary-card"><h4>&#127919; Prüfungstipp</h4><p>Portnummern auswendig lernen! Häufige Frage: &laquo;Welches Protokoll nutzt welchen Port?&raquo; Merke: 80=HTTP, 443=HTTPS, 22=SSH, 53=DNS, 25=SMTP.</p></div>
 <div class="summary-card"><h4>&#129513; Routing-Vergleich</h4><p>RIP = einfach (Distance-Vector, max 15 Hops). OSPF = schnelle Konvergenz (Link-State, Dijkstra). BGP = Internet-Backbone (Path-Vector, AS-Nummern).</p></div>
 <div class="summary-card"><h4>&#128274; Handshake merken</h4><p>SYN &rarr; SYN-ACK &rarr; ACK &ndash; wie ein Telefongespräch: &laquo;Hallo?&raquo; &ndash; &laquo;Ja, hallo!&raquo; &ndash; &laquo;Gut, lass uns reden.&raquo;</p></div>
@@ -331,10 +331,10 @@ const tcpudpQuestions=[
   {q:'Eine Datei wird per FTP heruntergeladen. Welches Protokoll?',a:'TCP',hint:'FTP nutzt TCP (Port 20/21), da die Datei vollstaendig und fehlerfrei ankommen muss.'},
   {q:'Ein VoIP-Telefonat wird geführt. Welches Protokoll?',a:'UDP',hint:'VoIP nutzt UDP. Echtzeitkommunikation duldet keine Verzögerung durch Neuübertragung.'},
   {q:'Eine Webseite wird per HTTPS geladen. Welches Protokoll?',a:'TCP',hint:'HTTPS läuft über TCP (Port 443). Zuverlässigkeit ist hier wichtig.'},
-  {q:'Ein DNS-Lookup wird durchgeführt. Welches Protokoll?',a:'UDP',hint:'DNS nutzt standardmaessig UDP (Port 53) für schnelle, kurze Anfragen.'},
+  {q:'Ein DNS-Lookup wird durchgeführt. Welches Protokoll?',a:'UDP',hint:'DNS nutzt standardmäßig UDP (Port 53) für schnelle, kurze Anfragen.'},
   {q:'Ein E-Mail wird per SMTP versendet. Welches Protokoll?',a:'TCP',hint:'SMTP (Port 25) nutzt TCP, da E-Mails vollstaendig zugestellt werden müssen.'},
   {q:'Ein Online-Spiel sendet Positionsdaten. Welches Protokoll?',a:'UDP',hint:'Gaming nutzt UDP für minimale Latenz. Veraltete Positionsdaten sind wertlos.'},
-  {q:'Ein SSH-Terminal wird geoeffnet. Welches Protokoll?',a:'TCP',hint:'SSH (Port 22) nutzt TCP für zuverlässige, verschlüsselte Verbindung.'},
+  {q:'Ein SSH-Terminal wird geöffnet. Welches Protokoll?',a:'TCP',hint:'SSH (Port 22) nutzt TCP für zuverlässige, verschlüsselte Verbindung.'},
   {q:'Ein DHCP-Client fordert eine IP-Adresse an. Welches Protokoll?',a:'UDP',hint:'DHCP nutzt UDP (Port 67/68), da der Client noch keine IP-Adresse hat.'},
   {q:'Eine grosse Datei wird zuverlässig übertragen. Welches Protokoll?',a:'TCP',hint:'Zuverlässige Dateiübertragung benötigt TCP (Bestätigungen, Neuübertragung).'},
   {q:'Ein TFTP-Transfer wird gestartet. Welches Protokoll?',a:'UDP',hint:'TFTP (Trivial FTP) nutzt UDP (Port 69) für einfache, schnelle Übertragung.'},
@@ -371,7 +371,7 @@ const routingQuestions=[
   {q:'OSPF organisiert Netzwerke in...?',a:'Areas',opts:['Zonen','Areas','Domains','Regionen'],hint:'OSPF nutzt Areas. Area 0 ist die Backbone-Area, an die alle anderen Areas angebunden sind.'},
   {q:'Welcher TCP-Port wird von BGP verwendet?',a:'179',opts:['80','143','179','520'],hint:'BGP läuft über TCP Port 179 für zuverlässige Kommunikation zwischen AS-Routern.'},
   {q:'Welches Protokoll ist ein IGP (Interior Gateway Protocol)?',a:'OSPF',opts:['BGP','OSPF','EGP','ICMP'],hint:'OSPF ist ein IGP für Routing innerhalb eines autonomen Systems. BGP ist ein EGP.'},
-  {q:'Wie oft sendet RIP seine komplette Routing-Tabelle?',a:'Alle 30 Sekunden',opts:['Alle 10 Sekunden','Alle 30 Sekunden','Alle 60 Sekunden','Nur bei Aenderungen'],hint:'RIP sendet alle 30 Sekunden die gesamte Routing-Tabelle an seine Nachbarn.'},
+  {q:'Wie oft sendet RIP seine komplette Routing-Tabelle?',a:'Alle 30 Sekunden',opts:['Alle 10 Sekunden','Alle 30 Sekunden','Alle 60 Sekunden','Nur bei Änderungen'],hint:'RIP sendet alle 30 Sekunden die gesamte Routing-Tabelle an seine Nachbarn.'},
   {q:'Welche Metrik verwendet OSPF?',a:'Kosten (Bandbreite)',opts:['Hop Count','Kosten (Bandbreite)','Verzögerung','MTU'],hint:'OSPF berechnet Kosten basierend auf der Bandbreite der Links. Höhere Bandbreite = niedrigere Kosten.'},
   {q:'Was identifiziert ein autonomes System eindeutig?',a:'AS-Nummer (ASN)',opts:['IP-Adresse','MAC-Adresse','AS-Nummer (ASN)','VLAN-ID'],hint:'Jedes autonome System hat eine eindeutige AS-Nummer (ASN), vergeben durch die IANA.'},
   {q:'Welches Routing-Protokoll eignet sich für kleine Netzwerke?',a:'RIP',opts:['RIP','OSPF','BGP','IS-IS'],hint:'RIP ist einfach zu konfigurieren und eignet sich für kleine Netzwerke (max. 15 Hops).'},

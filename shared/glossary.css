@@ -209,3 +209,22 @@ textarea.gl-input{min-height:80px;resize:vertical}
 .gp-action.ghost{background:none;color:var(--muted);border:1px solid var(--border)}
 .gp-action.ghost:hover{border-color:var(--text);color:var(--text)}
 @media(max-width:600px){.gp-modal{border-radius:14px}.gp-body{padding:12px 16px 20px}.gp-station{gap:10px}}
+
+/* ══════════════════════════════════════════════════════════════
+   LIGHT THEME
+   ══════════════════════════════════════════════════════════════ */
+body.light{--bg:#f5f6fa;--surface:#ffffff;--border:#dfe2ea;--text:#1a1d2e;--muted:#6b7084;--accent:#5b54e0;--cyan:#0891b2;--green:#16a34a;--orange:#ea580c;--red:#dc2626;--yellow:#ca8a04}
+body.light .noise{display:none}
+body.light .glow-orb{display:none}
+body.light .glossary-card{box-shadow:0 2px 8px rgba(0,0,0,.06)}
+body.light .gp-modal,body.light .fe-modal{box-shadow:0 8px 32px rgba(0,0,0,.12)}
+body.light .gp-overlay,body.light .fe-overlay{background:rgba(0,0,0,.3)}
+body.light .gl-overlay{background:rgba(0,0,0,.3)}
+body.light .sc-ghost{color:rgba(0,0,0,.25)}
+body.light .gp-test-input{background:var(--surface)}
+body.light .fe-textarea,body.light #fe-text{background:var(--surface)!important;color:var(--text)}
+body.light input,body.light textarea,body.light select{color:var(--text)}
+
+/* Theme Toggle Button */
+.theme-toggle{position:fixed;top:14px;right:14px;z-index:200;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.theme-toggle:hover{border-color:var(--accent);color:var(--accent)}

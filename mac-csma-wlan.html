@@ -263,7 +263,7 @@ function vizStart(type){
     {fn:()=>{const c=document.createElement('div');c.className='collision-flash';document.getElementById('viz-medium').appendChild(c);document.getElementById('viz-medium').textContent='!! KOLLISION !!';document.getElementById('viz-medium').style.color='var(--red)';},msg:'3. Kollision erkannt! Beide Stationen detektieren die Signalverzerrung.'},
     {fn:()=>{document.querySelectorAll('.pkt.a,.pkt.b').forEach(e=>e.remove());addPkt('lane-a','jam','JAM','45%');addPkt('lane-b','jam','JAM','45%');},msg:'4. Jam Signal wird gesendet (32 Bit), um alle Stationen zu informieren.'},
     {fn:()=>{document.querySelectorAll('.pkt').forEach(e=>e.remove());document.getElementById('viz-medium').textContent='-- Warten: Backoff --';document.getElementById('viz-medium').style.color='var(--yellow)';},msg:'5. Binary Exponential Backoff: Beide warten eine zufaellige Zeit (0..2^n - 1 Slotzeiten).'},
-    {fn:()=>{document.getElementById('viz-medium').textContent='-- Medium frei --';document.getElementById('viz-medium').style.color='';addPkt('lane-a','a','DATA','80px');},msg:'6. Station A gewinnt (kuerzerer Backoff) und sendet erfolgreich.'},
+    {fn:()=>{document.getElementById('viz-medium').textContent='-- Medium frei --';document.getElementById('viz-medium').style.color='';addPkt('lane-a','a','DATA','80px');},msg:'6. Station A gewinnt (kürzerer Backoff) und sendet erfolgreich.'},
     {fn:()=>{document.querySelectorAll('#lane-a .pkt.a').forEach(p=>p.style.left='calc(100% - 140px)');},msg:'7. Daten erfolgreich übertragen. Station B wartet und sendet danach.'}
   ]:[
     {fn:()=>{},msg:'1. Station A moechte senden. Sie hoert den Kanal ab (Carrier Sense).'},
@@ -274,7 +274,7 @@ function vizStart(type){
     {fn:()=>{document.querySelectorAll('.pkt.cts').forEach(p=>p.style.left='80px');},msg:'6. CTS empfangen. Station A darf jetzt exklusiv senden.'},
     {fn:()=>{document.querySelectorAll('.pkt.cts').forEach(e=>e.remove());addPkt('lane-a','a','DATA','80px');document.getElementById('viz-medium').textContent='-- Senden --';document.getElementById('viz-medium').style.color='var(--cyan)';},msg:'7. Station A sendet die Daten über den Kanal.'},
     {fn:()=>{document.querySelectorAll('#lane-a .pkt.a').forEach(p=>p.style.left='calc(100% - 140px)');},msg:'8. Daten erreichen den Empfänger (Station B / AP).'},
-    {fn:()=>{document.querySelectorAll('.pkt.a').forEach(e=>e.remove());addPkt('lane-b','ack','ACK','calc(100% - 140px)');},msg:'9. Empfänger sendet ACK (Acknowledgement) als Bestätigung zurueck.'},
+    {fn:()=>{document.querySelectorAll('.pkt.a').forEach(e=>e.remove());addPkt('lane-b','ack','ACK','calc(100% - 140px)');},msg:'9. Empfänger sendet ACK (Acknowledgement) als Bestätigung zurück.'},
     {fn:()=>{document.querySelectorAll('.pkt.ack').forEach(p=>p.style.left='80px');document.getElementById('viz-medium').textContent='-- Erfolgreich --';document.getElementById('viz-medium').style.color='var(--green)';},msg:'10. ACK empfangen! Übertragung erfolgreich abgeschlossen.'}
   ];
   let i=0;
@@ -322,7 +322,7 @@ const macQuestions=[
   {q:'Wie viele Bytes hat eine MAC-Adresse?',a:'6',s:'48 Bit / 8 = 6 Byte. Dargestellt als 6 Hex-Paare getrennt durch Doppelpunkte oder Bindestriche.'},
   {q:'Auf welcher OSI-Schicht arbeitet die MAC-Adresse?',a:'2',s:'Die MAC-Adresse arbeitet auf Schicht 2 (Data Link Layer), genauer auf der MAC-Teilschicht.'},
   {q:'Wie gross ist der Datenteil (Payload) eines Ethernet Frames (min-max in Byte)?',a:'46-1500',s:'Der Datenteil eines Ethernet Frames ist mindestens 46 Byte und maximal 1500 Byte gross.'},
-  {q:'Was prueft das FCS-Feld am Ende eines Ethernet Frames?',a:'Fehler',s:'FCS = Frame Check Sequence. Eine CRC-Prüfsumme, die Übertragungsfehler erkennt.'},
+  {q:'Was prüft das FCS-Feld am Ende eines Ethernet Frames?',a:'Fehler',s:'FCS = Frame Check Sequence. Eine CRC-Prüfsumme, die Übertragungsfehler erkennt.'},
 ];
 
 const topoQuestions=[
